@@ -14,7 +14,7 @@
 
 Μπορείτε να δείτε τις προδιαγραφές του έργου σύμφωνα με τα πρότυπα της μεθοδολογίας Agile / Scrum  στο https://git.minedu.gov.gr/itminedu/e-epal/wikis/scrum
 
-Η αναλυτική τεκμηρίωση των λειτουργικών απαιτήσεων συντηρείται στο https://git.minedu.gov.gr/itminedu/e-epal/analysis 
+Η αναλυτική τεκμηρίωση των λειτουργικών απαιτήσεων συντηρείται στο https://git.minedu.gov.gr/itminedu/e-epal/wikis/analysis 
 
 # Παρατηρήσιες - Σχόλια #
 

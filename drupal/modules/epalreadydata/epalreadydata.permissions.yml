@@ -1,0 +1,132 @@
+add eepal admin area entities:
+  title: 'Create new Eepal admin area entities'
+
+administer eepal admin area entities:
+  title: 'Administer Eepal admin area entities'
+  description: 'Allow to access the administration form to configure Eepal admin area entities.'
+  restrict access: true
+
+delete eepal admin area entities:
+  title: 'Delete Eepal admin area entities'
+
+edit eepal admin area entities:
+  title: 'Edit Eepal admin area entities'
+
+access eepal admin area overview:
+  title: 'Access the Eepal admin area overview page'
+
+view published eepal admin area entities:
+  title: 'View published Eepal admin area entities'
+
+view unpublished eepal admin area entities:
+  title: 'View unpublished Eepal admin area entities'
+add eepal specialty entities:
+  title: 'Create new Eepal specialty entities'
+
+administer eepal specialty entities:
+  title: 'Administer Eepal specialty entities'
+  description: 'Allow to access the administration form to configure Eepal specialty entities.'
+  restrict access: true
+
+delete eepal specialty entities:
+  title: 'Delete Eepal specialty entities'
+
+edit eepal specialty entities:
+  title: 'Edit Eepal specialty entities'
+
+access eepal specialty overview:
+  title: 'Access the Eepal specialty overview page'
+
+view published eepal specialty entities:
+  title: 'View published Eepal specialty entities'
+
+view unpublished eepal specialty entities:
+  title: 'View unpublished Eepal specialty entities'
+add eepal prefecture entities:
+  title: 'Create new Eepal prefecture entities'
+
+administer eepal prefecture entities:
+  title: 'Administer Eepal prefecture entities'
+  description: 'Allow to access the administration form to configure Eepal prefecture entities.'
+  restrict access: true
+
+delete eepal prefecture entities:
+  title: 'Delete Eepal prefecture entities'
+
+edit eepal prefecture entities:
+  title: 'Edit Eepal prefecture entities'
+
+access eepal prefecture overview:
+  title: 'Access the Eepal prefecture overview page'
+
+view published eepal prefecture entities:
+  title: 'View published Eepal prefecture entities'
+
+view unpublished eepal prefecture entities:
+  title: 'View unpublished Eepal prefecture entities'
+add eepal region entities:
+  title: 'Create new Eepal region entities'
+
+administer eepal region entities:
+  title: 'Administer Eepal region entities'
+  description: 'Allow to access the administration form to configure Eepal region entities.'
+  restrict access: true
+
+delete eepal region entities:
+  title: 'Delete Eepal region entities'
+
+edit eepal region entities:
+  title: 'Edit Eepal region entities'
+
+access eepal region overview:
+  title: 'Access the Eepal region overview page'
+
+view published eepal region entities:
+  title: 'View published Eepal region entities'
+
+view unpublished eepal region entities:
+  title: 'View unpublished Eepal region entities'
+add eepal school entities:
+  title: 'Create new Eepal school entities'
+
+administer eepal school entities:
+  title: 'Administer Eepal school entities'
+  description: 'Allow to access the administration form to configure Eepal school entities.'
+  restrict access: true
+
+delete eepal school entities:
+  title: 'Delete Eepal school entities'
+
+edit eepal school entities:
+  title: 'Edit Eepal school entities'
+
+access eepal school overview:
+  title: 'Access the Eepal school overview page'
+
+view published eepal school entities:
+  title: 'View published Eepal school entities'
+
+view unpublished eepal school entities:
+  title: 'View unpublished Eepal school entities'
+add eepal specialties in epal entities:
+  title: 'Create new Eepal specialties in epal entities'
+
+administer eepal specialties in epal entities:
+  title: 'Administer Eepal specialties in epal entities'
+  description: 'Allow to access the administration form to configure Eepal specialties in epal entities.'
+  restrict access: true
+
+delete eepal specialties in epal entities:
+  title: 'Delete Eepal specialties in epal entities'
+
+edit eepal specialties in epal entities:
+  title: 'Edit Eepal specialties in epal entities'
+
+access eepal specialties in epal overview:
+  title: 'Access the Eepal specialties in epal overview page'
+
+view published eepal specialties in epal entities:
+  title: 'View published Eepal specialties in epal entities'
+
+view unpublished eepal specialties in epal entities:
+  title: 'View unpublished Eepal specialties in epal entities'

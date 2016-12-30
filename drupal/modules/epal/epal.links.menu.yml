@@ -1,0 +1,28 @@
+
+# EPAL Student menu items definition
+entity.epal_student.collection:
+  title: 'EPAL Student list'
+  route_name: entity.epal_student.collection
+  description: 'List EPAL Student entities'
+  parent: system.admin_epal
+  weight: 100
+
+epal_student.admin.structure.settings:
+  title: EPAL Student settings
+  description: 'Configure EPAL Student entities'
+  route_name: epal_student.settings
+  parent: system.admin_structure
+
+# EPAL Student Class menu items definition
+entity.epal_student_class.collection:
+  title: 'EPAL Student Class list'
+  route_name: entity.epal_student_class.collection
+  description: 'List EPAL Student Class entities'
+  parent: system.admin_epal
+  weight: 100
+
+epal_student_class.admin.structure.settings:
+  title: EPAL Student Class settings
+  description: 'Configure EPAL Student Class entities'
+  route_name: epal_student_class.settings
+  parent: system.admin_structure

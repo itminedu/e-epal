@@ -1,0 +1,10 @@
+entity.epal_student.add_form:
+  route_name: entity.epal_student.add_form
+  title: 'Add EPAL Student'
+  appears_on:
+    - entity.epal_student.collection
+entity.epal_student_class.add_form:
+  route_name: entity.epal_student_class.add_form
+  title: 'Add EPAL Student Class'
+  appears_on:
+    - entity.epal_student_class.collection

@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Contains epal.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function epal_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the epal module.
+    case 'help.page.epal':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('EPAL Registration') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function epal_theme() {
+  return [
+    'epal' => [
+      'template' => 'epal',
+      'render element' => 'children',
+    ],
+  ];
+}

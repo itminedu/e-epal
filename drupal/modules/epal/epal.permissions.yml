@@ -1,0 +1,44 @@
+add epal student entities:
+  title: 'Create new EPAL Student entities'
+
+administer epal student entities:
+  title: 'Administer EPAL Student entities'
+  description: 'Allow to access the administration form to configure EPAL Student entities.'
+  restrict access: true
+
+delete epal student entities:
+  title: 'Delete EPAL Student entities'
+
+edit epal student entities:
+  title: 'Edit EPAL Student entities'
+
+access epal student overview:
+  title: 'Access the EPAL Student overview page'
+
+view published epal student entities:
+  title: 'View published EPAL Student entities'
+
+view unpublished epal student entities:
+  title: 'View unpublished EPAL Student entities'
+add epal student class entities:
+  title: 'Create new EPAL Student Class entities'
+
+administer epal student class entities:
+  title: 'Administer EPAL Student Class entities'
+  description: 'Allow to access the administration form to configure EPAL Student Class entities.'
+  restrict access: true
+
+delete epal student class entities:
+  title: 'Delete EPAL Student Class entities'
+
+edit epal student class entities:
+  title: 'Edit EPAL Student Class entities'
+
+access epal student class overview:
+  title: 'Access the EPAL Student Class overview page'
+
+view published epal student class entities:
+  title: 'View published EPAL Student Class entities'
+
+view unpublished epal student class entities:
+  title: 'View unpublished EPAL Student Class entities'

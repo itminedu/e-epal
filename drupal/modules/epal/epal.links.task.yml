@@ -1,0 +1,44 @@
+# EPAL Student routing definition
+epal_student.settings_tab:
+  route_name: epal_student.settings
+  title: 'Settings'
+  base_route: epal_student.settings
+
+entity.epal_student.canonical:
+  route_name: entity.epal_student.canonical
+  base_route: entity.epal_student.canonical
+  title: 'View'
+
+entity.epal_student.edit_form:
+  route_name: entity.epal_student.edit_form
+  base_route: entity.epal_student.canonical
+  title: 'Edit'
+
+entity.epal_student.delete_form:
+  route_name:  entity.epal_student.delete_form
+  base_route:  entity.epal_student.canonical
+  title: Delete
+  weight: 10
+
+# EPAL Student Class routing definition
+epal_student_class.settings_tab:
+  route_name: epal_student_class.settings
+  title: 'Settings'
+  base_route: epal_student_class.settings
+
+entity.epal_student_class.canonical:
+  route_name: entity.epal_student_class.canonical
+  base_route: entity.epal_student_class.canonical
+  title: 'View'
+
+entity.epal_student_class.edit_form:
+  route_name: entity.epal_student_class.edit_form
+  base_route: entity.epal_student_class.canonical
+  title: 'Edit'
+
+entity.epal_student_class.delete_form:
+  route_name:  entity.epal_student_class.delete_form
+  base_route:  entity.epal_student_class.canonical
+  title: Delete
+  weight: 10
+

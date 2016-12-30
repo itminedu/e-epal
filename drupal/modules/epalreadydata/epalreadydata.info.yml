@@ -1,0 +1,5 @@
+name: epalreadydata
+type: module
+description: Data Avaialble from MySchool System
+core: 8.x
+package: EPAL

@@ -22,7 +22,7 @@ module.exports = {
       '@angular/common',
       '@angular/router',
       '@angular/http'
-     ]
+  ],
   },
 
 //  output: {

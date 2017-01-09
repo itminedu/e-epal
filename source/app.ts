@@ -1,5 +1,9 @@
+import 'reflect-metadata';
+import 'babel-polyfill';
+import 'core-js/es6';
+import 'core-js/es7/reflect';
 import { NgModule } from '@angular/core';
-
+import { NgReduxModule, DevToolsExtension, NgRedux } from 'ng2-redux';
 import {BrowserModule} from '@angular/platform-browser';
 import {
   FormsModule,
@@ -20,11 +24,11 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import Main from './containers/main';
 import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
-// import { TodoService, FormatService } from './components/todo-app/todo-service';
 
 /* Here we import services */
-// import Service1 from './services/service1';
+import {HelperDataService} from './services/helper-data-service';
 
+import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 class MyLocalization extends NgLocalization {
@@ -43,7 +47,8 @@ class MyLocalization extends NgLocalization {
     ReactiveFormsModule,
     APP_ROUTER_PROVIDERS,
     HttpModule,
-    Ng2SmartTableModule
+    Ng2SmartTableModule,
+    NgReduxModule
   ],
   declarations: [
     Main,
@@ -54,7 +59,10 @@ class MyLocalization extends NgLocalization {
     { provide: APP_BASE_HREF, useValue: '/' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: NgLocalization, useClass: MyLocalization },
+    DevToolsExtension,
+    ACTION_PROVIDERS,
 //    Service1, again services here
+    HelperDataService,
   ]
 })
 class AppModule {}

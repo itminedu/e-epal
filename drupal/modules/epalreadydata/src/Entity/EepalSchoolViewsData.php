@@ -16,11 +16,13 @@ class EepalSchoolViewsData extends EntityViewsData implements EntityViewsDataInt
   public function getViewsData() {
     $data = parent::getViewsData();
 
+	/*
     $data['eepal_school']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Eepal school'),
       'help' => $this->t('The Eepal school ID.'),
     );
+	*/
 
     return $data;
   }

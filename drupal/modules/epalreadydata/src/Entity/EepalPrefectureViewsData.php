@@ -16,11 +16,13 @@ class EepalPrefectureViewsData extends EntityViewsData implements EntityViewsDat
   public function getViewsData() {
     $data = parent::getViewsData();
 
+	/*
     $data['eepal_prefecture']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Eepal prefecture'),
       'help' => $this->t('The Eepal prefecture ID.'),
     );
+	*/
 
     return $data;
   }

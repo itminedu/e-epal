@@ -16,12 +16,13 @@ class EepalAdminAreaViewsData extends EntityViewsData implements EntityViewsData
   public function getViewsData() {
     $data = parent::getViewsData();
 
-    $data['eepal_admin_area']['table']['base'] = array(
+  /*
+   $data['eepal_admin_area']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Eepal admin area'),
       'help' => $this->t('The Eepal admin area ID.'),
     );
-
+*/
     return $data;
   }
 

@@ -196,6 +196,7 @@ class EepalAdminArea extends ContentEntityBase implements EepalAdminAreaInterfac
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+	 /* 
      $fields['region_to_belong'] = BaseFieldDefinition::create('integer')
         ->setLabel(t('region_to_belong'))
         ->setDescription(t('Περιφερειακή Διεύθυνση στην οποία ανήκει.'))
@@ -216,6 +217,31 @@ class EepalAdminArea extends ContentEntityBase implements EepalAdminAreaInterfac
         ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
+	*/
+	$fields['region_to_belong'] = BaseFieldDefinition::create('entity_reference')
+        ->setLabel(t('region_to_belong'))
+        ->setDescription(t('Περιφερειακή Διεύθυνση στην οποία ανήκει.'))
+        ->setSetting('target_type', 'eepal_region')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(TRUE)
+        ->setDisplayOptions('view', array(
+              'label' => 'hidden',
+              'type' => 'author',
+              'weight' => 0,
+            ))
+        ->setDisplayOptions('form', array(
+              'type' => 'entity_reference_autocomplete',
+              'weight' => 5,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+		
 		
 	$fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))

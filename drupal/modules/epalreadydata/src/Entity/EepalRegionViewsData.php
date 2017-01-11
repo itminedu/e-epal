@@ -16,11 +16,13 @@ class EepalRegionViewsData extends EntityViewsData implements EntityViewsDataInt
   public function getViewsData() {
     $data = parent::getViewsData();
 
+	/*
     $data['eepal_region']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Eepal region'),
       'help' => $this->t('The Eepal region ID.'),
     );
+	*/
 
     return $data;
   }

@@ -196,24 +196,27 @@ class EepalPrefecture extends ContentEntityBase implements EepalPrefectureInterf
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-     $fields['dief_to_belong'] = BaseFieldDefinition::create('integer')
+     $fields['dief_to_belong'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('region_to_belong'))
         ->setDescription(t('Περιφερειακή Διεύθυνση στην οποία ανήκει.'))
-        ->setRevisionable(TRUE)
-        ->setSettings(array(
-          //'max_length' => 2,
-          'text_processing' => 0,
-        ))
-        //->setDefaultValue(25)
+        ->setSetting('target_type', 'eepal_admin_area')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(TRUE)
         ->setDisplayOptions('view', array(
-          'label' => 'above',
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'label' => 'hidden',
+              'type' => 'author',
+              'weight' => 0,
+            ))
         ->setDisplayOptions('form', array(
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'type' => 'entity_reference_autocomplete',
+              'weight' => 5,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
 

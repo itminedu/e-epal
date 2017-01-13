@@ -17,14 +17,13 @@ export class HelperDataService {
             this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list`)
             .map(response => <ICourseField[]>response.json())
             .subscribe(data => {
-                console.log(data);
                 resolve(data);
             }, // put the data returned from the server in our variable
             error => {
                 console.log("Error HTTP GET Service"); // in case of failure show this message
                 reject("Error HTTP GET Service");
             },
-            () => console.log("this.courseFields"));//run this code in all cases); */
+            () => console.log("Course Fields Received"));//run this code in all cases); */
         });
     };
 }

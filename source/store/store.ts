@@ -15,13 +15,13 @@ export const rootReducer = combineReducers<IAppState>({
 
 export function deimmutify(state: IAppState): Object {
   return {
-//    courseFields: courseFields.deimmutifyCourseFields(state.courseFields),
-    courseFields: state.courseFields,
+    courseFields: courseFields.deimmutifyCourseFields(state.courseFields),
   };
 }
 
-export function reimmutify(plain): IAppState {
+/* export function reimmutify(plain): IAppState {
   return plain ? {
     courseFields: courseFields.reimmutifyCourseFields(plain.courseFields),
+    courseFieldsSelected: courseFieldsSelected.reimmutifyCourseFieldsSelected(plain.courseFieldsSelected),
   } : {};
-}
+} */

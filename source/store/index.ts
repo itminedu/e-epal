@@ -1,6 +1,6 @@
-import * as persistState from 'redux-localstorage';
+// import * as persistState from 'redux-localstorage';
 import * as createLogger from 'redux-logger';
-import { IAppState, rootReducer, deimmutify, reimmutify } from './store';
+import { IAppState, rootReducer, deimmutify } from './store';
 import { ICourseField, ICourseFields } from './coursefields/coursefields.types';
 
 export {
@@ -8,7 +8,6 @@ export {
   rootReducer,
   ICourseField,
   ICourseFields,
-  reimmutify,
 };
 
 export const middleware = [
@@ -19,12 +18,11 @@ export const middleware = [
   })
 ];
 
-export const enhancers = [
+/* export const enhancers = [
   persistState(
     '', {
       key: 'e-epal',
-//      serialize: s => JSON.stringify(deimmutify(s)),
-      serialize: s => JSON.stringify(s),
+      serialize: s => JSON.stringify(deimmutify(s)),
       deserialize: s => reimmutify(JSON.parse(s)),
   })
-];
+]; */

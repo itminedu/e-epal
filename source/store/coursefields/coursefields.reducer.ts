@@ -13,7 +13,7 @@ export function courseFieldsReducer(state: ICourseFields = INITIAL_STATE, action
         let newCourseFields = Array<ICourseField>();
         let i=0;
         action.payload.courseFields.forEach(courseField => {
-            newCourseFields.push(<ICourseField>{id: courseField.id, name: courseField.name, selected: 0});
+            newCourseFields.push(<ICourseField>{id: courseField.id, name: courseField.name, selected: false});
             i++;
         });
         return Seq(newCourseFields).map(n => n).toList();

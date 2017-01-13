@@ -11,9 +11,9 @@ import {
   IAppState,
   rootReducer,
   middleware,
-  enhancers,
+//  enhancers,
 } from '../store';
-import { reimmutify } from '../store';
+// import { reimmutify } from '../store';
 
 
 @Component({
@@ -61,8 +61,8 @@ export default class Main {
 
 
     const tools = _devTools.enhancer({
-      deserializeState: reimmutify,
-    });
+//      deserializeState: reimmutify,
+  });
     _ngRedux.configureStore(
       rootReducer,
       {},

@@ -16,11 +16,13 @@ class EepalSpecialtiesInEpalViewsData extends EntityViewsData implements EntityV
   public function getViewsData() {
     $data = parent::getViewsData();
 
+	/*
     $data['eepal_specialties_in_epal']['table']['base'] = array(
       'field' => 'id',
       'title' => $this->t('Eepal specialties in epal'),
       'help' => $this->t('The Eepal specialties in epal ID.'),
     );
+	*/
 
     return $data;
   }

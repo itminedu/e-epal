@@ -356,68 +356,77 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-	$fields['region_edu_admin_id'] = BaseFieldDefinition::create('integer')
+	$fields['region_edu_admin_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('ID Περιφερειακής Διεύθυνσης'))
         ->setDescription(t('Δώσε το ID της Περιφερειακής Διεύθυνσης στην οποία ανήκει.'))
-        ->setRevisionable(TRUE)
-        ->setSettings(array(
-          //'max_length' => 2,
-          'text_processing' => 0,
-        ))
-        //->setDefaultValue(25)
+        ->setSetting('target_type', 'eepal_region')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(TRUE)
         ->setDisplayOptions('view', array(
-          'label' => 'above',
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'label' => 'hidden',
+              'type' => 'author',
+              'weight' => 0,
+            ))
         ->setDisplayOptions('form', array(
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'type' => 'entity_reference_autocomplete',
+              'weight' => 5,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
         ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);  
+        ->setDisplayConfigurable('view', TRUE);
 	
-	$fields['edu_admin_id'] = BaseFieldDefinition::create('integer')
+	$fields['edu_admin_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('ID Διεύθυνσης Εκπαίδευσης'))
         ->setDescription(t('Δώσε το ID της Διεύθυνσης Εκπαίδευσης στην οποία ανήκει.'))
-        ->setRevisionable(TRUE)
-        ->setSettings(array(
-          //'max_length' => 2,
-          'text_processing' => 0,
-        ))
-        //->setDefaultValue(25)
+        ->setSetting('target_type', 'eepal_admin_area')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(TRUE)
         ->setDisplayOptions('view', array(
-          'label' => 'above',
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'label' => 'hidden',
+              'type' => 'author',
+              'weight' => 0,
+            ))
         ->setDisplayOptions('form', array(
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'type' => 'entity_reference_autocomplete',
+              'weight' => 5,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
         ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);  
+        ->setDisplayConfigurable('view', TRUE);
 		
-    $fields['prefecture_id'] = BaseFieldDefinition::create('integer')
+    $fields['prefecture_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('ID Νομαρχίας'))
         ->setDescription(t('Δώσε το ID της Νομαρχίας στην οποία ανήκει.'))
-        ->setRevisionable(TRUE)
-        ->setSettings(array(
-          //'max_length' => 2,
-          'text_processing' => 0,
-        ))
-        //->setDefaultValue(25)
+        ->setSetting('target_type', 'eepal_prefecture')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(TRUE)
         ->setDisplayOptions('view', array(
-          'label' => 'above',
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'label' => 'hidden',
+              'type' => 'author',
+              'weight' => 0,
+            ))
         ->setDisplayOptions('form', array(
-          'type' => 'integer',
-          //'weight' => -4,
-        ))
+              'type' => 'entity_reference_autocomplete',
+              'weight' => 5,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
         ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);  
+        ->setDisplayConfigurable('view', TRUE);
 		
 	$fields['municipality'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Δήμος-Περιοχή Σχολείου'))

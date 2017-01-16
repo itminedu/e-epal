@@ -11,14 +11,17 @@ export class CourseFieldsActions {
     private _hds: HelperDataService) {}
 
   getCourseFields = () => {
-    return this._hds.getCourseFields().then(courseFields => {
-      return this._ngRedux.dispatch({
-        type: COURSEFIELDS_RECEIVED,
-        payload: {
-          courseFields
-        }
-      });
-    });
+    const { courseFields } = this._ngRedux.getState();
+    if (courseFields.size === 0) {
+        return this._hds.getCourseFields().then(courseFields => {
+            return this._ngRedux.dispatch({
+                type: COURSEFIELDS_RECEIVED,
+                payload: {
+                    courseFields
+                }
+            });
+        });
+    }
   };
 
   saveCourseFieldsSelected = (courseFieldsSelected) => {

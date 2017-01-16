@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { CourseFieldsActions } from '../../actions/coursefields.actions';
 import { DevToolsExtension, NgRedux, select } from 'ng2-redux';
-import { ICourseFields } from '../../store/coursefields/coursefields.types';
+import { ICourseFields, ICourseField } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
 
 import {
@@ -53,12 +53,14 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
+
         this._cfa.getCourseFields();
 
         this.courseFields$ = this._ngRedux.select(state => {
-            for (let courseField in state.courseFields) {
-                this.cfs.push(new FormControl('', []));
-            }
+            state.courseFields.reduce(({}, courseField) =>{
+                this.cfs.push(new FormControl(courseField.selected, []));
+                return courseField;
+            }, {});
             return state.courseFields;
         });
 
@@ -67,4 +69,6 @@ import {AppSettings} from '../../app.settings';
     saveSelected() {
         this._cfa.saveCourseFieldsSelected(this.formGroup.value.formArray);
     }
+
+
 }

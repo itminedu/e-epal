@@ -42,3 +42,69 @@ view published epal student class entities:
 
 view unpublished epal student class entities:
   title: 'View unpublished EPAL Student Class entities'
+add epal student epal chosen entities:
+  title: 'Create new Epal student epal chosen entities'
+
+administer epal student epal chosen entities:
+  title: 'Administer Epal student epal chosen entities'
+  description: 'Allow to access the administration form to configure Epal student epal chosen entities.'
+  restrict access: true
+
+delete epal student epal chosen entities:
+  title: 'Delete Epal student epal chosen entities'
+
+edit epal student epal chosen entities:
+  title: 'Edit Epal student epal chosen entities'
+
+access epal student epal chosen overview:
+  title: 'Access the Epal student epal chosen overview page'
+
+view published epal student epal chosen entities:
+  title: 'View published Epal student epal chosen entities'
+
+view unpublished epal student epal chosen entities:
+  title: 'View unpublished Epal student epal chosen entities'
+add epal student course field entities:
+  title: 'Create new Epal student course field entities'
+
+administer epal student course field entities:
+  title: 'Administer Epal student course field entities'
+  description: 'Allow to access the administration form to configure Epal student course field entities.'
+  restrict access: true
+
+delete epal student course field entities:
+  title: 'Delete Epal student course field entities'
+
+edit epal student course field entities:
+  title: 'Edit Epal student course field entities'
+
+access epal student course field overview:
+  title: 'Access the Epal student course field overview page'
+
+view published epal student course field entities:
+  title: 'View published Epal student course field entities'
+
+view unpublished epal student course field entities:
+  title: 'View unpublished Epal student course field entities'
+add epal users entities:
+  title: 'Create new Epal users entities'
+
+administer epal users entities:
+  title: 'Administer Epal users entities'
+  description: 'Allow to access the administration form to configure Epal users entities.'
+  restrict access: true
+
+delete epal users entities:
+  title: 'Delete Epal users entities'
+
+edit epal users entities:
+  title: 'Edit Epal users entities'
+
+access epal users overview:
+  title: 'Access the Epal users overview page'
+
+view published epal users entities:
+  title: 'View published Epal users entities'
+
+view unpublished epal users entities:
+  title: 'View unpublished Epal users entities'

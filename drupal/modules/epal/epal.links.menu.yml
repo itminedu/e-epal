@@ -26,3 +26,45 @@ epal_student_class.admin.structure.settings:
   description: 'Configure EPAL Student Class entities'
   route_name: epal_student_class.settings
   parent: system.admin_structure
+
+# Epal student epal chosen menu items definition
+entity.epal_student_epal_chosen.collection:
+  title: 'Epal student epal chosen list'
+  route_name: entity.epal_student_epal_chosen.collection
+  description: 'List Epal student epal chosen entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_epal_chosen.admin.structure.settings:
+  title: Epal student epal chosen settings
+  description: 'Configure Epal student epal chosen entities'
+  route_name: epal_student_epal_chosen.settings
+  parent: system.admin_structure
+
+# Epal student course field menu items definition
+entity.epal_student_course_field.collection:
+  title: 'Epal student course field list'
+  route_name: entity.epal_student_course_field.collection
+  description: 'List Epal student course field entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_course_field.admin.structure.settings:
+  title: Epal student course field settings
+  description: 'Configure Epal student course field entities'
+  route_name: epal_student_course_field.settings
+  parent: system.admin_structure
+
+# Epal users menu items definition
+entity.epal_users.collection:
+  title: 'Epal users list'
+  route_name: entity.epal_users.collection
+  description: 'List Epal users entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_users.admin.structure.settings:
+  title: Epal users settings
+  description: 'Configure Epal users entities'
+  route_name: epal_users.settings
+  parent: system.admin_structure

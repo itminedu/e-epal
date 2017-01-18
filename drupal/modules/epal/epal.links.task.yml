@@ -42,3 +42,69 @@ entity.epal_student_class.delete_form:
   title: Delete
   weight: 10
 
+# Epal student epal chosen routing definition
+epal_student_epal_chosen.settings_tab:
+  route_name: epal_student_epal_chosen.settings
+  title: 'Settings'
+  base_route: epal_student_epal_chosen.settings
+
+entity.epal_student_epal_chosen.canonical:
+  route_name: entity.epal_student_epal_chosen.canonical
+  base_route: entity.epal_student_epal_chosen.canonical
+  title: 'View'
+
+entity.epal_student_epal_chosen.edit_form:
+  route_name: entity.epal_student_epal_chosen.edit_form
+  base_route: entity.epal_student_epal_chosen.canonical
+  title: 'Edit'
+
+entity.epal_student_epal_chosen.delete_form:
+  route_name:  entity.epal_student_epal_chosen.delete_form
+  base_route:  entity.epal_student_epal_chosen.canonical
+  title: Delete
+  weight: 10
+
+# Epal student course field routing definition
+epal_student_course_field.settings_tab:
+  route_name: epal_student_course_field.settings
+  title: 'Settings'
+  base_route: epal_student_course_field.settings
+
+entity.epal_student_course_field.canonical:
+  route_name: entity.epal_student_course_field.canonical
+  base_route: entity.epal_student_course_field.canonical
+  title: 'View'
+
+entity.epal_student_course_field.edit_form:
+  route_name: entity.epal_student_course_field.edit_form
+  base_route: entity.epal_student_course_field.canonical
+  title: 'Edit'
+
+entity.epal_student_course_field.delete_form:
+  route_name:  entity.epal_student_course_field.delete_form
+  base_route:  entity.epal_student_course_field.canonical
+  title: Delete
+  weight: 10
+
+# Epal users routing definition
+epal_users.settings_tab:
+  route_name: epal_users.settings
+  title: 'Settings'
+  base_route: epal_users.settings
+
+entity.epal_users.canonical:
+  route_name: entity.epal_users.canonical
+  base_route: entity.epal_users.canonical
+  title: 'View'
+
+entity.epal_users.edit_form:
+  route_name: entity.epal_users.edit_form
+  base_route: entity.epal_users.canonical
+  title: 'Edit'
+
+entity.epal_users.delete_form:
+  route_name:  entity.epal_users.delete_form
+  base_route:  entity.epal_users.canonical
+  title: Delete
+  weight: 10
+

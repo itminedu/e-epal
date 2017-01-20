@@ -1,7 +1,9 @@
 import { CourseFieldsActions } from './coursefields.actions';
-const ACTION_PROVIDERS = [ CourseFieldsActions ];
+import { StudentDataFieldsActions } from './studentdatafields.actions';
+const ACTION_PROVIDERS = [ CourseFieldsActions, StudentDataFieldsActions  ];
 
 export {
   CourseFieldsActions,
+  StudentDataFieldsActions,
   ACTION_PROVIDERS,
 };

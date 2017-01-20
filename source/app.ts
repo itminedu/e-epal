@@ -27,6 +27,7 @@ import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 
 /* Here we import services */
 import {HelperDataService} from './services/helper-data-service';
+import {UserDataService} from './services/user-data-service';
 
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
@@ -63,6 +64,7 @@ class MyLocalization extends NgLocalization {
     ACTION_PROVIDERS,
 //    Service1, again services here
     HelperDataService,
+    UserDataService,
   ]
 })
 class AppModule {}

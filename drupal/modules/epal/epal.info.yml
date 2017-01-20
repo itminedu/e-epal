@@ -2,4 +2,4 @@ name: epal
 type: module
 description: EPAL Registration
 core: 8.x
-package: epal
+package: EPAL

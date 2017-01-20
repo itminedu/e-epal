@@ -8,3 +8,18 @@ entity.epal_student_class.add_form:
   title: 'Add EPAL Student Class'
   appears_on:
     - entity.epal_student_class.collection
+entity.epal_student_epal_chosen.add_form:
+  route_name: entity.epal_student_epal_chosen.add_form
+  title: 'Add Epal student epal chosen'
+  appears_on:
+    - entity.epal_student_epal_chosen.collection
+entity.epal_student_course_field.add_form:
+  route_name: entity.epal_student_course_field.add_form
+  title: 'Add Epal student course field'
+  appears_on:
+    - entity.epal_student_course_field.collection
+entity.epal_users.add_form:
+  route_name: entity.epal_users.add_form
+  title: 'Add Epal users'
+  appears_on:
+    - entity.epal_users.collection

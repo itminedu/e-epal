@@ -57,8 +57,10 @@ import {AppSettings} from '../../app.settings';
         this._cfa.getCourseFields();
 
         this.courseFields$ = this._ngRedux.select(state => {
+           //console.log("test2");
             state.courseFields.reduce(({}, courseField) =>{
                 this.cfs.push(new FormControl(courseField.selected, []));
+                //console.log(courseField.selected);
                 return courseField;
             }, {});
             return state.courseFields;

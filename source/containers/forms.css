@@ -1,0 +1,18 @@
+.ng-valid[required], .ng-valid.required  {
+  /*border-left: 3px solid #42A948;*/ /* green */
+
+}
+
+.ng-invalid:not(form)  {
+  border-left: 3px solid #a94442; /* red */
+}
+
+#outer
+{
+    width:100%;
+    text-align: center;
+}
+.inner
+{
+    display: inline-block;
+}

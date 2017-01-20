@@ -49,12 +49,15 @@ export default class Form3 {
 
     onSubmit(studentform: any) {
         let headers = new Headers({
-            "Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+             "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
             "Accept": "*/*",
             "Access-Control-Allow-Credentials": "true",
             "Content-Type": "application/json",
             // "Content-Type": "text/plain",  // try to skip preflight
-            "X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc"
         });
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         console.log(this.student);

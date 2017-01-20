@@ -28,6 +28,9 @@ import {
       <li [ngClass]="{active: path=='form3'}">
         <a [routerLink]="['/form3']">Αίτηση</a>
       </li>
+     <li [ngClass]="{active: path=='applicant-data-form'}">
+       <a [routerLink]="['/applicant-data-form']">Αίτηση μαθητή / Καταχώρηση προσωπικών στοιχείων</a>
+     </li>
       <li [ngClass]="{active: path=='students-list'}">
         <a [routerLink]="['/students-list']">Μαθητές</a>
       </li>

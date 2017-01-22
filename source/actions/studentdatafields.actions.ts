@@ -14,9 +14,9 @@ export class StudentDataFieldsActions {
 
 
     getStudentDataFields = () => {
-      const { studentdataFields } = this._ngRedux.getState();
+      const { studentDataFields } = this._ngRedux.getState();
       //console.log(studentdataFields);
-      if (studentdataFields.size === 0) {
+      if (studentDataFields.size === 0) {
           return this._hds.getStudentDataFields().then(studentdataFields => {
               return this._ngRedux.dispatch({
                   type: STUDENTDATAFIELDS_RECEIVED,
@@ -40,25 +40,12 @@ export class StudentDataFieldsActions {
     };
   */
 
-  saveStudentDataFields = (studentdataFieldsFirstname, studentdataFieldsSurname, studentdataFieldsGuardianFirstname,
-    studentdataFieldsGuardianSurname, studentdataFieldsStudentAmka,
-    studentdataFieldsRegionAddress, studentdataFieldsRegionTK, studentdataFieldsRegionArea,
-    studentdataFieldsCertificateType, studentdataFieldsRelationToStudent,) => {
+  saveStudentDataFields = (studentDataFields) => {
 
       return this._ngRedux.dispatch({
         type: STUDENTDATAFIELDS_SAVE,
         payload: {
-          studentdataFieldsFirstname,
-          studentdataFieldsSurname,
-          studentdataFieldsGuardianFirstname,
-          studentdataFieldsGuardianSurname,
-          studentdataFieldsStudentAmka,
-          studentdataFieldsRegionAddress,
-          studentdataFieldsRegionTK,
-          studentdataFieldsRegionArea,
-          studentdataFieldsCertificateType,
-          studentdataFieldsRelationToStudent,
-
+          studentDataFields
         }
 
       });

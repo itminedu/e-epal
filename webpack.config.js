@@ -64,7 +64,7 @@ module.exports = {
       loader: 'tslint'
     }],
     loaders: [
-      { test: /\.ts$/, loaders: ['ts', 'angular2-router-loader'], exclude: /node_modules/ },
+      { test: /\.ts$/, loaders: ['ts', 'angular2-router-loader', 'angular2-template-loader'], exclude: /node_modules/ },
       { test: /\.js$/, exclude: [/bower_components/, /node_modules\/@angular\/compiler\/bundles\/.+/], loader: 'babel-loader', query: {presets: ['es2015']} },
       { test: /\.html$/, loader: 'raw' },
 //      { test: /\.css$/, loader: 'style-loader!css-loader?sourceMap' },

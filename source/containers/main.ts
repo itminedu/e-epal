@@ -25,14 +25,14 @@ import {
       <li [ngClass]="{active: path=='course-fields-select'}">
         <a [routerLink]="['/course-fields-select']">Επιλογή Ειδικότητας</a>
       </li>
-      <li [ngClass]="{active: path=='form3'}">
-        <a [routerLink]="['/form3']">Αίτηση</a>
+      <li [ngClass]="{active: path=='student-application-form-main'}">
+        <a [routerLink]="['/student-application-form-main']">Αίτηση μαθητή / Καταχώρηση προσωπικών στοιχείων</a>
       </li>
-     <li [ngClass]="{active: path=='applicant-data-form'}">
-       <a [routerLink]="['/applicant-data-form']">Αίτηση μαθητή / Καταχώρηση προσωπικών στοιχείων</a>
-     </li>
       <li [ngClass]="{active: path=='students-list'}">
         <a [routerLink]="['/students-list']">Μαθητές</a>
+      </li>
+      <li [ngClass]="{active: path=='form3'}">
+        <a [routerLink]="['/form3']">Αίτηση</a>
       </li>
       </ul>
     </div>

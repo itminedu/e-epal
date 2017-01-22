@@ -33,7 +33,9 @@ import {AppSettings} from '../../app.settings';
         </div>
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button class="btn-primary btn-lg pull-center" (click)="saveSelected()">Συνέχεια</button>
+            <button class="btn-primary btn-lg pull-center" (click)="saveSelected()" [routerLink]="['/student-application-form-main']">
+            Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+            </button>
         </div>
         </div>
     </form>

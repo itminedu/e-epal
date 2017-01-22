@@ -7,7 +7,8 @@ import {
   STUDENTDATAFIELDS_SAVE
 } from '../../constants';
 
-export function studentdataFieldsReducer(state: IStudentDataFields = INITIAL_STATE, action): IStudentDataFields {
+
+export function studentDataFieldsReducer(state: IStudentDataFields = INITIAL_STATE, action): IStudentDataFields {
   switch (action.type) {
     case STUDENTDATAFIELDS_RECEIVED:
         let newStudentDataFields = Array<IStudentDataField>();
@@ -23,23 +24,18 @@ export function studentdataFieldsReducer(state: IStudentDataFields = INITIAL_STA
         return Seq(newStudentDataFields).map(n => n).toList();
 
     case STUDENTDATAFIELDS_SAVE:
-        let selectedStudentDataFields = Array<IStudentDataField>();
+        let studentDataFields = Array<IStudentDataField>();
         let ind=0;
 
         //let testvar = "nikos";
 
-        state.forEach(studentdataField => {
-            selectedStudentDataFields.push(<IStudentDataField>{studentFirstname: action.payload.studentdataFieldsFirstname, studentSurname: action.payload.studentdataFieldsSurname,
-              guardianFirstname: action.payload.studentdataFieldsGuardianFirstname, guardianSurname: action.payload.studentdataFieldsGuardianSurname,
-              studentAmka: studentdataField.studentAmka, regionAddress: action.payload.studentdataFieldsRegionAddress,
-              regionTK: action.payload.studentdataFieldsRegionTK, regionArea: action.payload.studentdataFieldsRegionArea,
-              certificateType: action.payload.studentdataFieldsCertificateType, relationToStudent: action.payload.studentdataFieldsRelationToStudent});
-
+        action.payload.studentDataFields.forEach(studentDataField => {
+            studentDataFields.push(<IStudentDataField>studentDataField);
             ind++;
             //console.log(action.payload.studentdataFieldsFirstname);
         });
 
-        return Seq(selectedStudentDataFields).map(n => n).toList();
+        return Seq(studentDataFields).map(n => n).toList();
     default: return state;
   }
 };

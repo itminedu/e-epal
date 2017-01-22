@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import * as courseFields from './coursefields';
-import * as studentdataFields from './studentdatafields';
+import * as studentDataFields from './studentdatafields';
 
 /*
  * This is where we 'assemble' the full store out of its modules.
@@ -8,18 +8,18 @@ import * as studentdataFields from './studentdatafields';
 
 export interface IAppState {
     courseFields?: courseFields.ICourseFields;
-    studentdataFields?: studentdataFields.IStudentDataFields;
+    studentDataFields?: studentDataFields.IStudentDataFields;
 };
 
 export const rootReducer = combineReducers<IAppState>({
    courseFields: courseFields.courseFieldsReducer,
-   studentdataFields: studentdataFields.studentdataFieldsReducer,
+   studentDataFields: studentDataFields.studentDataFieldsReducer,
 });
 
 export function deimmutify(state: IAppState): Object {
   return {
     courseFields: courseFields.deimmutifyCourseFields(state.courseFields),
-    studentdataFields: studentdataFields.deimmutifyStudentDataFields(state.studentdataFields),
+    studentdataFields: studentDataFields.deimmutifyStudentDataFields(state.studentDataFields),
   };
 }
 

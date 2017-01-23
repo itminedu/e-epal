@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import {Injectable, ChangeDetectionStrategy} from "@angular/core";
-import {StudentDataFieldsActions} from '../../actions/studentdatafields.actions';
+import { Injectable } from "@angular/core";
+import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
+import { Router } from '@angular/router';
 
-import { DevToolsExtension, NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from 'ng2-redux';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { ICourseFields } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
@@ -28,8 +29,10 @@ import {
 
     public studentDataGroup: FormGroup;
 
-    constructor(private fb: FormBuilder, private _sdfa: StudentDataFieldsActions, private _ngRedux: NgRedux<IAppState>) {
-
+    constructor(private fb: FormBuilder,
+                private _sdfa: StudentDataFieldsActions,
+                private _ngRedux: NgRedux<IAppState>,
+                private router: Router) {
         this.studentDataGroup = this.fb.group({
             studentAmka: ['12345', Validators.required],
             studentFirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -42,7 +45,6 @@ import {
             certificateType: ['', Validators.required],
             relationToStudent: ['', Validators.required],
         });
-
     };
 
     ngOnInit() {
@@ -57,10 +59,7 @@ import {
         });
 
         this.courseFields$ = this._ngRedux.select(state => {
-           //console.log("test2");
             state.courseFields.reduce(({}, courseField) =>{
-//                this.cfs.push(new FormControl(courseField.selected, []));
-                //console.log(courseField.selected);
                 return courseField;
             }, {});
             return state.courseFields;
@@ -69,5 +68,6 @@ import {
 
     saveSelected() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
+        this.router.navigate(['/course-fields-select']);
     }
 }

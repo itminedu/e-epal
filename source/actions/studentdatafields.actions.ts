@@ -9,36 +9,7 @@ import { UserDataService } from '../services/user-data-service';
 @Injectable()
 export class StudentDataFieldsActions {
   constructor(
-    private _ngRedux: NgRedux<IAppState>,
-    private _hds: UserDataService) {}
-
-
-    getStudentDataFields = () => {
-      const { studentDataFields } = this._ngRedux.getState();
-      //console.log(studentdataFields);
-      if (studentDataFields.size === 0) {
-          return this._hds.getStudentDataFields().then(studentdataFields => {
-              return this._ngRedux.dispatch({
-                  type: STUDENTDATAFIELDS_RECEIVED,
-                  payload: {
-                      studentdataFields
-                  }
-              });
-          });
-        }
-    };
-  /*
-  getStudentDataFields = () => {
-      return this._hds.getStudentDataFields().then(studentdataFields => {
-        return this._ngRedux.dispatch({
-          type: STUDENTDATAFIELDS_RECEIVED,
-          payload: {
-            studentdataFields
-          }
-        });
-      });
-    };
-  */
+    private _ngRedux: NgRedux<IAppState>) {}
 
   saveStudentDataFields = (studentDataFields) => {
 

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Http, Response, RequestOptions, Headers } from '@angular/http';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { CourseFieldsActions } from '../../actions/coursefields.actions';
-import { DevToolsExtension, NgRedux, select } from 'ng2-redux';
-import { ICourseFields, ICourseField } from '../../store/coursefields/coursefields.types';
+import { NgRedux, select } from 'ng2-redux';
+import { ICourseFields } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
 
 import {
@@ -33,7 +33,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button class="btn-primary btn-lg pull-center" (click)="saveSelected()" [routerLink]="['/student-application-form-main']">
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -48,7 +48,10 @@ import {AppSettings} from '../../app.settings';
     public formGroup: FormGroup;
     public cfs = new FormArray([]);
 
-    constructor(private http: Http, private fb: FormBuilder, private _cfa: CourseFieldsActions, private _ngRedux: NgRedux<IAppState>) {
+    constructor(private fb: FormBuilder,
+                private _cfa: CourseFieldsActions,
+                private _ngRedux: NgRedux<IAppState>,
+                private router: Router) {
         this.formGroup = this.fb.group({
             formArray: this.cfs
         });
@@ -59,10 +62,8 @@ import {AppSettings} from '../../app.settings';
         this._cfa.getCourseFields();
 
         this.courseFields$ = this._ngRedux.select(state => {
-           //console.log("test2");
             state.courseFields.reduce(({}, courseField) =>{
                 this.cfs.push(new FormControl(courseField.selected, []));
-                //console.log(courseField.selected);
                 return courseField;
             }, {});
             return state.courseFields;
@@ -72,7 +73,6 @@ import {AppSettings} from '../../app.settings';
 
     saveSelected() {
         this._cfa.saveCourseFieldsSelected(this.formGroup.value.formArray);
+        this.router.navigate(['/student-application-form-main']);
     }
-
-
 }

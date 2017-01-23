@@ -1,9 +1,13 @@
 <form novalidate [formGroup]="studentDataGroup">
     <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
 
-    <label>ΑΜΚΑ μαθητή</label><input type="text" formControlName="studentAmka">
+    <div class="form-group">
+        <label for="studentAmka">ΑΜΚΑ μαθητή</label><input class="form-control" type="text" formControlName="studentAmka">
+    </div>
 
-    <label>Όνομα μαθητή</label><input type="text" formControlName="studentFirstname">
+    <div class="form-group">
+        <label for="studentFirstname">Όνομα μαθητή</label><input class="form-control" type="text" formControlName="studentFirstname">
+    </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentFirstname').touched && studentDataGroup.get('studentFirstname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
     </div>
@@ -11,7 +15,9 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
-    <label>Επώνυμο μαθητή</label><input type="text" formControlName="studentSurname">
+    <div class="form-group">
+        <label for="studentSurname">Επώνυμο μαθητή</label><input class="form-control" type="text" formControlName="studentSurname">
+    </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentSurname').touched && studentDataGroup.get('studentSurname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
     </div>
@@ -19,7 +25,9 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
-    <label>Όνομα κηδεμόνα</label><input type="text" formControlName="guardianFirstname">
+    <div class="form-group">
+        <label for="guardianFirstname">Όνομα κηδεμόνα</label><input class="form-control" type="text" formControlName="guardianFirstname">
+    </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianFirstname').touched && studentDataGroup.get('guardianFirstname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
     </div>
@@ -27,7 +35,10 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
-    <label>Επώνυμο κηδεμόνα</label><input type="text" formControlName="guardianSurname">
+    <div class="form-group">
+        <label for="guardianSurname">Επώνυμο κηδεμόνα</label>
+        <input class="form-control" type="text" formControlName="guardianSurname">
+    </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianSurname').touched && studentDataGroup.get('guardianSurname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
     </div>
@@ -39,56 +50,58 @@
         <tr>
             <td>
                 <div class="form-group">
-                    <label>Διεύθυνση κατοικίας</label><input type="text" formControlName="regionAddress">
+                    <label for="regionAddress">Διεύθυνση κατοικίας</label><input class="form-control" type="text" formControlName="regionAddress">
                 </div>
             </td>
             <td>
                 <div class="form-group">
-                    <label>TK </label><input type="text" formControlName="regionTK">
+                    <label for="regionTK">TK </label><input class="form-control" type="text" formControlName="regionTK">
                 </div>
             </td>
             <td>
                 <div class="form-group">
-                    <label>Πόλη/Περιοχή</label><input type="text" formControlName="regionArea">
+                    <label for="regionArea">Πόλη/Περιοχή</label><input class="form-control" type="text" formControlName="regionArea">
                 </div>
             </td>
         </tr>
     </table>
 
-    <label for="certificateType">Τύπος απολυτηρίου</label><br/>
-    <select formControlName="certificateType">
-     <option value="">Παρακαλώ επιλέξτε..</option>
-     <option value="Απολυτήριο Γυμνασίου">Απολυτήριο Γυμνασίου</option>
-     <option value="Απολυτήριο Λυκείου">Απολυτήριο Λυκείου</option>
-   </select>
-    <br/>
+    <div class="form-group">
+        <label for="certificateType">Τύπος απολυτηρίου</label><br/>
+        <select class="form-control" formControlName="certificateType">
+        <option value="">Παρακαλώ επιλέξτε..</option>
+        <option value="Απολυτήριο Γυμνασίου">Απολυτήριο Γυμνασίου</option>
+        <option value="Απολυτήριο Λυκείου">Απολυτήριο Λυκείου</option>
+    </select>
+    </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('certificateType').touched && studentDataGroup.get('certificateType').hasError('required')">
         Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
     </div>
 
-    <label for="relationToStudent">Η αίτηση γίνεται από:</label><br/>
-    <select formControlName="relationToStudent">
-     <option value="">Παρακαλώ επιλέξτε..</option>
-     <option value="Γονέας/Κηδεμόνας">Γονέας/Κηδεμόνας</option>
-     <option value="Μαθητής">Μαθητής</option>
-   </select>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('relationToStudent').touched && studentDataGroup.get('relationToStudent').hasError('required')">
-        Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
+    <div class="form-group">
+        <label for="relationToStudent">Η αίτηση γίνεται από:</label><br/>
+        <select class="form-control" formControlName="relationToStudent">
+        <option value="">Παρακαλώ επιλέξτε..</option>
+        <option value="Γονέας/Κηδεμόνας">Γονέας/Κηδεμόνας</option>
+        <option value="Μαθητής">Μαθητής</option>
+    </select>
+        <div class="alert alert-danger" *ngIf="studentDataGroup.get('relationToStudent').touched && studentDataGroup.get('relationToStudent').hasError('required')">
+            Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
+        </div>
     </div>
 
-    <h4 style="margin-top: 20px; line-height: 2em; background: #dddddd;">Επιλεγμένες Ειδικότητες</h4>
+    <h5 style="margin-top: 20px; line-height: 2em; background: #dddddd;">Επιλεγμένες Ειδικότητες</h5>
     <ul class="list-group" style="margin-bottom: 20px;">
-        <div  *ngFor="let courseField$ of courseFields$ | async">
-        <li class="list-group-item" *ngIf="courseField$.selected === true">
-            {{courseField$.name}}
-        </li>
+        <div *ngFor="let courseField$ of courseFields$ | async">
+            <li class="list-group-item" *ngIf="courseField$.selected === true">
+                {{courseField$.name}}
+            </li>
         </div>
     </ul>
 
-
     <div class="row">
         <div class="col-md-2 col-md-offset-4">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()" [routerLink]="['/course-fields-select']">
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
                 <span class="glyphicon glyphicon-menu-left"></span>Πίσω
             </button>
         </div>

@@ -73,6 +73,6 @@ import {AppSettings} from '../../app.settings';
 
     saveSelected() {
         this._cfa.saveCourseFieldsSelected(this.formGroup.value.formArray);
-        this.router.navigate(['/student-application-form-main']);
+        this.router.navigate(['/region-schools-select']);
     }
 }

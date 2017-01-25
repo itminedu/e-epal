@@ -25,6 +25,9 @@ import {
       <li [ngClass]="{active: path=='course-fields-select'}">
         <a [routerLink]="['/course-fields-select']">Επιλογή Ειδικότητας</a>
       </li>
+      <li [ngClass]="{active: path=='region-schools-select'}">
+        <a [routerLink]="['/region-schools-select']">Επιλογή Σχολείου</a>
+      </li>
       <li [ngClass]="{active: path=='student-application-form-main'}">
         <a [routerLink]="['/student-application-form-main']">Αίτηση μαθητή / Καταχώρηση προσωπικών στοιχείων</a>
       </li>

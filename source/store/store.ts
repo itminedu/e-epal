@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import * as courseFields from './coursefields';
+import * as regions from './regionschools';
 import * as studentDataFields from './studentdatafields';
 
 /*
@@ -8,24 +9,20 @@ import * as studentDataFields from './studentdatafields';
 
 export interface IAppState {
     courseFields?: courseFields.ICourseFields;
+    regions?: regions.IRegions;
     studentDataFields?: studentDataFields.IStudentDataFields;
 };
 
 export const rootReducer = combineReducers<IAppState>({
    courseFields: courseFields.courseFieldsReducer,
+   regions: regions.regionSchoolsReducer,
    studentDataFields: studentDataFields.studentDataFieldsReducer,
 });
 
 export function deimmutify(state: IAppState): Object {
   return {
     courseFields: courseFields.deimmutifyCourseFields(state.courseFields),
+    regions: regions.deimmutifyRegionSchools(state.regions),
     studentdataFields: studentDataFields.deimmutifyStudentDataFields(state.studentDataFields),
   };
 }
-
-/* export function reimmutify(plain): IAppState {
-  return plain ? {
-    courseFields: courseFields.reimmutifyCourseFields(plain.courseFields),
-    courseFieldsSelected: courseFieldsSelected.reimmutifyCourseFieldsSelected(plain.courseFieldsSelected),
-  } : {};
-} */

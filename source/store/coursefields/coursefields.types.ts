@@ -7,9 +7,3 @@ export interface ICourseField {
 }
 
 export type ICourseFields = List<ICourseField>;
-
-/* export const CourseFieldRecord = Record({
-  id: 0,
-  name: '---',
-  selected: 0
-}); */

@@ -74,63 +74,36 @@ interface EpalStudentInterface extends  ContentEntityInterface, EntityChangedInt
    */
   public function setPublished($published);
 
-  /**
-   * Gets the EPAL Student surname.
-   *
-   * @return string
-   *   Surname of the EPAL Student.
-   */
-  public function getSurname();
-
-  /**
-   * Sets the EPAL Student surname.
-   *
-   * @param string $surname
-   *   The EPAL Student surname.
-   *
-   * @return \Drupal\epal\Entity\EpalStudentInterface
-   *   The called EPAL Student entity.
-   */
-  public function setSurname($surname);
-
-  /**
-   * Gets the EPAL Student address.
-   *
-   * @return string
-   *   Address of the EPAL Student.
-   */
-  public function getAddress();
-
-  /**
-   * Sets the EPAL Student address.
-   *
-   * @param string $address
-   *   The EPAL Student address.
-   *
-   * @return \Drupal\epal\Entity\EpalStudentInterface
-   *   The called EPAL Student entity.
-   */
-  public function setAddress($address);
-
-  /**
-   * Gets the EPAL Student birthdate.
-   *
-   * @return string
-   *   Birthdate of the EPAL Student.
-   */
-  public function getBirthdate();
-
-  /**
-   * Sets the EPAL Student birthdate.
-   *
-   * @param string $birthdate
-   *   The EPAL Student birthdate.
-   *
-   * @return \Drupal\epal\Entity\EpalStudentInterface
-   *   The called EPAL Student entity.
-   */
-  public function setBirthdate($birthdate);
-
-
-
+  //get/set methods for additional fields for  configuration properties.
+  public function getUser_id();
+  public function setUser_id($val);
+  public function getEpaluser_id();
+  public function setEpaluser_id($val);
+  public function getStudentSurname();
+  public function setStudentSurname($val);
+  //public function getGuardianFirstname();
+  //public function setGuardianFirstname($val);
+  //public function getGuardianSurname();
+  //public function setGuardianSurname($val);
+  public function getStudentAmka();
+  public function setStudentAmka($val);
+  public function getRegionAddress();
+  public function setRegionAddress($val);
+  public function getRegionTK();
+  public function setRegionTK($val);
+  public function getRegionArea();
+  public function setRegionArea($val);
+  public function getCertificateType();
+  public function setCertificateType($val);
+  public function getCurrentclass();
+  public function setCurrentclass($val);
+  public function getCurrentepal();
+  public function setCurrentepal($val);
+  public function getCurrentsector();
+  public function setCurrentsector($val);
+  public function getTelnum();
+  public function setTelnum($val);
+  public function getRelationToStudent();
+  public function setRelationToStudent($val);
+  
 }

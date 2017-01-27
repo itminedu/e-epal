@@ -73,5 +73,19 @@ interface EpalStudentEpalChosenInterface extends  ContentEntityInterface, Entity
    *   The called Epal student epal chosen entity.
    */
   public function setPublished($published);
-
+  
+  //get/set methods for additional fields for  configuration properties.
+  public function getStudent_id();
+  public function setStudent_id($val);
+  public function getEpal_id();
+  public function setEpal_id($val);
+  public function getChoice_no();
+  public function setChoice_no($val);
+  public function getPoints_for_order();
+  public function setPoints_for_order($val);
+  public function getDistance_from_epal();
+  public function setDistance_from_epal($val);
+  public function getPoints_for_distance();
+  public function setPoints_for_distance($val);
+  
 }

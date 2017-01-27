@@ -20,8 +20,12 @@ class EpalStudentEpalChosenListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Epal student epal chosen ID');
-    $header['name'] = $this->t('Name');
+    $header['id'] = $this->t('ID');
+    $header['name'] = $this->t('Όνομα');
+	$header['student_id'] = $this->t('Id Μαθητή');
+	$header['epal_id'] = $this->t('ΕΠΑΛ');
+	$header['choice_no'] = $this->t('Σειρά προτίμησης');
+	 
     return $header + parent::buildHeader();
   }
 
@@ -39,6 +43,11 @@ class EpalStudentEpalChosenListBuilder extends EntityListBuilder {
         )
       )
     );
+	//$entity->get('name')->getString();
+	$row['student_id'] = $entity->getStudent_id();
+	$row['epal_id'] = $entity->getEpal_id();
+	$row['choice_no'] = $entity->getChoice_no();
+	
     return $row + parent::buildRow($entity);
   }
 

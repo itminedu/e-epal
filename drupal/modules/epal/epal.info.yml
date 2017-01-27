@@ -3,3 +3,5 @@ type: module
 description: EPAL Registration
 core: 8.x
 package: EPAL
+dependencies:
+  - epalreadydata

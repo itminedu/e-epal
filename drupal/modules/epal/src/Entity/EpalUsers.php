@@ -45,6 +45,10 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
+ * 	   "drupaluser_id" = "drupaluser_id",
+ *	   "name" = "name",
+ *	   "surname" = "surname",
+ * 	   "taxis_taxid" = "taxis_taxid",
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/epal_users/{epal_users}",
@@ -56,6 +60,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "epal_users.settings"
  * )
  */
+ 
 class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
 
   use EntityChangedTrait;
@@ -144,22 +149,164 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
+  
+  /**
+   * get / set methods for aditional fields 
+   */
+   
+  public function getDrupaluser_id() {
+    return $this->get('drupaluser_id')->value;
+  }
+
+  public function setDrupaluser_id($name) {
+    $this->set('drupaluser_id', $name);
+    return $this;
+  }
+  
+  public function getTaxis_userid() {
+    return $this->get('taxis_userid')->value;
+  }
+
+  public function setTaxis_userid($name) {
+    $this->set('taxis_userid', $name);
+    return $this;
+  }
+  
+  public function getTaxis_taxid() {
+    return $this->get('taxis_taxid')->value;
+  }
+
+  public function setTaxis_taxid($name) {
+    $this->set('taxis_taxid', $name);
+    return $this;
+  }
+  
+  public function getSurname() {
+    return $this->get('surname')->value;
+  }
+
+  public function setSurname($name) {
+    $this->set('surname', $name);
+    return $this;
+  }
+    
+  public function getFathername() {
+    return $this->get('fathername')->value;
+  }
+
+  public function setFathername($name) {
+    $this->set('fathername', $name);
+    return $this;
+  }
+  
+  public function getMothername() {
+    return $this->get('mothername')->value;
+  }
+
+  public function setMothername($name) {
+    $this->set('mothername', $name);
+    return $this;
+  }
+  
+  /*
+  public function getAddress() {
+    return $this->get('address')->value;
+  }
+
+  public function setAddress($name) {
+    $this->set('address', $name);
+    return $this;
+  }
+  
+  public function getAddresstk() {
+    return $this->get('addresstk')->value;
+  }
+
+  public function setAddresstk($name) {
+    $this->set('addresstk', $name);
+    return $this;
+  }
+  
+  public function getAddressarea() {
+    return $this->get('addressarea')->value;
+  }
+
+  public function setAddressarea($name) {
+    $this->set('addressarea', $name);
+    return $this;
+  }
+  */
+  
+  public function getAccesstoken() {
+    return $this->get('accesstoken')->value;
+  }
+
+  public function setAccesstoken($name) {
+    $this->set('accesstoken', $name);
+    return $this;
+  }
+  
+  public function getAuthtoken() {
+    return $this->get('authtoken')->value;
+  }
+
+  public function setAuthtoken($name) {
+    $this->set('authtoken', $name);
+    return $this;
+  }
+  
+  public function getTimelogin() {
+    return $this->get('timelogin')->value;
+  }
+
+  public function setTimelogin($name) {
+    $this->set('timelogin', $name);
+    return $this;
+  }
+  
+  public function getTimeregistration() {
+    return $this->get('timeregistration')->value;
+  }
+
+  public function setTimeregistration($name) {
+    $this->set('timeregistration', $name);
+    return $this;
+  }
+  
+  public function getTimetokeninvalid() {
+    return $this->get('timetokeninvalid')->value;
+  }
+
+  public function setTimetokeninvalid($name) {
+    $this->set('timetokeninvalid', $name);
+    return $this;
+  }
+  
+  public function getUserip() {
+    return $this->get('userip')->value;
+  }
+
+  public function setUserip($name) {
+    $this->set('userip', $name);
+    return $this;
+  }
 
   /**
    * {@inheritdoc}
    */
+  
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Epal users entity.'))
+      ->setLabel(t('Δημιουργός'))
+      ->setDescription(t('Δημιουργός.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
-        'label' => 'hidden',
+        'label' => 'above',
         'type' => 'author',
         'weight' => 0,
       ))
@@ -176,33 +323,34 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-
-
-    $fields['name'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('User Id από Drupal Users '))
-      ->setDescription(t('Δώσε το id του user από τον Drupal Users πίνακα'))
+	$fields['drupaluser_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Id χρήστη Drupal'))
+      ->setDescription(t('Δώσε το id του αντίστοιχου Drupal User.'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
+	  ->setRequired(true)
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
-         'label' => 'hidden',
-         'type' => 'author',
-         'weight' => 0,
-       ))
-       ->setDisplayOptions('form', array(
-         'type' => 'entity_reference_autocomplete',
-         'weight' => 5,
-         'settings' => array(
-         'match_operator' => 'CONTAINS',
-         'size' => '60',
-         'autocomplete_type' => 'tags',
-         'placeholder' => '',
+        'label' => 'above',
+        'type' => 'author',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'weight' => 5,
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
         ),
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userId'] = BaseFieldDefinition::create('string')
+	
+	
+	$fields['taxis_userid'] = BaseFieldDefinition::create('string')
       ->setLabel(t('User id χρήστη από taxis'))
       ->setDescription(t('Δώσε το user id του χρήστη από taxis.'))
       ->setSettings(array(
@@ -221,14 +369,15 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userTaxId'] = BaseFieldDefinition::create('string')
+	
+	$fields['taxis_taxid'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Tax id χρήστη'))
       ->setDescription(t('Δώσε το tax id / ΑΦΜ του χρήστη.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
       ))
+	  ->setRequired(true)
       ->setDefaultValue('')
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -241,14 +390,15 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userFirstname'] = BaseFieldDefinition::create('string')
+	  
+     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Όνομα χρήστη'))
-      ->setDescription(t('Δώσε το μικρό όνομα του χρήστη.'))
+      ->setDescription(t('Δώσε το όνομα χρήστη'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 80,
         'text_processing' => 0,
       ))
+	  ->setRequired(true)
       ->setDefaultValue('')
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -261,14 +411,15 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['userSurname'] = BaseFieldDefinition::create('string')
+	
+	$fields['surname'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Επώνυμο χρήστη'))
       ->setDescription(t('Δώσε το επώνυμο του χρήστη.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
       ))
+	  ->setRequired(true)
       ->setDefaultValue('')
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -281,8 +432,8 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userFatherName'] = BaseFieldDefinition::create('string')
+	
+	$fields['fathername'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Όνομα πατέρα χρήστη'))
       ->setDescription(t('Δώσε το όνομα του πατέρα του χρήστη.'))
       ->setSettings(array(
@@ -301,8 +452,8 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userMothername'] = BaseFieldDefinition::create('string')
+	
+	$fields['mothername'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Όνομα μητέρας χρήστη'))
       ->setDescription(t('Δώσε το όνομα της μητέρας χρήστη.'))
       ->setSettings(array(
@@ -321,10 +472,9 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-
-
-	$fields['userAddress'] = BaseFieldDefinition::create('string')
+	  
+	/*
+	$fields['address'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Διεύθυνση κατοικίας'))
       ->setDescription(t('Δώσε τη διεύθυνση κατοικίας.'))
       ->setSettings(array(
@@ -343,8 +493,8 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userAddressTK'] = BaseFieldDefinition::create('string')
+	  
+	$fields['addresstk'] = BaseFieldDefinition::create('string')
       ->setLabel(t('ΤΚ'))
       ->setDescription(t('Δώσε τον ΤΚ κατοικίας.'))
       ->setSettings(array(
@@ -363,8 +513,8 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userAddressArea'] = BaseFieldDefinition::create('string')
+	  
+	$fields['addressarea'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Πόλη/Περιοχή διεύθυνσης κατοικίας'))
       ->setDescription(t('Δώσε την πόλη/περιοχή διεύθυνσης.'))
       ->setSettings(array(
@@ -383,8 +533,9 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['accessToken'] = BaseFieldDefinition::create('string')
+	*/
+	  
+	$fields['accesstoken'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Access-Token από taxis'))
       ->setDescription(t('Access-Token από taxis.'))
       ->setSettings(array(
@@ -403,10 +554,10 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['offToken'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Off-Token'))
-      ->setDescription(t('Off-Token που δημιουργείται από εμάς.'))
+	  
+	$fields['authtoken'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Authorization Token'))
+      ->setDescription(t('Authorization Token που δημιουργείται από την εφαρμογή.'))
       ->setSettings(array(
         'max_length' => 300,
         'text_processing' => 0,
@@ -423,18 +574,18 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	$fields['timeLogin'] = BaseFieldDefinition::create('timestamp')
+	
+	$fields['timelogin'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('timeLogin'))
       ->setDescription(t('timeLogin.'))
       ;
-
-	$fields['timeRegistration'] = BaseFieldDefinition::create('timestamp')
+	  
+	$fields['timeregistration'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('timeRegistration'))
       ->setDescription(t('timeRegistration.'))
       ;
 	
-	$fields['timeTokenInvalid'] = BaseFieldDefinition::create('integer')
+	$fields['timetokeninvalid'] = BaseFieldDefinition::create('integer')
           ->setLabel(t('Χρόνος σε min'))
           ->setDescription(t('Χρόνος σε min μετά τον οποίο γίνεται το token ανενεργό.'))
           ->setSettings(array(
@@ -444,16 +595,14 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'integer',
-            'weight' => -4,
           ))
           ->setDisplayOptions('form', array(
             'type' => 'integer',
-            'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-
-	$fields['userIP'] = BaseFieldDefinition::create('string')
+		  
+	$fields['userip'] = BaseFieldDefinition::create('string')
       ->setLabel(t('userIP'))
       ->setDescription(t('userIP.'))
       ->setSettings(array(
@@ -472,7 +621,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
+	
 	$fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Epal users is published.'))

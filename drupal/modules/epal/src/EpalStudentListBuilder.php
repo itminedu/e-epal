@@ -20,8 +20,14 @@ class EpalStudentListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('EPAL Student ID');
-    $header['name'] = $this->t('Name');
+    $header['id'] = $this->t('ID');
+	$header['epaluser_id'] = $this->t('ID χρήστη ΕΠΑΛ');
+    $header['name'] = $this->t('Όνομα');
+    $header['studentsurname'] = $this->t('Επώνυμο');
+    //$header['guardianfirstname'] = $this->t('Όνομα κηδεμόνα');
+	//$header['guardiansurname'] = $this->t('Επώνυμο κηδεμόνα');
+    $header['studentamka'] = $this->t('AMKA μαθητή');
+  
     return $header + parent::buildHeader();
   }
 
@@ -31,14 +37,63 @@ class EpalStudentListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\epal\Entity\EpalStudent */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
+	
+	$row['epaluser_id'] = $this->l(
+      $entity->getEpaluser_id(),
       new Url(
         'entity.epal_student.edit_form', array(
           'epal_student' => $entity->id(),
         )
       )
     );
+    
+    $row['name'] = $this->l(
+      $entity->getName(),
+      new Url(
+        'entity.epal_student.edit_form', array(
+          'epal_student' => $entity->id(),
+        )
+      )
+    );
+
+    $row['studentsurname'] = $this->l(
+      $entity->getStudentSurname(),
+      new Url(
+        'entity.epal_student.edit_form', array(
+          'epal_student' => $entity->id(),
+        )
+      )
+    );
+
+	/*
+    $row['guardianfirstname'] = $this->l(
+      $entity->getGuardianFirstname(),
+      new Url(
+        'entity.epal_student.edit_form', array(
+          'epal_student' => $entity->id(),
+        )
+      )
+    );
+	
+	$row['guardiansurname'] = $this->l(
+      $entity->getGuardianSurname(),
+      new Url(
+        'entity.epal_student.edit_form', array(
+          'epal_student' => $entity->id(),
+        )
+      )
+    );
+	*/
+
+   $row['studentAmka'] = $this->l(
+      $entity->getStudentAmka(),
+      new Url(
+        'entity.epal_student.edit_form', array(
+          'epal_student' => $entity->id(),
+        )
+      )
+    );
+
     return $row + parent::buildRow($entity);
   }
 

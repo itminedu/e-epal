@@ -20,9 +20,26 @@ class EpalUsersListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Epal users ID');
-    $header['name'] = $this->t('Name');
-    return $header + parent::buildHeader();
+    $header['id'] = $this->t('ID');
+	$header['name'] = $this->t('Όνομα');
+	$header['surname'] = $this->t('Επώνυμο');
+	$header['fathername'] = $this->t('Όνομα πατέρα');
+	$header['mothername'] = $this->t('Όνομα μητέρας');
+	
+	//$header['drupaluser_id'] = $this->t('ID χρήστη Drupal');
+	//$header['taxis_userid'] = $this->t('ID χρήστη από taxisnet');
+	//$header['taxis_taxid'] = $this->t('TAXID χρήστη από taxisnet');
+	//$header['address'] = $this->t('Διεύθυνση');
+	//$header['addresstk'] = $this->t('ΤΚ');
+	//$header['addressarea'] = $this->t('Περιοχή');
+	//$header['accesstoken'] = $this->t('AccessToken');
+	//$header['authtoken'] = $this->t('AuthToken');
+	//$header['timelogin'] = $this->t('Time Login');
+	//$header['timeregistration'] = $this->t('Time Registration');
+	//$header['timetokeninvalid'] = $this->t('Time Token Invalid');
+	//$header['userip'] = $this->t('User IP');
+    
+	return $header + parent::buildHeader();
   }
 
   /**
@@ -30,8 +47,8 @@ class EpalUsersListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\epal\Entity\EpalUsers */
-    $row['id'] = $entity->id();
-    $row['name'] = $this->l(
+	 $row['id'] = $entity->id();
+	 $row['name'] = $this->l(
       $entity->label(),
       new Url(
         'entity.epal_users.edit_form', array(
@@ -39,6 +56,31 @@ class EpalUsersListBuilder extends EntityListBuilder {
         )
       )
     );
+	$row['surname'] = $this->l(
+	  $entity->getSurname(),
+	  new Url(
+        'entity.epal_users.edit_form', array(
+          'epal_users' => $entity->id(),
+        )
+      )   
+    );
+	$row['fathername'] = $this->l(
+	  $entity->getFathername(),
+	  new Url(
+        'entity.epal_users.edit_form', array(
+          'epal_users' => $entity->id(),
+        )
+      )
+    );
+	$row['mothername'] = $this->l(
+	  $entity->getMothername(),
+	  new Url(
+        'entity.epal_users.edit_form', array(
+          'epal_users' => $entity->id(),
+        )
+      )
+    );
+	
     return $row + parent::buildRow($entity);
   }
 

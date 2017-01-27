@@ -39,12 +39,19 @@ use Drupal\user\UserInterface;
  *   translatable = TRUE,
  *   admin_permission = "administer epal student epal chosen entities",
  *   entity_keys = {
- *     "id" = "id",
+  *    "id" = "id",
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
+ *	   "student_id" = "student_id",
+ *	   "epal_id" = "epal_id",
+ *	   "choice_no" = "choice_no",
+ *     "status" = "status",
+ *     "created" = "created",
+ *     "changed" = "changed",
+ *     "default_langcode" = "default_langcode",
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/epal_student_epal_chosen/{epal_student_epal_chosen}",
@@ -144,7 +151,63 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
+  
+  //get / set methods for additional fields
+  public function getStudent_id() {
+    return $this->get('student_id')->getString();
+  }
 
+  public function setStudent_id($name) {
+    $this->set('student_id', $name);
+    return $this;
+  }
+  
+  public function getEpal_id() {
+    //return $this->get('epal_id')->getString();
+	return $this->get('epal_id')->target_id;
+  }
+
+  public function setEpal_id($name) {
+    $this->set('epal_id', $name);
+    return $this;
+  }
+  
+  public function getChoice_no() {
+    return $this->get('choice_no')->value;
+  }
+
+  public function setChoice_no($name) {
+    $this->set('choice_no', $name);
+    return $this;
+  }
+  
+  public function getPoints_for_order() {
+    return $this->get('points_for_order')->value;
+  }
+
+  public function setPoints_for_order($name) {
+    $this->set('points_for_order', $name);
+    return $this;
+  }
+  
+  public function getDistance_from_epal() {
+    return $this->get('distance_from_epal')->value;
+  }
+
+  public function setDistance_from_epal($name) {
+    $this->set('distance_from_epal', $name);
+    return $this;
+  }
+  
+  public function getPoints_for_distance() {
+    return $this->get('points_for_distance')->value;
+  }
+
+  public function setPoints_for_distance($name) {
+    $this->set('points_for_distance', $name);
+    return $this;
+  }
+  
   /**
    * {@inheritdoc}
    */
@@ -152,20 +215,20 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Epal student epal chosen entity.'))
+      ->setLabel(t('Δημιουργός'))
+      ->setDescription(t('Δημιουργός.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
-        'label' => 'hidden',
+        'label' => 'above',
         'type' => 'author',
-        'weight' => 0,
+        'weight' => -6,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
+        'weight' => -6,
         'settings' => array(
           'match_operator' => 'CONTAINS',
           'size' => '60',
@@ -175,32 +238,10 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-	/* 
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Epal student epal chosen entity.'))
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'string_textfield',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-	 */
 	
 	 $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the EpalStudentEpalChosen entity.'))
+      ->setLabel(t('Όνομα'))
+      ->setDescription(t('Ονομασία του EpalStudentEpalChosen entity.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -217,69 +258,47 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-			
-	/*
-	$fields['student_id'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Student id'))
-      ->setDescription(t('ώσε το id μαθητή.'))
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'string_textfield',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-	*/
-	
 	
 	$fields['student_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Student id'))
+      ->setLabel(t('Id Μαθητή'))
       ->setDescription(t('Δώσε το id μαθητή.'))
       ->setSetting('target_type', 'epal_student')
             ->setSetting('handler', 'default')
+			->setRequired(true)
             ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
-              'label' => 'hidden',
+              'label' => 'above',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
-            ->setDisplayOptions('form', array(
-              'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
-              'settings' => array(
+      ->setDisplayOptions('form', array(
+             'type' => 'entity_reference_autocomplete',
+             'weight' => -4,
+             'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
                 'autocomplete_type' => 'tags',
                 'placeholder' => '',
               ),
             ))
-            ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);
-	
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 	
 	 $fields['epal_id'] = BaseFieldDefinition::create('entity_reference')
-            ->setLabel(t('Epal id'))
+            ->setLabel(t('Id ΕΠΑΛ'))
             ->setDescription(t('Δώσε το όνομα - id σχολείου που επέλεξε ο μαθητής.'))
             ->setSetting('target_type', 'eepal_school')
             ->setSetting('handler', 'default')
+			->setRequired(true)
             ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
-              'label' => 'hidden',
+              'label' => 'above',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
             ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
@@ -288,17 +307,16 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
               ),
             ))
             ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);
-			
+            ->setDisplayConfigurable('view', TRUE);		
 	
 	$fields['choice_no'] = BaseFieldDefinition::create('integer')
-          ->setLabel(t('Max Number of Students'))
-          ->setDescription(t('The maximum number of students in class.'))
+          ->setLabel(t('Σειρά προτίμησης'))
+          ->setDescription(t('Δώσε τη σειρά προτίμησης.'))
           ->setSettings(array(
             'max_length' => 2,
             'text_processing' => 0,
           ))
-          ->setDefaultValue(25)
+		  ->setRequired(true)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'integer',
@@ -310,7 +328,6 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);	
-	
 		  
 	$fields['points_for_order'] = BaseFieldDefinition::create('integer')
           ->setLabel(t('Μόρια για σειρά προτίμησης'))
@@ -319,15 +336,14 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
             'max_length' => 2,
             'text_processing' => 0,
           ))
-          //->setDefaultValue(25)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'integer',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayOptions('form', array(
             'type' => 'integer',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);		
@@ -336,18 +352,16 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
           ->setLabel(t('Απόσταση από ΕΠΑΛ'))
           ->setDescription(t('Απόσταση από ΕΠΑΛ.'))
           ->setSettings(array(
-            //'max_length' => 2,
             'text_processing' => 0,
           ))
-          //->setDefaultValue(25)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'float',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayOptions('form', array(
             'type' => 'float',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);		
@@ -359,19 +373,17 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
             'max_length' => 2,
             'text_processing' => 0,
           ))
-          //->setDefaultValue(25)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'integer',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayOptions('form', array(
             'type' => 'integer',
-            //'weight' => -4,
+            'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);	
-	
 	
 	
 	$fields['status'] = BaseFieldDefinition::create('boolean')

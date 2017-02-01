@@ -10,34 +10,34 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Eepal specialty entity.
+ * Defines the Eepal sectors entity.
  *
  * @ingroup epalreadydata
  *
  * @ContentEntityType(
- *   id = "eepal_specialty",
- *   label = @Translation("Eepal specialty"),
+ *   id = "eepal_sectors",
+ *   label = @Translation("Eepal sectors"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\epalreadydata\EepalSpecialtyListBuilder",
- *     "views_data" = "Drupal\epalreadydata\Entity\EepalSpecialtyViewsData",
- *     "translation" = "Drupal\epalreadydata\EepalSpecialtyTranslationHandler",
+ *     "list_builder" = "Drupal\epalreadydata\EepalSectorsListBuilder",
+ *     "views_data" = "Drupal\epalreadydata\Entity\EepalSectorsViewsData",
+ *     "translation" = "Drupal\epalreadydata\EepalSectorsTranslationHandler",
  *
  *     "form" = {
- *       "default" = "Drupal\epalreadydata\Form\EepalSpecialtyForm",
- *       "add" = "Drupal\epalreadydata\Form\EepalSpecialtyForm",
- *       "edit" = "Drupal\epalreadydata\Form\EepalSpecialtyForm",
- *       "delete" = "Drupal\epalreadydata\Form\EepalSpecialtyDeleteForm",
+ *       "default" = "Drupal\epalreadydata\Form\EepalSectorsForm",
+ *       "add" = "Drupal\epalreadydata\Form\EepalSectorsForm",
+ *       "edit" = "Drupal\epalreadydata\Form\EepalSectorsForm",
+ *       "delete" = "Drupal\epalreadydata\Form\EepalSectorsDeleteForm",
  *     },
- *     "access" = "Drupal\epalreadydata\EepalSpecialtyAccessControlHandler",
+ *     "access" = "Drupal\epalreadydata\EepalSectorsAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\epalreadydata\EepalSpecialtyHtmlRouteProvider",
+ *       "html" = "Drupal\epalreadydata\EepalSectorsHtmlRouteProvider",
  *     },
  *   },
- *   base_table = "eepal_specialty",
- *   data_table = "eepal_specialty_field_data",
+ *   base_table = "eepal_sectors",
+ *   data_table = "eepal_sectors_field_data",
  *   translatable = TRUE,
- *   admin_permission = "administer eepal specialty entities",
+ *   admin_permission = "administer eepal sectors entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
@@ -47,16 +47,16 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/eepal_specialty/{eepal_specialty}",
- *     "add-form" = "/admin/structure/eepal_specialty/add",
- *     "edit-form" = "/admin/structure/eepal_specialty/{eepal_specialty}/edit",
- *     "delete-form" = "/admin/structure/eepal_specialty/{eepal_specialty}/delete",
- *     "collection" = "/admin/structure/eepal_specialty",
+ *     "canonical" = "/admin/structure/eepal_sectors/{eepal_sectors}",
+ *     "add-form" = "/admin/structure/eepal_sectors/add",
+ *     "edit-form" = "/admin/structure/eepal_sectors/{eepal_sectors}/edit",
+ *     "delete-form" = "/admin/structure/eepal_sectors/{eepal_sectors}/delete",
+ *     "collection" = "/admin/structure/eepal_sectors",
  *   },
- *   field_ui_base_route = "eepal_specialty.settings"
+ *   field_ui_base_route = "eepal_sectors.settings"
  * )
  */
-class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterface {
+class EepalSectors extends ContentEntityBase implements EepalSectorsInterface {
 
   use EntityChangedTrait;
 
@@ -153,7 +153,7 @@ class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterfac
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Eepal specialty entity.'))
+      ->setDescription(t('The user ID of author of the Eepal sectors entity.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -177,8 +177,8 @@ class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterfac
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Όνομα'))
-      ->setDescription(t('Όνομα.'))
+      ->setLabel(t('Name'))
+      ->setDescription(t('The name of the Eepal sectors entity.'))
       ->setSettings(array(
         'max_length' => 100,
         'text_processing' => 0,
@@ -195,34 +195,10 @@ class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterfac
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	  
-	$fields['sector_id'] = BaseFieldDefinition::create('entity_reference')
-        ->setLabel(t('ID Τομέα'))
-        ->setDescription(t('Δώσε το ID τομέα στον οποίο ανήκει.'))
-        ->setSetting('target_type', 'eepal_sectors')
-        ->setSetting('handler', 'default')
-        ->setTranslatable(TRUE)
-        ->setDisplayOptions('view', array(
-              'label' => 'above',
-              'type' => 'author',
-              'weight' => -4,
-            ))
-        ->setDisplayOptions('form', array(
-              'type' => 'entity_reference_autocomplete',
-              'weight' => -4,
-              'settings' => array(
-                'match_operator' => 'CONTAINS',
-                'size' => '60',
-                'autocomplete_type' => 'tags',
-                'placeholder' => '',
-              ),
-            ))
-        ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Eepal specialty is published.'))
+      ->setDescription(t('A boolean indicating whether the Eepal sectors is published.'))
       ->setDefaultValue(TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')

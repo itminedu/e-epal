@@ -1,5 +1,4 @@
 /* Absolute Center Spinner */
-
 .loading {
     position: fixed;
     z-index: 999;
@@ -125,4 +124,8 @@
         -o-transform: rotate(360deg);
         transform: rotate(360deg);
     }
+}
+
+.bootstrap-select.btn-group.show-tick .dropdown-menu li.selected a span.check-mark {
+    position: relative;
 }

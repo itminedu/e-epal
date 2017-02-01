@@ -18,7 +18,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'course-fields-select',
     template: `
-     <form [formGroup]="formGroup">
+     <div class="row equal">
+      <div class="col-md-8">
+       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
             <ul class="list-group">
             <div *ngFor="let region$ of regions$ | async; let i=index">
@@ -49,7 +51,12 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
     </form>
-<!--    <pre>{{formGroup.value | json}}</pre> -->
+   </div>
+
+   <div class="col-md-4">
+     <application-preview-select></application-preview-select>
+   </div>
+  </div>
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit {

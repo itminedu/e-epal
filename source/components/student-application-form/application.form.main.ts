@@ -34,16 +34,16 @@ import {
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
         this.studentDataGroup = this.fb.group({
-            studentAmka: ['12345', Validators.required],
-            studentFirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            studentSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            guardianFirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            guardianSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            regionAddress: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            regionTK: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            regionArea: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            certificateType: ['', Validators.required],
-            relationToStudent: ['', Validators.required],
+            studentAmka: ['12346', Validators.required],
+            studentFirstname: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            studentSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            guardianFirstname: ['ΑΝΑΣΤΑΣΙΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            guardianSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            regionAddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            regionTK: ['26334', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            regionArea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            certificateType: ['Απολυτήριο Λυκείου', Validators.required],
+            relationToStudent: ['Μαθητής', Validators.required],
         });
     };
 
@@ -68,6 +68,10 @@ import {
 
     saveSelected() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-        this.router.navigate(['/course-fields-select']);
+        this.router.navigate(['/region-schools-select']);
+    }
+    submitSelected() {
+        this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
+        this.router.navigate(['/application-preview']);
     }
 }

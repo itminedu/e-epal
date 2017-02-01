@@ -82,3 +82,17 @@ eepal_specialties_in_epal.admin.structure.settings:
   description: 'Configure Eepal specialties in epal entities'
   route_name: eepal_specialties_in_epal.settings
   parent: system.admin_structure
+
+# Eepal sectors menu items definition
+entity.eepal_sectors.collection:
+  title: 'Eepal sectors list'
+  route_name: entity.eepal_sectors.collection
+  description: 'List Eepal sectors entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_sectors.admin.structure.settings:
+  title: Eepal sectors settings
+  description: 'Configure Eepal sectors entities'
+  route_name: eepal_sectors.settings
+  parent: system.admin_structure

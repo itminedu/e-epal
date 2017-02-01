@@ -22,8 +22,17 @@ import {
   <div class="row">
     <div class="col-md-3">
       <ul class="nav nav-pills nav-stacked">
+      <li [ngClass]="{active: path=='application-preview'}">
+        <a [routerLink]="['/application-preview']">Προεπισκόπηση</a>
+      </li>
+      <li [ngClass]="{active: path=='sector-fields-select'}">
+        <a [routerLink]="['/sector-fields-select']">Επιλογή Τομέα</a>
+      </li>
       <li [ngClass]="{active: path=='course-fields-select'}">
         <a [routerLink]="['/course-fields-select']">Επιλογή Ειδικότητας</a>
+      </li>
+      <li [ngClass]="{active: path=='sectorcourses-fields-select'}">
+        <a [routerLink]="['/sectorcourses-fields-select']">Επιλογή Ειδικότητας με βάση τον τομέα</a>
       </li>
       <li [ngClass]="{active: path=='region-schools-select'}">
         <a [routerLink]="['/region-schools-select']">Επιλογή Σχολείου</a>

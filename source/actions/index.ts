@@ -3,7 +3,8 @@ import { SectorFieldsActions } from './sectorfields.actions';
 import { RegionSchoolsActions } from './regionschools.actions';
 import { SectorCoursesActions } from './sectorcourses.actions';
 import { StudentDataFieldsActions } from './studentdatafields.actions';
-const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions  ];
+import { ClassFieldsActions } from './classfields.actions';
+const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions, ClassFieldsActions ];
 
 export {
   CourseFieldsActions,
@@ -11,5 +12,6 @@ export {
   RegionSchoolsActions,
   SectorCoursesActions,
   StudentDataFieldsActions,
+  ClassFieldsActions,
   ACTION_PROVIDERS,
 };

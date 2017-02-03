@@ -16,6 +16,8 @@
 
 Η αναλυτική τεκμηρίωση των λειτουργικών απαιτήσεων συντηρείται στο https://git.minedu.gov.gr/itminedu/e-epal/wikis/analysis 
 
+Το Sprint Backlog είναι στο https://git.minedu.gov.gr/itminedu/e-epal.
+
 # Παρατηρήσεις - Σχόλια #
 
 Όλοι οι συμμετέχοντες στο έργο με οποιαδήποτε ιδιότητα (Ιδιοκτήτες Προϊόντος,  Ομάδα Ανάπτυξης, Ομάδα Εποπτείας) μπορούν να αναρτούν τις παρατηρήσεις και σχόλιά τους στο https://git.minedu.gov.gr/itminedu/e-epal/issues

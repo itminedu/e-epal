@@ -73,5 +73,38 @@ interface EpalUsersInterface extends  ContentEntityInterface, EntityChangedInter
    *   The called Epal users entity.
    */
   public function setPublished($published);
+  
+  //get/set methods for additional fields for  configuration properties.
+  public function getDrupaluser_id();
+  public function setDrupaluser_id($val);
+  public function getTaxis_userid();
+  public function setTaxis_userid($val);
+  public function getTaxis_taxid();
+  public function setTaxis_taxid($val);
+  public function getSurname();
+  public function setSurname($val);
+  public function getFathername();
+  public function setFathername($val);
+  public function getMothername();
+  public function setMothername($val);
+  //public function getAddress();
+  //public function setAddress($val);
+  //public function getAddresstk();
+  //public function setAddresstk($val);
+  //public function getAddressarea();
+  //public function setAddressarea($val);
+  public function getAccesstoken();
+  public function setAccesstoken($val);
+  public function getAuthtoken();
+  public function setAuthtoken($val);
+  public function getTimelogin();
+  public function setTimelogin($val);
+  public function getTimeregistration();
+  public function setTimeregistration($val);
+  public function getTimetokeninvalid();
+  public function setTimetokeninvalid($val);
+  public function getUserip();
+  public function setUserip($val);
+  
 
 }

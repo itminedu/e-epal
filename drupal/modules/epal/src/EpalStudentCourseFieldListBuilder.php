@@ -20,8 +20,10 @@ class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Epal student course field ID');
-    $header['name'] = $this->t('Name');
+    $header['id'] = $this->t('ID');
+    $header['name'] = $this->t('Όνομα');
+    $header['student_id'] = $this->t('ID Μαθητή');
+    $header['courseField_id'] = $this->t('ID Ειδικότητας');        
     return $header + parent::buildHeader();
   }
 
@@ -39,6 +41,27 @@ class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
         )
       )
     );
+    $row['student_id'] = $this->l(
+      $entity->getStudent_id(),
+      new Url(
+        'entity.epal_student_course_field.edit_form', array(
+          'epal_student_course_field' => $entity->id(),
+        )
+      )
+    );
+    $row['courseField_id'] = $this->l(
+      $entity->getCourseField_id(),
+      new Url(
+        'entity.epal_student_course_field.edit_form', array(
+          'epal_student_course_field' => $entity->id(),
+        )
+      )
+    );
+
+
+
+
+
     return $row + parent::buildRow($entity);
   }
 

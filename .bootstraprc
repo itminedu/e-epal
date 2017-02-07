@@ -1,3 +1,4 @@
+---
 # Output debugging info
 # loglevel: debug
 
@@ -112,4 +113,3 @@ scripts:
   tab: true
   tooltip: true
   util: true
-

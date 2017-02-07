@@ -45,6 +45,8 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
+ *     "student_id" = "student_id",
+ *     "courseField_id" = "courseField_id",  
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/epal_student_course_field/{epal_student_course_field}",
@@ -84,8 +86,8 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     $this->set('name', $name);
     return $this;
   }
-
-  /**
+  
+   /**
    * {@inheritdoc}
    */
   public function getCreatedTime() {
@@ -145,6 +147,38 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     return $this;
   }
 
+/**
+   * {@inheritdoc}
+   */
+  public function getCourseField_id() {
+    return $this->get('courseField_id')->getString();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCourseField_id($name) {
+    $this->set('courseField_id', $name);
+    return $this;
+  }
+
+/**
+   * {@inheritdoc}
+   */
+  public function getStudent_id() {
+    return $this->get('student_id')->getString();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setStudent_id($name) {
+    $this->set('student_id', $name);
+    return $this;
+  }
+
+ 
+
   /**
    * {@inheritdoc}
    */
@@ -152,14 +186,14 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     $fields = parent::baseFieldDefinitions($entity_type);
 
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Epal student course field entity.'))
+      ->setLabel(t('Δημιουργός'))
+      ->setDescription(t('Δημιουργός.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
-        'label' => 'hidden',
+        'label' => 'above',
         'type' => 'author',
         'weight' => 0,
       ))
@@ -177,8 +211,8 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Epal student course field entity.'))
+      ->setLabel(t('Όνομα'))
+      ->setDescription(t('Όνομα.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -197,19 +231,20 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
       ->setDisplayConfigurable('view', TRUE);
 	  
 	$fields['student_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Student id'))
+      ->setLabel(t('ID Μαθητή'))
       ->setDescription(t('Δώσε το id μαθητή.'))
-     ->setSetting('target_type', 'epal_student')
+      ->setSetting('target_type', 'epal_student')
             ->setSetting('handler', 'default')
             ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
-              'label' => 'hidden',
+              'label' => 'above',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
-            ->setDisplayOptions('form', array(
+	 ->setRequired(true)
+           ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
@@ -217,24 +252,25 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
                 'placeholder' => '',
               ),
             ))
-            ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);
+     ->setDisplayConfigurable('form', TRUE)
+     ->setDisplayConfigurable('view', TRUE);
 	
 	
 	 $fields['courseField_id'] = BaseFieldDefinition::create('entity_reference')
-            ->setLabel(t('Specialty id'))
+            ->setLabel(t('ID ειδικότητας'))
             ->setDescription(t('Δώσε το id ειδικότητας που επέλεξε ο μαθητής.'))
             ->setSetting('target_type', 'eepal_specialty')
             ->setSetting('handler', 'default')
+			->setRequired(true)
             ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
-              'label' => 'hidden',
+              'label' => 'above',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
             ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',

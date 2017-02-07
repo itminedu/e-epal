@@ -28,3 +28,8 @@ entity.eepal_specialties_in_epal.add_form:
   title: 'Add Eepal specialties in epal'
   appears_on:
     - entity.eepal_specialties_in_epal.collection
+entity.eepal_sectors.add_form:
+  route_name: entity.eepal_sectors.add_form
+  title: 'Add Eepal sectors'
+  appears_on:
+    - entity.eepal_sectors.collection

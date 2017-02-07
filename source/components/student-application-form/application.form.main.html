@@ -1,4 +1,6 @@
-<form novalidate [formGroup]="studentDataGroup">
+<div class="row equal">
+ <div class="col-md-8">
+  <form novalidate [formGroup]="studentDataGroup">
     <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
 
     <div class="form-group">
@@ -90,15 +92,6 @@
         </div>
     </div>
 
-    <h5 style="margin-top: 20px; line-height: 2em; background: #dddddd;">Επιλεγμένες Ειδικότητες</h5>
-    <ul class="list-group" style="margin-bottom: 20px;">
-        <div *ngFor="let courseField$ of courseFields$ | async">
-            <li class="list-group-item" *ngIf="courseField$.selected === true">
-                {{courseField$.name}}
-            </li>
-        </div>
-    </ul>
-
     <div class="row">
         <div class="col-md-2 col-md-offset-4">
             <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
@@ -106,10 +99,15 @@
             </button>
         </div>
         <div class="col-md-2">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()" [disabled]="studentDataGroup.invalid">
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="submitSelected()">
                 Αποστολή<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
     </div>
 
-</form>
+  </form>
+</div>
+
+<div class="col-md-4">
+  <application-preview-select></application-preview-select>
+</div>

@@ -1,0 +1,10 @@
+@import 'header';
+@import 'navbar';
+@import 'main';
+@import 'footer';
+@import 'scss/font-awesome';
+
+html {
+	position: relative;
+	min-height: 100%;
+}

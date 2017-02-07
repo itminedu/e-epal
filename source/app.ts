@@ -32,6 +32,12 @@ import {UserDataService} from './services/user-data-service';
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+
+import HeaderComponent from './components/header/header.component';
+import NavbarComponent from './components/navbar/navbar.component';
+import MainComponent from './components/main/main.component';
+import FooterComponent from './components/footer/footer.component';
+
 class MyLocalization extends NgLocalization {
    getPluralCategory(value: any) {
       if (value < 5) {
@@ -52,7 +58,7 @@ class MyLocalization extends NgLocalization {
     NgReduxModule
   ],
   declarations: [
-    Main,
+    Main, FooterComponent, HeaderComponent, NavbarComponent, MainComponent,
     APP_DECLARATIONS,
   ],
   bootstrap: [ Main ],

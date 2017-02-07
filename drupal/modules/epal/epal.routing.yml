@@ -1,0 +1,16 @@
+epal_is_logged_in:
+  path: '/epal/login/check'
+  defaults:
+    _controller: '\Drupal\epal\Controller\Login::helloWorld'
+  requirements:
+    _access: 'TRUE'
+epal_auth_test:
+  path: 'epal/auth/test'
+  options:
+    _auth: [ 'oauthost' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\Login::helloWorld'
+    _title: 'Greeting'
+  requirements:
+    _permission: 'access content'
+    _user_is_logged_in: 'TRUE'

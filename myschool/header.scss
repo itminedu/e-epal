@@ -1,0 +1,41 @@
+
+.header-wrapper {
+  background: none repeat scroll 0 0 #F2F1F1;
+  border-bottom: 1px solid #e2e2e2;
+  height: 32px;
+  .navbar {
+    border-color: transparent;
+    a.navbar-brand {
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    #block-block-1 {
+      padding-top: 12px;
+    }
+  }
+
+  .name-slogan {
+    float:left;
+    margin: 0 0 30px 15px;
+    padding-top: 25px;
+    #site-name {
+      .navbar-sitename {
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        &:hover {
+          text-decoration: default;
+          color: #fff;
+        }
+      }
+    }
+    #site-slogan {
+      .lead {
+        font-size: 14px;
+        color: #fff;
+      }
+    }
+  }
+}

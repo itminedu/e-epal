@@ -19,25 +19,43 @@ import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'sector-fields-select',
-    //declarations: [
-    //  ApplicationPreview,
-    //] ,
-
-    //directives:[ApplicationPreview],
     template: `
+
     <div class="row equal">
+
      <div class="col-md-8">
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
+
             <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
-                <li class="list-group-item" (click)="setActiveSector(i)" [style.background-color]="toggleBackgroundColor(i)">
+                <li class="list-group-item" (click)="setActiveSectorAndSave(i)" [style.background-color]="toggleBackgroundColor(i)">
                     <h5>{{sectorField$.name}}</h5>
                 </li>
             </div>
+
+
+            <!--CHECK BOXES USING BOTSTRAP
+            <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
+                <div class="[ form-group ]">
+                  <input type="checkbox" name="{{i}}" id="{{i}}" autocomplete="off" />
+                  <div class="[ btn-group ]">
+                      <label for="{{i}}" class="[ btn btn-primary ]">
+                          <span class="[ glyphicon glyphicon-ok ]"></span>
+                          <span> </span>
+                      </label>
+                      <label for="{{i}}" class="[ btn btn-default active ]">
+                          {{sectorField$.name}}
+                      </label>
+                  </div>
+                </div>
+            </div>
+            -->
+
         </div>
+
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()" [disabled]="sectorActive === -1"	>
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -75,7 +93,9 @@ import {AppSettings} from '../../app.settings';
         this.sectorFields$ = this._ngRedux.select(state => {
             state.sectorFields.reduce(({}, sectorField) =>{
                 this.cfs.push(new FormControl(sectorField.selected, []));
-                this.retrieveCheck();
+                if (sectorField.selected === true) {
+                  this.sectorActive = sectorField.id - 1;
+                }
                 return sectorField;
             }, {});
             return state.sectorFields;
@@ -83,17 +103,25 @@ import {AppSettings} from '../../app.settings';
 
     }
 
-    saveSelected() {
-        for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-          this.formGroup.value.formArray[i] = false;
-        if (this.sectorActive != -1)
-          this.formGroup.value.formArray[this.sectorActive] = true;
-        this._cfa.saveSectorFieldsSelected(this.formGroup.value.formArray);
+    navigateToSchools() {
+        //this.saveSelected();
         this.router.navigate(['/region-schools-select']);
     }
 
-    setActiveSector(ind) {
+    saveSelected() {
+      for (let i = 0; i < this.formGroup.value.formArray.length; i++)
+        this.formGroup.value.formArray[i] = false;
+      if (this.sectorActive != -1)
+        this.formGroup.value.formArray[this.sectorActive] = true;
+
+      this._cfa.saveSectorFieldsSelected(this.formGroup.value.formArray);
+    }
+
+    setActiveSectorAndSave(ind) {
+        if (ind === this.sectorActive)
+          ind = -1;
         this.sectorActive = ind;
+        this.saveSelected();
     }
 
     toggleBackgroundColor(ind) {

@@ -36,7 +36,7 @@ import {AppSettings} from '../../app.settings';
 
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineCourse()">
+            <button type="button" class="btn-primary btn-md pull-center" [disabled] = true>
             Η ειδικότητά μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -52,8 +52,16 @@ import {AppSettings} from '../../app.settings';
         </ul>
 
         <div class="row">
+        <div class="btn-group inline pull-right">
+            <button class="btn-primary btn-md pull-center my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedSchools === 0" >
+            Επαναφορά<span class="glyphicon glyphicon-menu-right"></span>
+            </button>
+        </div>
+        </div>
+
+        <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineSchools()">
+            <button type="button" id = "butsch" class="btn-primary btn-md pull-center" (click)="defineSchools()" [disabled] = "numSelectedSchools === 0 ">
             Τα σχολεία μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -96,6 +104,10 @@ import {AppSettings} from '../../app.settings';
     private regions$: Observable<IRegions>;
     private sectorFields$: Observable<ISectorFields>;
     private studentDataFields$: Observable<IStudentDataFields>;
+    private courseActive = "-1";
+    private numSelectedSchools = <number>0;
+    private numSelectedCourses = <number>0;
+
 
     constructor(private _rsa: SectorCoursesActions,
                 private _rsb: RegionSchoolsActions,
@@ -107,27 +119,45 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this._rsa.getSectorCourses();
+        this.courseActive = this.getCourseActive();
+
+        this._rsa.getSectorCourses(false);
         this.sectors$ = this._ngRedux.select(state => {
+            let numsel = 0;
             state.sectors.reduce((prevSector, sector) =>{
                 sector.courses.reduce((prevCourse, course) =>{
+                  if (course.selected === true)  {
+                    numsel++;
+                    //this.numSelectedCourses
+                  }
                     return course;
                 }, {});
                 return sector;
             }, {});
+            this.numSelectedCourses = numsel;
             return state.sectors;
         });
 
-        this._rsb.getRegionSchools();
+        //WORKED STRANGELY BEFORE..
+        /*
+        this.courseActive = this.getCourseActive();
+        this._rsb.getRegionSchools(this.courseActive);
+        */
+
+        this._rsb.getRegionSchools(this.courseActive, false);
         this.regions$ = this._ngRedux.select(state => {
-            state.regions.reduce((prevRegion, region) =>{
-                region.epals.reduce((prevSchool, school) =>{
+              let numsel = 0;
+              state.regions.reduce((prevRegion, region) =>{
+                  region.epals.reduce((prevSchool, school) =>{
+                    if (school.selected === true)
+                        numsel++;
                     return school;
-                }, {});
-                return region;
-            }, {});
-            return state.regions;
-        });
+                  }, {});
+                  return region;
+              }, {});
+              this.numSelectedSchools = numsel;
+              return state.regions;
+          });
 
         this._rsc.getSectorFields();
         this.sectorFields$ = this._ngRedux.select(state => {
@@ -149,14 +179,60 @@ import {AppSettings} from '../../app.settings';
     defineSector() {
         this.router.navigate(['/sector-fields-select']);
     }
+
     defineCourse() {
-        this.router.navigate(['/sectorcourses-fields-select']);
+      //this._rsb.getRegionSchools_Reload("-1");
+      this._rsb.getRegionSchools("-1", true);
+      this.regions$ = this._ngRedux.select(state => {
+          let numsel = 0;
+          state.regions.reduce((prevRegion, region) =>{
+              region.epals.reduce((prevSchool, school) =>{
+                if (school.selected === true)
+                    numsel++;
+                return school;
+              }, {});
+              return region;
+          }, {});
+          this.numSelectedSchools = numsel;
+          return state.regions;
+      });
+
+
+      //this._rsa.getSectorCourses_Reload();
+      this._rsa.getSectorCourses(true);
+      this.sectors$ = this._ngRedux.select(state => {
+          state.sectors.reduce((prevSector, sector) =>{
+              sector.courses.reduce((prevCourse, course) =>{
+                  return course;
+              }, {});
+              return sector;
+          }, {});
+          return state.sectors;
+      });
+
+      this.router.navigate(['/sectorcourses-fields-select']);
+
     }
+
     defineSchools() {
         this.router.navigate(['/region-schools-select']);
     }
     definePersonalData() {
         this.router.navigate(['/student-application-form-main']);
     }
+
+
+    getCourseActive() {
+        const { sectors } = this._ngRedux.getState();
+        let l,m;
+        for ( l=0; l<sectors.size; l++)
+          if (sectors["_tail"]["array"][l]["sector_selected"] === true)
+            for ( m=0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
+              if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
+                 return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
+    }
+
+
+
 
 }

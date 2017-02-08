@@ -34,7 +34,8 @@ import {AppSettings} from '../../app.settings';
                             <div class="col-md-2">
                                 <input #cb type="checkbox" formControlName="{{ course$.globalIndex }}"
                                 (change)="updateCheckedOptions(course$.globalIndex, cb)"
-                                [checked] = " course$.globalIndex === idx ">
+                                [checked] = " course$.globalIndex === idx "
+                                >
                             </div>
                             <div class="col-md-10">
                                 {{course$.course_name}}
@@ -48,7 +49,7 @@ import {AppSettings} from '../../app.settings';
 
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()" [disabled]="idx === -1"	 >
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="idx === -1"	 >
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -68,6 +69,8 @@ import {AppSettings} from '../../app.settings';
     private rss = new FormArray([]);
     private sectorActive = <number>-1;
     private idx = <number>-1;
+    private sectorsList: Array<boolean> = new Array();
+    //private  sectorsList = new Array([]);
 
     constructor(private fb: FormBuilder,
                 private _rsa: SectorCoursesActions,
@@ -80,24 +83,38 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this._rsa.getSectorCourses();
+        this._rsa.getSectorCourses(false);
+        let ids = 0;
 
         this.sectors$ = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) =>{
+                this.sectorsList[ids] = sector.sector_selected;
+                ids++;
+                //In case we want to preserve last checked option when we revisit the form
+                //if (sector.sector_selected === true)
+                  //this.sectorActive = ids-1;
+
                 sector.courses.reduce((prevCourse, course) =>{
                     this.rss.push( new FormControl(course.selected, []));
-                    this.retrieveCheck();
+                    //this.retrieveCheck();
+                    if (course.selected === true) {
+                      //In case we want to preserve last checked option when we revisit the form
+                      //this.idx = course.globalIndex;
+                    }
                     return course;
                 }, {});
                 return sector;
             }, {});
+            ids = 0;
             return state.sectors;
         });
 
     }
 
     setActiveSector(ind) {
-        this.sectorActive = ind;
+      if (ind === this.sectorActive)
+        ind = -1;
+      this.sectorActive = ind;
     }
 
     toggleBackgroundColor(ind) {
@@ -105,28 +122,29 @@ import {AppSettings} from '../../app.settings';
     }
 
     saveSelected() {
-        this._rsa.saveSectorCoursesSelected(this.formGroup.value.formArray);
+        this._rsa.saveSectorCoursesSelected(this.formGroup.value.formArray, this.sectorsList);
+    }
+
+    navigateToSchools() {
         this.router.navigate(['/region-schools-select']);
     }
 
     updateCheckedOptions(globalIndex, cb){
-      /*
-      if (this.oneselected)
-        this.oneselected = 0;
-      else
-        this.oneselected = 1;
-      console.log(this.oneselected);
-      */
-      //this.idx = index;
       this.idx = globalIndex;
-
       for (let i = 0; i < this.formGroup.value.formArray.length; i++)
         this.formGroup.value.formArray[i] = false;
       this.formGroup.value.formArray[globalIndex] = cb.checked;
       if (cb.checked === false)
         this.idx = -1;
+
+      for (let i = 0; i < this.sectorsList.length; i++)
+          this.sectorsList[i] = false;
+      this.sectorsList[this.sectorActive] = true;
+
+      this.saveSelected();
 }
 
+/*
 retrieveCheck()  {
   for (let i = 0; i < this.formGroup.value.formArray.length; i++)
     if (this.formGroup.value.formArray[i] === true) {
@@ -134,5 +152,6 @@ retrieveCheck()  {
       return;
     }
 }
+*/
 
 }

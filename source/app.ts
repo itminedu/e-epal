@@ -12,7 +12,6 @@ import {
 
 import {RouterModule} from '@angular/router';
 import { HttpModule } from '@angular/http';
-
 import {
   APP_BASE_HREF,
   HashLocationStrategy,
@@ -32,6 +31,8 @@ import {UserDataService} from './services/user-data-service';
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+
+
 class MyLocalization extends NgLocalization {
    getPluralCategory(value: any) {
       if (value < 5) {
@@ -49,7 +50,8 @@ class MyLocalization extends NgLocalization {
     APP_ROUTER_PROVIDERS,
     HttpModule,
     Ng2SmartTableModule,
-    NgReduxModule
+    NgReduxModule,
+
   ],
   declarations: [
     Main,

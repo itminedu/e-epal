@@ -25,6 +25,9 @@ import {
       <li [ngClass]="{active: path=='application-preview'}">
         <a [routerLink]="['/application-preview']">Προεπισκόπηση</a>
       </li>
+      <li [ngClass]="{active: path=='epal-class-select'}">
+        <a [routerLink]="['/epal-class-select']">Επιλογή Τάξης</a>
+      </li>
       <li [ngClass]="{active: path=='sector-fields-select'}">
         <a [routerLink]="['/sector-fields-select']">Επιλογή Τομέα</a>
       </li>

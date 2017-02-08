@@ -1,0 +1,16 @@
+"use strict";
+const coursefields_actions_1 = require("./coursefields.actions");
+exports.CourseFieldsActions = coursefields_actions_1.CourseFieldsActions;
+const sectorfields_actions_1 = require("./sectorfields.actions");
+exports.SectorFieldsActions = sectorfields_actions_1.SectorFieldsActions;
+const regionschools_actions_1 = require("./regionschools.actions");
+exports.RegionSchoolsActions = regionschools_actions_1.RegionSchoolsActions;
+const sectorcourses_actions_1 = require("./sectorcourses.actions");
+exports.SectorCoursesActions = sectorcourses_actions_1.SectorCoursesActions;
+const studentdatafields_actions_1 = require("./studentdatafields.actions");
+exports.StudentDataFieldsActions = studentdatafields_actions_1.StudentDataFieldsActions;
+const epalclass_actions_1 = require("./epalclass.actions");
+exports.EpalClassesActions = epalclass_actions_1.EpalClassesActions;
+const ACTION_PROVIDERS = [coursefields_actions_1.CourseFieldsActions, sectorfields_actions_1.SectorFieldsActions, regionschools_actions_1.RegionSchoolsActions, sectorcourses_actions_1.SectorCoursesActions, studentdatafields_actions_1.StudentDataFieldsActions, ClassFieldsActions];
+exports.ACTION_PROVIDERS = ACTION_PROVIDERS;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJpbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsaUVBQTZEO0FBUzNELHlFQUFtQjtBQVJyQixpRUFBNkQ7QUFTM0QseUVBQW1CO0FBUnJCLG1FQUErRDtBQVM3RCw0RUFBb0I7QUFSdEIsbUVBQStEO0FBUzdELDRFQUFvQjtBQVJ0QiwyRUFBdUU7QUFTckUsd0ZBQXdCO0FBUjFCLDJEQUF5RDtBQVN2RCxvRUFBa0I7QUFScEIsTUFBTSxnQkFBZ0IsR0FBRyxDQUFFLDBDQUFtQixFQUFFLDBDQUFtQixFQUFFLDRDQUFvQixFQUFFLDRDQUFvQixFQUFFLG9EQUF3QixFQUFFLGtCQUFrQixDQUFFLENBQUM7QUFTOUosNENBQWdCIn0=

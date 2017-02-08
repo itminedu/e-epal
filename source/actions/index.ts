@@ -3,8 +3,8 @@ import { SectorFieldsActions } from './sectorfields.actions';
 import { RegionSchoolsActions } from './regionschools.actions';
 import { SectorCoursesActions } from './sectorcourses.actions';
 import { StudentDataFieldsActions } from './studentdatafields.actions';
-import { ClassFieldsActions } from './classfields.actions';
-const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions, ClassFieldsActions ];
+import { EpalClassesActions } from './epalclass.actions';
+const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions, EpalClassesActions ];
 
 export {
   CourseFieldsActions,
@@ -12,6 +12,6 @@ export {
   RegionSchoolsActions,
   SectorCoursesActions,
   StudentDataFieldsActions,
-  ClassFieldsActions,
+  EpalClassesActions,
   ACTION_PROVIDERS,
 };

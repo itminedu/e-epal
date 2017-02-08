@@ -26,7 +26,7 @@
     "tslint": "^3.15.1",
     "tslint-loader": "^2.1.5",
     "typescript": "^2.0.10",
-    "redux-logger" : "^2.7.4",
+    "redux-logger": "^2.7.4",
     "webpack": "^1.14.0",
     "webpack-dashboard": "^0.2.0",
     "webpack-dev-server": "^1.16.2"
@@ -41,7 +41,8 @@
     "@angular/platform-browser-dynamic": "^2.0.0",
     "@angular/router": "^3.2.0",
     "@types/node": "^6.0.60",
-    "babel-polyfill" : "^6.20.0",
+    "babel-polyfill": "^6.20.0",
+    "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "css-loader": "^0.25.0",
     "d3": "^3.5.16",

@@ -62,6 +62,10 @@ import {
       </div>
     </div>
   </div>
+  <reg-header></reg-header>
+  <reg-navbar></reg-navbar>
+  <reg-main></reg-main>
+  <reg-footer></reg-footer>
   `
 })
 export default class Main {

@@ -50,12 +50,12 @@ import {AppSettings} from '../../app.settings';
                 </div>
             </div>
             -->
-
         </div>
 
+        <!--[disabled]="sectorActive === -1-->
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="true"	>
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>

@@ -90,8 +90,8 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this.courseActive = this.getCourseActive();
 
+        this.courseActive = this.getCourseActive();
         this._rsa.getRegionSchools(this.courseActive, false);
 
         this.regions$ = this._ngRedux.select(state => {
@@ -99,8 +99,10 @@ import {AppSettings} from '../../app.settings';
             state.regions.reduce((prevRegion, region) =>{
                 region.epals.reduce((prevEpal, epal) =>{
                     this.rss.push( new FormControl(epal.selected, []));
-                    if (epal.selected === true)
+                    if (epal.selected === true) {
                       numsel++;
+                      console.log(epal.epal_name);
+                    }
                     return epal;
                 }, {});
                 return region;

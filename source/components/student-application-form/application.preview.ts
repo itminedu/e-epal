@@ -36,11 +36,22 @@ import {AppSettings} from '../../app.settings';
 
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" [disabled] = true>
+            <button type="button" class="btn-primary btn-md pull-center" (click)="defineCourse()" >
             Η ειδικότητά μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
+
+        <!--
+        <div class="row">
+        <div class="btn-group inline pull-right">
+            <button class="btn-primary btn-md pull-right my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedCourses === 0" >
+            Επαναφορά<span class="glyphicon glyphicon-menu-right"></span>
+            </button>
+        </div>
+        </div>
+        -->
+
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let sector$ of sectors$ | async;">
                 <div *ngFor="let course$ of sector$.courses;" >
@@ -50,14 +61,6 @@ import {AppSettings} from '../../app.settings';
             </div>
             </div>
         </ul>
-
-        <div class="row">
-        <div class="btn-group inline pull-right">
-            <button class="btn-primary btn-md pull-center my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedSchools === 0" >
-            Επαναφορά<span class="glyphicon glyphicon-menu-right"></span>
-            </button>
-        </div>
-        </div>
 
         <div class="row">
         <div class="btn-group inline pull-center">
@@ -106,8 +109,7 @@ import {AppSettings} from '../../app.settings';
     private studentDataFields$: Observable<IStudentDataFields>;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
-    private numSelectedCourses = <number>0;
-
+    //private numSelectedCourses = <number>0;
 
     constructor(private _rsa: SectorCoursesActions,
                 private _rsb: RegionSchoolsActions,
@@ -120,38 +122,28 @@ import {AppSettings} from '../../app.settings';
 
     ngOnInit() {
         this.courseActive = this.getCourseActive();
-
-        this._rsa.getSectorCourses(false);
         this.sectors$ = this._ngRedux.select(state => {
-            let numsel = 0;
+            //let numsel = 0;
             state.sectors.reduce((prevSector, sector) =>{
                 sector.courses.reduce((prevCourse, course) =>{
-                  if (course.selected === true)  {
-                    numsel++;
-                    //this.numSelectedCourses
-                  }
+                  //if (course.selected === true)  {
+                  //  numsel++;
+                  //}
                     return course;
                 }, {});
                 return sector;
             }, {});
-            this.numSelectedCourses = numsel;
+            //this.numSelectedCourses = numsel;
             return state.sectors;
         });
 
-        //WORKED STRANGELY BEFORE..
-        /*
-        this.courseActive = this.getCourseActive();
-        this._rsb.getRegionSchools(this.courseActive);
-        */
-
-        this._rsb.getRegionSchools(this.courseActive, false);
         this.regions$ = this._ngRedux.select(state => {
               let numsel = 0;
               state.regions.reduce((prevRegion, region) =>{
-                  region.epals.reduce((prevSchool, school) =>{
-                    if (school.selected === true)
+                  region.epals.reduce((prevEpal, epal) =>{
+                    if (epal.selected === true)
                         numsel++;
-                    return school;
+                    return epal;
                   }, {});
                   return region;
               }, {});
@@ -159,7 +151,6 @@ import {AppSettings} from '../../app.settings';
               return state.regions;
           });
 
-        this._rsc.getSectorFields();
         this.sectorFields$ = this._ngRedux.select(state => {
             state.sectorFields.reduce(({}, sectorField) =>{
                 return sectorField;
@@ -180,8 +171,25 @@ import {AppSettings} from '../../app.settings';
         this.router.navigate(['/sector-fields-select']);
     }
 
+    defineSchools() {
+        this.router.navigate(['/region-schools-select']);
+    }
+    definePersonalData() {
+        this.router.navigate(['/student-application-form-main']);
+    }
+
+    getCourseActive() {
+        const { sectors } = this._ngRedux.getState();
+        let l,m;
+        for ( l=0; l<sectors.size; l++)
+          if (sectors["_tail"]["array"][l]["sector_selected"] === true)
+            for ( m=0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
+              if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
+                 return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
+    }
+
+/*
     defineCourse() {
-      //this._rsb.getRegionSchools_Reload("-1");
       this._rsb.getRegionSchools("-1", true);
       this.regions$ = this._ngRedux.select(state => {
           let numsel = 0;
@@ -197,8 +205,6 @@ import {AppSettings} from '../../app.settings';
           return state.regions;
       });
 
-
-      //this._rsa.getSectorCourses_Reload();
       this._rsa.getSectorCourses(true);
       this.sectors$ = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
@@ -213,26 +219,10 @@ import {AppSettings} from '../../app.settings';
       this.router.navigate(['/sectorcourses-fields-select']);
 
     }
+  */
 
-    defineSchools() {
-        this.router.navigate(['/region-schools-select']);
-    }
-    definePersonalData() {
-        this.router.navigate(['/student-application-form-main']);
-    }
-
-
-    getCourseActive() {
-        const { sectors } = this._ngRedux.getState();
-        let l,m;
-        for ( l=0; l<sectors.size; l++)
-          if (sectors["_tail"]["array"][l]["sector_selected"] === true)
-            for ( m=0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
-              if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
-                 return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
-    }
-
-
-
+  defineCourse() {
+      this.router.navigate(['/sectorcourses-fields-select']);
+  }
 
 }

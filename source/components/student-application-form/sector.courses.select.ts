@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { NgRedux, select } from 'ng2-redux';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { IRegions } from '../../store/regionschools/regionschools.types';
+import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 
 import {
@@ -27,7 +29,6 @@ import {AppSettings} from '../../app.settings';
                 <li class="list-group-item" (click)="setActiveSector(i)" [style.background-color]="toggleBackgroundColor(i)">
                     <h5>{{sector$.sector_name}}</h5>
                 </li>
-
                 <div *ngFor="let course$ of sector$.courses; let j=index;" [hidden]="i !== sectorActive">
                     <li class="list-group-item" >
                         <div class="row">
@@ -65,15 +66,16 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class SectorCoursesSelect implements OnInit {
     private sectors$: Observable<ISectors>;
+    private regions$: Observable<IRegions>;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
     private sectorActive = <number>-1;
     private idx = <number>-1;
     private sectorsList: Array<boolean> = new Array();
-    //private  sectorsList = new Array([]);
 
     constructor(private fb: FormBuilder,
                 private _rsa: SectorCoursesActions,
+                private _rsr: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
@@ -83,9 +85,11 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this._rsa.getSectorCourses(false);
-        let ids = 0;
+        //re-initialize schools-redux-state
+        this.getAllSchools();
 
+        this._rsa.getSectorCourses(true);
+        let ids = 0;
         this.sectors$ = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) =>{
                 this.sectorsList[ids] = sector.sector_selected;
@@ -93,7 +97,6 @@ import {AppSettings} from '../../app.settings';
                 //In case we want to preserve last checked option when we revisit the form
                 //if (sector.sector_selected === true)
                   //this.sectorActive = ids-1;
-
                 sector.courses.reduce((prevCourse, course) =>{
                     this.rss.push( new FormControl(course.selected, []));
                     //this.retrieveCheck();
@@ -144,14 +147,22 @@ import {AppSettings} from '../../app.settings';
       this.saveSelected();
 }
 
-/*
-retrieveCheck()  {
-  for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-    if (this.formGroup.value.formArray[i] === true) {
-      this.idx = i;
-      return;
-    }
+getAllSchools() {
+  //store in Redux the whole schools
+  this._rsr.getRegionSchools("-1", true);
+  this.regions$ = this._ngRedux.select(state => {
+      let numsel = 0;
+      state.regions.reduce((prevRegion, region) =>{
+          region.epals.reduce((prevEpal, epal) =>{
+              this.rss.push( new FormControl(epal.selected, []));
+              return epal;
+          }, {});
+          return region;
+      }, {});
+      return state.regions;
+  });
+
 }
-*/
+
 
 }

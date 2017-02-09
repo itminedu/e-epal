@@ -147,15 +147,3 @@
 .form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
     display: none;
 }
-
-.black-background {background-color:#000000;}
-.white {color:#ffffff;}
-
-.my-btn{
-  border-color: #116f2f;
-  background-color: #116f2f;
-}
-.my-btn:hover {
-  background: #1b8d3f;
-  color: #ffffff;
-}

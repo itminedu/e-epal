@@ -5,7 +5,12 @@ import { Injectable } from "@angular/core";
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { NgRedux, select } from 'ng2-redux';
 import { IRegions } from '../../store/regionschools/regionschools.types';
+
+import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
+import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
+
 import { IAppState } from '../../store/store';
+
 
 import {
     FormBuilder,
@@ -32,7 +37,10 @@ import {AppSettings} from '../../app.settings';
                     <li class="list-group-item" >
                         <div class="row">
                             <div class="col-md-2">
-                                <input type="checkbox" formControlName="{{ epal$.globalIndex }}">
+                                <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
+                                (change)="saveSelected()"
+                                [hidden] = "numSelected === 3 && cb.checked === false"
+                                >
                             </div>
                             <div class="col-md-10">
                                 {{epal$.epal_name}}
@@ -45,7 +53,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -53,20 +61,26 @@ import {AppSettings} from '../../app.settings';
     </form>
    </div>
 
+
    <div class="col-md-4">
      <application-preview-select></application-preview-select>
    </div>
+
   </div>
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit {
     private regions$: Observable<IRegions>;
+    private sectors$: Observable<ISectors>;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
     private regionActive = <number>-1;
+    private numSelected = <number>0;
+    private courseActive = "-1";
 
     constructor(private fb: FormBuilder,
                 private _rsa: RegionSchoolsActions,
+                private _rsb: SectorCoursesActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
@@ -77,23 +91,32 @@ import {AppSettings} from '../../app.settings';
 
     ngOnInit() {
 
-        this._rsa.getRegionSchools();
+        this.courseActive = this.getCourseActive();
+        this._rsa.getRegionSchools(this.courseActive, false);
 
         this.regions$ = this._ngRedux.select(state => {
+            let numsel = 0;
             state.regions.reduce((prevRegion, region) =>{
                 region.epals.reduce((prevEpal, epal) =>{
                     this.rss.push( new FormControl(epal.selected, []));
+                    if (epal.selected === true) {
+                      numsel++;
+                      console.log(epal.epal_name);
+                    }
                     return epal;
                 }, {});
                 return region;
             }, {});
+            this.numSelected = numsel;
             return state.regions;
         });
 
     }
 
     setActiveRegion(ind) {
-        this.regionActive = ind;
+      if (ind === this.regionActive)
+        ind = -1;
+      this.regionActive = ind;
     }
 
     toggleBackgroundColor(ind) {
@@ -102,6 +125,32 @@ import {AppSettings} from '../../app.settings';
 
     saveSelected() {
         this._rsa.saveRegionSchoolsSelected(this.formGroup.value.formArray);
-        this.router.navigate(['/student-application-form-main']);
+        //this.router.navigate(['/student-application-form-main']);
     }
+
+    navigateToApplication() {
+      this.router.navigate(['/student-application-form-main']);
+    }
+
+    //not used
+    updateCheckedOptions(globalIndex, cb){
+      /*
+      if (cb.checked)
+        this.numselected--;
+      else
+        this.numselected++;
+      */
+      this.saveSelected();
+    }
+
+    getCourseActive() {
+        const { sectors } = this._ngRedux.getState();
+        let l,m;
+        for ( l=0; l<sectors.size; l++)
+          if (sectors["_tail"]["array"][l]["sector_selected"] === true)
+            for ( m=0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
+              if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
+                 return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
+    }
+
 }

@@ -6,6 +6,7 @@ import { ISectorField, ISectorFields } from './sectorfields/sectorfields.types';
 import { IRegions, IRegion, IRegionSchool } from './regionschools/regionschools.types';
 import { ISectors, ISector, ISectorCourse } from './sectorcourses/sectorcourses.types';
 import { IStudentDataField, IStudentDataFields } from './studentdatafields/studentdatafields.types';
+import { IEpalClass, IEpalClasses } from './epalclasses/epalclasses.types';
 
 export {
   IAppState,
@@ -22,6 +23,9 @@ export {
   ISectorCourse,
   IStudentDataField,
   IStudentDataFields,
+  IEpalClass,
+  IEpalClasses,
+
 };
 
 export const middleware = [

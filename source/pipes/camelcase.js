@@ -1,0 +1,21 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+const core_1 = require("@angular/core");
+let CamelCasePipe = class CamelCasePipe {
+    transform(value) {
+        return value
+            .replace(/\s(.)/g, function ($1) { return $1.toUpperCase(); })
+            .replace(/\s/g, '')
+            .replace(/^(.)/, function ($1) { return $1.toLowerCase(); });
+    }
+};
+CamelCasePipe = __decorate([
+    core_1.Pipe({ name: 'camelcase' })
+], CamelCasePipe);
+exports.CamelCasePipe = CamelCasePipe;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2FtZWxjYXNlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiY2FtZWxjYXNlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7QUFBQSx3Q0FBa0Q7QUFHbEQsSUFBYSxhQUFhLEdBQTFCO0lBQ0UsU0FBUyxDQUFDLEtBQWE7UUFDckIsTUFBTSxDQUFDLEtBQUs7YUFDSCxPQUFPLENBQUMsUUFBUSxFQUFFLFVBQVMsRUFBRSxJQUFJLE1BQU0sQ0FBQyxFQUFFLENBQUMsV0FBVyxFQUFFLENBQUMsQ0FBQyxDQUFDLENBQUM7YUFDNUQsT0FBTyxDQUFDLEtBQUssRUFBRSxFQUFFLENBQUM7YUFDbEIsT0FBTyxDQUFDLE1BQU0sRUFBRSxVQUFTLEVBQUUsSUFBSSxNQUFNLENBQUMsRUFBRSxDQUFDLFdBQVcsRUFBRSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDdEUsQ0FBQztDQUNGLENBQUE7QUFQWSxhQUFhO0lBRHpCLFdBQUksQ0FBQyxFQUFDLElBQUksRUFBRSxXQUFXLEVBQUMsQ0FBQztHQUNiLGFBQWEsQ0FPekI7QUFQWSxzQ0FBYSJ9

@@ -8,16 +8,35 @@ import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
+import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IRegions } from '../../store/regionschools/regionschools.types';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
+import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'application-preview-select',
     template: `
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
+
+
+       <div class="row">
+        <div class="btn-group inline pull-center">
+            <button type="button" class="btn-primary btn-md pull-center" (click)="defineClass()">
+            Η τάξη μου<span class="glyphicon glyphicon-menu-right"></span>
+            </button>
+        </div>
+        </div>
+        <ul class="list-group" style="margin-bottom: 20px;">
+            <div *ngFor="let epalclass$ of epalclasses$ | async;">
+                <li class="list-group-item">
+                    Τάξη εισαγωγής: {{epalclass$.name}}
+                </li>
+            </div>
+        </ul>
+
 
         <div class="row">
         <div class="btn-group inline pull-center">
@@ -41,8 +60,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         </div>
-
-        <!--
+        
         <div class="row">
         <div class="btn-group inline pull-right">
             <button class="btn-primary btn-md pull-right my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedCourses === 0" >
@@ -50,7 +68,6 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         </div>
-        -->
 
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let sector$ of sectors$ | async;">
@@ -72,20 +89,20 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let region$ of regions$ | async;">
                 <div *ngFor="let epal$ of region$.epals; " >
-                <li class="list-group-item" *ngIf="epal$.selected === true">
-                    {{epal$.epal_name}}
-                </li>
-            </div>
+                  <li class="list-group-item" *ngIf="epal$.selected === true">
+                      {{epal$.epal_name}}
+                  </li>
+                </div>
             </div>
         </ul>
-
+       
         <div class="row">
-        <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
-            Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
-            </button>
-        </div>
-        </div>
+          <div class="btn-group inline pull-center">
+              <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
+              Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
+              </button>
+          </div>
+         </div>
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
                 <li class="list-group-item">
@@ -107,6 +124,9 @@ import {AppSettings} from '../../app.settings';
     private regions$: Observable<IRegions>;
     private sectorFields$: Observable<ISectorFields>;
     private studentDataFields$: Observable<IStudentDataFields>;
+    private epalclasses$: Observable<IEpalClasses>;
+
+
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     //private numSelectedCourses = <number>0;
@@ -115,6 +135,7 @@ import {AppSettings} from '../../app.settings';
                 private _rsb: RegionSchoolsActions,
                 private _rsc: SectorFieldsActions,
                 private _rsd: StudentDataFieldsActions,
+                private _rcd: EpalClassesActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
@@ -165,6 +186,15 @@ import {AppSettings} from '../../app.settings';
             return state.studentDataFields;
         });
 
+
+        this.epalclasses$ = this._ngRedux.select(state => {
+            state.epalclasses.reduce(({}, epalclass) =>{
+                return epalclass;
+            }, {});
+            return state.epalclasses;
+        });
+
+
     }
 
     defineSector() {
@@ -177,6 +207,10 @@ import {AppSettings} from '../../app.settings';
     definePersonalData() {
         this.router.navigate(['/student-application-form-main']);
     }
+    defineClass() {
+        this.router.navigate(['/epal-class-select']);
+    }
+
 
     getCourseActive() {
         const { sectors } = this._ngRedux.getState();

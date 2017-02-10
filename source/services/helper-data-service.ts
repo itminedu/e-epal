@@ -6,6 +6,7 @@ import { ICourseField } from '../store/coursefields/coursefields.types';
 import { ISectorField } from '../store/sectorfields/sectorfields.types';
 import { IRegion, IRegions, IRegionSchool } from '../store/regionschools/regionschools.types';
 import { ISector, ISectors, ISectorCourse } from '../store/sectorcourses/sectorcourses.types';
+//import { IClassField } from '../store/classfields/classfields.types';
 import { AppSettings } from '../app.settings';
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };

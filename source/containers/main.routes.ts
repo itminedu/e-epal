@@ -14,6 +14,7 @@ import SectorFieldsSelect from '../components/student-application-form/sector.fi
 import RegionSchoolsSelect from '../components/student-application-form/region.schools.select';
 import SectorCoursesSelect from '../components/student-application-form/sector.courses.select';
 import ApplicationPreview from '../components/student-application-form/application.preview';
+import AmkaFill from '../components/student-application-form/amka-fill';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -25,7 +26,8 @@ export const MainRoutes: Routes = [
   { path: 'sector-fields-select', component: SectorFieldsSelect },
   { path: 'region-schools-select', component: RegionSchoolsSelect },
   { path: 'sectorcourses-fields-select', component: SectorCoursesSelect },
-  { path: 'application-preview', component: ApplicationPreview }
+  { path: 'application-preview', component: ApplicationPreview },
+  { path: 'amka-fill', component: AmkaFill }
 ];
 
 export const MainDeclarations = [
@@ -39,5 +41,6 @@ export const MainDeclarations = [
   RegionSchoolsSelect,
   SectorCoursesSelect,
   StudentApplicationMain,
-  ApplicationPreview
+  ApplicationPreview,
+  AmkaFill
 ];

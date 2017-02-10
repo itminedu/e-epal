@@ -12,11 +12,13 @@
       <li class="nav-item" [ngClass]="{active: path=='application-preview'}">
         <a class="nav-link" [routerLink]="['/application-preview']" [routerLinkActive]="['active']">Προεπισκόπηση</a>
       </li>
-
-      <li class="nav-item" [ngClass]="{active: path=='pal-class-select'}">
+      <li class="nav-item" [ngClass]="{active: path=='epal-class-select'}">
         <a class="nav-link" [routerLink]="['/epal-class-select']" [routerLinkActive]="['active']">Τάξη</a>
       </li>
-
+  
+      <li class="nav-item" [ngClass]="{active: path=='amka-fill'}">
+        <a class="nav-link" [routerLink]="['/amka-fill']" [routerLinkActive]="['active']">ΑΜΚΑ ΜΑΘΗΤΗ</a>
+      </li>
 
       <li class="nav-item" [ngClass]="{active: path=='sector-fields-select'}">
         <a class="nav-link" [routerLink]="['/sector-fields-select']" [routerLinkActive]="['active']">Τομεας</a>

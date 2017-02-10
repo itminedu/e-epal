@@ -42,12 +42,6 @@ export default class Home {
 
 
 	checkvalidation() {
-		if (this.fb.group.arguments == 'admin')                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             	
-		{
-
-
-		  }
-
-
 
         }
+    }

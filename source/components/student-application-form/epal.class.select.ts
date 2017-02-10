@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
@@ -13,7 +13,6 @@ import {
     FormArray
 } from '@angular/forms';
 import {AppSettings} from '../../app.settings';
-
 
 @Component({
     selector: 'epal-class-select',

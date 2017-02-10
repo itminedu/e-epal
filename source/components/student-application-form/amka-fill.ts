@@ -14,14 +14,14 @@ import {
     FormArray
 } from '@angular/forms';
 import {AppSettings} from '../../app.settings';
-
+ 
 
 @Component({
     selector: 'amka-fill',
     template: `
     
     <form [formGroup]="formGroup">
-           <div *ngFor="let amkafill$ of amkafills$ | async;"> </div>
+      
             <div class="form-group">
               <label for="studentAmka">ΑΜΚΑ μαθητή</label><input class="form-control" type="text" formControlName="name">
             </div>  
@@ -30,6 +30,9 @@ import {AppSettings} from '../../app.settings';
                 <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
                 Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
                 </button>
+            </div>
+            <div *ngIf="emptyselection==true">
+                 Παρακαλώ συμπληρώστε το ΑΜΚΑ του μαθητή
             </div>
         </div>
      </form>
@@ -41,6 +44,7 @@ import {AppSettings} from '../../app.settings';
 
     public formGroup: FormGroup;
     private respond: any;
+    emptyselection = false ;
 
        constructor(private fb: FormBuilder,
                 private _cas: AmkaCheckService,   
@@ -54,8 +58,7 @@ import {AppSettings} from '../../app.settings';
 
     ngOnInit() {
 
-       // this._cfa.getEpalClasses()
-        console.log(this.formGroup.value);
+    
 
           this.amkafills$ = this._ngRedux.select(state => {
             if (state.amkafills.size > 0) {
@@ -71,8 +74,14 @@ import {AppSettings} from '../../app.settings';
 
 
     saveSelected() {
+     if (this.formGroup.value.name == undefined) { 
+              this.emptyselection = true;
+       } 
+      else
+      { 
         this._cfa.saveAmkaFills(this.formGroup.value);  
         this.router.navigate(['/epal-class-select']);
+      }
     }
 
 }

@@ -6,6 +6,7 @@ import {
 }
  from '@angular/router';
 import './globalstyles.css';
+//import '../../myschool/main.scss';
 import { DevToolsExtension, NgRedux, select } from 'ng2-redux';
 import {
   IAppState,

@@ -10,9 +10,10 @@ export class SectorCoursesActions {
     private _ngRedux: NgRedux<IAppState>,
     private _hds: HelperDataService) {}
 
-  getSectorCourses = () => {
+  getSectorCourses = (reload) => {
     const { sectors } = this._ngRedux.getState();
-    if (sectors.size === 0) {
+    //if (sectors.size === 0) {
+    if (reload === true || (reload === false && sectors.size === 0)) {
         return this._hds.getSectorsWithCourses().then(sectors => {
             return this._ngRedux.dispatch({
                 type: SECTORCOURSES_RECEIVED,
@@ -24,11 +25,28 @@ export class SectorCoursesActions {
     }
   };
 
-  saveSectorCoursesSelected = (sectorCoursesSelected) => {
+ /*
+  getSectorCourses_Reload = () => {
+    const { sectors } = this._ngRedux.getState();
+    //if (sectors.size === 0) {
+        return this._hds.getSectorsWithCourses().then(sectors => {
+            return this._ngRedux.dispatch({
+                type: SECTORCOURSES_RECEIVED,
+                payload: {
+                    sectors
+                }
+            });
+        });
+    //}
+  };
+  */
+
+  saveSectorCoursesSelected = (sectorCoursesSelected,sectorSelected) => {
       return this._ngRedux.dispatch({
         type: SECTORCOURSES_SELECTED_SAVE,
         payload: {
-          sectorCoursesSelected
+          sectorCoursesSelected,
+          sectorSelected
         }
       });
   };

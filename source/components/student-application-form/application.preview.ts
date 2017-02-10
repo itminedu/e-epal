@@ -22,7 +22,6 @@ import {AppSettings} from '../../app.settings';
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
 
 
-
        <div class="row">
         <div class="btn-group inline pull-center">
             <button type="button" class="btn-primary btn-md pull-center" (click)="defineClass()">
@@ -61,8 +60,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         </div>
-
-        <!--
+        
         <div class="row">
         <div class="btn-group inline pull-right">
             <button class="btn-primary btn-md pull-right my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedCourses === 0" >
@@ -91,20 +89,20 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let region$ of regions$ | async;">
                 <div *ngFor="let epal$ of region$.epals; " >
-                <li class="list-group-item" *ngIf="epal$.selected === true">
-                    {{epal$.epal_name}}
-                </li>
-            </div>
+                  <li class="list-group-item" *ngIf="epal$.selected === true">
+                      {{epal$.epal_name}}
+                  </li>
+                </div>
             </div>
         </ul>
-
+       
         <div class="row">
-        <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
-            Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
-            </button>
-        </div>
-        </div>
+          <div class="btn-group inline pull-center">
+              <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
+              Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
+              </button>
+          </div>
+         </div>
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
                 <li class="list-group-item">

@@ -27,7 +27,7 @@ import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 /* Here we import services */
 import {HelperDataService} from './services/helper-data-service';
 
-import {UserDataService} from './services/user-data-service';
+//import {UserDataService} from './services/user-data-service';
 import {AmkaCheckService} from './services/amkacheck-service';
 
 
@@ -80,8 +80,7 @@ class MyLocalization extends NgLocalization {
     ACTION_PROVIDERS,
     //Service1, again services here
     HelperDataService,
-
-    UserDataService,
+    
     AmkaCheckService,
 
   ]

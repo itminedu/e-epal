@@ -37,7 +37,11 @@ import {AppSettings} from '../../app.settings';
                 </button>
             </div>
         </div>
-  
+
+        <div *ngIf="emptyselection==true">
+             Παρακαλώ επιλέξτε μια τάξη
+        </div>
+
     </form>
    `
 })
@@ -47,7 +51,7 @@ import {AppSettings} from '../../app.settings';
 
     public formGroup: FormGroup;
 
-
+       emptyselection = false;
        constructor(private fb: FormBuilder,
                 private _cfa: EpalClassesActions,
                 private _ngRedux: NgRedux<IAppState>,
@@ -58,8 +62,6 @@ import {AppSettings} from '../../app.settings';
         };
 
     ngOnInit() {
-
-       // this._cfa.getEpalClasses()
 
           this.epalclasses$ = this._ngRedux.select(state => {
             if (state.epalclasses.size > 0) {
@@ -74,9 +76,16 @@ import {AppSettings} from '../../app.settings';
     }
 
     saveSelected() {
-        this._cfa.saveEpalClassesSelected(this.formGroup.value);
-        this.router.navigate(['/region-schools-select']);
+
+        if (this.formGroup.value.name == undefined) { 
+                   this.emptyselection = true;
         } 
+        else
+        {
+            this._cfa.saveEpalClassesSelected(this.formGroup.value);
+            this.router.navigate(['/region-schools-select']);
+        }
         
     }
+}
 

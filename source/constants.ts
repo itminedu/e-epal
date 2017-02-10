@@ -15,4 +15,6 @@ export const STUDENTDATAFIELDS_SAVE = 'STUDENTDATAFIELDS_SAVE';
 
 export const EPALCLASSES_SAVE = 'EPALCLASSES_SAVE';
 
+export const AMKAFILL_SAVE = 'AMKAFILL_SAVE';
+
 export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';

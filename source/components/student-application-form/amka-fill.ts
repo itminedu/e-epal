@@ -7,7 +7,6 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAmkaFills } from '../../store/amkafill/amkafills.types';
 import { IAppState } from '../../store/store';
 import { AmkaCheckService} from '../../services/amkacheck-service';
-
 import {
     FormBuilder,
     FormGroup,
@@ -33,8 +32,7 @@ import {AppSettings} from '../../app.settings';
                 </button>
             </div>
         </div>
-  
-    </form>
+     </form>
    `
 })
 
@@ -73,9 +71,6 @@ import {AppSettings} from '../../app.settings';
 
 
     saveSelected() {
-        this._cas.checkstudentamka(this.formGroup.value)
-        .subscribe(res =>this.respond = res);
-        console.log(this.respond);
         this._cfa.saveAmkaFills(this.formGroup.value);  
         this.router.navigate(['/epal-class-select']);
     }

@@ -149,7 +149,7 @@ import {AppSettings} from '../../app.settings';
 
 getAllSchools() {
   //store in Redux the whole schools
-  this._rsr.getRegionSchools("-1", true);
+  this._rsr.getRegionSchools(3,"-1", true);
   this.regions$ = this._ngRedux.select(state => {
       let numsel = 0;
       state.regions.reduce((prevRegion, region) =>{

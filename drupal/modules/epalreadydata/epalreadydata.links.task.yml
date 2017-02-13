@@ -152,3 +152,25 @@ entity.eepal_sectors.delete_form:
   title: Delete
   weight: 10
 
+# Eepal sectors in epal routing definition
+eepal_sectors_in_epal.settings_tab:
+  route_name: eepal_sectors_in_epal.settings
+  title: 'Settings'
+  base_route: eepal_sectors_in_epal.settings
+
+entity.eepal_sectors_in_epal.canonical:
+  route_name: entity.eepal_sectors_in_epal.canonical
+  base_route: entity.eepal_sectors_in_epal.canonical
+  title: 'View'
+
+entity.eepal_sectors_in_epal.edit_form:
+  route_name: entity.eepal_sectors_in_epal.edit_form
+  base_route: entity.eepal_sectors_in_epal.canonical
+  title: 'Edit'
+
+entity.eepal_sectors_in_epal.delete_form:
+  route_name:  entity.eepal_sectors_in_epal.delete_form
+  base_route:  entity.eepal_sectors_in_epal.canonical
+  title: Delete
+  weight: 10
+

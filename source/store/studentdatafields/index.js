@@ -1,6 +1,0 @@
-"use strict";
-const studentdatafields_reducer_1 = require("./studentdatafields.reducer");
-exports.studentDataFieldsReducer = studentdatafields_reducer_1.studentDataFieldsReducer;
-const studentdatafields_transformers_1 = require("./studentdatafields.transformers");
-exports.deimmutifyStudentDataFields = studentdatafields_transformers_1.deimmutifyStudentDataFields;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJpbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQ0EsMkVBQXVFO0FBTXJFLHdGQUF3QjtBQUwxQixxRkFBK0U7QUFNN0UsbUdBQTJCIn0=

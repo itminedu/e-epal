@@ -2,7 +2,7 @@
  <div class="col-md-8">
   <form novalidate  (ngSubmit)="onSubmit(studentDataGroup)" [formGroup]="studentDataGroup">
     <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
-
+    <!--
     <div class="form-group">
         <label for="studentAmka">ΑΜΚΑ μαθητή</label><input class="form-control" type="text" formControlName="studentAmka">
     </div>
@@ -12,6 +12,7 @@
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentAmka').dirty && studentDataGroup.get('studentAmka').hasError('pattern')">
         Επιτρέπονται μόνο ψηφία σε αυτό το πεδίο!
     </div>
+  -->
 
     <div class="form-group">
         <label for="studentFirstname">Όνομα μαθητή</label><input class="form-control" type="text" formControlName="studentFirstname">

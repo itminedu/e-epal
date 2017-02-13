@@ -152,3 +152,25 @@ view published eepal sectors entities:
 
 view unpublished eepal sectors entities:
   title: 'View unpublished Eepal sectors entities'
+add eepal sectors in epal entities:
+  title: 'Create new Eepal sectors in epal entities'
+
+administer eepal sectors in epal entities:
+  title: 'Administer Eepal sectors in epal entities'
+  description: 'Allow to access the administration form to configure Eepal sectors in epal entities.'
+  restrict access: true
+
+delete eepal sectors in epal entities:
+  title: 'Delete Eepal sectors in epal entities'
+
+edit eepal sectors in epal entities:
+  title: 'Edit Eepal sectors in epal entities'
+
+access eepal sectors in epal overview:
+  title: 'Access the Eepal sectors in epal overview page'
+
+view published eepal sectors in epal entities:
+  title: 'View published Eepal sectors in epal entities'
+
+view unpublished eepal sectors in epal entities:
+  title: 'View unpublished Eepal sectors in epal entities'

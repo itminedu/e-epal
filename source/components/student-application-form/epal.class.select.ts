@@ -17,18 +17,18 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'epal-class-select',
     template: `
-    
+
     <form [formGroup]="formGroup">
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
             <div class="form-group">
               <label for="name">Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση</label><br/>
                     <select class="form-control" formControlName="name">
-                        <option value="Ά Λυκείου">Ά Λυκείου</option>
-                        <option value="Β Λυκείου">Β Λυκείου</option>
-                        <option value="Γ Λυκείου">Γ Λυκείου</option>
+                        <option value="Α' Λυκείου">Α' Λυκείου</option>
+                        <option value="Β' Λυκείου">Β' Λυκείου</option>
+                        <option value="Γ' Λυκείου">Γ' Λυκείου</option>
                     </select>
 
-            </div>  
+            </div>
         <div class="row">
             <div class="col-md-2 col-md-offset-5">
                 <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
@@ -76,15 +76,20 @@ import {AppSettings} from '../../app.settings';
 
     saveSelected() {
 
-        if (this.formGroup.value.name == undefined) { 
+        if (this.formGroup.value.name == undefined) {
                    this.emptyselection = true;
-        } 
+        }
         else
         {
             this._cfa.saveEpalClassesSelected(this.formGroup.value);
-            this.router.navigate(['/region-schools-select']);
+            if (this.formGroup.value.name === "Α' Λυκείου")
+              this.router.navigate(['/region-schools-select']);
+            else if (this.formGroup.value.name === "Β' Λυκείου")
+                this.router.navigate(['/sector-fields-select']);
+            else if (this.formGroup.value.name === "Γ' Λυκείου")
+                this.router.navigate(['/sectorcourses-fields-select']);
+
         }
-        
+
     }
 }
-

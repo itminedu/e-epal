@@ -1,6 +1,0 @@
-"use strict";
-const sectorfields_reducer_1 = require("./sectorfields.reducer");
-exports.sectorFieldsReducer = sectorfields_reducer_1.sectorFieldsReducer;
-const sectorfields_transformers_1 = require("./sectorfields.transformers");
-exports.deimmutifySectorFields = sectorfields_transformers_1.deimmutifySectorFields;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJpbmRleC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQ0EsaUVBQTZEO0FBTTNELHlFQUFtQjtBQUxyQiwyRUFBcUU7QUFNbkUsb0ZBQXNCIn0=

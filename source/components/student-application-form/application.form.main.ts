@@ -7,7 +7,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { ICourseFields } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
-import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_AMKA_PATTERN } from '../../constants';
+import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN } from '../../constants';
 
 import {
     FormBuilder,
@@ -45,7 +45,7 @@ import {
             certificateType: ['Απολυτήριο Λυκείου', Validators.required],
             relationToStudent: ['Μαθητής', Validators.required],
             */
-            studentAmka: ['12346', [Validators.pattern(VALID_AMKA_PATTERN),Validators.required]],
+            //studentAmka: ['12346', [Validators.pattern(VALID_AMKA_PATTERN),Validators.required]],
             studentFirstname: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             guardianFirstname: ['ΑΝΑΣΤΑΣΙΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],

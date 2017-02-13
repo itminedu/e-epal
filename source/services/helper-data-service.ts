@@ -45,13 +45,20 @@ export class HelperDataService {
         });
     };
 
-    getRegionsWithSchools(courseActive) {
+    getRegionsWithSchools(classActive,courseActive) {
         return new Promise((resolve, reject) => {
             let getConnectionString = null;
-            if (courseActive === -1)
+
+            //if (courseActive === -1)
+            if (classActive === 1)
               getConnectionString = `${AppSettings.API_ENDPOINT}/regions/list`;
-            else
+              else if (classActive === 2)
+                  getConnectionString = `${AppSettings.API_ENDPOINT}/sectorsperschool/list?sector_id=${courseActive}`;
+            else if (classActive === 3)
               getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
+
+            //getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?${courseActive}`;
+            console.log(getConnectionString);
 
             //this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
             //this.http.get(`${AppSettings.API_ENDPOINT}/`.concat(`coursesperschool/list?course_id=${courseActive}`))

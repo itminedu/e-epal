@@ -7,6 +7,9 @@ import { NgRedux, select } from 'ng2-redux';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IAppState } from '../../store/store';
 
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { IRegions } from '../../store/regionschools/regionschools.types';
+
 //import ApplicationPreview from './application.preview';
 
 import {
@@ -55,7 +58,7 @@ import {AppSettings} from '../../app.settings';
         <!--[disabled]="sectorActive === -1-->
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="true"	>
+            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -72,6 +75,7 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class SectorFieldsSelect implements OnInit {
     private sectorFields$: Observable<ISectorFields>;
+    private regions$: Observable<IRegions>;
 
     public formGroup: FormGroup;
     public cfs = new FormArray([]);
@@ -80,6 +84,7 @@ import {AppSettings} from '../../app.settings';
 
     constructor(private fb: FormBuilder,
                 private _cfa: SectorFieldsActions,
+                private _rsr: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
         this.formGroup = this.fb.group({
@@ -88,14 +93,19 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this._cfa.getSectorFields();
+        //re-initialize schools-redux-state
+        this.getAllSchools();
 
+        this._cfa.getSectorFields(true);
         this.sectorFields$ = this._ngRedux.select(state => {
             state.sectorFields.reduce(({}, sectorField) =>{
                 this.cfs.push(new FormControl(sectorField.selected, []));
+                //in case we want to retrieve last check when we return to the form
+                /*
                 if (sectorField.selected === true) {
                   this.sectorActive = sectorField.id - 1;
                 }
+                */
                 return sectorField;
             }, {});
             return state.sectorFields;
@@ -128,6 +138,7 @@ import {AppSettings} from '../../app.settings';
         return ((this.sectorActive === ind) ? "cyan" : "#eeeeee");
     }
 
+    /*
     retrieveCheck()  {
       for (let i = 0; i < this.formGroup.value.formArray.length; i++)
         if (this.formGroup.value.formArray[i] === true) {
@@ -135,6 +146,24 @@ import {AppSettings} from '../../app.settings';
           return i;
         }
         return -1;
+    }
+    */
+
+    getAllSchools() {
+      //store in Redux the whole schools
+      this._rsr.getRegionSchools(3,"-1", true);
+      this.regions$ = this._ngRedux.select(state => {
+          let numsel = 0;
+          state.regions.reduce((prevRegion, region) =>{
+              region.epals.reduce((prevEpal, epal) =>{
+                  this.cfs.push( new FormControl(epal.selected, []));
+                  return epal;
+              }, {});
+              return region;
+          }, {});
+          return state.regions;
+      });
+
     }
 
 }

@@ -74,9 +74,11 @@ import {AppSettings} from '../../app.settings';
     private sectors$: Observable<ISectors>;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
+    private classActive = "-1";
     private regionActive = <number>-1;
+    private courseActive = -1;
     private numSelected = <number>0;
-    private courseActive = "-1";
+
 
     constructor(private fb: FormBuilder,
                 private _rsa: RegionSchoolsActions,
@@ -90,9 +92,23 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
+        this.classActive = this.classActive = this.getClassActive();
 
-        this.courseActive = this.getCourseActive();
-        this._rsa.getRegionSchools(this.courseActive, false);
+        let class_id = -1;
+        if (this.classActive === "Α' Λυκείου")  {
+          //είναι Α' Λυκείου, οπότε courseActive = "-1" (είναι ήδη ορισμένο με αυτή την τιμή από την αρχικοποίηση)
+          class_id = 1;
+        }
+        else if (this.classActive === "Β' Λυκείου") {
+          class_id = 2;
+          this.courseActive = this.getSectorActive();
+        }
+        else if (this.classActive === "Γ' Λυκείου")  {
+          class_id = 3;
+          this.courseActive = this.getCourseActive();
+        }
+
+        this._rsa.getRegionSchools(class_id,this.courseActive, false);
 
         this.regions$ = this._ngRedux.select(state => {
             let numsel = 0;
@@ -101,7 +117,6 @@ import {AppSettings} from '../../app.settings';
                     this.rss.push( new FormControl(epal.selected, []));
                     if (epal.selected === true) {
                       numsel++;
-                      console.log(epal.epal_name);
                     }
                     return epal;
                 }, {});
@@ -151,6 +166,28 @@ import {AppSettings} from '../../app.settings';
             for ( m=0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
               if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
                  return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
+        return "-1";
+    }
+
+    getClassActive()  {
+      const { epalclasses } = this._ngRedux.getState();
+      let l,m;
+      if (epalclasses.size !== 0 && epalclasses["_tail"]["array"][0]["name"].length !==0 )
+         return epalclasses["_tail"]["array"][0]["name"];
+      return "-1";
+    }
+
+    getSectorActive() {
+      const { sectorFields } = this._ngRedux.getState();
+      let l,m;
+      for ( l=0; l<sectorFields.size; l++)  {
+        if (sectorFields["_tail"]["array"][l]["selected"] === true) {
+            return sectorFields["_tail"]["array"][l]["id"];
+          }
+      }
+      return "-1";
+
+
     }
 
 }

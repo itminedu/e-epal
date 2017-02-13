@@ -9,18 +9,19 @@ import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
+import { AmkaFillsActions } from '../../actions/amkafill.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IRegions } from '../../store/regionschools/regionschools.types';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
+import { IAmkaFills } from '../../store/amkafill/amkafills.types';
 import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'application-preview-select',
     template: `
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
-
 
        <div class="row">
         <div class="btn-group inline pull-center">
@@ -51,6 +52,16 @@ import {AppSettings} from '../../app.settings';
                     {{sectorField$.name}}
                 </li>
             </div>
+
+            <!--NEW!-->
+            <div *ngFor="let sector$ of sectors$  | async;">
+                <li class="list-group-item" *ngIf="sector$.sector_selected === true" >
+                    {{sector$.sector_name}}
+                </li>
+            </div>
+            <!--NEW!-->
+
+
         </ul>
 
         <div class="row">
@@ -60,7 +71,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         </div>
-        
+        <!--
         <div class="row">
         <div class="btn-group inline pull-right">
             <button class="btn-primary btn-md pull-right my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedCourses === 0" >
@@ -68,6 +79,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         </div>
+        -->
 
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let sector$ of sectors$ | async;">
@@ -95,7 +107,7 @@ import {AppSettings} from '../../app.settings';
                 </div>
             </div>
         </ul>
-       
+
         <div class="row">
           <div class="btn-group inline pull-center">
               <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
@@ -111,11 +123,28 @@ import {AppSettings} from '../../app.settings';
                 <li class="list-group-item">
                     Επώνυμο μαθητή: {{studentDataField$.studentSurname}}
                 </li>
+                <!--
                 <li class="list-group-item">
                     AMKA μαθητή: {{studentDataField$.studentAmka}}
                 </li>
+                -->
+            </div>
+            <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
+              <li class="list-group-item">
+                  AMKA μαθητή: {{selectedAmkaFill$.name}}
+              </li>
+          </div>
+        </ul>
+
+<!--
+        <ul class="list-group" style="margin-bottom: 20px;">
+              <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
+                <li class="list-group-item">
+                    AMKA μαθητή: {{selectedAmkaFill$.name}}
+                </li>
             </div>
         </ul>
+  -->
   `
 })
 
@@ -124,6 +153,7 @@ import {AppSettings} from '../../app.settings';
     private regions$: Observable<IRegions>;
     private sectorFields$: Observable<ISectorFields>;
     private studentDataFields$: Observable<IStudentDataFields>;
+    private selectedAmkaFills$: Observable<IAmkaFills>;
     private epalclasses$: Observable<IEpalClasses>;
 
 
@@ -131,12 +161,20 @@ import {AppSettings} from '../../app.settings';
     private numSelectedSchools = <number>0;
     //private numSelectedCourses = <number>0;
 
+    /*
     constructor(private _rsa: SectorCoursesActions,
                 private _rsb: RegionSchoolsActions,
                 private _rsc: SectorFieldsActions,
                 private _rsd: StudentDataFieldsActions,
+                private _rse: AmkaFillsActions,
                 private _rcd: EpalClassesActions,
                 private _ngRedux: NgRedux<IAppState>,
+                private router: Router
+            ) {
+    };
+    */
+
+    constructor(private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
     };
@@ -146,6 +184,7 @@ import {AppSettings} from '../../app.settings';
         this.sectors$ = this._ngRedux.select(state => {
             //let numsel = 0;
             state.sectors.reduce((prevSector, sector) =>{
+                //if (sector.sector_selected)
                 sector.courses.reduce((prevCourse, course) =>{
                   //if (course.selected === true)  {
                   //  numsel++;
@@ -186,8 +225,14 @@ import {AppSettings} from '../../app.settings';
             return state.studentDataFields;
         });
 
+        this.selectedAmkaFills$ = this._ngRedux.select(state => {
+            state.amkafills.reduce(({}, selectedAmkaFill) =>{
+                return selectedAmkaFill;
+            }, {});
+            return state.amkafills;
+        });
 
-        this.epalclasses$ = this._ngRedux.select(state => {
+       this.epalclasses$ = this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) =>{
                 return epalclass;
             }, {});

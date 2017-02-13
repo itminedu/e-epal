@@ -1,0 +1,7 @@
+services:
+  authentication.oauthost:
+    class: Drupal\oauthost\Authentication\Provider\OSTAuthenticationProvider
+    arguments: ['@config.factory', '@entity_type.manager']
+    tags:
+      - { name: authentication_provider, provider_id: ostauthentication_provider, priority: 100 }
+

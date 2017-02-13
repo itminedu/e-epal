@@ -1,4 +1,4 @@
-import {Http, Headers} from '@angular/http';
+import {Http, Headers, RequestOptions} from '@angular/http';
 import {Injectable} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/map';
@@ -15,8 +15,19 @@ export class HelperDataService {
     constructor(private http: Http) {
     };
     getCourseFields() {
+        let headers = new Headers({
+            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
+            "Content-Type": "application/json",
+            // "Content-Type": "text/plain",  // try to skip preflight
+            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+            "X-Auth-Token": "bourboutsala"
+        });
+        let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list`)
+            this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list`, options)
             .map(response => <ICourseField[]>response.json())
             .subscribe(data => {
                 resolve(data);
@@ -45,8 +56,19 @@ export class HelperDataService {
     };
 
     getRegionsWithSchools() {
+        let headers = new Headers({
+            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
+            "Content-Type": "application/json",
+            // "Content-Type": "text/plain",  // try to skip preflight
+            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+            "X-Auth-Token": "bourboutsal"
+        });
+        let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
+            this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`, options)
             .map(response => response.json())
             .subscribe(data => {
 //                console.log(data);

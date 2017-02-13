@@ -1,0 +1,45 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - basic_auth
+    - epalreadydata
+    - hal
+    - serialization
+    - user
+id: entity.eepal_region
+plugin_id: 'entity:eepal_region'
+granularity: method
+configuration:
+  GET:
+    supported_formats:
+      - hal_json
+      - json
+      - xml
+    supported_auth:
+      - basic_auth
+      - cookie
+  POST:
+    supported_formats:
+      - hal_json
+      - json
+      - xml
+    supported_auth:
+      - basic_auth
+      - cookie
+  DELETE:
+    supported_formats:
+      - hal_json
+      - json
+      - xml
+    supported_auth:
+      - basic_auth
+      - cookie
+  PATCH:
+    supported_formats:
+      - hal_json
+      - json
+      - xml
+    supported_auth:
+      - basic_auth
+      - cookie

@@ -6,6 +6,7 @@ import { ICourseField } from '../store/coursefields/coursefields.types';
 import { ISectorField } from '../store/sectorfields/sectorfields.types';
 import { IRegion, IRegions, IRegionSchool } from '../store/regionschools/regionschools.types';
 import { ISector, ISectors, ISectorCourse } from '../store/sectorcourses/sectorcourses.types';
+//import { IClassField } from '../store/classfields/classfields.types';
 import { AppSettings } from '../app.settings';
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
@@ -55,7 +56,7 @@ export class HelperDataService {
         });
     };
 
-    getRegionsWithSchools() {
+    getRegionsWithSchools(classActive,courseActive) {
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -68,17 +69,31 @@ export class HelperDataService {
         });
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`, options)
-            .map(response => response.json())
-            .subscribe(data => {
-//                console.log(data);
-                resolve(this.transformRegionSchoolsSchema(data));
-            }, // put the data returned from the server in our variable
-            error => {
-                console.log("Error HTTP GET Service"); // in case of failure show this message
-                reject("Error HTTP GET Service");
-            },
-            () => console.log("region schools service"));//run this code in all cases); */
+            let getConnectionString = null;
+
+            //if (courseActive === -1)
+            if (classActive === 1)
+              getConnectionString = `${AppSettings.API_ENDPOINT}/regions/list`;
+              else if (classActive === 2)
+                  getConnectionString = `${AppSettings.API_ENDPOINT}/sectorsperschool/list?sector_id=${courseActive}`;
+            else if (classActive === 3)
+              getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
+
+            //getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?${courseActive}`;
+            console.log(getConnectionString);
+
+            //this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
+            //this.http.get(`${AppSettings.API_ENDPOINT}/`.concat(`coursesperschool/list?course_id=${courseActive}`))
+            this.http.get(getConnectionString, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(this.transformRegionSchoolsSchema(data));
+                }, // put the data returned from the server in our variable
+                error => {
+                    console.log("Error HTTP GET Service"); // in case of failure show this message
+                    reject("Error HTTP GET Service");
+                },
+                () => console.log("region schools service"));//run this code in all cases); */
         });
     };
 
@@ -131,7 +146,7 @@ export class HelperDataService {
         sectorCourses.forEach(sectorCourse => {
             if (trackSectorId !== sectorCourse.sector_id) {
                 trackIndex++;
-                rsa.push(<ISector>{'sector_id': sectorCourse.sector_id, 'sector_name': sectorCourse.sector_name, 'sector_selected': sectorCourse.sector_selected, 'courses': Array<ISectorCourse>()});
+                rsa.push(<ISector>{'sector_id': sectorCourse.sector_id, 'sector_name': sectorCourse.sector_name, 'sector_selected': false, 'courses': Array<ISectorCourse>()});
                 trackSectorId = sectorCourse.sector_id;
             }
             rsa[trackIndex].courses.push(<ISectorCourse>{'course_id': sectorCourse.course_id, 'course_name': sectorCourse.course_name, 'globalIndex': j, 'selected': false});

@@ -3,12 +3,11 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { Router } from '@angular/router';
-
 import { NgRedux, select } from 'ng2-redux';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { ICourseFields } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
-import { VALID_NAMES_PATTERN } from '../../constants';
+import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN } from '../../constants';
 
 import {
     FormBuilder,
@@ -34,6 +33,7 @@ import {
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
         this.studentDataGroup = this.fb.group({
+            /*
             studentAmka: ['12346', Validators.required],
             studentFirstname: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -41,6 +41,17 @@ import {
             guardianSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionAddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionTK: ['26334', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            regionArea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            certificateType: ['Απολυτήριο Λυκείου', Validators.required],
+            relationToStudent: ['Μαθητής', Validators.required],
+            */
+            //studentAmka: ['12346', [Validators.pattern(VALID_AMKA_PATTERN),Validators.required]],
+            studentFirstname: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            studentSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            guardianFirstname: ['ΑΝΑΣΤΑΣΙΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            guardianSurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            regionAddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
+            regionTK: ['26334', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionArea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             certificateType: ['Απολυτήριο Λυκείου', Validators.required],
             relationToStudent: ['Μαθητής', Validators.required],
@@ -56,13 +67,6 @@ import {
                 }, {});
             }
             return state.studentDataFields;
-        });
-
-        this.courseFields$ = this._ngRedux.select(state => {
-            state.courseFields.reduce(({}, courseField) =>{
-                return courseField;
-            }, {});
-            return state.courseFields;
         });
     }
 

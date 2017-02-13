@@ -10,9 +10,10 @@ export class SectorFieldsActions {
     private _ngRedux: NgRedux<IAppState>,
     private _hds: HelperDataService) {}
 
-  getSectorFields = () => {
+  getSectorFields = (reload) => {
     const { sectorFields } = this._ngRedux.getState();
-    if (sectorFields.size === 0) {
+    //if (sectorFields.size === 0) {
+      if (reload === true || (reload === false && sectorFields.size === 0)) {
         return this._hds.getSectorFields().then(sectorFields => {
             return this._ngRedux.dispatch({
                 type: SECTORFIELDS_RECEIVED,

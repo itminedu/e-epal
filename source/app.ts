@@ -12,7 +12,6 @@ import {
 
 import {RouterModule} from '@angular/router';
 import { HttpModule } from '@angular/http';
-
 import {
   APP_BASE_HREF,
   HashLocationStrategy,
@@ -27,16 +26,26 @@ import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 
 /* Here we import services */
 import {HelperDataService} from './services/helper-data-service';
-import {UserDataService} from './services/user-data-service';
+
+//import {UserDataService} from './services/user-data-service';
+import {AmkaCheckService} from './services/amkacheck-service';
+
+
+//import {UserDataService} from './services/user-data-service';
+
 
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
+
+
 import HeaderComponent from './components/header/header.component';
 import NavbarComponent from './components/navbar/navbar.component';
 import MainComponent from './components/main/main.component';
 import FooterComponent from './components/footer/footer.component';
+
+
 
 class MyLocalization extends NgLocalization {
    getPluralCategory(value: any) {
@@ -55,7 +64,8 @@ class MyLocalization extends NgLocalization {
     APP_ROUTER_PROVIDERS,
     HttpModule,
     Ng2SmartTableModule,
-    NgReduxModule
+    NgReduxModule,
+
   ],
   declarations: [
     Main, FooterComponent, HeaderComponent, NavbarComponent, MainComponent,
@@ -68,9 +78,11 @@ class MyLocalization extends NgLocalization {
     { provide: NgLocalization, useClass: MyLocalization },
     DevToolsExtension,
     ACTION_PROVIDERS,
-//    Service1, again services here
+    //Service1, again services here
     HelperDataService,
-    UserDataService,
+
+    AmkaCheckService,
+
   ]
 })
 class AppModule {}

@@ -180,7 +180,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Eepal school entity.'))
       ->setSettings(array(
-        'max_length' => 80,
+        'max_length' => 140,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')

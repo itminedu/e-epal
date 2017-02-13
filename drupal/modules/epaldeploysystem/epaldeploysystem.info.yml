@@ -1,0 +1,8 @@
+name: epaldeploysystem
+type: module
+description: EPAL.epaldeploysystem . Εγκατάσταση αρχικού configuration για entities/objects. Ενεργοποίηση ΑΦΟΥ ενεργοποιηθούν πρώτα τα epalreadydata / epal modules. 
+core: 8.x
+package: EPAL
+dependencies:
+      - epalreadydata
+      - epal

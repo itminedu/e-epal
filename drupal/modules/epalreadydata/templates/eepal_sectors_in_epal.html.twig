@@ -1,0 +1,22 @@
+{#
+/**
+ * @file eepal_sectors_in_epal.html.twig
+ * Default theme implementation to present Eepal sectors in epal data.
+ *
+ * This template is used when viewing Eepal sectors in epal pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_eepal_sectors_in_epal()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('eepal_sectors_in_epal') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

@@ -33,3 +33,8 @@ entity.eepal_sectors.add_form:
   title: 'Add Eepal sectors'
   appears_on:
     - entity.eepal_sectors.collection
+entity.eepal_sectors_in_epal.add_form:
+  route_name: entity.eepal_sectors_in_epal.add_form
+  title: 'Add Eepal sectors in epal'
+  appears_on:
+    - entity.eepal_sectors_in_epal.collection

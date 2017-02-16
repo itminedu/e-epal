@@ -80,7 +80,7 @@ class MyLocalization extends NgLocalization {
     ACTION_PROVIDERS,
     //Service1, again services here
     HelperDataService,
-    
+
     AmkaCheckService,
 
   ]

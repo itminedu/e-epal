@@ -1,44 +1,53 @@
-import {Component} from '@angular/core';
+import {Router, ActivatedRoute, Params} from '@angular/router';
+import {OnInit, Component} from '@angular/core';
+import { LoginInfoActions } from '../actions/logininfo.actions';
 import {
     FormBuilder,
     FormGroup,
     FormControl,
     FormArray
 } from '@angular/forms';
+import { AppSettings } from '../app.settings';
 @Component({
   selector: 'home',
   template: `
   <div>
     <h4>Στοιχεία Σύνδεσης</h4>
-	   <form [formGroup]="formGroup">
-           <div class="form-group">
-              <label for="UserName">Όνομα Χρήστη</label><input class="form-control" type="text" formControlName="Username">
-            </div> 
-            <div class="form-group">
-              <label for="Paswd">Κωδικός Ασφαλείας</label><input class="form-control" type="password" formControlName="Paswd">
-            </div>  
+	   <form [formGroup]="formGroup" method = "POST" action="http://eepal.dev/drupal/oauth/login" #form>
+            <input type="hidden" name="X-oauth-enabled" value="true">
             <div class="row">
               <div class="col-md-2 col-md-offset-5">
-                <button type="button" class="btn-primary btn-lg pull-center" (click)="checkvalidation()">
-                Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+                <button type="submit" class="btn-primary btn-lg pull-center" (click)="form.submit()">
+                Είσοδος μέσω TaxisNet<span class="glyphicon glyphicon-menu-right"></span>
                 </button>
             </div>
-            <div *ngIf="emptyselection==true">
-                 Παρακαλώ συμπληρώστε το ΑΜΚΑ του μαθητή
-            </div>
         </div>
-     </form>	
+     </form>
   </div>
   `
 })
-export default class Home { 
+export default class Home implements OnInit{
 	public formGroup: FormGroup;
-       constructor(private fb: FormBuilder) {
+       constructor(private fb: FormBuilder,
+           private _ata: LoginInfoActions,
+           private activatedRoute: ActivatedRoute) {
        this.formGroup = this.fb.group({
             Username: [],
             Paswd : []
             });
         };
+
+    ngOnInit() {
+    // subscribe to router event
+        this.activatedRoute.queryParams.subscribe((params: Params) => {
+        let authToken = params['auth_token'];
+        let authRole = params['auth_role'];
+        this._ata.saveLoginInfo({auth_token: authToken, auth_role: authRole});
+        console.log(authToken);
+
+      });
+  }
+
 
 
 	checkvalidation() {

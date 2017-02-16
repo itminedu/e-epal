@@ -1,0 +1,6 @@
+oauthost.callback_log_in:
+  path: /oauth/cb
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\CBController::loginCB'
+  requirements:
+    _permission: 'access content'

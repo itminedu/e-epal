@@ -24,6 +24,7 @@ export class HelperDataService {
             //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
             //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
             "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+            "X-oauth-enabled": "true",
             "X-Auth-Token": "bourboutsala"
         });
         let options = new RequestOptions({ headers: headers });
@@ -65,7 +66,8 @@ export class HelperDataService {
             //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
             //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
             "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
-            "X-Auth-Token": "bourboutsal"
+            "X-oauth-enabled": "true",
+            "X-Auth-Token": "bourboutsala"
         });
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {

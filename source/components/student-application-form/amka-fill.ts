@@ -7,7 +7,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAmkaFills } from '../../store/amkafill/amkafills.types';
 import { IAppState } from '../../store/store';
 import { AmkaCheckService} from '../../services/amkacheck-service';
-import { VALID_AMKA_PATTERN } from '../../constants';
+import { VALID_DIGITS_PATTERN } from '../../constants';
 
 import {
     FormBuilder,
@@ -62,7 +62,7 @@ import {AppSettings} from '../../app.settings';
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
        this.formGroup = this.fb.group({
-            name: ['', [Validators.pattern(VALID_AMKA_PATTERN),Validators.required]],
+            name: ['', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
             });
         };
 

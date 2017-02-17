@@ -38,7 +38,7 @@ import {AppSettings} from '../../app.settings';
                         <div class="row">
                             <div class="col-md-2">
                                 <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
-                                (change)="saveSelected()"
+                                (change)="saveSelected(cb,j)"
                                 [hidden] = "numSelected === 3 && cb.checked === false"
                                 >
                             </div>
@@ -59,6 +59,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
     </form>
+
    </div>
 
 
@@ -78,6 +79,7 @@ import {AppSettings} from '../../app.settings';
     private regionActive = <number>-1;
     private courseActive = -1;
     private numSelected = <number>0;
+    //private schoolArray: Array<boolean> = new Array();
 
 
     constructor(private fb: FormBuilder,
@@ -138,24 +140,20 @@ import {AppSettings} from '../../app.settings';
         return ((this.regionActive === ind) ? "cyan" : "#eeeeee");
     }
 
-    saveSelected() {
+    saveSelected(cb,j) {
         this._rsa.saveRegionSchoolsSelected(this.formGroup.value.formArray);
-        //this.router.navigate(['/student-application-form-main']);
+        //σε κάθε νέο check, αρχικοποίησε τη σειρά προτιμήσεων (σειρά προτίμησης:0)
+        let schoolArrayOrders: Array<number> = new Array();
+        for (let i=0; i < this.formGroup.value.formArray.length; i++)
+          schoolArrayOrders.push(0);
+        this._rsa.saveRegionSchoolsOrder(schoolArrayOrders);
     }
 
     navigateToApplication() {
-      this.router.navigate(['/student-application-form-main']);
-    }
-
-    //not used
-    updateCheckedOptions(globalIndex, cb){
-      /*
-      if (cb.checked)
-        this.numselected--;
-      else
-        this.numselected++;
-      */
-      this.saveSelected();
+      //if (this.numSelected > 1)
+        this.router.navigate(['/schools-order-select']);
+      //else
+      //  this.router.navigate(['/student-application-form-main']);
     }
 
     getCourseActive() {
@@ -186,8 +184,6 @@ import {AppSettings} from '../../app.settings';
           }
       }
       return "-1";
-
-
     }
 
 }

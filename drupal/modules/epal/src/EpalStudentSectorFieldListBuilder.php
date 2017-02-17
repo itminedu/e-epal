@@ -8,11 +8,11 @@ use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
 
 /**
- * Defines a class to build a listing of Epal student course field entities.
+ * Defines a class to build a listing of Epal student sector field entities.
  *
  * @ingroup epal
  */
-class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
+class EpalStudentSectorFieldListBuilder extends EntityListBuilder {
 
   use LinkGeneratorTrait;
 
@@ -22,8 +22,8 @@ class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('ID');
     $header['name'] = $this->t('Όνομα');
-    $header['student_id'] = $this->t('ID Μαθητή');
-    $header['coursefield_id'] = $this->t('ID Ειδικότητας');        
+	$header['student_id'] = $this->t('ID Μαθητή');
+    $header['sectorfield_id'] = $this->t('ID Τομέα');
     return $header + parent::buildHeader();
   }
 
@@ -31,17 +31,18 @@ class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\epal\Entity\EpalStudentCourseField */
+    /* @var $entity \Drupal\epal\Entity\EpalStudentSectorField */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
       $entity->label(),
       new Url(
-        'entity.epal_student_course_field.edit_form', array(
-          'epal_student_course_field' => $entity->id(),
+        'entity.epal_student_sector_field.edit_form', array(
+          'epal_student_sector_field' => $entity->id(),
         )
       )
     );
-    $row['student_id'] = $this->l(
+	
+	 $row['student_id'] = $this->l(
       $entity->getStudent_id(),
       new Url(
         'entity.epal_student_course_field.edit_form', array(
@@ -49,15 +50,15 @@ class EpalStudentCourseFieldListBuilder extends EntityListBuilder {
         )
       )
     );
-    $row['coursefield_id'] = $this->l(
-      $entity->getCourseField_id(),
+    $row['sectorfield_id'] = $this->l(
+      $entity->getSectorField_id(),
       new Url(
-        'entity.epal_student_course_field.edit_form', array(
-          'epal_student_course_field' => $entity->id(),
+        'entity.epal_student_sector_field.edit_form', array(
+          'epal_student_sector_field' => $entity->id(),
         )
       )
     );
-
+	
     return $row + parent::buildRow($entity);
   }
 

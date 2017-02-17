@@ -21,19 +21,23 @@ import {AppSettings} from '../../app.settings';
       </div>
       <div class="form-group">
         <label>Επώνυμο</label>
-        <input type="text" [(ngModel)]="student.surname" name="surname"
+        <input type="text" [(ngModel)]="student.studentsurname" name="studentsurname"
           required class="form-control" />
       </div>
+      <!--
       <div class="form-group">
         <label>Διεύθυνση</label>
         <input type="text" [(ngModel)]="student.address" name="address"
           required class="form-control" />
       </div>
+
       <div class="form-group">
       <label>Ημερομηνία Γέννησης</label>
       <input type="date" [(ngModel)]="student.birthdate"
        class="form-control" name="birthdate" />
       </div>
+      -->
+
       <input type="submit"  [disabled]="!studentform.valid" value="Υποβολή" class="btn btn-success" />
     </form>
   </div>
@@ -44,7 +48,8 @@ export default class Form3 {
 
 
     constructor(private http: Http) {
-        this.student = new Student(0, '', '', '', '', 1);
+        this.student = new Student(1, '', '', '', '', '','','','');
+        //this.student = new Student(1, 1, '', '');
     }
 
     onSubmit(studentform: any) {

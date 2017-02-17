@@ -68,3 +68,17 @@ epal_users.admin.structure.settings:
   description: 'Configure Epal users entities'
   route_name: epal_users.settings
   parent: system.admin_structure
+
+# Epal student sector field menu items definition
+entity.epal_student_sector_field.collection:
+  title: 'Epal student sector field list'
+  route_name: entity.epal_student_sector_field.collection
+  description: 'List Epal student sector field entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_sector_field.admin.structure.settings:
+  title: Epal student sector field settings
+  description: 'Configure Epal student sector field entities'
+  route_name: epal_student_sector_field.settings
+  parent: system.admin_structure

@@ -23,3 +23,8 @@ entity.epal_users.add_form:
   title: 'Add Epal users'
   appears_on:
     - entity.epal_users.collection
+entity.epal_student_sector_field.add_form:
+  route_name: entity.epal_student_sector_field.add_form
+  title: 'Add Epal student sector field'
+  appears_on:
+    - entity.epal_student_sector_field.collection

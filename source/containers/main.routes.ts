@@ -15,7 +15,8 @@ import RegionSchoolsSelect from '../components/student-application-form/region.s
 import SectorCoursesSelect from '../components/student-application-form/sector.courses.select';
 import ApplicationPreview from '../components/student-application-form/application.preview';
 import AmkaFill from '../components/student-application-form/amka-fill';
-//import SchoolsOrderSelect from '../components/student-application-form/schools-order-select';
+import SchoolsOrderSelect from '../components/student-application-form/schools-order-select';
+import ApplicationSubmit from '../components/student-application-form/application.submit';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -28,8 +29,9 @@ export const MainRoutes: Routes = [
   { path: 'region-schools-select', component: RegionSchoolsSelect },
   { path: 'sectorcourses-fields-select', component: SectorCoursesSelect },
   { path: 'application-preview', component: ApplicationPreview },
-  { path: 'amka-fill', component: AmkaFill }
-  //{ path: 'schools-order-select', component: SchoolsOrderSelect }
+  { path: 'amka-fill', component: AmkaFill },
+  { path: 'schools-order-select', component: SchoolsOrderSelect },
+  { path: 'application-submit', component: ApplicationSubmit }
 ];
 
 export const MainDeclarations = [
@@ -44,6 +46,7 @@ export const MainDeclarations = [
   SectorCoursesSelect,
   StudentApplicationMain,
   ApplicationPreview,
-  AmkaFill
-  //SchoolsOrderSelect
+  AmkaFill,
+  SchoolsOrderSelect,
+  ApplicationSubmit
 ];

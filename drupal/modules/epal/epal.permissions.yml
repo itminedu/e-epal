@@ -108,3 +108,25 @@ view published epal users entities:
 
 view unpublished epal users entities:
   title: 'View unpublished Epal users entities'
+add epal student sector field entities:
+  title: 'Create new Epal student sector field entities'
+
+administer epal student sector field entities:
+  title: 'Administer Epal student sector field entities'
+  description: 'Allow to access the administration form to configure Epal student sector field entities.'
+  restrict access: true
+
+delete epal student sector field entities:
+  title: 'Delete Epal student sector field entities'
+
+edit epal student sector field entities:
+  title: 'Edit Epal student sector field entities'
+
+access epal student sector field overview:
+  title: 'Access the Epal student sector field overview page'
+
+view published epal student sector field entities:
+  title: 'View published Epal student sector field entities'
+
+view unpublished epal student sector field entities:
+  title: 'View unpublished Epal student sector field entities'

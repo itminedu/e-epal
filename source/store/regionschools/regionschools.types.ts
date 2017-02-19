@@ -11,6 +11,7 @@ export interface IRegionSchool {
     epal_name: string;
     globalIndex: number;
     selected: boolean;
+    order_id: number;
 }
 
 export type IRegions = List<IRegion>;

@@ -10,34 +10,34 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Epal student course field entity.
+ * Defines the Epal student sector field entity.
  *
  * @ingroup epal
  *
  * @ContentEntityType(
- *   id = "epal_student_course_field",
- *   label = @Translation("Epal student course field"),
+ *   id = "epal_student_sector_field",
+ *   label = @Translation("Epal student sector field"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\epal\EpalStudentCourseFieldListBuilder",
- *     "views_data" = "Drupal\epal\Entity\EpalStudentCourseFieldViewsData",
- *     "translation" = "Drupal\epal\EpalStudentCourseFieldTranslationHandler",
+ *     "list_builder" = "Drupal\epal\EpalStudentSectorFieldListBuilder",
+ *     "views_data" = "Drupal\epal\Entity\EpalStudentSectorFieldViewsData",
+ *     "translation" = "Drupal\epal\EpalStudentSectorFieldTranslationHandler",
  *
  *     "form" = {
- *       "default" = "Drupal\epal\Form\EpalStudentCourseFieldForm",
- *       "add" = "Drupal\epal\Form\EpalStudentCourseFieldForm",
- *       "edit" = "Drupal\epal\Form\EpalStudentCourseFieldForm",
- *       "delete" = "Drupal\epal\Form\EpalStudentCourseFieldDeleteForm",
+ *       "default" = "Drupal\epal\Form\EpalStudentSectorFieldForm",
+ *       "add" = "Drupal\epal\Form\EpalStudentSectorFieldForm",
+ *       "edit" = "Drupal\epal\Form\EpalStudentSectorFieldForm",
+ *       "delete" = "Drupal\epal\Form\EpalStudentSectorFieldDeleteForm",
  *     },
- *     "access" = "Drupal\epal\EpalStudentCourseFieldAccessControlHandler",
+ *     "access" = "Drupal\epal\EpalStudentSectorFieldAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\epal\EpalStudentCourseFieldHtmlRouteProvider",
+ *       "html" = "Drupal\epal\EpalStudentSectorFieldHtmlRouteProvider",
  *     },
  *   },
- *   base_table = "epal_student_course_field",
- *   data_table = "epal_student_course_field_field_data",
+ *   base_table = "epal_student_sector_field",
+ *   data_table = "epal_student_sector_field_field_data",
  *   translatable = TRUE,
- *   admin_permission = "administer epal student course field entities",
+ *   admin_permission = "administer epal student sector field entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
@@ -45,20 +45,18 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
- *     "student_id" = "student_id",
- *     "courseField_id" = "courseField_id",  
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/epal_student_course_field/{epal_student_course_field}",
- *     "add-form" = "/admin/structure/epal_student_course_field/add",
- *     "edit-form" = "/admin/structure/epal_student_course_field/{epal_student_course_field}/edit",
- *     "delete-form" = "/admin/structure/epal_student_course_field/{epal_student_course_field}/delete",
- *     "collection" = "/admin/structure/epal_student_course_field",
+ *     "canonical" = "/admin/structure/epal_student_sector_field/{epal_student_sector_field}",
+ *     "add-form" = "/admin/structure/epal_student_sector_field/add",
+ *     "edit-form" = "/admin/structure/epal_student_sector_field/{epal_student_sector_field}/edit",
+ *     "delete-form" = "/admin/structure/epal_student_sector_field/{epal_student_sector_field}/delete",
+ *     "collection" = "/admin/structure/epal_student_sector_field",
  *   },
- *   field_ui_base_route = "epal_student_course_field.settings"
+ *   field_ui_base_route = "epal_student_sector_field.settings"
  * )
  */
-class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCourseFieldInterface {
+class EpalStudentSectorField extends ContentEntityBase implements EpalStudentSectorFieldInterface {
 
   use EntityChangedTrait;
 
@@ -86,8 +84,8 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     $this->set('name', $name);
     return $this;
   }
-  
-   /**
+
+  /**
    * {@inheritdoc}
    */
   public function getCreatedTime() {
@@ -146,19 +144,19 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
-
-/**
+  
+  /**
    * {@inheritdoc}
    */
-  public function getCoursefield_id() {
-    return $this->get('coursefield_id')->getString();
+  public function getSectorfield_id() {
+    return $this->get('sectorfield_id')->getString();
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCoursefield_id($name) {
-    $this->set('coursefield_id', $name);
+  public function setSectorfield_id($name) {
+    $this->set('sectorfield_id', $name);
     return $this;
   }
 
@@ -177,8 +175,6 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
     return $this;
   }
 
- 
-
   /**
    * {@inheritdoc}
    */
@@ -193,7 +189,7 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
-        'label' => 'above',
+        'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
       ))
@@ -255,11 +251,10 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
      ->setDisplayConfigurable('form', TRUE)
      ->setDisplayConfigurable('view', TRUE);
 	
-	
-	 $fields['coursefield_id'] = BaseFieldDefinition::create('entity_reference')
-            ->setLabel(t('ID ειδικότητας'))
-            ->setDescription(t('Δώσε το id ειδικότητας που επέλεξε ο μαθητής.'))
-            ->setSetting('target_type', 'eepal_specialty')
+	 $fields['sectorfield_id'] = BaseFieldDefinition::create('entity_reference')
+            ->setLabel(t('ID τομέα'))
+            ->setDescription(t('Δώσε το id τομέα που επέλεξε ο μαθητής.'))
+            ->setSetting('target_type', 'eepal_sectors')
             ->setSetting('handler', 'default')
 			->setRequired(true)
             ->setTranslatable(TRUE)
@@ -283,7 +278,7 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Epal student course field is published.'))
+      ->setDescription(t('A boolean indicating whether the Epal student sector field is published.'))
       ->setDefaultValue(TRUE);
 
     $fields['created'] = BaseFieldDefinition::create('created')

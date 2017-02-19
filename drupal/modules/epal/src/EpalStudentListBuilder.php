@@ -24,8 +24,6 @@ class EpalStudentListBuilder extends EntityListBuilder {
 	$header['epaluser_id'] = $this->t('ID χρήστη ΕΠΑΛ');
     $header['name'] = $this->t('Όνομα');
     $header['studentsurname'] = $this->t('Επώνυμο');
-    //$header['guardianfirstname'] = $this->t('Όνομα κηδεμόνα');
-	//$header['guardiansurname'] = $this->t('Επώνυμο κηδεμόνα');
     $header['studentamka'] = $this->t('AMKA μαθητή');
   
     return $header + parent::buildHeader();
@@ -64,26 +62,6 @@ class EpalStudentListBuilder extends EntityListBuilder {
         )
       )
     );
-
-	/*
-    $row['guardianfirstname'] = $this->l(
-      $entity->getGuardianFirstname(),
-      new Url(
-        'entity.epal_student.edit_form', array(
-          'epal_student' => $entity->id(),
-        )
-      )
-    );
-	
-	$row['guardiansurname'] = $this->l(
-      $entity->getGuardianSurname(),
-      new Url(
-        'entity.epal_student.edit_form', array(
-          'epal_student' => $entity->id(),
-        )
-      )
-    );
-	*/
 
    $row['studentAmka'] = $this->l(
       $entity->getStudentAmka(),

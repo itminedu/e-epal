@@ -2,6 +2,7 @@ import { IStudentDataFields, IStudentDataField } from './studentdatafields.types
 
 export function deimmutifyStudentDataFields(state: IStudentDataFields): IStudentDataField[] {
     let fetchedStudentDataFields = new Array();
+    /*
     state.forEach(studentdataField => {
         fetchedStudentDataFields.push(<IStudentDataField>{studentSurname: studentdataField.studentFirstname,
           studentFirstname: studentdataField.studentSurname, guardianSurname: studentdataField.guardianFirstname,
@@ -10,6 +11,15 @@ export function deimmutifyStudentDataFields(state: IStudentDataFields): IStudent
           regionTK: studentdataField.regionTK,regionArea: studentdataField.regionArea,
           certificateType: studentdataField.certificateType, relationToStudent: studentdataField.relationToStudent
 
+        });
+    */
+    state.forEach(studentdataField => {
+        fetchedStudentDataFields.push(<IStudentDataField>{epaluser_id:studentdataField.epaluser_id,
+          name: studentdataField.name, studentsurname: studentdataField.studentsurname,
+          studentamka: studentdataField.studentamka, regionaddress: studentdataField.regionaddress,
+          regiontk: studentdataField.regiontk,regionarea: studentdataField.regionarea,
+          certificatetype: studentdataField.certificatetype, relationtostudent: studentdataField.relationtostudent,
+          currentclass: studentdataField.currentclass
         });
     });
     return fetchedStudentDataFields;

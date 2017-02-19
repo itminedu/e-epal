@@ -38,10 +38,9 @@ import {AppSettings} from '../../app.settings';
             </div>
         </ul>
 
-
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineSector()">
+            <button type="button" class="btn-primary btn-md pull-center" (click)="defineSector()" [hidden] = "classSelected === 1" [disabled] = "classSelected === 3">
             O τομέας μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -53,34 +52,20 @@ import {AppSettings} from '../../app.settings';
                 </li>
             </div>
 
-            <!--NEW!-->
             <div *ngFor="let sector$ of sectors$  | async;">
                 <li class="list-group-item" *ngIf="sector$.sector_selected === true" >
                     {{sector$.sector_name}}
                 </li>
             </div>
-            <!--NEW!-->
-
-
         </ul>
 
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineCourse()" >
+            <button type="button" class="btn-primary btn-md pull-center" (click)="defineCourse()" [hidden] = "classSelected !== 3">
             Η ειδικότητά μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
-        <!--
-        <div class="row">
-        <div class="btn-group inline pull-right">
-            <button class="btn-primary btn-md pull-right my-btn"  type="button" (click)="defineCourse()" [hidden] = "numSelectedCourses === 0" >
-            Επαναφορά<span class="glyphicon glyphicon-menu-right"></span>
-            </button>
-        </div>
-        </div>
-        -->
-
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let sector$ of sectors$ | async;">
                 <div *ngFor="let course$ of sector$.courses;" >
@@ -101,16 +86,39 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let region$ of regions$ | async;">
                 <div *ngFor="let epal$ of region$.epals; " >
-                  <li class="list-group-item" *ngIf="epal$.selected === true">
+                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 1">
+                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
+                </li>
+                  <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 0">
                       {{epal$.epal_name}}
                   </li>
                 </div>
+            </div>
+
+            <div *ngFor="let region$ of regions$ | async;">
+              <div *ngFor="let epal$ of region$.epals; " >
+                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 2">
+                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
+                </li>
+              </div>
+            </div>
+            <div *ngFor="let region$ of regions$ | async;">
+              <div *ngFor="let epal$ of region$.epals; " >
+                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 3">
+                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
+                </li>
+              </div>
+            </div>
+            <div class="btn-group inline pull-right">
+              <button type="button" class="btn-primary btn-sm pull-right" (click)="defineOrder()"
+              [hidden] = "numSelectedSchools <= 1 ">> Σειρά προτίμησης</button>
             </div>
         </ul>
 
         <div class="row">
           <div class="btn-group inline pull-center">
-              <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()">
+              <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()"
+              [disabled] = "numSelectedOrder === 0">
               Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
               </button>
           </div>
@@ -118,16 +126,11 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
                 <li class="list-group-item">
-                    Όνομα μαθητή: {{studentDataField$.studentFirstname}}
+                    Όνομα μαθητή: {{studentDataField$.name}}
                 </li>
                 <li class="list-group-item">
-                    Επώνυμο μαθητή: {{studentDataField$.studentSurname}}
+                    Επώνυμο μαθητή: {{studentDataField$.studentsurname}}
                 </li>
-                <!--
-                <li class="list-group-item">
-                    AMKA μαθητή: {{studentDataField$.studentAmka}}
-                </li>
-                -->
             </div>
             <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
               <li class="list-group-item">
@@ -135,16 +138,6 @@ import {AppSettings} from '../../app.settings';
               </li>
           </div>
         </ul>
-
-<!--
-        <ul class="list-group" style="margin-bottom: 20px;">
-              <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
-                <li class="list-group-item">
-                    AMKA μαθητή: {{selectedAmkaFill$.name}}
-                </li>
-            </div>
-        </ul>
-  -->
   `
 })
 
@@ -155,24 +148,10 @@ import {AppSettings} from '../../app.settings';
     private studentDataFields$: Observable<IStudentDataFields>;
     private selectedAmkaFills$: Observable<IAmkaFills>;
     private epalclasses$: Observable<IEpalClasses>;
-
-
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
-    //private numSelectedCourses = <number>0;
-
-    /*
-    constructor(private _rsa: SectorCoursesActions,
-                private _rsb: RegionSchoolsActions,
-                private _rsc: SectorFieldsActions,
-                private _rsd: StudentDataFieldsActions,
-                private _rse: AmkaFillsActions,
-                private _rcd: EpalClassesActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router
-            ) {
-    };
-    */
+    private numSelectedOrder = <number>0;
+    private classSelected = 0;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
                 private router: Router
@@ -198,16 +177,21 @@ import {AppSettings} from '../../app.settings';
         });
 
         this.regions$ = this._ngRedux.select(state => {
-              let numsel = 0;
+              let numsel = 0, numsel2 = 0;
               state.regions.reduce((prevRegion, region) =>{
                   region.epals.reduce((prevEpal, epal) =>{
-                    if (epal.selected === true)
+                    if (epal.selected === true) {
                         numsel++;
+                    }
+                    if (epal.order_id !== 0) {
+                        numsel2++;
+                    }
                     return epal;
                   }, {});
                   return region;
               }, {});
               this.numSelectedSchools = numsel;
+              this.numSelectedOrder = numsel2;
               return state.regions;
           });
 
@@ -234,11 +218,16 @@ import {AppSettings} from '../../app.settings';
 
        this.epalclasses$ = this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) =>{
-                return epalclass;
+              if (epalclass.name === "Α' Λυκείου")
+                this.classSelected = 1;
+              else if (epalclass.name === "Β' Λυκείου")
+                  this.classSelected = 2;
+              else if (epalclass.name === "Γ' Λυκείου")
+                    this.classSelected = 3;
+              return epalclass;
             }, {});
             return state.epalclasses;
         });
-
 
     }
 
@@ -249,13 +238,14 @@ import {AppSettings} from '../../app.settings';
     defineSchools() {
         this.router.navigate(['/region-schools-select']);
     }
+
     definePersonalData() {
         this.router.navigate(['/student-application-form-main']);
     }
+
     defineClass() {
         this.router.navigate(['/epal-class-select']);
     }
-
 
     getCourseActive() {
         const { sectors } = this._ngRedux.getState();
@@ -267,41 +257,12 @@ import {AppSettings} from '../../app.settings';
                  return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
     }
 
-/*
     defineCourse() {
-      this._rsb.getRegionSchools("-1", true);
-      this.regions$ = this._ngRedux.select(state => {
-          let numsel = 0;
-          state.regions.reduce((prevRegion, region) =>{
-              region.epals.reduce((prevSchool, school) =>{
-                if (school.selected === true)
-                    numsel++;
-                return school;
-              }, {});
-              return region;
-          }, {});
-          this.numSelectedSchools = numsel;
-          return state.regions;
-      });
-
-      this._rsa.getSectorCourses(true);
-      this.sectors$ = this._ngRedux.select(state => {
-          state.sectors.reduce((prevSector, sector) =>{
-              sector.courses.reduce((prevCourse, course) =>{
-                  return course;
-              }, {});
-              return sector;
-          }, {});
-          return state.sectors;
-      });
-
-      this.router.navigate(['/sectorcourses-fields-select']);
-
+        this.router.navigate(['/sectorcourses-fields-select']);
     }
-  */
 
-  defineCourse() {
-      this.router.navigate(['/sectorcourses-fields-select']);
-  }
+    defineOrder() {
+      this.router.navigate(['/schools-order-select']);
+    }
 
 }

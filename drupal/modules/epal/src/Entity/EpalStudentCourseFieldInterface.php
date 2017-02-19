@@ -75,8 +75,8 @@ interface EpalStudentCourseFieldInterface extends  ContentEntityInterface, Entit
   public function setPublished($published);
   
    //get/set methods for additional fields for  configuration properties.
-  public function getCourseField_id();
-  public function setCourseField_id($val);
+  public function getCoursefield_id();
+  public function setCoursefield_id($val);
   public function getStudent_id();
   public function setStudent_id($val);
 

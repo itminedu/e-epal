@@ -108,7 +108,7 @@ class OAuthOSTConsumer implements AuthenticationProviderInterface
 
     // Only check requests with the 'authorization' header starting with OAuth.
     // drupal_set_message('sdfsddgdg');
-    $oauthEnabled = $this->getHeader($request, 'x-oauth-enabled');
+    $oauthEnabled = $this->getHeader($request, 'X-oauth-enabled');
     if (!$oauthEnabled && $request->getMethod() == 'POST') {
         $oauthEnabled = $request->request->get('X-oauth-enabled');
     }

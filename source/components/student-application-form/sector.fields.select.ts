@@ -6,11 +6,8 @@ import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { NgRedux, select } from 'ng2-redux';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IAppState } from '../../store/store';
-
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { IRegions } from '../../store/regionschools/regionschools.types';
-
-//import ApplicationPreview from './application.preview';
 
 import {
     FormBuilder,
@@ -36,7 +33,6 @@ import {AppSettings} from '../../app.settings';
                 </li>
             </div>
 
-
             <!--CHECK BOXES USING BOTSTRAP
             <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
                 <div class="[ form-group ]">
@@ -55,7 +51,6 @@ import {AppSettings} from '../../app.settings';
             -->
         </div>
 
-        <!--[disabled]="sectorActive === -1-->
         <div class="row">
         <div class="col-md-2 col-md-offset-5">
             <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
@@ -76,10 +71,8 @@ import {AppSettings} from '../../app.settings';
 @Injectable() export default class SectorFieldsSelect implements OnInit {
     private sectorFields$: Observable<ISectorFields>;
     private regions$: Observable<IRegions>;
-
     public formGroup: FormGroup;
     public cfs = new FormArray([]);
-
     private sectorActive = <number>-1;
 
     constructor(private fb: FormBuilder,
@@ -137,17 +130,6 @@ import {AppSettings} from '../../app.settings';
     toggleBackgroundColor(ind) {
         return ((this.sectorActive === ind) ? "cyan" : "#eeeeee");
     }
-
-    /*
-    retrieveCheck()  {
-      for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-        if (this.formGroup.value.formArray[i] === true) {
-          this.sectorActive = i;
-          return i;
-        }
-        return -1;
-    }
-    */
 
     getAllSchools() {
       //store in Redux the whole schools

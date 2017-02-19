@@ -1,4 +1,4 @@
-import { REGIONSCHOOLS_RECEIVED, REGIONSCHOOLS_SELECTED_SAVE } from '../constants';
+import { REGIONSCHOOLS_RECEIVED, REGIONSCHOOLS_SELECTED_SAVE,  REGIONSCHOOLS_ORDER_SAVE } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -45,6 +45,15 @@ export class RegionSchoolsActions {
         type: REGIONSCHOOLS_SELECTED_SAVE,
         payload: {
           regionSchoolsSelected
+        }
+      });
+  };
+
+  saveRegionSchoolsOrder = (regionSchoolsOrder) => {
+      return this._ngRedux.dispatch({
+        type: REGIONSCHOOLS_ORDER_SAVE,
+        payload: {
+          regionSchoolsOrder
         }
       });
   };

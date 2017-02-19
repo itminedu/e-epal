@@ -81,10 +81,12 @@ interface EpalStudentInterface extends  ContentEntityInterface, EntityChangedInt
   public function setEpaluser_id($val);
   public function getStudentSurname();
   public function setStudentSurname($val);
-  //public function getGuardianFirstname();
-  //public function setGuardianFirstname($val);
-  //public function getGuardianSurname();
-  //public function setGuardianSurname($val);
+  public function getBirthdate();
+  public function setBirthdate($val);
+  public function getFatherFirstname();
+  public function setFatherFirstname($val);
+  public function getMotherSurname();
+  public function setMotherSurname($val);
   public function getStudentAmka();
   public function setStudentAmka($val);
   public function getRegionAddress();

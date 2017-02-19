@@ -6,6 +6,7 @@ drupal/*
 drupal/modules/*
 !drupal/modules/epal/
 !drupal/modules/epalreadydata/
+!drupal/modules/oauthost/
 
 # Logs
 *.log

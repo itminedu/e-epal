@@ -6,6 +6,7 @@ import * as sectors from './sectorcourses';
 import * as studentDataFields from './studentdatafields';
 import * as epalclasses from './epalclasses';
 import * as amkafills from './amkafill';
+import * as loginInfo from './logininfo';
 
 /*
  * This is where we 'assemble' the full store out of its modules.
@@ -18,7 +19,8 @@ export interface IAppState {
     sectors?: sectors.ISectors;
     studentDataFields?: studentDataFields.IStudentDataFields;
     epalclasses?: epalclasses.IEpalClasses;
-    amkafills?: amkafills.IAmkaFills;    
+    amkafills?: amkafills.IAmkaFills;
+    loginInfo?: loginInfo.ILoginInfo;
 };
 
 export const rootReducer = combineReducers<IAppState>({
@@ -29,6 +31,7 @@ export const rootReducer = combineReducers<IAppState>({
    studentDataFields: studentDataFields.studentDataFieldsReducer,
    epalclasses: epalclasses.epalclassesReducer,
    amkafills: amkafills.amkafillReducer,
+   loginInfo: loginInfo.loginInfoReducer,
 });
 
 export function deimmutify(state: IAppState): Object {
@@ -40,5 +43,6 @@ export function deimmutify(state: IAppState): Object {
     studentdataFields: studentDataFields.deimmutifyStudentDataFields(state.studentDataFields),
     epalclasses: epalclasses.deimmutifyEpalClasses(state.epalclasses),
     amkafills: amkafills.deimmutifyAmkaFills(state.amkafills),
+    loginInfo: loginInfo.deimmutifyLoginInfo(state.loginInfo),
   };
 }

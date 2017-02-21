@@ -183,31 +183,17 @@ class OAuthOSTConsumer implements AuthenticationProviderInterface
           $oauth->enableDebug();
 
           $this->logger->warning("i am here:" . "oauthToken=" . $authToken . " state=" . $_SESSION['state']);
-          if (($authToken == null || !$authToken) && !$_SESSION['state']) {
-              $this->logger->warning("send request token");
-              $requestToken = $oauth->getRequestToken($this->request_token_url, $this->callback_url);
+          $this->logger->warning("send request token");
+          $requestToken = $oauth->getRequestToken($this->request_token_url, $this->callback_url);
               // store auth token
-              $this->logger->warning("requestToken=" . $requestToken['oauth_token_secret']);
-              $_SESSION['secret'] = $requestToken['oauth_token_secret'];
-              $_SESSION['state'] = 1;
+          $this->logger->warning("requestToken=" . $requestToken['oauth_token_secret']);
+          $_SESSION['secret'] = $requestToken['oauth_token_secret'];
+          $_SESSION['state'] = 1;
 //              $_SESSION['secret'] = $request_token['oauth_token_secret'];
 
-              header('Location: '.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
-              exit;
-          } else if ($_SESSION['state']==1) {
-              $oauth->setToken($authToken, $_SESSION['secret']);
-              $this->logger->warning("oauthToken=" . $authToken . "***"  . $_SESSION['secret']);
-              $accessToken = $oauth->getAccessToken($this->access_token_url, '', $authVerifier);
-              $this->logger->warning("accessToken=" . $accessToken['oauth_token'] . "***"  . $accessToken['oauth_token_secret']);
-              $_SESSION['state'] = 2;
-              $_SESSION['token'] = $accessToken['oauth_token'];
-              $_SESSION['secret'] = $accessToken['oauth_token_secret'];
-//              $_SESSION['token'] = serialize($access_token);
-
-          }
-          $this->logger->warning("about to call web service");
-          $oauth->setToken($_SESSION['token'],$_SESSION['secret']);
-          $oauth->fetch($this->api_url);
+          header('Location: '.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
+          $this->logger->warning("redirected to:" . $this->user_authorization_url . '?oauth_token=' . $requestToken['oauth_token']);
+          exit;
 
       } catch (OAuthException $e) {
 
@@ -220,6 +206,7 @@ class OAuthOSTConsumer implements AuthenticationProviderInterface
 
 //      return null;
   }
+
 
   /**
    * {@inheritdoc}

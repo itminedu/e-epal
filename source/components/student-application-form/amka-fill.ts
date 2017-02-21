@@ -36,10 +36,9 @@ import {AppSettings} from '../../app.settings';
         </div>
 
         <div class="row">
-            <div class="col-md-2 col-md-offset-5">
+            <div class="col-md-12 col-md-offset-5">
                 <button type="button" class="btn-primary btn-lg pull-right" (click)="saveSelected()">
-                Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
-                </button>
+                Συνέχεια                </button>
             </div>
             <div *ngIf="emptyselection==true">
                  Παρακαλώ συμπληρώστε το ΑΜΚΑ του μαθητή

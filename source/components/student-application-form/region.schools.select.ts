@@ -52,8 +52,8 @@ import {AppSettings} from '../../app.settings';
             </ul>
         </div>
         <div class="row">
-        <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
+        <div class="col-md-12 col-md-offset-5">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>

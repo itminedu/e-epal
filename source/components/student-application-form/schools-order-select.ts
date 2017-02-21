@@ -40,7 +40,9 @@ import {AppSettings} from '../../app.settings';
                 Προτίμηση {{i+1}}:  {{schoolField$}}
                 </li>
             </div>
-            <button type="button" class="btn btn-primary btn-lg  pull-center" (click)="navigateToStudentForm()" >Συνέχεια</button>
+             <div class="col-md-12">
+            <button type="button" class="btn btn-primary btn-lg  pull-right" (click)="navigateToStudentForm()" >Συνέχεια</button>
+              </div>
       </form>
     </div>
 

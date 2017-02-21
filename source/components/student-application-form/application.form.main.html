@@ -1,5 +1,5 @@
 <div class="row equal">
- <div class="col-md-8">
+ <div class="col-md-12">
   <form novalidate  (ngSubmit)="onSubmit(studentDataGroup)" [formGroup]="studentDataGroup">
     <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
     <!--
@@ -135,8 +135,8 @@
                 <span class="glyphicon glyphicon-menu-left"></span>Πίσω
             </button>
         </div>
-        <div class="col-md-2">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="submitSelected()" [disabled]="studentDataGroup.invalid">
+        <div class="col-md-8">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid">
                 Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -145,6 +145,3 @@
   </form>
 </div>
 
-<div class="col-md-4">
-  <application-preview-select></application-preview-select>
-</div>

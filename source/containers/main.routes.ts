@@ -4,6 +4,7 @@ import {
 } from '@angular/router';
 
 import {CamelCasePipe} from '../pipes/camelcase';
+import {RemoveSpaces} from '../pipes/removespaces';
 import Form3 from '../components/form-controls/form3';
 import StudentApplicationMain from '../components/student-application-form/application.form.main';
 import StudentsList from '../components/students/students-list';
@@ -36,6 +37,7 @@ export const MainRoutes: Routes = [
 
 export const MainDeclarations = [
   CamelCasePipe,
+  RemoveSpaces,
   Form3,
   StudentsList,
   Home,

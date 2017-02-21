@@ -23,7 +23,7 @@ import {AppSettings} from '../../app.settings';
 
     <div class="row equal">
 
-     <div class="col-md-8">
+     <div class="col-md-12">
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
 
@@ -52,18 +52,15 @@ import {AppSettings} from '../../app.settings';
         </div>
 
         <div class="row">
-        <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
+        <div class="col-md-12 col-md-offset-5">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
       </form>
     </div>
-
-   <div class="col-md-4">
-     <application-preview-select></application-preview-select>
-   </div>
+  
   </div>
   `
 
@@ -128,7 +125,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     toggleBackgroundColor(ind) {
-        return ((this.sectorActive === ind) ? "cyan" : "#eeeeee");
+        return ((this.sectorActive === ind) ? "#fd9665" : "white");
     }
 
     getAllSchools() {

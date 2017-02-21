@@ -23,13 +23,13 @@ class OAuthOSTConsumer implements AuthenticationProviderInterface
     protected $request_token_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/request_token';
     protected $user_authorization_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/confirm_access';
     protected $access_token_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/access_token';
-    protected $signature_method = 'PLAINTEXT';
+    protected $signature_method = 'PLAINTEXT'; 
     protected $api_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/gsisdemoservice/resource_one';
-    protected $callback_url = 'http://eepal.dev/drupal/oauth/cb';
+    protected $callback_url = 'http://localhost/angular/eepal-front/drupal/oauth/cb';
     protected $logout_url = 'https://www1.gsis.gr/testgsisapps/gsisdemo/logout.htm?logout_token=';
 
   /**
-   * The config factory.
+   * The config factory. 
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */

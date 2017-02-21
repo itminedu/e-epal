@@ -18,6 +18,7 @@ import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import { IAmkaFills } from '../../store/amkafill/amkafills.types';
 import {AppSettings} from '../../app.settings';
 
+
 @Component({
     selector: 'application-preview-select',
     template: `
@@ -33,7 +34,7 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
             <div *ngFor="let epalclass$ of epalclasses$ | async;">
                 <li class="list-group-item">
-                    Τάξη εισαγωγής: {{epalclass$.name}}
+                    Τάξη εισαγωγής: {{epalclass$.name  }}
                 </li>
             </div>
         </ul>
@@ -48,13 +49,13 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
             <div *ngFor="let sectorField$ of sectorFields$ | async;">
                 <li class="list-group-item" *ngIf="sectorField$.selected === true" >
-                    {{sectorField$.name}}
+                    {{sectorField$.name   }}
                 </li>
             </div>
 
             <div *ngFor="let sector$ of sectors$  | async;">
                 <li class="list-group-item" *ngIf="sector$.sector_selected === true" >
-                    {{sector$.sector_name}}
+                    {{sector$.sector_name }}
                 </li>
             </div>
         </ul>
@@ -70,7 +71,7 @@ import {AppSettings} from '../../app.settings';
               <div *ngFor="let sector$ of sectors$ | async;">
                 <div *ngFor="let course$ of sector$.courses;" >
                 <li class="list-group-item" *ngIf="course$.selected === true">
-                    {{course$.course_name}}
+                    {{course$.course_name   }}
                 </li>
             </div>
             </div>
@@ -90,7 +91,7 @@ import {AppSettings} from '../../app.settings';
                     Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
                 </li>
                   <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 0">
-                      {{epal$.epal_name}}
+                      {{epal$.epal_name   }}
                   </li>
                 </div>
             </div>
@@ -98,14 +99,14 @@ import {AppSettings} from '../../app.settings';
             <div *ngFor="let region$ of regions$ | async;">
               <div *ngFor="let epal$ of region$.epals; " >
                 <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 2">
-                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
+                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
                 </li>
               </div>
             </div>
             <div *ngFor="let region$ of regions$ | async;">
               <div *ngFor="let epal$ of region$.epals; " >
                 <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 3">
-                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
+                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
                 </li>
               </div>
             </div>
@@ -126,10 +127,10 @@ import {AppSettings} from '../../app.settings';
         <ul class="list-group" style="margin-bottom: 20px;">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
                 <li class="list-group-item">
-                    Όνομα μαθητή: {{studentDataField$.name}}
+                    Όνομα μαθητή: {{studentDataField$.name   }}
                 </li>
                 <li class="list-group-item">
-                    Επώνυμο μαθητή: {{studentDataField$.studentsurname}}
+                    Επώνυμο μαθητή: {{studentDataField$.studentsurname   }}
                 </li>
             </div>
             <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">

@@ -37,9 +37,56 @@
 			p {
 				margin-bottom: 0;
 			}
+
+            .left-choices {
+            	h4{ 
+
+					font-weight: bold;
+					font-size: 1rem;
+            	}
+	           }
+
+	        .btn-primary {
+	        	background-color:#fd9665;
+	        	border: none!important;
+	        	width: 200px;
+				padding:5px 10px;
+	        }
+	         
+
+		}
+
+
+		.main-content{
+
+
+			.btn {
+	        	background-color:#fd9665;
+	        	border: none!important;
+			}
+
+			.btn-primary {
+	        	background-color:#fd9665;
+	        	border: none!important;
+	        	width: 120px;
+	        }
+
+			li.list-group-item{
+				color: black;
+				background-color: white;
+				border: none!important;
+			    padding: 0.3rem 0.3rem!important;
+				h5{
+					font-size: 1rem;
+				}
+			
+
+			}
+
 		}
 	}
-}
+	}
+
 
 
 

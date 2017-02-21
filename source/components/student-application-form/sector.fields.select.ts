@@ -23,7 +23,7 @@ import {AppSettings} from '../../app.settings';
 
     <div class="row equal">
 
-     <div class="col-md-8">
+     <div class="col-md-12">
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
 
@@ -60,10 +60,7 @@ import {AppSettings} from '../../app.settings';
         </div>
       </form>
     </div>
-
-   <div class="col-md-4">
-     <application-preview-select></application-preview-select>
-   </div>
+  
   </div>
   `
 
@@ -128,7 +125,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     toggleBackgroundColor(ind) {
-        return ((this.sectorActive === ind) ? "cyan" : "#eeeeee");
+        return ((this.sectorActive === ind) ? "#fd9665" : "white");
     }
 
     getAllSchools() {

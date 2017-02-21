@@ -8,6 +8,7 @@ import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { IRegions } from '../../store/regionschools/regionschools.types';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
+import {RemoveSpaces} from '../../pipes/removespaces';
 
 import {
     FormBuilder,
@@ -21,7 +22,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'sectorcourses-fields-select',
     template: `
     <div class="row equal">
-     <div class="col-md-8">
+     <div class="col-md-12">
       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
             <ul class="list-group">
@@ -39,7 +40,7 @@ import {AppSettings} from '../../app.settings';
                                 >
                             </div>
                             <div class="col-md-10">
-                                {{course$.course_name}}
+                                {{course$.course_name | removeSpaces}}
                             </div>
                         </div>
                     </li>
@@ -49,8 +50,8 @@ import {AppSettings} from '../../app.settings';
         </div>
 
         <div class="row">
-        <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToSchools()" [disabled]="idx === -1"	 >
+        <div class="col-md-12 col-md-offset-5">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="idx === -1"	 >
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -58,9 +59,6 @@ import {AppSettings} from '../../app.settings';
      </form>
    </div>
 
-   <div class="col-md-4">
-     <application-preview-select></application-preview-select>
-   </div>
    </div>
   `
 })
@@ -121,7 +119,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     toggleBackgroundColor(ind) {
-        return ((this.sectorActive === ind) ? "cyan" : "#eeeeee");
+        return ((this.sectorActive === ind) ? "#fd9665" : "white");
     }
 
     saveSelected() {

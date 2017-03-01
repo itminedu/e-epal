@@ -21,7 +21,7 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentClassListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentClassViewsData",
- *     "translation" = "Drupal\epal\EpalStudentClassTranslationHandler",
+ *  
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentClassForm",

@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentViewsData",
- *     "translation" = "Drupal\epal\EpalStudentTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentForm",
@@ -35,8 +34,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student",
- *   data_table = "epal_student_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal student entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -422,7 +419,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
       ->setSetting('target_type', 'epal_users')
       ->setSetting('handler', 'default')
 	  ->setRequired(true)
-      ->setTranslatable(TRUE)
+ //     ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -754,7 +751,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             ->setDescription(t('Δώσε το τρέχον ΕΠΑΛ παρακολούθησης.'))
             ->setSetting('target_type', 'eepal_school')
             ->setSetting('handler', 'default')
-            ->setTranslatable(TRUE)
+         //   ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',

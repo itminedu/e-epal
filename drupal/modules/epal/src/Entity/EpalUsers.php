@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalUsersListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalUsersViewsData",
- *     "translation" = "Drupal\epal\EpalUsersTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalUsersForm",
@@ -35,8 +34,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_users",
- *   data_table = "epal_users_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal users entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -330,7 +327,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
 	  ->setRequired(true)
-      ->setTranslatable(TRUE)
+   //   ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'author',

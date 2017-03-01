@@ -35,8 +35,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student_class",
- *   data_table = "epal_student_class_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal student class entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -191,7 +189,7 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setTranslatable(TRUE)
+     // ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'author',

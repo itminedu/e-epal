@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentEpalChosenListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentEpalChosenViewsData",
- *     "translation" = "Drupal\epal\EpalStudentEpalChosenTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentEpalChosenForm",
@@ -35,8 +34,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student_epal_chosen",
- *   data_table = "epal_student_epal_chosen_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal student epal chosen entities",
  *   entity_keys = {
   *    "id" = "id",
@@ -265,7 +262,7 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
       ->setSetting('target_type', 'epal_student')
             ->setSetting('handler', 'default')
 			->setRequired(true)
-            ->setTranslatable(TRUE)
+          //  ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -290,7 +287,7 @@ class EpalStudentEpalChosen extends ContentEntityBase implements EpalStudentEpal
             ->setSetting('target_type', 'eepal_school')
             ->setSetting('handler', 'default')
 			->setRequired(true)
-            ->setTranslatable(TRUE)
+        //    ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',

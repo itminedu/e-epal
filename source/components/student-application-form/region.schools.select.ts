@@ -24,7 +24,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'course-fields-select',
     template: `
      <div class="row equal">
-      <div class="col-md-8">
+      <div class="col-md-12">
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
             <ul class="list-group">
@@ -52,19 +52,14 @@ import {AppSettings} from '../../app.settings';
             </ul>
         </div>
         <div class="row">
-        <div class="col-md-2 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
+        <div class="col-md-12 col-md-offset-5">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
             Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
     </form>
 
-   </div>
-
-
-   <div class="col-md-4">
-     <application-preview-select></application-preview-select>
    </div>
 
   </div>
@@ -137,7 +132,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     toggleBackgroundColor(ind) {
-        return ((this.regionActive === ind) ? "cyan" : "#eeeeee");
+        return ((this.regionActive === ind) ? "#fd9665" : "white");
     }
 
     saveSelected(cb,j) {

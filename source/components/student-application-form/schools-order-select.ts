@@ -24,7 +24,7 @@ import {AppSettings} from '../../app.settings';
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
     <div class="row equal">
-     <div class="col-md-8">
+     <div class="col-md-12">
        <form [formGroup]="formGroup">
             <div *ngFor="let schoolField$ of schoolNames; let i=index">
                 <button type="button" class="btn btn-info btn-sm  pull-right" style="width:120px;margin-bottom:4px;white-space: normal;word-wrap:break-word;"
@@ -40,13 +40,12 @@ import {AppSettings} from '../../app.settings';
                 Προτίμηση {{i+1}}:  {{schoolField$}}
                 </li>
             </div>
-            <button type="button" class="btn btn-primary btn-lg  pull-center" (click)="navigateToStudentForm()" >Συνέχεια</button>
+             <div class="col-md-12">
+            <button type="button" class="btn btn-primary btn-lg  pull-right" (click)="navigateToStudentForm()" >Συνέχεια</button>
+              </div>
       </form>
     </div>
 
-   <div class="col-md-4">
-     <application-preview-select></application-preview-select>
-   </div>
   </div>
   `
 

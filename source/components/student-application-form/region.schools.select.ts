@@ -5,11 +5,11 @@ import { Injectable } from "@angular/core";
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { NgRedux, select } from 'ng2-redux';
 import { IRegions } from '../../store/regionschools/regionschools.types';
-
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-
 import { IAppState } from '../../store/store';
+import { LoaderService } from '../../services/Spinner.service';
+import {RemoveSpaces} from '../../pipes/removespaces';
 
 
 import {
@@ -23,6 +23,8 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'course-fields-select',
     template: `
+    <div class = "loading" *ngIf="objLoaderStatus">
+    </div>
      <div class="row equal">
       <div class="col-md-12">
        <form [formGroup]="formGroup">
@@ -32,29 +34,30 @@ import {AppSettings} from '../../app.settings';
                 <li class="list-group-item" (click)="setActiveRegion(i)" [style.background-color]="toggleBackgroundColor(i)">
                     <h5>{{region$.region_name}}</h5>
                 </li>
-
+              
                 <div *ngFor="let epal$ of region$.epals; let j=index;" [hidden]="i !== regionActive">
-                    <li class="list-group-item" >
+              
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-2 col-md-offset-1">              
                                 <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
                                 (change)="saveSelected(cb,j)"
                                 [hidden] = "numSelected === 3 && cb.checked === false"
                                 >
-                            </div>
-                            <div class="col-md-10">
-                                {{epal$.epal_name}}
+                             </div>   
+                            <div class="col-md-8  col-md-offset-1">
+                                {{epal$.epal_name | removeSpaces}}
                             </div>
                         </div>
-                    </li>
+              
                 </div>
+              
             </div>
             </ul>
         </div>
         <div class="row">
         <div class="col-md-12 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0" >
-            Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0"  >
+          <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>
@@ -74,6 +77,8 @@ import {AppSettings} from '../../app.settings';
     private regionActive = <number>-1;
     private courseActive = -1;
     private numSelected = <number>0;
+
+    objLoaderStatus: boolean;
     //private schoolArray: Array<boolean> = new Array();
 
 
@@ -81,14 +86,30 @@ import {AppSettings} from '../../app.settings';
                 private _rsa: RegionSchoolsActions,
                 private _rsb: SectorCoursesActions,
                 private _ngRedux: NgRedux<IAppState>,
-                private router: Router
+                private router: Router,
+                private loaderService: LoaderService
+             
             ) {
         this.formGroup = this.fb.group({
             formArray: this.rss
+            
         });
+
+        this.objLoaderStatus=false;
+         console.log (this.objLoaderStatus);
     };
 
     ngOnInit() {
+   
+        this.loaderService.loaderStatus.subscribe((val: boolean) => {
+            this.objLoaderStatus = val;
+        });
+
+        this.loaderService.displayLoader(true); // enable spinner
+
+//        this.objLoaderStatus = true;
+        console.log (this.objLoaderStatus,"AAAAAAAAAAAAA");
+
         this.classActive = this.classActive = this.getClassActive();
 
         let class_id = -1;
@@ -106,7 +127,7 @@ import {AppSettings} from '../../app.settings';
         }
 
         this._rsa.getRegionSchools(class_id,this.courseActive, false);
-
+         console.log(this.courseActive,"aaaaaaaaaaaaaa");
         this.regions$ = this._ngRedux.select(state => {
             let numsel = 0;
             state.regions.reduce((prevRegion, region) =>{
@@ -122,6 +143,9 @@ import {AppSettings} from '../../app.settings';
             this.numSelected = numsel;
             return state.regions;
         });
+        //this.objLoaderStatus = false;
+        this.loaderService.displayLoader(false); // enable spinner
+        console.log (this.objLoaderStatus,"BBBBBBBBBBBBB");
 
     }
 

@@ -34,7 +34,7 @@ import {AppSettings} from '../../app.settings';
         <div class="row">
         <div class="col-md-12 col-md-offset-5">
             <button type="button" class="btn-primary btn-lg pull-right" (click)="saveSelected()">
-            Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+            <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>

@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentCourseFieldListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentCourseFieldViewsData",
- *     "translation" = "Drupal\epal\EpalStudentCourseFieldTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentCourseFieldForm",
@@ -35,8 +34,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student_course_field",
- *   data_table = "epal_student_course_field_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal student course field entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -235,7 +232,7 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
       ->setDescription(t('Δώσε το id μαθητή.'))
       ->setSetting('target_type', 'epal_student')
             ->setSetting('handler', 'default')
-            ->setTranslatable(TRUE)
+     //       ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -262,7 +259,7 @@ class EpalStudentCourseField extends ContentEntityBase implements EpalStudentCou
             ->setSetting('target_type', 'eepal_specialty')
             ->setSetting('handler', 'default')
 			->setRequired(true)
-            ->setTranslatable(TRUE)
+         //   ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',

@@ -1,11 +1,20 @@
-langcode: en
+uuid: 303db0c1-04ad-4087-882e-7d487988017e
+langcode: el
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.applicant
+    - user.role.authenticated
   module:
+    - basic_auth
     - epalreadydata
     - hal
     - rest
     - serialization
+    - user
+_core:
+  default_config_hash: fK5R5e8RHCNJLfhNG1jGBtHtSy6rExm-UquW3n8og9w
 id: sectorsperschool
 label: sectorsperschool
 module: views
@@ -22,8 +31,12 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+            administrator: administrator
+            applicant: applicant
       cache:
         type: tag
         options: {  }
@@ -421,6 +434,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - user.roles
       tags: {  }
   page_1:
     display_plugin: page
@@ -430,12 +444,14 @@ display:
     display_options:
       display_extenders: {  }
       path: sectorsperschool
+      enabled: false
     cache_metadata:
       max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - user.roles
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -476,6 +492,8 @@ display:
         options:
           items_per_page: 0
           offset: 0
+      auth:
+        - basic_auth
     cache_metadata:
       max-age: -1
       contexts:
@@ -483,4 +501,5 @@ display:
         - 'languages:language_interface'
         - request_format
         - url
+        - user.roles
       tags: {  }

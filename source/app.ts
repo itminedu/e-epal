@@ -29,6 +29,7 @@ import {HelperDataService} from './services/helper-data-service';
 
 //import {UserDataService} from './services/user-data-service';
 import {AmkaCheckService} from './services/amkacheck-service';
+import {LoaderService} from './services/Spinner.service';
 
 
 //import {UserDataService} from './services/user-data-service';
@@ -82,6 +83,7 @@ class MyLocalization extends NgLocalization {
     HelperDataService,
 
     AmkaCheckService,
+    LoaderService,
 
   ]
 })

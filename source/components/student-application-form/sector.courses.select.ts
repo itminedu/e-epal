@@ -31,20 +31,18 @@ import {AppSettings} from '../../app.settings';
                     <h5>{{sector$.sector_name}}</h5>
                 </li>
                 <div *ngFor="let course$ of sector$.courses; let j=index;" [hidden]="i !== sectorActive">
-                    <li class="list-group-item" >
-                        <div class="row">
-                            <div class="col-md-2">
+                          <div class="row">
+                           <div class="col-md-2 col-md-offset-1">              
                                 <input #cb type="checkbox" formControlName="{{ course$.globalIndex }}"
                                 (change)="updateCheckedOptions(course$.globalIndex, cb)"
                                 [checked] = " course$.globalIndex === idx "
                                 >
                             </div>
-                            <div class="col-md-10">
+                            <div class="col-md-8  col-md-offset-1">
                                 {{course$.course_name | removeSpaces}}
                             </div>
-                        </div>
-                    </li>
-                </div>
+                            </div>
+                    </div>
               </div>
             </ul>
         </div>
@@ -52,7 +50,7 @@ import {AppSettings} from '../../app.settings';
         <div class="row">
         <div class="col-md-12 col-md-offset-5">
             <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="idx === -1"	 >
-            Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+            <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>

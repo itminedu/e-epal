@@ -41,7 +41,7 @@ import {AppSettings} from '../../app.settings';
                 </li>
             </div>
              <div class="col-md-12">
-            <button type="button" class="btn btn-primary btn-lg  pull-right" (click)="navigateToStudentForm()" >Συνέχεια</button>
+            <button type="button" class="btn btn-primary btn-lg  pull-right" (click)="navigateToStudentForm()" ><i class="fa fa-forward"></i></button>
               </div>
       </form>
     </div>

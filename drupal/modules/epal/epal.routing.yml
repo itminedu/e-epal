@@ -22,3 +22,9 @@ epal_auth_test:
   requirements:
     _permission: 'access content'
     _user_is_logged_in: 'TRUE'
+current_user:
+  path: '/epal/curuser'
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::content'
+  requirements:
+    _access: 'TRUE'

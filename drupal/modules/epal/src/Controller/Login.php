@@ -17,7 +17,7 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
  * Controller routines for page example routes.
  */
 class Login extends ControllerBase {
-
+ 
   protected $query_factory;
   protected $entityTypeManager;
   protected $entityFieldManager;
@@ -185,3 +185,6 @@ public function object_2_array($result) {
   }
 
 }
+
+
+

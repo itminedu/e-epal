@@ -138,7 +138,7 @@ export class HelperDataService {
               getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
 
             //getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?${courseActive}`;
-            console.log(getConnectionString);
+       //     console.log(getConnectionString,class);
 
             //this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
             //this.http.get(`${AppSettings.API_ENDPOINT}/`.concat(`coursesperschool/list?course_id=${courseActive}`))
@@ -229,5 +229,26 @@ export class HelperDataService {
         });
         return rsa;
     }
+
+
+
+    getCurrentUser() {
+        return new Promise((resolve, reject) => {
+            this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser`)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error HTTP GET Service");
+                reject("Error HTTP GET Service");
+            },
+            () => console.log("Course Fields Received"));
+        });
+    };
+
+
+
+
 
 }

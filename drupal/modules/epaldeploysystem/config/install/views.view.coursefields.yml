@@ -1,10 +1,19 @@
-langcode: en
+uuid: 761245c9-c12c-4bad-baae-b6659bdcd614
+langcode: el
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.applicant
+    - user.role.authenticated
   module:
+    - basic_auth
     - epalreadydata
     - rest
     - serialization
+    - user
+_core:
+  default_config_hash: x1x9jIC8SmXp0wDILOEs5_1lxH47q3VCokKYxEu4U-8
 id: coursefields
 label: coursefields
 module: views
@@ -21,8 +30,12 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+            administrator: administrator
+            applicant: applicant
       cache:
         type: tag
         options: {  }
@@ -217,6 +230,7 @@ display:
         - 'languages:language_interface'
         - request_format
         - url.query_args
+        - user.roles
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -246,10 +260,13 @@ display:
             name:
               alias: ''
               raw_output: true
+      auth:
+        - basic_auth
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - request_format
+        - user.roles
       tags: {  }

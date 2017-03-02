@@ -1,3 +1,9 @@
+oauthost.log_in_go:
+  path: /oauth/login
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\OAuthLogin::loginGo'
+  requirements:
+    _access: 'TRUE'
 oauthost.callback_log_in:
   path: /oauth/cb
   defaults:

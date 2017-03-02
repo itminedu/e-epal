@@ -1,9 +1,4 @@
 services:
-  authentication.oauthost:
-    class: Drupal\oauthost\Authentication\Provider\OAuthOSTConsumer
-    arguments: ['@config.factory', '@entity_type.manager', '@logger.channel.oauth']
-    tags:
-      - { name: authentication_provider, provider_id: ostauthentication_provider, priority: 100 }
   logger.channel.oauth:
     parent: 'logger.channel_base'
     arguments: ['oauthost']

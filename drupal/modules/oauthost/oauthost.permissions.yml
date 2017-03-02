@@ -1,0 +1,44 @@
+add oauthost config entities:
+  title: 'Create new OAuthOST Config entities'
+
+administer oauthost config entities:
+  title: 'Administer OAuthOST Config entities'
+  description: 'Allow to access the administration form to configure OAuthOST Config entities.'
+  restrict access: true
+
+delete oauthost config entities:
+  title: 'Delete OAuthOST Config entities'
+
+edit oauthost config entities:
+  title: 'Edit OAuthOST Config entities'
+
+access oauthost config overview:
+  title: 'Access the OAuthOST Config overview page'
+
+view published oauthost config entities:
+  title: 'View published OAuthOST Config entities'
+
+view unpublished oauthost config entities:
+  title: 'View unpublished OAuthOST Config entities'
+add oauthost session entities:
+  title: 'Create new OAuthOST Session entities'
+
+administer oauthost session entities:
+  title: 'Administer OAuthOST Session entities'
+  description: 'Allow to access the administration form to configure OAuthOST Session entities.'
+  restrict access: true
+
+delete oauthost session entities:
+  title: 'Delete OAuthOST Session entities'
+
+edit oauthost session entities:
+  title: 'Edit OAuthOST Session entities'
+
+access oauthost session overview:
+  title: 'Access the OAuthOST Session overview page'
+
+view published oauthost session entities:
+  title: 'View published OAuthOST Session entities'
+
+view unpublished oauthost session entities:
+  title: 'View unpublished OAuthOST Session entities'

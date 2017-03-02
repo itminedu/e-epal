@@ -1,0 +1,10 @@
+entity.oauthost_config.add_form:
+  route_name: entity.oauthost_config.add_form
+  title: 'Add OAuthOST Config'
+  appears_on:
+    - entity.oauthost_config.collection
+entity.oauthost_session.add_form:
+  route_name: entity.oauthost_session.add_form
+  title: 'Add OAuthOST Session'
+  appears_on:
+    - entity.oauthost_session.collection

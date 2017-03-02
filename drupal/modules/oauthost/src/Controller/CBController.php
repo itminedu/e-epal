@@ -8,102 +8,217 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Url;
-use Drupal\oauthost\Authentication\Provider;
 use OAuth;
 use OAuthException;
+use Drupal\user\Entity\User;
+use Drupal\Core\Database\Connection;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
-class CBController extends ControllerBase {
-
-  protected $query_factory;
-  protected $entityTypeManager;
-  protected $request;
-  protected $logger;
-
-  protected $consumer_key = 'tc97t89';
-  protected $consumer_secret = 'xr7tgt9AbK3';
-  protected $request_token_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/request_token';
-  protected $user_authorization_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/confirm_access';
-  protected $access_token_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/oauth/access_token';
-  protected $signature_method = 'PLAINTEXT';
-  protected $api_url = 'https://www1.gsis.gr/gsisapps/gsisdemo/gsisdemoservice/resource_one';
-  protected $callback_url = 'http://eepal.dev/drupal/oauth/cb';
-  protected $logout_url = 'https://www1.gsis.gr/testgsisapps/gsisdemo/logout.htm?logout_token=';
-
-
-public function __construct(EntityTypeManagerInterface $entityTypeManager, QueryFactory $query_factory) {
-      $this->entityTypeManager = $entityTypeManager;
-      $this->query_factory = $query_factory;
-      $this->request = \Drupal::request();
-      $this->logger = \Drupal::logger('oauthost');
-  }
-
-  public static function create(ContainerInterface $container) {
-      return new static(
-          $container->get('entity.manager'),
-          $container->get('entity.query')
-      );
-  }
-
-
-public function loginCB() {
-    $authToken = $this->request->query->get('oauth_token');
-    $authVerifier = $this->request->query->get('oauth_verifier');
-    $this->logger->notice("authToken=".$authToken."***authVerifier=".$authVerifier);
-/*    $response = new JsonResponse(['hello' => 'world', 'name' => $name, 'authToken' => $authToken, 'accessKey' => $accessKey]);
-    $response->headers->set('X-AUTH-TOKEN', 'HELLOTOKEN'); */
-
-    $authenticated = $this->authenticatePhase2($authToken, $authVerifier);
-
-    if ($authenticated) {
-        return new RedirectResponse('/dist/#/?auth_token=' . $authToken . '&auth_role=student',302,[]);
-    }
-    else {
-        return new RedirectResponse('/dist/#/',403,[]);
-    }
-}
-
-public function authenticatePhase2($authToken, $authVerifier)
+class CBController extends ControllerBase
 {
+    protected $entity_query;
+    protected $entityTypeManager;
+    protected $logger;
+    protected $connection;
+
+    protected $consumer_key = 'tc97t89';
+    protected $consumer_secret = 'xr7tgt9AbK3';
+    protected $request_token_url;
+    protected $user_authorization_url;
+    protected $access_token_url;
+    protected $signature_method;
+    protected $api_url;
+    protected $callback_url;
+    protected $logout_url;
+
+    protected $requestToken;
+    protected $requestTokenSecret;
+    protected $oauthostSession;
+
+    public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    QueryFactory $entity_query,
+    Connection $connection,
+    LoggerChannelFactoryInterface $loggerChannel)
+    {
+        $this->entityTypeManager = $entityTypeManager;
+        $this->entity_query = $entity_query;
+        $this->connection = $connection;
+        $this->logger = $loggerChannel->get('oauthost');
+    }
+
+    public static function create(ContainerInterface $container)
+    {
+        return new static(
+          $container->get('entity.manager'),
+          $container->get('entity.query'),
+          $container->get('database'),
+          $container->get('logger.factory')
+      );
+    }
+
+    public function loginCB(Request $request)
+    {
+
+        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => 'oauthost_taxisnet_config'));
+        $ostauthConfig = reset($ostauthConfigs);
+        if ($ostauthConfig) {
+            $this->consumer_key = $ostauthConfig->consumer_key->value;
+            $this->consumer_secret = $ostauthConfig->consumer_secret->value;
+            $this->request_token_url = $ostauthConfig->request_token_url->value;
+            $this->user_authorization_url = $ostauthConfig->user_authorization_url->value;
+            $this->access_token_url = $ostauthConfig->access_token_url->value;
+            $this->signature_method = $ostauthConfig->signature_method->value;
+            $this->api_url = $ostauthConfig->api_url->value;
+            $this->callback_url = $ostauthConfig->callback_url->value;
+            $this->logout_url = $ostauthConfig->logout_url->value;
+        } else {
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('name' => $request->query->get('sid_ost')));
+        $this->oauthostSession = reset($oauthostSessions);
+        if ($this->oauthostSession) {
+            $this->requestToken = $this->oauthostSession->request_token->value;
+            $this->requestTokenSecret = $this->oauthostSession->request_token_secret->value;
+        } else {
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+
+        $authToken = $request->query->get('oauth_token');
+        $authVerifier = $request->query->get('oauth_verifier');
+//        $this->logger->notice('authToken='.$authToken.'***authVerifier='.$authVerifier);
+
+        $authenticated = $this->authenticatePhase2($authToken, $authVerifier);
+
+        if ($authenticated) {
+            return new RedirectResponse('/dist/#/?auth_token='.$authToken.'&auth_role=student', 302, []);
+        } else {
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+    }
+
+    public function authenticatePhase2($authToken, $authVerifier)
+    {
+    $taxis_userid = null;
+    $trx = $this->connection->startTransaction();
     try {
         $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
         $oauth->enableDebug();
-
-        $this->logger->warning("i am here:" . "oauthToken=" . $authToken . " state=" . $_SESSION['state']);
-
-        $oauth->setToken($authToken, $_SESSION['secret']);
-        $this->logger->warning("oauthToken=" . $authToken . "***"  . $_SESSION['secret']);
+        $oauth->setToken($authToken, $this->requestTokenSecret);
         $accessToken = $oauth->getAccessToken($this->access_token_url, '', $authVerifier);
-        $this->logger->warning("accessToken=" . $accessToken['oauth_token'] . "***"  . $accessToken['oauth_token_secret']);
-        $_SESSION['state'] = 2;
-        $_SESSION['token'] = $accessToken['oauth_token'];
-        $_SESSION['secret'] = $accessToken['oauth_token_secret'];
-
-        $this->logger->warning("about to call web service");
-        $oauth->setToken($_SESSION['token'],$_SESSION['secret']);
+        $oauth->setToken($accessToken['oauth_token'], $accessToken['oauth_token_secret']);
         $oauth->fetch($this->api_url);
-        $this->logger->warning($oauth->getLastResponse());
 
-        $epalUser = $this->entityTypeManager()->getStorage('epal_users')->loadByProperties(['taxis_userid' => '12345']);
-        if ($epalUser === null || !$epalUser) {
-            
+        $this->logger->warning($oauth->getLastResponse());
+        $taxis_userid = $this->xmlParse($oauth->getLastResponse(), 'messageText');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userid));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
+            if ($user) {
+                $user->setPassword($this->requestToken);
+                $user->setUsername($this->requestToken);
+                $user->save();
+                $epalUser->set('accesstoken', $accessToken['oauth_token']);
+                $epalUser->set('accesstoken_secret', $accessToken['oauth_token_secret']);
+                $epalUser->set('requesttoken',$this->requestToken);
+                $epalUser->set('requesttoken_secret', $this->requestTokenSecret);
+                $epalUser->save();
+            }
         }
 
+        if ($epalUser === null || !$epalUser) {
+
+            //Create a User
+            $user = User::create();
+            //Mandatory settings
+            $unique_id = uniqid('id');
+            $user->setPassword($this->requestToken);
+            $user->enforceIsNew();
+            $user->setEmail($unique_id);
+            $user->setUsername($this->requestToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
+            $user->activate();
+            $user->set('init', $unique_id);
+
+            //Set Language
+            $language_interface = \Drupal::languageManager()->getCurrentLanguage();
+            $user->set('langcode', $language_interface->getId());
+            $user->set('preferred_langcode', $language_interface->getId());
+            $user->set('preferred_admin_langcode', $language_interface->getId());
+
+            //Adding default user role
+            $user->addRole('applicant');
+            $user->save();
+
+
+            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('mail' => $unique_id));
+            $user = reset($users);
+            if ($user) {
+                $this->logger->warning('userid 190='.$user->id().'*** name='.$user->name->value);
+                $currentTime = time();
+
+                $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
+            //    'langcode' => $language_interface->getId(),
+                'langcode' => 'el',
+                'user_id' => $user->id(),
+                'drupaluser_id' => $user->id(),
+                'taxis_userid' => $taxis_userid,
+                'taxis_taxid' => $unique_id,
+                'name' => $unique_id,
+                'surname' => $unique_id,
+                'fathername' => $unique_id,
+                'mothername' => $unique_id,
+                'accesstoken' => $accessToken['oauth_token'],
+                'accesstoken_secret' => $accessToken['oauth_token_secret'],
+                'authtoken' => $accessToken['oauth_token'],
+                'requesttoken' => $this->requestToken,
+                'requesttoken_secret' => $this->requestTokenSecret,
+                'timelogin' => $currentTime,
+                'timeregistration' => $currentTime,
+                'timetokeninvalid' => 9999999,
+                'userip' => '',
+                'status' => 1,
+                'default_langcode' => 1,
+            ));
+            $epalUser->save();
+            } else {
+                return false;
+            }
+
+        }
+        $this->oauthostSession->delete();
+
         return true;
-
     } catch (OAuthException $e) {
-
         $this->logger->warning($e->getMessage());
+        $trx->rollback();
+        return false;
+    } catch (Exception $ee) {
+        $this->logger->warning($ee->getMessage());
+        $trx->rollback();
         return false;
     }
-    return false;
-  // Check if we found a user.
-/*    if (!empty($this->user)) {
-      return $this->user;
-  } */
 
-//      return null;
-}
+        return false;
+    }
 
-
+    public function xmlParse($xmlText, $token){
+        return '12345';
+    }
 }

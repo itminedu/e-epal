@@ -165,7 +165,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
+        'weight' => 0,
         'settings' => array(
           'match_operator' => 'CONTAINS',
           'size' => '60',
@@ -365,11 +365,11 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
         ->setDisplayOptions('view', array(
               'label' => 'hidden',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
         ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
@@ -389,11 +389,11 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
         ->setDisplayOptions('view', array(
               'label' => 'hidden',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
         ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
@@ -413,11 +413,11 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
         ->setDisplayOptions('view', array(
               'label' => 'hidden',
               'type' => 'author',
-              'weight' => 0,
+              'weight' => -4,
             ))
         ->setDisplayOptions('form', array(
               'type' => 'entity_reference_autocomplete',
-              'weight' => 5,
+              'weight' => -4,
               'settings' => array(
                 'match_operator' => 'CONTAINS',
                 'size' => '60',
@@ -453,6 +453,26 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ->setDescription(t('Δώσε τον τύπο σχολείου με βάση το ωράριο λειτουργίας-πχ Ημερήσιο'))
       ->setSettings(array(
         'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+	  
+	$fields['metathesis_region'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Περιοχή Μετάθεσης Σχολείου'))
+      ->setDescription(t('Δώσε την περιοχή μετάθεσης σχολείου'))
+      ->setSettings(array(
+        'max_length' => 5,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')

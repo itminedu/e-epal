@@ -82,3 +82,45 @@ epal_student_sector_field.admin.structure.settings:
   description: 'Configure Epal student sector field entities'
   route_name: epal_student_sector_field.settings
   parent: system.admin_structure
+
+# Epal criteria menu items definition
+entity.epal_criteria.collection:
+  title: 'Epal criteria list'
+  route_name: entity.epal_criteria.collection
+  description: 'List Epal criteria entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_criteria.admin.structure.settings:
+  title: Epal criteria settings
+  description: 'Configure Epal criteria entities'
+  route_name: epal_criteria.settings
+  parent: system.admin_structure
+
+# Epal student moria menu items definition
+entity.epal_student_moria.collection:
+  title: 'Epal student moria list'
+  route_name: entity.epal_student_moria.collection
+  description: 'List Epal student moria entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_moria.admin.structure.settings:
+  title: Epal student moria settings
+  description: 'Configure Epal student moria entities'
+  route_name: epal_student_moria.settings
+  parent: system.admin_structure
+
+# Epal class limits menu items definition
+entity.epal_class_limits.collection:
+  title: 'Epal class limits list'
+  route_name: entity.epal_class_limits.collection
+  description: 'List Epal class limits entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_class_limits.admin.structure.settings:
+  title: Epal class limits settings
+  description: 'Configure Epal class limits entities'
+  route_name: epal_class_limits.settings
+  parent: system.admin_structure

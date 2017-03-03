@@ -1,18 +1,23 @@
 <div class="row equal">
  <div class="col-md-12">
   <form novalidate  (ngSubmit)="onSubmit(studentDataGroup)" [formGroup]="studentDataGroup">
+
+    <form [formGroup]="applicantDataGroup">
+      <table>
+        <tr><td>
+          <div class="form-group">
+            <label for="guardianfirstname">Όνομα κηδεμόνα</label><input class="form-control" type="text" formControlName="guardianfirstname" disabled = "true">
+          </div>
+        </td>
+        <td>
+          <div class="form-group">
+            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><input class="form-control" type="text" formControlName="guardiansurname" disabled = "true">
+          </div>
+        </td></tr>
+      </table>
+    </form>
+
     <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
-    <!--
-    <div class="form-group">
-        <label for="studentAmka">ΑΜΚΑ μαθητή</label><input class="form-control" type="text" formControlName="studentAmka">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentAmka').touched && studentDataGroup.get('studentAmka').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentAmka').dirty && studentDataGroup.get('studentAmka').hasError('pattern')">
-        Επιτρέπονται μόνο ψηφία σε αυτό το πεδίο!
-    </div>
-  -->
 
     <div class="form-group">
         <label for="name">Όνομα μαθητή</label><input class="form-control" type="text" formControlName="name">
@@ -33,29 +38,6 @@
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentsurname').dirty && studentDataGroup.get('studentsurname').hasError('pattern')">
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
-
-    <!--
-    <div class="form-group">
-        <label for="guardianfirstname">Όνομα κηδεμόνα</label><input class="form-control" type="text" formControlName="guardianfirstname">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianfirstname').touched && studentDataGroup.get('guardianfirstname').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianfirstname').dirty && studentDataGroup.get('guardianfirstname').hasError('pattern')">
-        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
-    </div>
-
-    <div class="form-group">
-        <label for="guardiansurname">Επώνυμο κηδεμόνα</label>
-        <input class="form-control" type="text" formControlName="guardiansurname">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardiansurname').touched && studentDataGroup.get('guardiansurname').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardiansurname').dirty && studentDataGroup.get('guardiansurname').hasError('pattern')">
-        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
-    </div>
-  -->
 
     <table>
         <tr>
@@ -129,6 +111,64 @@
         Επιτρέπονται μόνο ψηφία σε αυτό το πεδίο!
     </div>
 
+
+    <form novalidate (ngSubmit)="onSubmit(studentCriteriaGroup)" [formGroup]="studentCriteriaGroup">
+      <div *ngFor="let criter$ of criteria$ | async; let i=index"> </div>
+
+        <fieldset class="group">
+        <legend>Εισοδηματικά κριτήρια</legend>
+
+        <div class="form-group">
+            <label for="income">Το κατά κεφαλήν εισόδημα στο προηγούμενο φορολογικό έτος είναι:</label><br/>
+              <select class="form-control" (change)="checkstatus()" formControlName="income">
+              <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
+              <option value="<= 3000 Ευρώ">μικρότερο ή ίσο των 3000 Ευρώ</option>
+              <option value="<= 6000 Ευρώ">μικρότερο ή ίσο των 6000 Ευρώ</option>
+              <option value="<= 9000 Ευρώ">μικρότερο ή ίσο των 9000 Ευρώ</option>
+              <option value="> 9000 Ευρώ">μεγαλύτερο των 9000 Ευρώ</option>
+            </select>
+            <div class="alert alert-danger" *ngIf="studentCriteriaGroup.get('income').dirty && studentCriteriaGroup.get('income').hasError('status')">
+                  Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
+            </div>
+        </div>
+
+        <legend>Κοινωνικά κριτήρια</legend>
+        <p style="margin-top: 15px; line-height: 1.5em;">Επιλέξτε όσα από τα παρακάτω κριτήρια πληρούνται για εσάς.
+          Οι επιλογές σας επέχουν θέση υπέυθυνης δήλωσης.
+          Θα πρέπει να προσκομίσετε τα αντίστοιχα δικαιολογητικά στο σχολείο εγγραφής σας, όταν σας ζητηθεί.
+        </p>
+        <div class="row">
+          <div class="col-md-1"> <input #cborphanmono type="checkbox" (change)="checkorphan('mono', cborphanmono)"  formControlName="orphanmono" ></div>
+          <div class="col-md-11 pull-left">Ορφανός από τον ένα γονέα</div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input #cborphantwice type="checkbox" (change)="checkorphan('twice', cborphantwice)" formControlName="orphantwice" ></div>
+          <div class="col-md-11 pull-left">Ορφανός και από τους δύο γονείς</div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input #cbthreechildren type="checkbox" (change)="checkchildren('three', cbthreechildren)"  formControlName="threechildren"></div>
+          <div class="col-md-11 pull-left">Μέλος Τρίτεκνης Οικογένειας</div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input #cbmanychildren type="checkbox" (change)="checkchildren('many', cbmanychildren)" formControlName="manychildren"></div>
+          <div class="col-md-11 pull-left">Μέλος Πολύτεκνης Οικογένειας</div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="twins"></div>
+          <div class="col-md-11 pull-left">Πολύδυμα Τέκνα</div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="disability"></div>
+          <div class="col-md-11 pull-left">Γονείς, τέκνα, αδέλφια ή σύζυγος με αναπηρία 67% και άνω </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="studies"></div>
+          <div class="col-md-11 pull-left">Αδελφός,-ή που σπουδάζει σε άλλη πόλη</div>
+        </div>
+      </fieldset>
+
+    </form>
+
     <div class="row">
         <div class="col-md-2 col-md-offset-4">
             <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
@@ -144,4 +184,3 @@
 
   </form>
 </div>
-

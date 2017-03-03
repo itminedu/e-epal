@@ -209,8 +209,8 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
       ->setDisplayConfigurable('view', TRUE);
 
     $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the EPAL Student Class entity.'))
+      ->setLabel(t('Ονομασία'))
+      ->setDescription(t('Ονομασία.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -228,7 +228,76 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['status'] = BaseFieldDefinition::create('boolean')
+    $fields['student_id'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Id Μαθητή'))
+      ->setDescription(t('Δώσε το id μαθητή.'))
+      ->setSetting('target_type', 'epal_student')
+            ->setSetting('handler', 'default')
+			->setRequired(true)
+            ->setTranslatable(TRUE)
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'author',
+              'weight' => -4,
+            ))
+      ->setDisplayOptions('form', array(
+             'type' => 'entity_reference_autocomplete',
+             'weight' => -4,
+             'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+	
+	 $fields['epal_id'] = BaseFieldDefinition::create('entity_reference')
+            ->setLabel(t('Id ΕΠΑΛ'))
+            ->setDescription(t('Δώσε το όνομα - id σχολείου που επιλέχτηκε ο μαθητής.'))
+            ->setSetting('target_type', 'eepal_school')
+            ->setSetting('handler', 'default')
+			->setRequired(true)
+            ->setTranslatable(TRUE)
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'author',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'entity_reference_autocomplete',
+              'weight' => -4,
+              'settings' => array(
+                'match_operator' => 'CONTAINS',
+                'size' => '60',
+                'autocomplete_type' => 'tags',
+                'placeholder' => '',
+              ),
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);	
+
+    $fields['directorconfirm'] = BaseFieldDefinition::create('boolean')
+          ->setLabel(t('Επιβεβαίωση Διευθυντή'))
+          ->setDescription(t('Επιβεβαίωση Διευθυντή.'))
+          ->setSettings(array(
+            'text_processing' => 0,
+          ))
+		  ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+	
+	$fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the EPAL Student Class is published.'))
       ->setDefaultValue(TRUE);
@@ -240,48 +309,6 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
-
-
-      $fields['maxno'] = BaseFieldDefinition::create('integer')
-          ->setLabel(t('Max Number of Students'))
-          ->setDescription(t('The maximum number of students in class.'))
-          ->setSettings(array(
-            'max_length' => 2,
-            'text_processing' => 0,
-          ))
-          ->setDefaultValue(25)
-          ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayOptions('form', array(
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE);
-
-      $fields['minno'] = BaseFieldDefinition::create('integer')
-              ->setLabel(t('Min Number of Students'))
-              ->setDescription(t('The minimum number of students in class.'))
-              ->setSettings(array(
-                'max_length' => 2,
-                'text_processing' => 0,
-              ))
-              ->setDefaultValue(25)
-              ->setDisplayOptions('view', array(
-                'label' => 'above',
-                'type' => 'integer',
-                'weight' => -4,
-              ))
-              ->setDisplayOptions('form', array(
-                'type' => 'integer',
-                'weight' => -4,
-              ))
-              ->setDisplayConfigurable('form', TRUE)
-              ->setDisplayConfigurable('view', TRUE);
-
 
     return $fields;
   }

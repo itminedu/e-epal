@@ -6,7 +6,10 @@ import { StudentDataFieldsActions } from './studentdatafields.actions';
 import { EpalClassesActions } from './epalclass.actions';
 import { AmkaFillsActions} from './amkafill.actions';
 import { LoginInfoActions} from './logininfo.actions';
-const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions, EpalClassesActions, AmkaFillsActions, LoginInfoActions ];
+import { CriteriaActions} from './criteria.actions';
+
+const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions,
+  EpalClassesActions, AmkaFillsActions, LoginInfoActions, CriteriaActions ];
 
 export {
   CourseFieldsActions,
@@ -17,5 +20,6 @@ export {
   EpalClassesActions,
   AmkaFillsActions,
   LoginInfoActions,
+  CriteriaActions,
   ACTION_PROVIDERS,
 };

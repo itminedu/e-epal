@@ -1,0 +1,22 @@
+{#
+/**
+ * @file epal_class_limits.html.twig
+ * Default theme implementation to present Epal class limits data.
+ *
+ * This template is used when viewing Epal class limits pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_epal_class_limits()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('epal_class_limits') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

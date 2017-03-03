@@ -19,6 +19,8 @@ export const AMKAFILL_SAVE = 'AMKAFILL_SAVE';
 
 export const LOGININFO_SAVE = 'LOGININFO_SAVE';
 
+export const CRITERIA_SAVE = 'CRITERIA_SAVE';
+
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';

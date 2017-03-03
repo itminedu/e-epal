@@ -21,8 +21,8 @@ class OAuthLogin extends ControllerBase
     protected $logger;
     protected $connection;
 
-    protected $consumer_key = 'tc97t89';
-    protected $consumer_secret = 'xr7tgt9AbK3';
+    protected $consumer_key = '';
+    protected $consumer_secret = '';
     protected $request_token_url;
     protected $user_authorization_url;
     protected $access_token_url;
@@ -75,10 +75,6 @@ class OAuthLogin extends ControllerBase
             return $response;
         }
 
-        $customUser = null;
-        $customUsers = null;
-        $userId = null;
-        $user = null;
         try {
             $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
             $oauth->enableDebug();

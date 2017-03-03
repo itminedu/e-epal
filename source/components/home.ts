@@ -16,7 +16,7 @@ import { AppSettings } from '../app.settings';
     selector: 'home',
     template: `
   <div>
-	   <form [formGroup]="formGroup" method = "POST" action="http://eepal.dev/drupal/oauth/login" #form>
+	   <form [formGroup]="formGroup" method = "POST" action="http://localhost/drupal-8.2.5/oauth/login" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index">
                 <div class="row">

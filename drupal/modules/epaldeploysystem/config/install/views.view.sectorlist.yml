@@ -1,11 +1,19 @@
-langcode: en
+langcode: el
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.applicant
+    - user.role.authenticated
   module:
+    - basic_auth
     - epalreadydata
     - hal
     - rest
     - serialization
+    - user
+_core:
+  default_config_hash: 5rM-pSfc1ywl4-ufHeAQsKiVGcBMDcz4RLfYmMeVGfo
 id: sectorlist
 label: sectorList
 module: views
@@ -22,8 +30,12 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+            administrator: administrator
+            applicant: applicant
       cache:
         type: tag
         options: {  }
@@ -222,6 +234,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url.query_args
+        - user.roles
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -247,10 +260,13 @@ display:
             hal_json: hal_json
             json: json
       path: sectorfields/list
+      auth:
+        - basic_auth
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - request_format
+        - user.roles
       tags: {  }

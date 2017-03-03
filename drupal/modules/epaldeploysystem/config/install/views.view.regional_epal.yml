@@ -1,10 +1,18 @@
-langcode: en
+langcode: el
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.applicant
+    - user.role.authenticated
   module:
+    - basic_auth
     - epalreadydata
     - rest
     - serialization
+    - user
+_core:
+  default_config_hash: jN_EIEThsJ2oXHaytnygkFnn2JT0t0QskuCm77DjmZk
 id: regional_epal
 label: regional_epal
 module: views
@@ -21,8 +29,12 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+            administrator: administrator
+            applicant: applicant
       cache:
         type: tag
         options: {  }
@@ -387,6 +399,7 @@ display:
         - 'languages:language_interface'
         - request_format
         - url.query_args
+        - user.roles
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -422,10 +435,13 @@ display:
             name_1:
               alias: region_name
               raw_output: true
+      auth:
+        - basic_auth
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - request_format
+        - user.roles
       tags: {  }

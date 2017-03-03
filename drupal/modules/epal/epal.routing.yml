@@ -4,6 +4,14 @@ epal_is_logged_in:
     _controller: '\Drupal\epal\Controller\Login::helloWorld'
   requirements:
     _access: 'TRUE'
+epal_entityapi_test:
+  path: '/epal/entityapi/test'
+  options:
+    _auth: [ 'basic_auth' ]
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  defaults:
+    _controller: '\Drupal\epal\Controller\Login::testQuery'
 epal_auth_test:
   path: 'epal/auth/test'
   options:
@@ -14,3 +22,9 @@ epal_auth_test:
   requirements:
     _permission: 'access content'
     _user_is_logged_in: 'TRUE'
+current_user:
+  path: '/epal/curuser'
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::content'
+  requirements:
+    _access: 'TRUE'

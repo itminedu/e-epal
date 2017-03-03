@@ -39,29 +39,6 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
-    <!--
-    <div class="form-group">
-        <label for="guardianfirstname">Όνομα κηδεμόνα</label><input class="form-control" type="text" formControlName="guardianfirstname">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianfirstname').touched && studentDataGroup.get('guardianfirstname').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardianfirstname').dirty && studentDataGroup.get('guardianfirstname').hasError('pattern')">
-        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
-    </div>
-
-    <div class="form-group">
-        <label for="guardiansurname">Επώνυμο κηδεμόνα</label>
-        <input class="form-control" type="text" formControlName="guardiansurname">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardiansurname').touched && studentDataGroup.get('guardiansurname').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('guardiansurname').dirty && studentDataGroup.get('guardiansurname').hasError('pattern')">
-        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
-    </div>
-  -->
-
     <table>
         <tr>
             <td>
@@ -190,24 +167,17 @@
         </div>
       </fieldset>
 
-
-
-
-
-
-
     </form>
-
 
     <div class="row">
         <div class="col-md-2 col-md-offset-4">
             <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
-                <span class="glyphicon glyphicon-menu-left"></span>Πίσω
+                <i class="fa fa-backward"></i>
             </button>
         </div>
         <div class="col-md-8">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid ">
-                Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid">
+                <i class="fa fa-forward"></i>
             </button>
         </div>
     </div>

@@ -10,12 +10,9 @@ export function loginInfoReducer(state: ILoginInfo = INITIAL_STATE, action): ILo
   switch (action.type) {
     case LOGININFO_SAVE:
         let loginInfoTokens = Array<ILoginInfoToken>();
-        let ind=0;
-        state.forEach(loginInfoToken => {
-            loginInfoTokens.push(<ILoginInfoToken>{auth_token: action.payload.loginInfo.auth_token, auth_role: action.payload.loginInfo.auth_role});
-            ind++;
-        });
+        loginInfoTokens.push(<ILoginInfoToken>{auth_token: action.payload.loginInfo.auth_token, auth_role: action.payload.loginInfo.auth_role});
         return Seq(loginInfoTokens).map(n => n).toList();
-    default: return state;
+    default:
+        return state;
   }
 };

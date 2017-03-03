@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentViewsData",
- *     "translation" = "Drupal\epal\EpalStudentTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentForm",
@@ -35,8 +34,6 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student",
- *   data_table = "epal_student_field_data",
- *   translatable = TRUE,
  *   admin_permission = "administer epal student entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -422,7 +419,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
       ->setSetting('target_type', 'epal_users')
       ->setSetting('handler', 'default')
 	  ->setRequired(true)
-      ->setTranslatable(TRUE)
+ //     ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -499,30 +496,6 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	  
-	  
-	   /*
-	   $fields['guardianADT'] = BaseFieldDefinition::create('string')
-          ->setLabel(t('Ταυτότητα κηδεμόνα'))
-          ->setDescription(t('Δώσε την ταυτότητα κηδεμόνα.'))
-          ->setSettings(array(
-            'max_length' => 50,
-            'text_processing' => 0,
-          ))
-          ->setDefaultValue('')
-          ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'string',
-            'weight' => -4,
-          ))
-          ->setDisplayOptions('form', array(
-            'type' => 'string_textfield',
-            'weight' => -4,
-          ))
-          ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE);
-		*/
-		
 			  
 	   $fields['fatherfirstname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Όνομα του πατέρα'))
@@ -729,6 +702,26 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
 		  
+	  $fields['lastam'] = BaseFieldDefinition::create('string')
+          ->setLabel(t('Αριθμός Μητρώου στο τελευταίο σχολείο φοίτησης'))
+          ->setDescription(t('Αριθμός Μητρώου στο τελευταίο σχολείο φοίτησης'))
+          ->setSettings(array(
+            'max_length' => 10,
+            'text_processing' => 0,
+          ))
+          ->setDefaultValue('')
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'string',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'string_textfield',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+	  
 	  $fields['currentclass'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Τάξη παρακολούθησης'))
           ->setDescription(t('Δώσε την τρέχουσα τάξη παρακολούθησης'))
@@ -754,7 +747,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             ->setDescription(t('Δώσε το τρέχον ΕΠΑΛ παρακολούθησης.'))
             ->setSetting('target_type', 'eepal_school')
             ->setSetting('handler', 'default')
-            ->setTranslatable(TRUE)
+         //   ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -771,7 +764,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
               ),
             ))
             ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);	
+            ->setDisplayConfigurable('view', TRUE);		
 		  
 	  $fields['currentsector'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Τομέας παρακολούθησης'))
@@ -792,33 +785,6 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
-	  /*
-	  $fields['currentsector'] = BaseFieldDefinition::create('entity_reference')
-            ->setLabel(t('Τομέας παρακολούθησης'))
-            ->setDescription(t('Δώσε τον τομέα παρακολούθησης.'))
-            ->setSetting('target_type', 'eepal_sector')
-            ->setSetting('handler', 'default')
-			->setRequired(true)
-            ->setTranslatable(TRUE)
-            ->setDisplayOptions('view', array(
-              'label' => 'above',
-              'type' => 'author',
-              'weight' => -4,
-            ))
-            ->setDisplayOptions('form', array(
-              'type' => 'entity_reference_autocomplete',
-              'weight' => -4,
-              'settings' => array(
-                'match_operator' => 'CONTAINS',
-                'size' => '60',
-                'autocomplete_type' => 'tags',
-                'placeholder' => '',
-              ),
-            ))
-            ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);	
-	  */
 			
 	  $fields['relationtostudent'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Σχέση αιτούντα με μαθητή'))

@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentSectorFieldListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentSectorFieldViewsData",
- *     "translation" = "Drupal\epal\EpalStudentSectorFieldTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentSectorFieldForm",
@@ -35,9 +34,7 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "epal_student_sector_field",
- *   data_table = "epal_student_sector_field_field_data",
- *   translatable = TRUE,
- *   admin_permission = "administer epal student sector field entities",
+*   admin_permission = "administer epal student sector field entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
@@ -231,7 +228,7 @@ class EpalStudentSectorField extends ContentEntityBase implements EpalStudentSec
       ->setDescription(t('Δώσε το id μαθητή.'))
       ->setSetting('target_type', 'epal_student')
             ->setSetting('handler', 'default')
-            ->setTranslatable(TRUE)
+           // ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',
@@ -257,7 +254,7 @@ class EpalStudentSectorField extends ContentEntityBase implements EpalStudentSec
             ->setSetting('target_type', 'eepal_sectors')
             ->setSetting('handler', 'default')
 			->setRequired(true)
-            ->setTranslatable(TRUE)
+         //   ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',

@@ -147,8 +147,3 @@
 .form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
     display: none;
 }
-
-fieldset{
-border-width: 1px;
-border-style: inset;
-}

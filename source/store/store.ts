@@ -50,3 +50,5 @@ export function deimmutify(state: IAppState): Object {
     criter: criter.deimmutifyCriteria(state.criter),
   };
 }
+
+

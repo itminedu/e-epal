@@ -1,10 +1,13 @@
- import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { NgRedux, select } from 'ng2-redux';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
+import { SectorFieldsActions } from '../../actions/sectorfields.actions';
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { IAppState } from '../../store/store';
 import {
     FormBuilder,
@@ -22,7 +25,7 @@ import {AppSettings} from '../../app.settings';
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
             <div class="form-group">
               <label for="name">Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση</label><br/>
-                    <select class="form-control" formControlName="name">
+                    <select class="form-control" formControlName="name" (change)="initializestore()">
                         <option value="Α' Λυκείου">Α' Λυκείου</option>
                         <option value="Β' Λυκείου">Β' Λυκείου</option>
                         <option value="Γ' Λυκείου">Γ' Λυκείου</option>
@@ -32,7 +35,7 @@ import {AppSettings} from '../../app.settings';
         <div class="row">
             <div class="col-md-12 col-md-offset-5">
                 <button type="button" class="btn-primary btn-lg pull-right" (click)="saveSelected()">
-                Συνέχεια<span class="glyphicon glyphicon-menu-right"></span>
+               <i class="fa fa-forward"></i>
                 </button>
             </div>
         </div>
@@ -54,6 +57,9 @@ import {AppSettings} from '../../app.settings';
        constructor(private fb: FormBuilder,
                 private _cfa: EpalClassesActions,
                 private _ngRedux: NgRedux<IAppState>,
+                private _csa: SectorCoursesActions,
+                private _sfa: SectorFieldsActions,
+                private _rsa: RegionSchoolsActions,
                 private router: Router) {
        this.formGroup = this.fb.group({
             name: []
@@ -92,4 +98,15 @@ import {AppSettings} from '../../app.settings';
         }
 
     }
+
+
+    initializestore()
+    {
+       this._cfa.saveEpalClassesSelected(this.formGroup.value);
+       this._sfa.getSectorFields(true);
+       this._rsa.getRegionSchools(1,"-1", true);
+       this._csa.getSectorCourses(true);
+
+    }
+
 }

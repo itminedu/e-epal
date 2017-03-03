@@ -1,11 +1,19 @@
-langcode: en
+langcode: el
 status: true
 dependencies:
+  config:
+    - user.role.administrator
+    - user.role.applicant
+    - user.role.authenticated
   module:
+    - basic_auth
     - epalreadydata
     - hal
     - rest
     - serialization
+    - user
+_core:
+  default_config_hash: X-Hp7xhmfNgEXwpE0VYHvI6BIYiDJDxGhGXtNwpeiCs
 id: coursesperschool
 label: coursesperschool
 module: views
@@ -22,8 +30,12 @@ display:
     position: 0
     display_options:
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+            administrator: administrator
+            applicant: applicant
       cache:
         type: tag
         options: {  }
@@ -457,6 +469,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.roles
       tags: {  }
   page_1:
     display_plugin: page
@@ -466,6 +479,7 @@ display:
     display_options:
       display_extenders: {  }
       path: coursesperschool
+      enabled: false
     cache_metadata:
       max-age: 0
       contexts:
@@ -473,6 +487,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.roles
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -516,6 +531,8 @@ display:
         options:
           items_per_page: 0
           offset: 0
+      auth:
+        - basic_auth
     cache_metadata:
       max-age: -1
       contexts:
@@ -523,4 +540,5 @@ display:
         - 'languages:language_interface'
         - request_format
         - url
+        - user.roles
       tags: {  }

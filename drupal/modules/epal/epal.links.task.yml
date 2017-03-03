@@ -130,3 +130,69 @@ entity.epal_student_sector_field.delete_form:
   title: Delete
   weight: 10
 
+# Epal criteria routing definition
+epal_criteria.settings_tab:
+  route_name: epal_criteria.settings
+  title: 'Settings'
+  base_route: epal_criteria.settings
+
+entity.epal_criteria.canonical:
+  route_name: entity.epal_criteria.canonical
+  base_route: entity.epal_criteria.canonical
+  title: 'View'
+
+entity.epal_criteria.edit_form:
+  route_name: entity.epal_criteria.edit_form
+  base_route: entity.epal_criteria.canonical
+  title: 'Edit'
+
+entity.epal_criteria.delete_form:
+  route_name:  entity.epal_criteria.delete_form
+  base_route:  entity.epal_criteria.canonical
+  title: Delete
+  weight: 10
+
+# Epal student moria routing definition
+epal_student_moria.settings_tab:
+  route_name: epal_student_moria.settings
+  title: 'Settings'
+  base_route: epal_student_moria.settings
+
+entity.epal_student_moria.canonical:
+  route_name: entity.epal_student_moria.canonical
+  base_route: entity.epal_student_moria.canonical
+  title: 'View'
+
+entity.epal_student_moria.edit_form:
+  route_name: entity.epal_student_moria.edit_form
+  base_route: entity.epal_student_moria.canonical
+  title: 'Edit'
+
+entity.epal_student_moria.delete_form:
+  route_name:  entity.epal_student_moria.delete_form
+  base_route:  entity.epal_student_moria.canonical
+  title: Delete
+  weight: 10
+
+# Epal class limits routing definition
+epal_class_limits.settings_tab:
+  route_name: epal_class_limits.settings
+  title: 'Settings'
+  base_route: epal_class_limits.settings
+
+entity.epal_class_limits.canonical:
+  route_name: entity.epal_class_limits.canonical
+  base_route: entity.epal_class_limits.canonical
+  title: 'View'
+
+entity.epal_class_limits.edit_form:
+  route_name: entity.epal_class_limits.edit_form
+  base_route: entity.epal_class_limits.canonical
+  title: 'Edit'
+
+entity.epal_class_limits.delete_form:
+  route_name:  entity.epal_class_limits.delete_form
+  base_route:  entity.epal_class_limits.canonical
+  title: Delete
+  weight: 10
+

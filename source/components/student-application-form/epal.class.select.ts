@@ -20,8 +20,8 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'epal-class-select',
     template: `
-   
-    <form [formGroup]="formGroup"> 
+
+    <form [formGroup]="formGroup">
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
             <div class="form-group">
               <label for="name">Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση</label><br/>

@@ -28,3 +28,18 @@ entity.epal_student_sector_field.add_form:
   title: 'Add Epal student sector field'
   appears_on:
     - entity.epal_student_sector_field.collection
+entity.epal_criteria.add_form:
+  route_name: entity.epal_criteria.add_form
+  title: 'Add Epal criteria'
+  appears_on:
+    - entity.epal_criteria.collection
+entity.epal_student_moria.add_form:
+  route_name: entity.epal_student_moria.add_form
+  title: 'Add Epal student moria'
+  appears_on:
+    - entity.epal_student_moria.collection
+entity.epal_class_limits.add_form:
+  route_name: entity.epal_class_limits.add_form
+  title: 'Add Epal class limits'
+  appears_on:
+    - entity.epal_class_limits.collection

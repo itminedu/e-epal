@@ -130,3 +130,69 @@ view published epal student sector field entities:
 
 view unpublished epal student sector field entities:
   title: 'View unpublished Epal student sector field entities'
+add epal criteria entities:
+  title: 'Create new Epal criteria entities'
+
+administer epal criteria entities:
+  title: 'Administer Epal criteria entities'
+  description: 'Allow to access the administration form to configure Epal criteria entities.'
+  restrict access: true
+
+delete epal criteria entities:
+  title: 'Delete Epal criteria entities'
+
+edit epal criteria entities:
+  title: 'Edit Epal criteria entities'
+
+access epal criteria overview:
+  title: 'Access the Epal criteria overview page'
+
+view published epal criteria entities:
+  title: 'View published Epal criteria entities'
+
+view unpublished epal criteria entities:
+  title: 'View unpublished Epal criteria entities'
+add epal student moria entities:
+  title: 'Create new Epal student moria entities'
+
+administer epal student moria entities:
+  title: 'Administer Epal student moria entities'
+  description: 'Allow to access the administration form to configure Epal student moria entities.'
+  restrict access: true
+
+delete epal student moria entities:
+  title: 'Delete Epal student moria entities'
+
+edit epal student moria entities:
+  title: 'Edit Epal student moria entities'
+
+access epal student moria overview:
+  title: 'Access the Epal student moria overview page'
+
+view published epal student moria entities:
+  title: 'View published Epal student moria entities'
+
+view unpublished epal student moria entities:
+  title: 'View unpublished Epal student moria entities'
+add epal class limits entities:
+  title: 'Create new Epal class limits entities'
+
+administer epal class limits entities:
+  title: 'Administer Epal class limits entities'
+  description: 'Allow to access the administration form to configure Epal class limits entities.'
+  restrict access: true
+
+delete epal class limits entities:
+  title: 'Delete Epal class limits entities'
+
+edit epal class limits entities:
+  title: 'Edit Epal class limits entities'
+
+access epal class limits overview:
+  title: 'Access the Epal class limits overview page'
+
+view published epal class limits entities:
+  title: 'View published Epal class limits entities'
+
+view unpublished epal class limits entities:
+  title: 'View unpublished Epal class limits entities'

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file epal_student_moria.html.twig
+ * Default theme implementation to present Epal student moria data.
+ *
+ * This template is used when viewing Epal student moria pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_epal_student_moria()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('epal_student_moria') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

@@ -8,6 +8,7 @@ import { ISectors, ISector, ISectorCourse } from './sectorcourses/sectorcourses.
 import { IStudentDataField, IStudentDataFields } from './studentdatafields/studentdatafields.types';
 import { IEpalClass, IEpalClasses } from './epalclasses/epalclasses.types';
 import { ILoginInfoToken, ILoginInfo } from './logininfo/logininfo.types';
+import { ICriter, ICriteria } from './criteria/criteria.types';
 
 export {
   IAppState,
@@ -27,7 +28,8 @@ export {
   IEpalClass,
   IEpalClasses,
   ILoginInfo,
-
+  ICriter,
+  ICriteria
 };
 
 export const middleware = [

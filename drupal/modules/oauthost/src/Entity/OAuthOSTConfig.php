@@ -377,7 +377,7 @@ class OAuthOSTConfig extends ContentEntityBase implements OAuthOSTConfigInterfac
                                                                           'max_length' => 500,
                                                                           'text_processing' => 0,
                                                                         ))
-                                                                        ->setDefaultValue('https://www1.gsis.gr/testgsisapps/gsisdemo/logout.htm?logout_token=')
+                                                                        ->setDefaultValue('https://www1.gsis.gr/gsisapps/gsisdemo/logout.htm?logout_token=')
                                                                         ->setDisplayOptions('view', array(
                                                                           'label' => 'above',
                                                                           'type' => 'string',
@@ -389,6 +389,26 @@ class OAuthOSTConfig extends ContentEntityBase implements OAuthOSTConfigInterfac
                                                                         ))
                                                                         ->setDisplayConfigurable('form', true)
                                                                         ->setDisplayConfigurable('view', true);
+
+                                                                        $fields['redirect_url'] = BaseFieldDefinition::create('string')
+                                                                                     ->setLabel(t('Redirect_Url'))
+                                                                                     ->setDescription(t('The Redirect_Url'))
+                                                                                     ->setSettings(array(
+                                                                                       'max_length' => 500,
+                                                                                       'text_processing' => 0,
+                                                                                     ))
+                                                                                     ->setDefaultValue('/dist/#/?auth_token=')
+                                                                                     ->setDisplayOptions('view', array(
+                                                                                       'label' => 'above',
+                                                                                       'type' => 'string',
+                                                                                       'weight' => -4,
+                                                                                     ))
+                                                                                     ->setDisplayOptions('form', array(
+                                                                                       'type' => 'string_textfield',
+                                                                                       'weight' => -4,
+                                                                                     ))
+                                                                                     ->setDisplayConfigurable('form', true)
+                                                                                     ->setDisplayConfigurable('view', true);
 
       $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))

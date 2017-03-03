@@ -10,3 +10,11 @@ oauthost.callback_log_in:
     _controller: '\Drupal\oauthost\Controller\CBController::loginCB'
   requirements:
     _permission: 'access content'
+oauthost.log_out_go:
+  path: /oauth/logout
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\OAuthLogout::logoutGo'
+  requirements:
+    _user_is_logged_in: 'TRUE'

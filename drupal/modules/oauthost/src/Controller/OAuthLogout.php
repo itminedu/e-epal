@@ -6,15 +6,13 @@ use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Controller\ControllerBase;
-use OAuth;
-use OAuthException;
 use Drupal\user\Entity\User;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
-class OAuthLogin extends ControllerBase
+class OAuthLogout extends ControllerBase
 {
     protected $entity_query;
     protected $entityTypeManager;
@@ -53,8 +51,10 @@ class OAuthLogin extends ControllerBase
       );
     }
 
-    public function loginGo(Request $request)
+    public function logoutGo(Request $request)
     {
+        $trx = $this->connection->startTransaction();
+        try {
         $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => 'oauthost_taxisnet_config'));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
@@ -75,33 +75,62 @@ class OAuthLogin extends ControllerBase
             return $response;
         }
 
-        try {
-            $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
-            $oauth->enableDebug();
+        $user = null;
+        $username = $request->headers->get('PHP_AUTH_USER');
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $username));
+        $epalUser = reset($epalUsers);
+        $foundUser = true;
 
-            $uniqid = uniqid('sid');
-            $requestToken = $oauth->getRequestToken($this->request_token_url, $this->callback_url . '?sid_ost=' . $uniqid);
-                // store auth token
+        if ($epalUser) {
+            $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
+            if ($user) {
 
-            $oauthostSession = $this->entityTypeManager()->getStorage('oauthost_session')->create(array(
-        //    'langcode' => $language_interface->getId(),
-              'langcode' => 'el',
-              'user_id' => \Drupal::currentUser()->id(),
-              'name' => $uniqid,
-              'request_token' => $requestToken['oauth_token'],
-              'request_token_secret' => $requestToken['oauth_token_secret'],
-              'status' => 1
-          ));
-            $oauthostSession->save();
-            header('Location: '.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
-            $this->logger->warning('redirected to:'.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
-            exit;
-        } catch (OAuthException $e) {
+                $res = \Drupal::httpClient()->get($this->logout_url . $username, array('headers' => array('Accept' => 'text/plain')));
+/*                $resData = (string) $res->getBody();
+                if (empty($resData)) {
+                    return FALSE;
+                } */
+
+//                if ($res->getStatusCode() === "200")
+
+                $user->setPassword(uniqid('pw'));
+                $user->save();
+                $epalUser->set('accesstoken', '-');
+                $epalUser->set('accesstoken_secret', '-');
+                $epalUser->set('authtoken','-');
+                $epalUser->set('requesttoken','-');
+                $epalUser->set('requesttoken_secret', '-');
+                $epalUser->save();
+
+            } else {
+                $foundUser = false;
+            }
+        } else {
+            $foundUser = false;
+        }
+        if (!$foundUser) {
+            $this->logger->warning("user not found");
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        $response = new Response();
+        $response->setContent('logout successful');
+        $response->setStatusCode(Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+
+
+
+        } catch (Exception $e) {
             $this->logger->warning($e->getMessage());
             $response = new Response();
             $response->setContent('forbidden');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
+            $trx->rollback();
             return $response;
         }
     }

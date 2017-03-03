@@ -23,8 +23,8 @@ class CBController extends ControllerBase
     protected $logger;
     protected $connection;
 
-    protected $consumer_key = 'tc97t89';
-    protected $consumer_secret = 'xr7tgt9AbK3';
+    protected $consumer_key = '';
+    protected $consumer_secret = '';
     protected $request_token_url;
     protected $user_authorization_url;
     protected $access_token_url;
@@ -32,6 +32,7 @@ class CBController extends ControllerBase
     protected $api_url;
     protected $callback_url;
     protected $logout_url;
+    protected $redirect_url;
 
     protected $requestToken;
     protected $requestTokenSecret;
@@ -74,6 +75,7 @@ class CBController extends ControllerBase
             $this->api_url = $ostauthConfig->api_url->value;
             $this->callback_url = $ostauthConfig->callback_url->value;
             $this->logout_url = $ostauthConfig->logout_url->value;
+            $this->redirect_url = $ostauthConfig->redirect_url->value;
         } else {
             $response = new Response();
             $response->setContent('forbidden');
@@ -99,10 +101,10 @@ class CBController extends ControllerBase
         $authVerifier = $request->query->get('oauth_verifier');
 //        $this->logger->notice('authToken='.$authToken.'***authVerifier='.$authVerifier);
 
-        $authenticated = $this->authenticatePhase2($authToken, $authVerifier);
+        $epalToken = $this->authenticatePhase2($request, $authToken, $authVerifier);
 
-        if ($authenticated) {
-            return new RedirectResponse('/dist/#/?auth_token='.$authToken.'&auth_role=student', 302, []);
+        if ($epalToken) {
+            return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
         } else {
             $response = new Response();
             $response->setContent('forbidden');
@@ -112,7 +114,7 @@ class CBController extends ControllerBase
         }
     }
 
-    public function authenticatePhase2($authToken, $authVerifier)
+    public function authenticatePhase2($request, $authToken, $authVerifier)
     {
     $taxis_userid = null;
     $trx = $this->connection->startTransaction();
@@ -127,18 +129,25 @@ class CBController extends ControllerBase
         $this->logger->warning($oauth->getLastResponse());
         $taxis_userid = $this->xmlParse($oauth->getLastResponse(), 'messageText');
 
+        $currentTime = time();
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userid));
         $epalUser = reset($epalUsers);
+
+        $epalToken = md5(uniqid(mt_rand(), true));
         if ($epalUser) {
             $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
             if ($user) {
-                $user->setPassword($this->requestToken);
-                $user->setUsername($this->requestToken);
+                $user->setPassword($epalToken);
+                $user->setUsername($epalToken);
                 $user->save();
+                $epalUser->set('authtoken', $epalToken);
                 $epalUser->set('accesstoken', $accessToken['oauth_token']);
                 $epalUser->set('accesstoken_secret', $accessToken['oauth_token_secret']);
                 $epalUser->set('requesttoken',$this->requestToken);
                 $epalUser->set('requesttoken_secret', $this->requestTokenSecret);
+                $epalUser->set('timelogin', $currentTime);
+                $epalUser->set('userip', $request->getClientIp());
+
                 $epalUser->save();
             }
         }
@@ -149,10 +158,10 @@ class CBController extends ControllerBase
             $user = User::create();
             //Mandatory settings
             $unique_id = uniqid('id');
-            $user->setPassword($this->requestToken);
+            $user->setPassword($epalToken);
             $user->enforceIsNew();
             $user->setEmail($unique_id);
-            $user->setUsername($this->requestToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
+            $user->setUsername($epalToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
             $user->activate();
             $user->set('init', $unique_id);
 
@@ -171,7 +180,6 @@ class CBController extends ControllerBase
             $user = reset($users);
             if ($user) {
                 $this->logger->warning('userid 190='.$user->id().'*** name='.$user->name->value);
-                $currentTime = time();
 
                 $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
             //    'langcode' => $language_interface->getId(),
@@ -186,15 +194,14 @@ class CBController extends ControllerBase
                 'mothername' => $unique_id,
                 'accesstoken' => $accessToken['oauth_token'],
                 'accesstoken_secret' => $accessToken['oauth_token_secret'],
-                'authtoken' => $accessToken['oauth_token'],
+                'authtoken' => $epalToken,
                 'requesttoken' => $this->requestToken,
                 'requesttoken_secret' => $this->requestTokenSecret,
                 'timelogin' => $currentTime,
                 'timeregistration' => $currentTime,
-                'timetokeninvalid' => 9999999,
-                'userip' => '',
-                'status' => 1,
-                'default_langcode' => 1,
+                'timetokeninvalid' => 0,
+                'userip' => $request->getClientIp(),
+                'status' => 1
             ));
             $epalUser->save();
             } else {
@@ -204,7 +211,7 @@ class CBController extends ControllerBase
         }
         $this->oauthostSession->delete();
 
-        return true;
+        return $epalToken;
     } catch (OAuthException $e) {
         $this->logger->warning($e->getMessage());
         $trx->rollback();

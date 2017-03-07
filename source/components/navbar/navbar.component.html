@@ -8,8 +8,15 @@
           <img src="../myschool/assets/images/myschool_logo.png" alt="Αρχική" />
   </a>
   <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
+      <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
     <ul class="navbar-nav">
        <b>Όνομα Χρήστη:</b> {{this.cuser}}
+       &nbsp;&nbsp;
+        <div *ngIf="authToken">
+                <button type="button" class="btn-primary btn-sm pull-right" (click)="oauthSignOut()">
+               <i class="fa fa-sign-out"></i>
+                </button>
+        </div>
 
     <!--
       <li class="nav-item" [ngClass]="{active: path=='application-preview'}">

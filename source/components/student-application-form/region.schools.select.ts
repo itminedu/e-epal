@@ -34,23 +34,23 @@ import {AppSettings} from '../../app.settings';
                 <li class="list-group-item" (click)="setActiveRegion(i)" [style.background-color]="toggleBackgroundColor(i)">
                     <h5>{{region$.region_name}}</h5>
                 </li>
-              
+
                 <div *ngFor="let epal$ of region$.epals; let j=index;" [hidden]="i !== regionActive">
-              
+
                         <div class="row">
-                            <div class="col-md-2 col-md-offset-1">              
+                            <div class="col-md-2 col-md-offset-1">
                                 <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
                                 (change)="saveSelected(cb,j)"
                                 [hidden] = "numSelected === 3 && cb.checked === false"
                                 >
-                             </div>   
+                             </div>
                             <div class="col-md-8  col-md-offset-1">
                                 {{epal$.epal_name | removeSpaces}}
                             </div>
                         </div>
-              
+
                 </div>
-              
+
             </div>
             </ul>
         </div>
@@ -88,11 +88,11 @@ import {AppSettings} from '../../app.settings';
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
                 private loaderService: LoaderService
-             
+
             ) {
         this.formGroup = this.fb.group({
             formArray: this.rss
-            
+
         });
 
         this.objLoaderStatus=false;
@@ -100,7 +100,7 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-   
+
         this.loaderService.loaderStatus.subscribe((val: boolean) => {
             this.objLoaderStatus = val;
         });
@@ -162,10 +162,10 @@ import {AppSettings} from '../../app.settings';
     saveSelected(cb,j) {
         this._rsa.saveRegionSchoolsSelected(this.formGroup.value.formArray);
         //σε κάθε νέο check, αρχικοποίησε τη σειρά προτιμήσεων (σειρά προτίμησης:0)
-        let schoolArrayOrders: Array<number> = new Array();
+/*        let schoolArrayOrders: Array<number> = new Array();
         for (let i=0; i < this.formGroup.value.formArray.length; i++)
           schoolArrayOrders.push(0);
-        this._rsa.saveRegionSchoolsOrder(schoolArrayOrders);
+        this._rsa.saveRegionSchoolsOrder(schoolArrayOrders); */
     }
 
     navigateToApplication() {

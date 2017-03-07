@@ -1,6 +1,12 @@
 import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 import { Injectable } from "@angular/core";
 import { HelperDataService } from '../../services/helper-data-service';
+import { Observable } from 'rxjs/Rx';
+import { LoginInfoActions } from '../../actions/logininfo.actions';
+import { ILoginInfo } from '../../store/logininfo/logininfo.types';
+import { NgRedux, select } from 'ng2-redux';
+import { IAppState } from '../../store/store';
 
 @Component({
   selector: 'reg-navbar',
@@ -8,22 +14,46 @@ import { HelperDataService } from '../../services/helper-data-service';
 })
 
 @Injectable() export default class NavbarComponent implements OnInit{
+    private authToken: string;
+    private authRole: string;
+    private loginInfo$: Observable<ILoginInfo>;
+ 	public cuser :any;
 
-  	 	public cuser :any;
+    constructor( private _ata: LoginInfoActions,
+                private _hds: HelperDataService,
+                private _ngRedux: NgRedux<IAppState>,
+                private router: Router
+                ) {
 
-       constructor( private _hds: HelperDataService) {
-       
+                        this.authToken = '';
+                        this.authRole = '';
+
         };
 
     ngOnInit() {
+        this.loginInfo$ = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.authToken = loginInfoToken.auth_token;
+                    this.authRole = loginInfoToken.auth_role;
+                    return loginInfoToken;
+                }, {});
+            }
 
+            return state.loginInfo;
+        });
 
     	this._hds.getCurrentUser().then( cuser => this.cuser= cuser );
     }
 
-
-
-
+    oauthSignOut() {
+        this._hds.signOut().then(data => {
+            this._ata.initLoginInfo();
+            this.authToken = '';
+            this.authRole = '';
+            this.router.navigate(['/']);
+        });
+    }
 
 
 

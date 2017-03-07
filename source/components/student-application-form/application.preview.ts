@@ -22,8 +22,8 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'application-preview-select',
     template: `
+        <div *ngFor="let epalclass$ of epalclasses$ | async;">
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
-
        <div class="row">
         <div class="btn-group inline pull-center">
             <button type="button" class="btn-primary btn-md pull-center" (click)="defineClass()">
@@ -32,54 +32,55 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
         <ul class="list-group" style="margin-bottom: 20px;">
-            <div *ngFor="let epalclass$ of epalclasses$ | async;">
+
                 <li class="list-group-item">
                     Τάξη εισαγωγής: {{epalclass$.name  }}
                 </li>
-            </div>
-        </ul>
 
+        </ul>
+        </div>
+
+    <div *ngFor="let sector$ of sectors$  | async;">
+        <div *ngFor="let sectorField$ of sectorFields$ | async;">
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineSector()" [hidden] = "classSelected === 1" [disabled] = "classSelected === 3">
+            <button type="button" class="btn-primary btn-md pull-center" [hidden] = "classSelected === 1" [disabled] = "classSelected === 3">
             O τομέας μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
         <ul class="list-group" style="margin-bottom: 20px;">
-            <div *ngFor="let sectorField$ of sectorFields$ | async;">
                 <li class="list-group-item" *ngIf="sectorField$.selected === true" >
                     {{sectorField$.name   }}
                 </li>
-            </div>
-
-            <div *ngFor="let sector$ of sectors$  | async;">
                 <li class="list-group-item" *ngIf="sector$.sector_selected === true" >
                     {{sector$.sector_name }}
                 </li>
-            </div>
         </ul>
+        </div>
 
+
+        <div *ngFor="let course$ of sector$.courses;" >
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" class="btn-primary btn-md pull-center" (click)="defineCourse()" [hidden] = "classSelected !== 3">
+            <button type="button" class="btn-primary btn-md pull-center" [hidden] = "classSelected !== 3">
             Η ειδικότητά μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
         </div>
         <ul class="list-group" style="margin-bottom: 20px;">
-              <div *ngFor="let sector$ of sectors$ | async;">
-                <div *ngFor="let course$ of sector$.courses;" >
                 <li class="list-group-item" *ngIf="course$.selected === true">
                     {{course$.course_name   }}
                 </li>
-            </div>
-            </div>
-        </ul>
 
+        </ul>
+        </div>
+        </div>
+
+        <div *ngIf="regions$.size > 0 | async">
         <div class="row">
         <div class="btn-group inline pull-center">
-            <button type="button" id = "butsch" class="btn-primary btn-md pull-center" (click)="defineSchools()" [disabled] = "numSelectedSchools === 0 ">
+            <button type="button" id = "butsch" class="btn-primary btn-md pull-center" [disabled] = "numSelectedSchools === 0 ">
             Τα σχολεία μου<span class="glyphicon glyphicon-menu-right"></span>
             </button>
         </div>
@@ -93,18 +94,11 @@ import {AppSettings} from '../../app.settings';
                   <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 0">
                       {{epal$.epal_name   }}
                   </li>
-                </div>
-            </div>
 
-            <div *ngFor="let region$ of regions$ | async;">
-              <div *ngFor="let epal$ of region$.epals; " >
                 <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 2">
                     Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
                 </li>
-              </div>
-            </div>
-            <div *ngFor="let region$ of regions$ | async;">
-              <div *ngFor="let epal$ of region$.epals; " >
+
                 <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 3">
                     Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
                 </li>
@@ -115,10 +109,12 @@ import {AppSettings} from '../../app.settings';
               [hidden] = "numSelectedSchools <= 1 ">> Σειρά προτίμησης</button>
             </div>
         </ul>
+        </div>
 
+        <div *ngIf="studentDataFields$.size > 0 | async">
         <div class="row">
           <div class="btn-group inline pull-center">
-              <button type="button" class="btn-primary btn-md pull-center" (click)="definePersonalData()"
+              <button type="button" class="btn-primary btn-md pull-center"
               [disabled] = "numSelectedOrder === 0">
               Τα στοιχεία μου<span class="glyphicon glyphicon-menu-right"></span>
               </button>
@@ -133,12 +129,13 @@ import {AppSettings} from '../../app.settings';
                     Επώνυμο μαθητή: {{studentDataField$.studentsurname   }}
                 </li>
             </div>
-            <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
+<!--            <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
               <li class="list-group-item">
                   AMKA μαθητή: {{selectedAmkaFill$.name}}
               </li>
-          </div>
+          </div>  -->
         </ul>
+        </div>
   `
 })
 

@@ -169,13 +169,13 @@
 
     </form>
 
-    <div class="row">
-        <div class="col-md-2 col-md-offset-4">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6">
+            <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                 <i class="fa fa-backward"></i>
             </button>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid">
                 <i class="fa fa-forward"></i>
             </button>

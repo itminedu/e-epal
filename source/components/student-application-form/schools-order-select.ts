@@ -23,10 +23,10 @@ import {AppSettings} from '../../app.settings';
     Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα κουμπάκια δίπλα στα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
-    <div class="row equal">
-     <div class="col-md-12">
+<!--    <div class="row equal">
+     <div class="col-md-12"> -->
        <form [formGroup]="formGroup">
-            <div *ngFor="let schoolField$ of schoolNames; let i=index">
+            <div *ngFor="let schoolField$ of schoolNames; let i=index; let isOdd=odd; let isEven=even" [class.odd]="isOdd" [class.even]="isEven">
                 <button type="button" class="btn btn-info btn-sm  pull-right" style="width:120px;margin-bottom:4px;white-space: normal;word-wrap:break-word;"
                 (click)="changeOrder(i,'up')" *ngIf = "i !== 0">Ανέβασέ με</button>
                   <!--
@@ -40,13 +40,22 @@ import {AppSettings} from '../../app.settings';
                 Προτίμηση {{i+1}}:  {{schoolField$}}
                 </li>
             </div>
-             <div class="col-md-12">
-            <button type="button" class="btn btn-primary btn-lg  pull-right" (click)="navigateToStudentForm()" ><i class="fa fa-forward"></i></button>
+              <div class="row" style="margin-top: 20px;">
+              <div class="col-md-6">
+                  <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack();" >
+                <i class="fa fa-backward"></i>
+                  </button>
+              </div>
+              <div class="col-md-6">
+                  <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToStudentForm()" [disabled] = "numSelected === 0"  >
+                <i class="fa fa-forward"></i>
+                  </button>
+              </div>
               </div>
       </form>
-    </div>
+<!--    </div>
 
-  </div>
+  </div>  -->
   `
 
 })
@@ -117,6 +126,23 @@ import {AppSettings} from '../../app.settings';
 
     navigateToStudentForm() {
         this.router.navigate(['/student-application-form-main']);
+    }
+
+    navigateBack() {
+/*        this._ngRedux.select(state => {
+            state.epalclasses.reduce(({}, epalclass) =>{
+              if (epalclass.name === "Α' Λυκείου")
+                this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Β' Λυκείου")
+                  this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Γ' Λυκείου")
+                    this.router.navigate(['/region-schools-select']);
+              return epalclass;
+            }, {});
+            return state.epalclasses;
+        }); */
+        this.router.navigate(['/region-schools-select']);
+
     }
 
 }

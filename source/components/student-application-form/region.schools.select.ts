@@ -8,7 +8,6 @@ import { IRegions } from '../../store/regionschools/regionschools.types';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IAppState } from '../../store/store';
-import { LoaderService } from '../../services/Spinner.service';
 import {RemoveSpaces} from '../../pipes/removespaces';
 
 
@@ -23,19 +22,19 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'course-fields-select',
     template: `
-    <div class = "loading" *ngIf="objLoaderStatus">
+    <div class = "loading" *ngIf="showLoader$ | async">
     </div>
-     <div class="row equal">
-      <div class="col-md-12">
+<!--     <div class="row equal">
+      <div class="col-md-12"> -->
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
-            <ul class="list-group">
-            <div *ngFor="let region$ of regions$ | async; let i=index">
-                <li class="list-group-item" (click)="setActiveRegion(i)" [style.background-color]="toggleBackgroundColor(i)">
+            <ul class="list-group main-view">
+            <div *ngFor="let region$ of regions$ | async; let i=index; let isOdd=odd; let isEven=even"  >
+                <li class="list-group-item isclickable" (click)="setActiveRegion(i)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === i">
                     <h5>{{region$.region_name}}</h5>
                 </li>
 
-                <div *ngFor="let epal$ of region$.epals; let j=index;" [hidden]="i !== regionActive">
+                <div *ngFor="let epal$ of region$.epals; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [hidden]="i !== regionActive">
 
                         <div class="row">
                             <div class="col-md-2 col-md-offset-1">
@@ -44,7 +43,7 @@ import {AppSettings} from '../../app.settings';
                                 [hidden] = "numSelected === 3 && cb.checked === false"
                                 >
                              </div>
-                            <div class="col-md-8  col-md-offset-1">
+                            <div class="col-md-8  col-md-offset-1 isclickable">
                                 {{epal$.epal_name | removeSpaces}}
                             </div>
                         </div>
@@ -54,8 +53,13 @@ import {AppSettings} from '../../app.settings';
             </div>
             </ul>
         </div>
-        <div class="row">
-        <div class="col-md-12 col-md-offset-5">
+        <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async)">
+        <div class="col-md-6">
+            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()" >
+          <i class="fa fa-backward"></i>
+            </button>
+        </div>
+        <div class="col-md-6">
             <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0"  >
           <i class="fa fa-forward"></i>
             </button>
@@ -63,14 +67,15 @@ import {AppSettings} from '../../app.settings';
         </div>
     </form>
 
-   </div>
+<!--   </div>
 
-  </div>
+  </div>  -->
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit {
     private regions$: Observable<IRegions>;
     private sectors$: Observable<ISectors>;
+    private showLoader$: Observable<boolean>;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
     private classActive = "-1";
@@ -78,7 +83,6 @@ import {AppSettings} from '../../app.settings';
     private courseActive = -1;
     private numSelected = <number>0;
 
-    objLoaderStatus: boolean;
     //private schoolArray: Array<boolean> = new Array();
 
 
@@ -86,8 +90,7 @@ import {AppSettings} from '../../app.settings';
                 private _rsa: RegionSchoolsActions,
                 private _rsb: SectorCoursesActions,
                 private _ngRedux: NgRedux<IAppState>,
-                private router: Router,
-                private loaderService: LoaderService
+                private router: Router
 
             ) {
         this.formGroup = this.fb.group({
@@ -95,20 +98,9 @@ import {AppSettings} from '../../app.settings';
 
         });
 
-        this.objLoaderStatus=false;
-         console.log (this.objLoaderStatus);
     };
 
     ngOnInit() {
-
-        this.loaderService.loaderStatus.subscribe((val: boolean) => {
-            this.objLoaderStatus = val;
-        });
-
-        this.loaderService.displayLoader(true); // enable spinner
-
-//        this.objLoaderStatus = true;
-        console.log (this.objLoaderStatus,"AAAAAAAAAAAAA");
 
         this.classActive = this.classActive = this.getClassActive();
 
@@ -127,7 +119,6 @@ import {AppSettings} from '../../app.settings';
         }
 
         this._rsa.getRegionSchools(class_id,this.courseActive, false);
-         console.log(this.courseActive,"aaaaaaaaaaaaaa");
         this.regions$ = this._ngRedux.select(state => {
             let numsel = 0;
             state.regions.reduce((prevRegion, region) =>{
@@ -143,10 +134,20 @@ import {AppSettings} from '../../app.settings';
             this.numSelected = numsel;
             return state.regions;
         });
-        //this.objLoaderStatus = false;
-        this.loaderService.displayLoader(false); // enable spinner
-        console.log (this.objLoaderStatus,"BBBBBBBBBBBBB");
+        this.showLoader$ = this.regions$.map(regions => regions.size === 0);
+    }
 
+    navigateBack() {
+//        this.router.navigate(['/epal-class-select']);
+        if (this.classActive === "Α' Λυκείου")  {
+            this.router.navigate(['/epal-class-select']);
+        }
+        else if (this.classActive === "Β' Λυκείου") {
+            this.router.navigate(['/sector-fields-select']);
+        }
+        else if (this.classActive === "Γ' Λυκείου")  {
+            this.router.navigate(['/sectorcourses-fields-select']);
+        }
     }
 
     setActiveRegion(ind) {
@@ -155,17 +156,8 @@ import {AppSettings} from '../../app.settings';
       this.regionActive = ind;
     }
 
-    toggleBackgroundColor(ind) {
-        return ((this.regionActive === ind) ? "#fd9665" : "white");
-    }
-
     saveSelected(cb,j) {
         this._rsa.saveRegionSchoolsSelected(this.formGroup.value.formArray);
-        //σε κάθε νέο check, αρχικοποίησε τη σειρά προτιμήσεων (σειρά προτίμησης:0)
-/*        let schoolArrayOrders: Array<number> = new Array();
-        for (let i=0; i < this.formGroup.value.formArray.length; i++)
-          schoolArrayOrders.push(0);
-        this._rsa.saveRegionSchoolsOrder(schoolArrayOrders); */
     }
 
     navigateToApplication() {

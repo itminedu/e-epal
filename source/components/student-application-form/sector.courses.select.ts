@@ -21,24 +21,24 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sectorcourses-fields-select',
     template: `
-    <div class="row equal">
-     <div class="col-md-12">
+    <div class = "loading" *ngIf="(showLoader$ | async) && (showLoader2$ | async)">
+   </div>
       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
             <ul class="list-group">
-            <div *ngFor="let sector$ of sectors$ | async; let i=index">
-                <li class="list-group-item" (click)="setActiveSector(i)" [style.background-color]="toggleBackgroundColor(i)">
+            <div *ngFor="let sector$ of sectors$ | async; let i=index; let isOdd=odd; let isEven=even">
+                <li class="list-group-item isclickable" (click)="setActiveSector(i)"  [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="sectorActive === i">
                     <h5>{{sector$.sector_name}}</h5>
                 </li>
-                <div *ngFor="let course$ of sector$.courses; let j=index;" [hidden]="i !== sectorActive">
+                <div *ngFor="let course$ of sector$.courses; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [hidden]="i !== sectorActive">
                           <div class="row">
-                           <div class="col-md-2 col-md-offset-1">              
+                           <div class="col-md-2 col-md-offset-1">
                                 <input #cb type="checkbox" formControlName="{{ course$.globalIndex }}"
                                 (change)="updateCheckedOptions(course$.globalIndex, cb)"
                                 [checked] = " course$.globalIndex === idx "
                                 >
                             </div>
-                            <div class="col-md-8  col-md-offset-1">
+                            <div class="col-md-8  col-md-offset-1 isclickable">
                                 {{course$.course_name | removeSpaces}}
                             </div>
                             </div>
@@ -47,22 +47,26 @@ import {AppSettings} from '../../app.settings';
             </ul>
         </div>
 
-        <div class="row">
-        <div class="col-md-12 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="idx === -1"	 >
+        <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async) || !(showLoader2$ | async)">
+        <div class="col-md-6">
+            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
+          <i class="fa fa-backward"></i>
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="idx === -1">
             <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>
      </form>
-   </div>
-
-   </div>
   `
 })
 @Injectable() export default class SectorCoursesSelect implements OnInit {
     private sectors$: Observable<ISectors>;
     private regions$: Observable<IRegions>;
+    private showLoader$: Observable<boolean>;
+    private showLoader2$: Observable<boolean>;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
     private sectorActive = <number>-1;
@@ -107,6 +111,7 @@ import {AppSettings} from '../../app.settings';
             ids = 0;
             return state.sectors;
         });
+        this.showLoader$ = this.sectors$.map(sectors => sectors.size === 0);
 
     }
 
@@ -114,10 +119,6 @@ import {AppSettings} from '../../app.settings';
       if (ind === this.sectorActive)
         ind = -1;
       this.sectorActive = ind;
-    }
-
-    toggleBackgroundColor(ind) {
-        return ((this.sectorActive === ind) ? "#fd9665" : "white");
     }
 
     saveSelected() {
@@ -157,6 +158,7 @@ getAllSchools() {
       }, {});
       return state.regions;
   });
+  this.showLoader2$ = this.regions$.map(regions => regions.size === 0);
 
 }
 

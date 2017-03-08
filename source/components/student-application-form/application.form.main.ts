@@ -92,6 +92,23 @@ import {
 
     }
 
+    navigateBack() {
+/*        this._ngRedux.select(state => {
+            state.epalclasses.reduce(({}, epalclass) =>{
+              if (epalclass.name === "Α' Λυκείου")
+                this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Β' Λυκείου")
+                  this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Γ' Λυκείου")
+                    this.router.navigate(['/region-schools-select']);
+              return epalclass;
+            }, {});
+            return state.epalclasses;
+        }); */
+        this.router.navigate(['/schools-order-select']);
+
+    }
+
     submitSelected() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
 

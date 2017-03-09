@@ -5,7 +5,8 @@ import { Seq } from 'immutable';
 import {
   REGIONSCHOOLS_RECEIVED,
   REGIONSCHOOLS_SELECTED_SAVE,
-  REGIONSCHOOLS_ORDER_SAVE
+  REGIONSCHOOLS_ORDER_SAVE,
+  REGIONSCHOOLS_INIT
 } from '../../constants';
 
 export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): IRegions {
@@ -27,7 +28,7 @@ export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): I
         state.forEach(region => {
             regionsWithSelections.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>()});
             region.epals.forEach(epal => {
-                regionsWithSelections[ind].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, globalIndex: epal.globalIndex, selected: action.payload.regionSchoolsSelected[j], order_id: epal.order_id});
+                regionsWithSelections[ind].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, globalIndex: epal.globalIndex, selected: action.payload.regionSchoolsSelected[j], order_id: 0});
                 j++;
             })
             ind++;
@@ -47,6 +48,8 @@ export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): I
             });
             return Seq(regionsWithOrders).map(n => n).toList();
 
+            case REGIONSCHOOLS_INIT:
+                return INITIAL_STATE;
     default: return state;
   }
 };

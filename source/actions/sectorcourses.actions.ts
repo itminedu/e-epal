@@ -1,4 +1,4 @@
-import { SECTORCOURSES_RECEIVED, SECTORCOURSES_SELECTED_SAVE } from '../constants';
+import { SECTORCOURSES_RECEIVED, SECTORCOURSES_SELECTED_SAVE, SECTORCOURSES_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -23,6 +23,14 @@ export class SectorCoursesActions {
             });
         });
     }
+  };
+
+  initSectorCourses = () => {
+      return this._ngRedux.dispatch({
+          type: SECTORCOURSES_INIT,
+          payload: {
+          }
+      });
   };
 
  /*

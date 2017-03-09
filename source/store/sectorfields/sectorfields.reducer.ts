@@ -4,7 +4,8 @@ import { Seq } from 'immutable';
 
 import {
   SECTORFIELDS_RECEIVED,
-  SECTORFIELDS_SELECTED_SAVE
+  SECTORFIELDS_SELECTED_SAVE,
+  SECTORFIELDS_INIT
 } from '../../constants';
 
 export function sectorFieldsReducer(state: ISectorFields = INITIAL_STATE, action): ISectorFields {
@@ -25,6 +26,8 @@ export function sectorFieldsReducer(state: ISectorFields = INITIAL_STATE, action
             ind++;
         });
         return Seq(selectedSectorFields).map(n => n).toList();
+    case SECTORFIELDS_INIT:
+        return INITIAL_STATE;
     default: return state;
   }
 };

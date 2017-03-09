@@ -105,6 +105,10 @@ import {AppSettings} from '../../app.settings';
        this._cfa.saveEpalClassesSelected(this.formGroup.value);
        this._sfa.getSectorFields(true);
        this._rsa.getRegionSchools(1,"-1", true);
+       console.log("Here I am!");
+
+       //this._rsa.saveRegionSchoolsOrder(true);
+
        this._csa.getSectorCourses(true);
 
     }

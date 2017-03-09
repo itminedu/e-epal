@@ -12,6 +12,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../store/store';
 import { ILoginInfo } from '../store/logininfo/logininfo.types';
 
+
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
 
 @Injectable()
@@ -232,20 +233,29 @@ export class HelperDataService {
 
 
 
-    getCurrentUser() {
-        return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser`)
+    getCurrentUser(oauthtoken) {
+         console.log(oauthtoken, "tokenlalalala");
+         return new Promise((resolve, reject) => {
+            this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser/${oauthtoken}   `)
             .map(response => response.json())
             .subscribe(data => {
                 resolve(data);
-            },
+            }, // put the data returned from the server in our variable
             error => {
-                console.log("Error HTTP GET Service");
+                console.log("Error HTTP GET Service"); // in case of failure show this message
                 reject("Error HTTP GET Service");
             },
-            () => console.log("Course Fields Received"));
+            () => console.log("Sector Fields Received"));
         });
-    };
+}
+
+
+
+
+
+
+
+    
 
 
 

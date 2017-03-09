@@ -8,8 +8,9 @@ import { AmkaFillsActions} from './amkafill.actions';
 import { LoginInfoActions} from './logininfo.actions';
 import { CriteriaActions} from './criteria.actions';
 
+
 const ACTION_PROVIDERS = [ CourseFieldsActions, SectorFieldsActions, RegionSchoolsActions, SectorCoursesActions, StudentDataFieldsActions,
-  EpalClassesActions, AmkaFillsActions, LoginInfoActions, CriteriaActions ];
+  EpalClassesActions, AmkaFillsActions, LoginInfoActions, CriteriaActions];
 
 export {
   CourseFieldsActions,
@@ -21,5 +22,6 @@ export {
   AmkaFillsActions,
   LoginInfoActions,
   CriteriaActions,
+  
   ACTION_PROVIDERS,
 };

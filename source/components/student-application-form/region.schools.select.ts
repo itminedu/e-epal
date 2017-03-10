@@ -8,7 +8,9 @@ import { IRegions } from '../../store/regionschools/regionschools.types';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IAppState } from '../../store/store';
-import {RemoveSpaces} from '../../pipes/removespaces';
+import { RemoveSpaces } from '../../pipes/removespaces';
+import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
+import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 
 
 import {
@@ -20,7 +22,7 @@ import {
 import {AppSettings} from '../../app.settings';
 
 @Component({
-    selector: 'course-fields-select',
+    selector: 'region-schools-select',
     template: `
     <div class = "loading" *ngIf="showLoader$ | async">
     </div>
@@ -73,6 +75,7 @@ import {AppSettings} from '../../app.settings';
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit {
+    private epalclasses$: Observable<IEpalClasses>;
     private regions$: Observable<IRegions>;
     private sectors$: Observable<ISectors>;
     private showLoader$: Observable<boolean>;
@@ -80,8 +83,9 @@ import {AppSettings} from '../../app.settings';
     private rss = new FormArray([]);
     private classActive = "-1";
     private regionActive = <number>-1;
-    private courseActive = -1;
+    private courseActive = <number>-1;
     private numSelected = <number>0;
+    private sectorFields$: Observable<ISectorFields>;
 
     //private schoolArray: Array<boolean> = new Array();
 
@@ -101,24 +105,18 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-
-        this.classActive = this.classActive = this.getClassActive();
-
-        let class_id = -1;
-        if (this.classActive === "Α' Λυκείου")  {
-          //είναι Α' Λυκείου, οπότε courseActive = "-1" (είναι ήδη ορισμένο με αυτή την τιμή από την αρχικοποίηση)
-          class_id = 1;
-        }
-        else if (this.classActive === "Β' Λυκείου") {
-          class_id = 2;
-          this.courseActive = this.getSectorActive();
-        }
-        else if (this.classActive === "Γ' Λυκείου")  {
-          class_id = 3;
-          this.courseActive = this.getCourseActive();
-        }
-
-        this._rsa.getRegionSchools(class_id,this.courseActive, false);
+        console.log("hello");
+        this.epalclasses$ = this._ngRedux.select(state => {
+            console.log("size=" + state.epalclasses.size);
+          if (state.epalclasses.size > 0) {
+              state.epalclasses.reduce(({}, epalclass) => {
+                  this.selectAppropriateData(epalclass);
+                  return epalclass;
+              }, {});
+          }
+          return state.epalclasses;
+        });
+        console.log("hello2");
         this.regions$ = this._ngRedux.select(state => {
             let numsel = 0;
             state.regions.reduce((prevRegion, region) =>{
@@ -135,6 +133,43 @@ import {AppSettings} from '../../app.settings';
             return state.regions;
         });
         this.showLoader$ = this.regions$.map(regions => regions.size === 0);
+        console.log("hello3");
+    }
+
+    selectAppropriateData(epalClass) {
+
+        if (epalClass === "Α' Λυκείου")  {
+            this._rsa.getRegionSchools(1,"-1", false);
+        }
+        else if (epalClass === "Β' Λυκείου") {
+            this.sectorFields$ = this._ngRedux.select(state => {
+                state.sectorFields.reduce(({}, sectorField) =>{
+                    if (sectorField.selected === true) {
+                        this.courseActive = sectorField.id;
+                        this._rsa.getRegionSchools(2,this.courseActive, false);
+                    }
+                    return sectorField;
+                }, {});
+                return state.sectorFields;
+            });
+        }
+        else if (epalClass === "Γ' Λυκείου")  {
+            this.sectors$ = this._ngRedux.select(state => {
+                state.sectors.reduce((prevSector, sector) =>{
+                      if (sector.sector_selected === true) {
+                          sector.courses.reduce((prevCourse, course) =>{
+                              if (course.selected === true) {
+                                  this.courseActive = parseInt(course.course_id);
+                                  this._rsa.getRegionSchools(3,this.courseActive, false);
+                              }
+                              return course;
+                          }, {});
+                      }
+                    return sector;
+                }, {});
+                return state.sectors;
+            });
+        }
     }
 
     navigateBack() {

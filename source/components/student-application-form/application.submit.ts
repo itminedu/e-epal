@@ -5,11 +5,8 @@ import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
-//import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
-//import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { IRegions } from '../../store/regionschools/regionschools.types';
-//import { CriteriaActions } from '../../actions/criteria.actions';
 import { ICriter } from '../../store/criteria/criteria.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
@@ -24,25 +21,31 @@ import {AppSettings} from '../../app.settings';
     template: `
       <application-preview-select></application-preview-select>
 
+      <div class = "loading" *ngIf="showLoaderLogin$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderClasses$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderStudent$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderSchools$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderCriteria$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderCourses$ | async"></div>
+      <div class = "loading" *ngIf="showLoaderSectors$ | async"></div>
+
+      <!--
       <div *ngFor="let loginInfoToken$ of loginInfo$ | async;"> </div>
+      <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
       <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
       <div *ngFor="let region$ of regions$ | async;">
         <div *ngFor="let epal$ of region$.epals "> </div> </div>
-      <div *ngFor="let criter$ of criteria$ | async; let i=index"> </div>
       <div *ngFor="let sector$ of sectors$ | async;">
         <div *ngFor="let course$ of sector$.courses;"> </div> </div>
       <div *ngFor="let sectorField$ of sectorFields$ | async;"></div>
-      <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
+      <div *ngFor="let criter$ of criteria$ | async;"> </div>
+      -->
 
       <button type="button" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
   `
 })
 
 @Injectable() export default class ApplicationSubmit implements OnInit {
-    //private studentepalchosen;
-    //private studentcoursechosen;
-    //private studentsectorchosen;
-    //private studentcriteriachosen;
 
     private authToken;
     private student;
@@ -52,6 +55,14 @@ import {AppSettings} from '../../app.settings';
     private courseSelected;
     private sectorSelected;
     private classSelected;
+
+    private showLoaderLogin$: Observable<boolean>;
+    private showLoaderClasses$: Observable<boolean>;
+    private showLoaderStudent$: Observable<boolean>;
+    private showLoaderSchools$: Observable<boolean>;
+    private showLoaderCriteria$: Observable<boolean>;
+    private showLoaderCourses$: Observable<boolean>;
+    private showLoaderSectors$: Observable<boolean>;
 
     private studentDataFields$: Observable<IStudentDataFields>;
     private regions$: Observable<IRegions>;
@@ -77,18 +88,18 @@ import {AppSettings} from '../../app.settings';
           }
           return state.loginInfo;
       });
+      this.showLoaderLogin$ = this.loginInfo$.map(loginInfo => loginInfo.size === 0);
 
       this.epalclasses$ = this._ngRedux.select(state => {
         if (state.epalclasses.size > 0) {
             state.epalclasses.reduce(({}, epalclass) => {
                 this.classSelected = epalclass.name;
-                console.log("Hey!");
-                console.log(this.classSelected);
                 return epalclass;
             }, {});
         }
         return state.epalclasses;
       });
+      this.showLoaderClasses$ = this.epalclasses$.map(epalclasses => epalclasses.size === 0);
 
       this.studentDataFields$ = this._ngRedux.select(state => {
           if (state.studentDataFields.size > 0) {
@@ -99,6 +110,7 @@ import {AppSettings} from '../../app.settings';
           }
           return state.studentDataFields;
       });
+      this.showLoaderStudent$ = this.studentDataFields$.map(studentDataFields => studentDataFields.size === 0);
 
       this.regions$ = this._ngRedux.select(state => {
           state.regions.reduce((prevRegion, region) =>{
@@ -113,10 +125,12 @@ import {AppSettings} from '../../app.settings';
           }, {});
           return state.regions;
       });
+      this.showLoaderSchools$ = this.regions$.map(regions => regions.size === 0);
 
       this.criteria$ = this._ngRedux.select(state => {
           if (state.criter.size > 0) {
               state.criter.reduce(({}, criteria) => {
+                //code to be replaced in next version
                   if (criteria.orphanmono === true)
                     this.studentCriteria.push(6);
                   else if (criteria.orphantwice === true)
@@ -137,14 +151,13 @@ import {AppSettings} from '../../app.settings';
                     this.studentCriteria.push(8);
                   else if (criteria.income === '<= 9000 Ευρώ')
                     this.studentCriteria.push(9);
-                  console.log("Criteria");
-                    console.log(this.studentCriteria);
 
                   return criteria;
               }, {});
           }
           return state.criter;
       });
+      this.showLoaderCriteria$ = this.criteria$.map(criter => criter.size === 0);
 
       this.sectors$ = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
@@ -158,6 +171,7 @@ import {AppSettings} from '../../app.settings';
           }, {});
           return state.sectors;
       });
+      this.showLoaderCourses$ = this.sectors$.map(sectors => sectors.size === 0 && this.classSelected === "Γ' Λυκείου");
 
       this.sectorFields$ = this._ngRedux.select(state => {
           state.sectorFields.reduce(({}, sectorField) =>{
@@ -168,6 +182,8 @@ import {AppSettings} from '../../app.settings';
           }, {});
           return state.sectorFields;
       });
+
+      this.showLoaderSectors$ = this.sectorFields$.map(sectorFields => sectorFields.size === 0 && this.classSelected === "Β' Λυκείου");
 
 
     };
@@ -196,7 +212,7 @@ import {AppSettings} from '../../app.settings';
           else if (aitisiObj[0]['currentclass'] === "Γ' Λυκείου" )
             aitisiObj['3'] =  new StudentCourseChosen(null, this.courseSelected);
 
-          console.log(aitisiObj);
+          //console.log(aitisiObj);
 
           this.submitRecord(aitisiObj);
   }
@@ -224,28 +240,17 @@ import {AppSettings} from '../../app.settings';
 
 
   submitRecord(record) {
-    console.log("Here...");
-    console.log(this.authToken);
     let auth_str = this.authToken + ":" + this.authToken;
-    let auth_str2 = "nkatsaounos" + ":" + "zemraime";
-    console.log(auth_str);
-    console.log(auth_str2);
-    let s = btoa(auth_str);
-    let s2 = btoa(auth_str2);
-    console.log(s);
-    console.log(s2);
-
-
-    this.authToken = auth_str2;
+    //let authTokenPost = "nkatsaounos" + ":" + "...";
+    let authTokenPost = this.authToken + ":" + this.authToken;
 
     let headers = new Headers({
-       "Authorization": "Basic " + btoa(this.authToken),
+       "Authorization": "Basic " + btoa(authTokenPost),
        "Accept": "*/*",
        "Access-Control-Allow-Credentials": "true",
        "Content-Type": "application/json",
-       "X-CSRF-Token": "Pz3psGTGpc-EGNLm3tgzCpqEMg3HW0fCKf8xOnQLAsc"
+      // "X-CSRF-Token": "Pz3psGTGpc-EGNLm3tgzCpqEMg3HW0fCKf8xOnQLAsc"
     });
-    console.log(headers);
 
     //let headers = new Headers({
     //   "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -257,19 +262,21 @@ import {AppSettings} from '../../app.settings';
 
 
     let options = new RequestOptions({ headers: headers,  method: "post", withCredentials: true });
-    //let connectionString = `${AppSettings.API_ENDPOINT}/epal/appsubmit`;
     let connectionString = `${AppSettings.API_ENDPOINT}/epal/appsubmit`;
-    //this.http.post(`${AppSettings.API_ENDPOINT}/entity/epal_student`, this.student, options)
-    //this.http.post(connectionString, { "search": "person" }, options)
+
     this.http.post(connectionString, record, options)
       // Call map on the response observable to get the parsed people object
       .map((res: Response) => res.json())
-      .subscribe(success => {alert("Επιτυχές post στο route υποβολής " ); console.log("success post"); }, // put the data returned from the server in our variable
+      .subscribe(
+      success => {alert("Επιτυχές post στο route υποβολής " ); console.log("success post"); }, // put the data returned from the server in our variable
       error => {alert("Αποτυχές post στο route υποβολής " ); console.log("Error HTTP POST Service")}, // in case of failure show this message
-      () => console.log("write this message anyway"));//run this code in all cases);
+      () => console.log("write this message anyway"),
+
+      );//run this code in all cases);
+
+  //});
 
   }
-
 
 }
 

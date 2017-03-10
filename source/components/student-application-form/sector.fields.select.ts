@@ -21,17 +21,20 @@ import {AppSettings} from '../../app.settings';
     selector: 'sector-fields-select',
     template: `
 
-    <div class="row equal">
- 
-     <div class="col-md-12">
+<!--    <div class="row equal">
+
+     <div class="col-md-12"> -->
+     <div class = "loading" *ngIf="(showLoader$ | async) && (showLoader2$ | async)">
+    </div>
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
-
-            <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
-                <li class="list-group-item" (click)="setActiveSectorAndSave(i)" [style.background-color]="toggleBackgroundColor(i)">
+            <ul class="list-group main-view">
+            <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index; let isOdd=odd; let isEven=even">
+                <li class="list-group-item  isclickable" (click)="setActiveSectorAndSave(i)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="sectorActive === i">
                     <h5>{{sectorField$.name}}</h5>
                 </li>
             </div>
+            </ul>
 
             <!--CHECK BOXES USING BOTSTRAP
             <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
@@ -51,23 +54,31 @@ import {AppSettings} from '../../app.settings';
             -->
         </div>
 
-        <div class="row">
-        <div class="col-md-12 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="sectorActive === -1"	>
-            <i class="fa fa-forward"></i>
+        <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async) || !(showLoader2$ | async)">
+        <div class="col-md-6">
+            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
+          <i class="fa fa-backward"></i>
+            </button>
+        </div>
+        <div class="col-md-6">
+            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="sectorActive === -1"  >
+          <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>
+
       </form>
-    </div>
-  
-  </div>
+<!--    </div>
+
+  </div>  -->
   `
 
 })
 @Injectable() export default class SectorFieldsSelect implements OnInit {
     private sectorFields$: Observable<ISectorFields>;
     private regions$: Observable<IRegions>;
+    private showLoader$: Observable<boolean>;
+    private showLoader2$: Observable<boolean>;
     public formGroup: FormGroup;
     public cfs = new FormArray([]);
     private sectorActive = <number>-1;
@@ -100,6 +111,7 @@ import {AppSettings} from '../../app.settings';
             }, {});
             return state.sectorFields;
         });
+        this.showLoader$ = this.sectorFields$.map(sectorFields => sectorFields.size === 0);
 
     }
 
@@ -124,10 +136,6 @@ import {AppSettings} from '../../app.settings';
         this.saveSelected();
     }
 
-    toggleBackgroundColor(ind) {
-        return ((this.sectorActive === ind) ? "#fd9665" : "white");
-    }
-
     getAllSchools() {
       //store in Redux the whole schools
       this._rsr.getRegionSchools(3,"-1", true);
@@ -142,6 +150,7 @@ import {AppSettings} from '../../app.settings';
           }, {});
           return state.regions;
       });
+      this.showLoader2$ = this.regions$.map(regions => regions.size === 0);
 
     }
 

@@ -1,4 +1,6 @@
+export const API_ENDPOINT = 'http://localhost/drupal-8.2.5';
 export class AppSettings {
+
    public static get API_ENDPOINT(): string {
       return 'http://localhost/drupal-8.2.5';
    //	     return 'http://localhost/angular/eepal-front/drupal';

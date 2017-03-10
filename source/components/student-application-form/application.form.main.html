@@ -1,8 +1,6 @@
 <div class="row equal">
  <div class="col-md-12">
-  <form novalidate  (ngSubmit)="onSubmit(studentDataGroup)" [formGroup]="studentDataGroup"
-  method = "POST" action="http://localhost/drupal-8.2.5/epal/appsubmit" #form>
-
+  <form novalidate  [formGroup]="studentDataGroup" #form>
     <form [formGroup]="applicantDataGroup">
       <table>
         <tr><td>
@@ -81,23 +79,23 @@
     <div class="form-group">
         <label for="certificatetype">Τύπος απολυτηρίου</label><br/>
         <select class="form-control" formControlName="certificatetype">
-        <option value="">Παρακαλώ επιλέξτε..</option>
+        <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
         <option value="Απολυτήριο Γυμνασίου">Απολυτήριο Γυμνασίου</option>
         <option value="Απολυτήριο Λυκείου">Απολυτήριο Λυκείου</option>
     </select>
     </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('certificatetype').dirty && studentDataGroup.get('certificatetype').hasError('required')">
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('certificatetype').dirty && studentDataGroup.get('certificatetype').hasError('status')">
         Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
     </div>
 
     <div class="form-group">
         <label for="relationtostudent">Η αίτηση γίνεται από:</label><br/>
         <select class="form-control" formControlName="relationtostudent">
-        <option value="">Παρακαλώ επιλέξτε..</option>
+        <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
         <option value="Γονέας/Κηδεμόνας">Γονέας/Κηδεμόνας</option>
         <option value="Μαθητής">Μαθητής</option>
     </select>
-        <div class="alert alert-danger" *ngIf="studentDataGroup.get('relationtostudent').dirty && studentDataGroup.get('relationtostudent').hasError('required')">
+        <div class="alert alert-danger" *ngIf="studentDataGroup.get('relationtostudent').dirty && studentDataGroup.get('relationtostudent').hasError('status')">
             Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
         </div>
     </div>
@@ -128,7 +126,8 @@
               <option value="<= 9000 Ευρώ">μικρότερο ή ίσο των 9000 Ευρώ</option>
               <option value="> 9000 Ευρώ">μεγαλύτερο των 9000 Ευρώ</option>
             </select>
-            <div class="alert alert-danger" *ngIf="studentCriteriaGroup.get('income').dirty && studentCriteriaGroup.get('income').hasError('status')">
+            <!--  studentCriteriaGroup.get('income').dirty && -->
+            <div class="alert alert-danger" *ngIf=" studentCriteriaGroup.get('income').hasError('status')">
                   Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
             </div>
         </div>
@@ -170,14 +169,14 @@
 
     </form>
 
-    <div class="row">
-        <div class="col-md-2 col-md-offset-4">
-            <button type="button" class="btn-primary btn-lg pull-center" (click)="saveSelected()">
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-6">
+            <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                 <i class="fa fa-backward"></i>
             </button>
         </div>
-        <div class="col-md-8">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid">
+        <div class="col-md-6">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid" >
                 <i class="fa fa-forward"></i>
             </button>
         </div>

@@ -23,7 +23,7 @@ import {AppSettings} from '../../app.settings';
 
     <form [formGroup]="formGroup">
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
-            <div class="form-group">
+            <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
               <label for="name">Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση</label><br/>
                     <select class="form-control" formControlName="name" (change)="initializestore()">
                         <option value="Α' Λυκείου">Α' Λυκείου</option>
@@ -103,13 +103,17 @@ import {AppSettings} from '../../app.settings';
     initializestore()
     {
        this._cfa.saveEpalClassesSelected(this.formGroup.value);
-       this._sfa.getSectorFields(true);
+       this._sfa.initSectorFields();
+       this._rsa.initRegionSchools();
+       this._csa.initSectorCourses();
+/*       this._sfa.getSectorFields(true);
        this._rsa.getRegionSchools(1,"-1", true);
        console.log("Here I am!");
 
        //this._rsa.saveRegionSchoolsOrder(true);
 
        this._csa.getSectorCourses(true);
+       this._csa.getSectorCourses(true); */
 
     }
 

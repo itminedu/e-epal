@@ -1,4 +1,4 @@
-import { LOGININFO_SAVE } from '../constants';
+import { LOGININFO_SAVE, LOGININFO_RECEIVED } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -10,13 +10,16 @@ export class LoginInfoActions {
     private _ngRedux: NgRedux<IAppState>,
     private _hds: HelperDataService) {}
 
-  saveLoginInfo = (loginInfo) => {
+ 
+  getloginInfo = (loginInfo) => {
+ return this._hds.getCurrentUser(loginInfo.auth_token, loginInfo.auth_role).then (loginInfos => {
       return this._ngRedux.dispatch({
         type: LOGININFO_SAVE,
         payload: {
-          loginInfo
+          loginInfos
         }
       });
-  };
+  });
 
+}
 }

@@ -9,9 +9,16 @@ import {
 export function loginInfoReducer(state: ILoginInfo = INITIAL_STATE, action): ILoginInfo {
   switch (action.type) {
     case LOGININFO_SAVE:
-        let loginInfoTokens = Array<ILoginInfoToken>();
-        loginInfoTokens.push(<ILoginInfoToken>{auth_token: action.payload.loginInfo.auth_token, auth_role: action.payload.loginInfo.auth_role, cu_name: action.payload.loginInfo.cu_name });
+		let loginInfoTokens = Array<ILoginInfoToken>();
+        let i=0;
+        action.payload.loginInfos.forEach(loginInfo => {
+            loginInfoTokens.push(<ILoginInfoToken>{auth_token: loginInfo.auth_token, auth_role: loginInfo.auth_role, cu_name: loginInfo.cu_name, xcsrftoken: loginInfo.xcsrftoken });
+            i++;
+        });
         return Seq(loginInfoTokens).map(n => n).toList();
+
+
+
     default:
         return state;
   }

@@ -9,8 +9,11 @@
   </a>
   <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
     <ul class="navbar-nav">
-       
-          
+          <div *ngFor="let username$ of loginInfo$ | async;">
+             
+                  <b>Όνομα Χρήστη:</b> {{username$.cu_name}}
+             
+          </div>
     <!--
       <li class="nav-item" [ngClass]="{active: path=='application-preview'}">
         <a class="nav-link" [routerLink]="['/application-preview']" [routerLinkActive]="['active']">Προεπισκόπηση</a>

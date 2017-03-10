@@ -27,9 +27,7 @@ import { AppSettings } from '../app.settings';
                     <div class="col-md-6">
                         {{loginInfoToken$.auth_role}}
                     </div>
-                    <div>
-                        {{loginInfoToken$.cu_name}}
-                    </div>
+                    
                 </div>
             </div>
             <div class="row">
@@ -62,6 +60,7 @@ export default class Home implements OnInit {
     private authToken: string;
     private authRole: string;
     private name :any;
+    private xcsrftoken :any;
     private loginInfo$: Observable<ILoginInfo>;
     constructor(private fb: FormBuilder,
         private _ata: LoginInfoActions,
@@ -85,28 +84,25 @@ export default class Home implements OnInit {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     this.name = loginInfoToken.cu_name;
+                    this.xcsrftoken = loginInfoToken.xcsrftoken;
                     return loginInfoToken;
                 }, {});
             }
             return state.loginInfo;
         });
         
-        this._hds.getCurrentUser(this.authToken).then(cu_name =>{ return this._ngRedux.dispatch({
-                type: "aaaaaa",
-                payload: {
-                    cu_name
-                }
-            });
-        });
+       
         // subscribe to router event
         this.activatedRoute.queryParams.subscribe((params: Params) => {
             this.authToken = params['auth_token'];
             this.authRole = params['auth_role'];
             
-            if (this.authToken && this.authRole)
-            this._ata.saveLoginInfo({ auth_token: this.authToken, auth_role: this.authRole, cu_name:this.name });
-           // console.log(this.authToken,"token");
 
+            if (this.authToken && this.authRole)
+                this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole});
+          
+          //  this._ata.saveLoginInfo({ auth_token: this.authToken, auth_role: this.authRole, cu_name:this.name });
+     
         });
     }
 

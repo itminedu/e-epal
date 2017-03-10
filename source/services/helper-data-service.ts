@@ -10,7 +10,7 @@ import { ISector, ISectors, ISectorCourse } from '../store/sectorcourses/sectorc
 import { AppSettings } from '../app.settings';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../store/store';
-import { ILoginInfo } from '../store/logininfo/logininfo.types';
+import { ILoginInfo, ILoginInfoToken } from '../store/logininfo/logininfo.types';
 
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
@@ -233,30 +233,30 @@ export class HelperDataService {
 
 
 
-    getCurrentUser(oauthtoken) {
-         console.log(oauthtoken, "tokenlalalala");
-         return new Promise((resolve, reject) => {
+    getCurrentUser(oauthtoken, oauthrole) {
+           return new Promise((resolve, reject) => {
             this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser/${oauthtoken}   `)
             .map(response => response.json())
             .subscribe(data => {
-                resolve(data);
+                resolve(this.transformUserSchema(data, oauthtoken, oauthrole));
             }, // put the data returned from the server in our variable
             error => {
                 console.log("Error HTTP GET Service"); // in case of failure show this message
                 reject("Error HTTP GET Service");
             },
-            () => console.log("Sector Fields Received"));
+            () => console.log("UserName Received"));
         });
+
+
 }
 
-
-
-
-
-
-
-    
-
+    transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
+        let rsa = Array<ILoginInfoToken>();
+          
+            rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
+        return rsa;
+            
+        }
 
 
 

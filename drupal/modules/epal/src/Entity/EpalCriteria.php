@@ -180,7 +180,7 @@ class EpalCriteria extends ContentEntityBase implements EpalCriteriaInterface {
         'max_length' => 100,
         'text_processing' => 0,
       ))
-      ->setDefaultValue('')
+	  ->setRequired(true)
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',

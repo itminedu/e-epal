@@ -43,8 +43,8 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
- *     "minno" = "minno",
- *     "maxno" = "maxno",
+ *     "student_id" = "student_id",
+ *     "epal_id" = "epal_id", 
  *   },
  *   links = {
  *     "canonical" = "/admin/epal/epal_student_class/{epal_student_class}",

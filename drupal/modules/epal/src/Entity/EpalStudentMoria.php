@@ -42,6 +42,8 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
+ *     "student_id" = "student_id",
+ *     "criterio_id" = "criterio_id", 
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/epal_student_moria/{epal_student_moria}",

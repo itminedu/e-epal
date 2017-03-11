@@ -90,8 +90,7 @@ export default class Home implements OnInit {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0)
-                        this.router.navigate(['/epal-class-select']);
+                    
                     return loginInfoToken;
                 }, {});
             }
@@ -111,7 +110,9 @@ export default class Home implements OnInit {
          
             if (this.authToken && this.authRole)
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole});
-          
+                console.log(this.authToken, "tttttttt");
+              if (this.authToken && this.authToken.length > 0)
+                        this.router.navigate(['/epal-class-select']);
           //  this._ata.saveLoginInfo({ auth_token: this.authToken, auth_role: this.authRole, cu_name:this.name });
      
         });

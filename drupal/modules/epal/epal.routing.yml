@@ -28,3 +28,12 @@ current_user:
     _controller: '\Drupal\epal\Controller\CurrentUser::content'
   requirements:
     _access: 'TRUE'
+epal.application_submit:
+  path: '/epal/appsubmit'
+  options: 
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ApplicationSubmit::appSubmit'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  

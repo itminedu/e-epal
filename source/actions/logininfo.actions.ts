@@ -12,7 +12,7 @@ export class LoginInfoActions {
     private _hds: HelperDataService) {}
 
  
-  getloginInfo = (loginInfo) => {
+ getloginInfo = (loginInfo) => {
  return this._hds.getCurrentUser(loginInfo.auth_token, loginInfo.auth_role).then (loginInfos => {
       return this._ngRedux.dispatch({
         type: LOGININFO_SAVE,

@@ -1,5 +1,5 @@
 .main-wrapper {
-	 background: #FFF none repeat-y 0 0; 
+	 background: #FFF none repeat-y 0 0;
 	 min-height: calc(100vh - 220px);
 	#content {
 		zoom: 1;
@@ -39,7 +39,7 @@
 			}
 
             .left-choices {
-            	h4{ 
+            	h4{
 
 					font-weight: bold;
 					font-size: 1rem;
@@ -51,9 +51,9 @@
 	        	border: none!important;
 	        	width: 200px;
 				padding:5px 10px;
-				
+
 	        }
-	         
+
 
 		}
 
@@ -75,13 +75,13 @@
 
 			li.list-group-item{
 				color: black;
-				background-color: white;
+	//			background-color: white;
 				border: none!important;
 			    padding: 0.3rem 0.3rem!important;
 				h5{
 					font-size: 1rem;
 				}
-			
+
 
 			}
 
@@ -92,7 +92,7 @@
 
 
 
-@include media-breakpoint-up(md) { 
+@include media-breakpoint-up(md) {
    .main-wrapper {
    	#content {
    		padding: 0 10px 10px;

@@ -1,4 +1,5 @@
 dist/*
+source/app.settings.ts
 node_modules/*
 !drupal/
 drupal/*

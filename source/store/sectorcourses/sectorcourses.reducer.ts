@@ -4,7 +4,8 @@ import { Seq } from 'immutable';
 
 import {
   SECTORCOURSES_RECEIVED,
-  SECTORCOURSES_SELECTED_SAVE
+  SECTORCOURSES_SELECTED_SAVE,
+  SECTORCOURSES_INIT
 } from '../../constants';
 
 export function sectorCoursesReducer(state: ISectors = INITIAL_STATE, action): ISectors {
@@ -33,6 +34,8 @@ export function sectorCoursesReducer(state: ISectors = INITIAL_STATE, action): I
             ind++;
         });
         return Seq(sectorsWithSelections).map(n => n).toList();
+    case SECTORCOURSES_INIT:
+        return INITIAL_STATE;
     default: return state;
   }
 };

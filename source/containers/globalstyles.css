@@ -147,3 +147,31 @@
 .form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
     display: none;
 }
+
+.left-side-view > li.active {
+    background-color: #fd9665;
+    border-color: #fd9665;
+}
+
+.isclickable {
+    cursor: pointer;
+}
+
+.oddin {
+    background-color: #f2f9ff;
+
+}
+.evenin {
+    background-color: #eceff3;
+}
+
+.oddout {
+    background-color: #dddddd;
+
+}
+.evenout {
+    background-color: #eeeeee;
+}
+.selectedout {
+    background-color: #fd9665;
+}

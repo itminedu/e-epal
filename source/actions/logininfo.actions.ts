@@ -1,4 +1,5 @@
 import { LOGININFO_SAVE, LOGININFO_RECEIVED } from '../constants';
+import { LOGININFO_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -20,6 +21,15 @@ export class LoginInfoActions {
         }
       });
   });
-
 }
+
+  initLoginInfo = () => {
+      return this._ngRedux.dispatch({
+          type: LOGININFO_INIT,
+          payload: {
+          }
+      });
+  };
+
+
 }

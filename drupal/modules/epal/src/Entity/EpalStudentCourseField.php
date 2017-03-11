@@ -43,7 +43,7 @@ use Drupal\user\UserInterface;
  *     "langcode" = "langcode",
  *     "status" = "status",
  *     "student_id" = "student_id",
- *     "courseField_id" = "courseField_id",  
+ *     "coursefield_id" = "coursefield_id",  
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/epal_student_course_field/{epal_student_course_field}",

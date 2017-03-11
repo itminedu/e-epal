@@ -39,14 +39,14 @@ import {
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
         this.studentDataGroup = this.fb.group({
-            epaluser_id: [1,[]],
+            epaluser_id: [,[]],
             name: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentsurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionaddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['26334', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            certificatetype: ['Απολυτήριο Λυκείου', Validators.required],
-            relationtostudent: ['Μαθητής', Validators.required],
+            certificatetype: ['Απολυτήριο Λυκείου', this.checkChoice],
+            relationtostudent: ['Μαθητής', this.checkChoice],
             telnum:  ['2610789789', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
         });
 
@@ -63,9 +63,9 @@ import {
           twins: false,
           disability: false,
           studies: false,
-          income: ['noincomecriterio', checkChoice],
+          income: ['noincomecriterio', this.checkChoice ],
         });
-
+        
     };
 
     ngOnInit() {
@@ -89,6 +89,23 @@ import {
             }
             return state.criter;
         });
+
+    }
+
+    navigateBack() {
+/*        this._ngRedux.select(state => {
+            state.epalclasses.reduce(({}, epalclass) =>{
+              if (epalclass.name === "Α' Λυκείου")
+                this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Β' Λυκείου")
+                  this.router.navigate(['/region-schools-select']);
+              else if (epalclass.name === "Γ' Λυκείου")
+                    this.router.navigate(['/region-schools-select']);
+              return epalclass;
+            }, {});
+            return state.epalclasses;
+        }); */
+        this.router.navigate(['/schools-order-select']);
 
     }
 
@@ -129,16 +146,13 @@ import {
         this._sdfb.saveCriteria([this.studentCriteriaGroup.value]);
     }
 
+     checkChoice(c: FormControl) {
+      console.log(c.value);
+      if (c.value === "noincomecriterio")
+        return {status: true}
+      else
+      // Null means valid, believe it or not
+        return null;
+    }
 
-}
-
-
-function checkChoice(c: FormControl) {
-  console.log("here!!!!");
-  console.log(c.value);
-  if (c.value === "noincomecriterio")
-    return {status: true}
-  else
-  // Null means valid, believe it or not
-    return null;
 }

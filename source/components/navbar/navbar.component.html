@@ -8,12 +8,20 @@
           <img src="../myschool/assets/images/myschool_logo.png" alt="Αρχική" />
   </a>
   <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
+      <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
     <ul class="navbar-nav">
           <div *ngFor="let username$ of loginInfo$ | async;">
              
                   <b>Όνομα Χρήστη:</b> {{username$.cu_name}}
              
-          </div>
+
+       &nbsp;&nbsp;
+        <div *ngIf="authToken">
+                <button type="button" class="btn-primary btn-sm pull-right" (click)="oauthSignOut()">
+               <i class="fa fa-sign-out"></i>
+                </button>
+        </div>
+</div>
     <!--
       <li class="nav-item" [ngClass]="{active: path=='application-preview'}">
         <a class="nav-link" [routerLink]="['/application-preview']" [routerLinkActive]="['active']">Προεπισκόπηση</a>

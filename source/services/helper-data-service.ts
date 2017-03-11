@@ -39,8 +39,7 @@ export class HelperDataService {
     };
 
     createAuthorizationHeader(headers: Headers) {
-        headers.append('Authorization', 'Basic ' +
-        btoa(this.authToken + ':' + this.authToken));
+        headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
     }
 
     getCourseFields() {
@@ -246,11 +245,10 @@ export class HelperDataService {
             },
             () => console.log("UserName Received"));
         });
-
-
 }
 
-    transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
+
+transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         let rsa = Array<ILoginInfoToken>();
           
             rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
@@ -258,7 +256,42 @@ export class HelperDataService {
             
         }
 
+    signOut() {
+        this.loginInfo$.forEach(loginInfoToken => {
+            console.log(loginInfoToken.get(0));
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
 
+
+           "Content-Type": "application/json",
+            "Accept": "*/*",
+            "Access-Control-Allow-Credentials": "true",
+            // "Content-Type": "text/plain",  // try to skip preflight
+            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
+            "X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
+//            "X-oauth-enabled": "true",
+//            "X-Auth-Token": this.authToken
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/oauth/logout`, {}, options)
+            .map(response => response)
+            .subscribe(data => {
+                resolve(data);
+                console.log(data);
+            }, // put the data returned from the server in our variable
+            error => {
+                console.log("Error Logout"); // in case of failure show this message
+                reject("Error Logout");
+            },
+            () => console.log("Logging out"));//run this code in all cases); */
+        });
+    }
 
 
 }

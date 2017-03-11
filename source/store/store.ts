@@ -23,6 +23,7 @@ export interface IAppState {
     amkafills?: amkafills.IAmkaFills;
     loginInfo?: loginInfo.ILoginInfo;
     criter?: criter.ICriter;
+    
 };
 
 export const rootReducer = combineReducers<IAppState>({
@@ -35,6 +36,7 @@ export const rootReducer = combineReducers<IAppState>({
    amkafills: amkafills.amkafillReducer,
    loginInfo: loginInfo.loginInfoReducer,
    criter: criter.criteriaReducer,
+   
 });
 
 export function deimmutify(state: IAppState): Object {
@@ -48,6 +50,7 @@ export function deimmutify(state: IAppState): Object {
     amkafills: amkafills.deimmutifyAmkaFills(state.amkafills),
     loginInfo: loginInfo.deimmutifyLoginInfo(state.loginInfo),
     criter: criter.deimmutifyCriteria(state.criter),
+    
   };
 }
 

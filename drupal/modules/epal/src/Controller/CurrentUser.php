@@ -4,6 +4,10 @@
  * Contains \Drupal\query_example\Controller\QueryExampleController.
  */
 
+
+
+
+
 namespace Drupal\epal\Controller;
 
 use Drupal\Core\Entity\Query\QueryFactory;
@@ -13,26 +17,22 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 
 
+
+
 class CurrentUser extends ControllerBase {
 
  
-  public function content() {
-  
-     
+  public function content($token_name) {
+   
+   $query = \Drupal::database()->select('epal_users', 'nfd');
+   $query->fields('nfd', ['name']);
+   $query->condition('nfd.authtoken', $token_name);
+   $field = $query->execute()->fetchAssoc();
+ 
 
-//  	$name = \Drupal\user\Entity\User::load(\Drupal::currentUser()->id());
-  	$name = "LALALA";
-    $authToken = "no authToken";
-    $accessKey = "no accessKey";
 
-    if (\Drupal::request()->headers->has('X-AUTH-TOKEN')) {
-        $authToken = \Drupal::request()->headers->get( 'X-AUTH-TOKEN' );
-    }
-    if (\Drupal::request()->headers->has('X-ACCESS-KEY')) {
-        $accessKey = \Drupal::request()->headers->get( 'X-ACCESS-KEY' );
-    }
-    $response = new JsonResponse([$name]);
-    $response->headers->set('X-AUTH-TOKEN', 'HELLOTOKEN');
+
+    $response = new JsonResponse($field);
     return $response;
 
   }

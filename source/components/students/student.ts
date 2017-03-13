@@ -11,6 +11,7 @@ export class Student {
         public regionarea: string,
         public certificatetype: string,
         public relationtostudent: string,
+        public studentamka: string,
         public currentclass: string,
         ){}
 }
@@ -31,3 +32,35 @@ export class StudentCourseChosen  {
     public coursefield_id: number,
   ) {}
 }
+
+export class StudentSectorChosen  {
+  constructor(
+    public student_id: number,
+    public sectorfield_id: number,
+  ) {}
+}
+
+export class StudentCriteriaChosen  {
+  constructor(
+    public student_id: number,
+    public income: number,
+    public criterio_id: number,
+  ) {}
+}
+
+
+/*
+export class StudentCriteria  {
+  constructor(
+    public student_id: number,
+    public orphanmono: boolean,
+    public orphantwice: boolean,
+    public threechildren: boolean,
+    public manychildren: boolean,
+    public twins: boolean,
+    public disability: boolean,
+    public studies: boolean,
+    public income: number,
+  ) {}
+}
+*/

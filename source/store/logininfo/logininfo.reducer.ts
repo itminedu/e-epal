@@ -13,7 +13,7 @@ export function loginInfoReducer(state: ILoginInfo = INITIAL_STATE, action): ILo
 		let loginInfoTokens = Array<ILoginInfoToken>();
         let i=0;
         action.payload.loginInfos.forEach(loginInfo => {
-            loginInfoTokens.push(<ILoginInfoToken>{auth_token: loginInfo.auth_token, auth_role: loginInfo.auth_role, cu_name: loginInfo.cu_name, xcsrftoken: loginInfo.xcsrftoken });
+            loginInfoTokens.push(<ILoginInfoToken>{auth_token: loginInfo.auth_token, auth_role: loginInfo.auth_role, cu_name: loginInfo.cu_name});
             i++;
         });
         return Seq(loginInfoTokens).map(n => n).toList();

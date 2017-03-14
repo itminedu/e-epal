@@ -23,7 +23,9 @@ epal_auth_test:
     _permission: 'access content'
     _user_is_logged_in: 'TRUE'
 current_user:
-  path: '/epal/curuser'
+  path: '/epal/curuser/{token_name}'
+  options: 
+    _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\CurrentUser::content'
   requirements:

@@ -112,31 +112,45 @@
 
 
     <form novalidate (ngSubmit)="onSubmit(studentCriteriaGroup)" [formGroup]="studentCriteriaGroup">
-      <div *ngFor="let criter$ of criteria$ | async; let i=index"> </div>
 
+      <!--
         <fieldset class="group">
+      -->
         <legend>Εισοδηματικά κριτήρια</legend>
 
+        <select #cblsttest class="form-control" (change)="checkstatus(cblsttest)" formControlName="incometest">
+        <option *ngFor="let criter$ of criteria$   | async; let i=index" >
+          <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+        {{criter$.name}} </div></option>
+        </select>
+
+
         <div class="form-group">
+
             <label for="income">Το κατά κεφαλήν εισόδημα στο προηγούμενο φορολογικό έτος είναι:</label><br/>
-              <select class="form-control" (change)="checkstatus()" formControlName="income">
-              <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
-              <option value="<= 3000 Ευρώ">μικρότερο ή ίσο των 3000 Ευρώ</option>
-              <option value="<= 6000 Ευρώ">μικρότερο ή ίσο των 6000 Ευρώ</option>
-              <option value="<= 9000 Ευρώ">μικρότερο ή ίσο των 9000 Ευρώ</option>
-              <option value="> 9000 Ευρώ">μεγαλύτερο των 9000 Ευρώ</option>
+              <select #cblst class="form-control" (change)="checkstatus(cblst)" formControlName="income">
+              <option value="noincomecriterio" [selected] = "selectionIncomeId === 0" >Παρακαλώ επιλέξτε..</option>
+              <option value="<= 3000 Ευρώ" [selected] = "selectionIncomeId === 8" >μικρότερο ή ίσο των 3000 Ευρώ</option>
+              <option value="<= 6000 Ευρώ" [selected] = "selectionIncomeId === 9" >μικρότερο ή ίσο των 6000 Ευρώ</option>
+              <option value="<= 9000 Ευρώ" [selected] = "selectionIncomeId === 10" >μικρότερο ή ίσο των 9000 Ευρώ</option>
+              <option value="> 9000 Ευρώ" [selected] = "selectionIncomeId === 11" >μεγαλύτερο των 9000 Ευρώ</option>
             </select>
-            <!--  studentCriteriaGroup.get('income').dirty && -->
+
             <div class="alert alert-danger" *ngIf=" studentCriteriaGroup.get('income').hasError('status')">
                   Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
             </div>
         </div>
+
+        <div formArrayName="formArray">
+         <div *ngFor="let criter$ of criteria$ | async; let i=index"> </div>
+
 
         <legend>Κοινωνικά κριτήρια</legend>
         <p style="margin-top: 15px; line-height: 1.5em;">Επιλέξτε όσα από τα παρακάτω κριτήρια πληρούνται για εσάς.
           Οι επιλογές σας επέχουν θέση υπέυθυνης δήλωσης.
           Θα πρέπει να προσκομίσετε τα αντίστοιχα δικαιολογητικά στο σχολείο εγγραφής σας, όταν σας ζητηθεί.
         </p>
+        <!--
         <div class="row">
           <div class="col-md-1"> <input #cborphanmono type="checkbox" (change)="checkorphan('mono', cborphanmono)"  formControlName="orphanmono" ></div>
           <div class="col-md-11 pull-left">Ορφανός από τον ένα γονέα</div>
@@ -165,7 +179,33 @@
           <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="studies"></div>
           <div class="col-md-11 pull-left">Αδελφός,-ή που σπουδάζει σε άλλη πόλη</div>
         </div>
+      -->
+
+
+          <div *ngFor="let criter$ of criteria$   | async; let i=index">
+
+
+
+
+          <div class="row" *ngIf="criter$.name !== 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+          <div class="col-md-1">
+              <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{i}}>
+          </div>
+          <div class="col-md-11 pull-left">
+              {{criter$.name}}
+          </div>
+          </div>
+
+          </div>
+
+      <div class="row">
+
+      </div>
+
+      <!--
       </fieldset>
+    -->
+    </div>
 
     </form>
 

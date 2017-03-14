@@ -131,6 +131,21 @@ import {AppSettings} from '../../app.settings';
           if (state.criter.size > 0) {
               state.criter.reduce(({}, criteria) => {
                 //code to be replaced in next version
+                  if (criteria.selected === true && Number(criteria.id) !== 11)
+                      this.studentCriteria.push(Number(criteria.id));
+
+                  return criteria;
+              }, {});
+          }
+          return state.criter;
+      });
+      this.showLoaderCriteria$ = this.criteria$.map(criter => criter.size === 0);
+
+      /*
+      this.criteria$ = this._ngRedux.select(state => {
+          if (state.criter.size > 0) {
+              state.criter.reduce(({}, criteria) => {
+                //code to be replaced in next version
                   if (criteria.orphanmono === true)
                     this.studentCriteria.push(6);
                   else if (criteria.orphantwice === true)
@@ -158,6 +173,7 @@ import {AppSettings} from '../../app.settings';
           return state.criter;
       });
       this.showLoaderCriteria$ = this.criteria$.map(criter => criter.size === 0);
+      */
 
       this.sectors$ = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{

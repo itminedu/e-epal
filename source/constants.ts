@@ -23,6 +23,7 @@ export const AMKAFILL_SAVE = 'AMKAFILL_SAVE';
 export const LOGININFO_SAVE = 'LOGININFO_SAVE';
 export const LOGININFO_INIT = 'LOGININFO_INIT';
 
+export const CRITERIA_RECEIVED = 'CRITERIA_RECEIVED';
 export const CRITERIA_SAVE = 'CRITERIA_SAVE';
 
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';

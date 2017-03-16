@@ -27,6 +27,7 @@ import {
 
     private studentDataFields$: Observable<IStudentDataFields>;
     private criteria$: Observable<ICriter>;
+    private showLoader$: Observable<boolean>;
 
     public studentDataGroup: FormGroup;
     public applicantDataGroup: FormGroup;
@@ -34,8 +35,6 @@ import {
 
     private rss = new FormArray([]);
     private selectionIncomeId = <number>0;
-    //public orphanmode = <number>0;
-    //public childrenmode = <number>0;
 
     constructor(private fb: FormBuilder,
                 private _sdfa: StudentDataFieldsActions,
@@ -49,8 +48,8 @@ import {
             regionaddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['26334', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            certificatetype: ['Απολυτήριο Λυκείου', checkChoice],
-            relationtostudent: ['Μαθητής', checkChoice],
+            certificatetype: ['Απολυτήριο Λυκείου', this.checkChoice],
+            relationtostudent: ['Μαθητής', this.checkChoice],
             telnum:  ['2610789789', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
         });
 
@@ -59,22 +58,12 @@ import {
           guardiansurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
         });
 
-        /*
-        this.studentCriteriaGroup = this.fb.group({
-          orphanmono: false,
-          orphantwice: false,
-          threechildren: false,
-          manychildren: false,
-          twins: false,
-          disability: false,
-          studies: false,
-          income: ['noincomecriterio', checkChoice ],
-        });
-        */
         this.studentCriteriaGroup = this.fb.group({
             formArray: this.rss,
-            income: ['noincomecriterio', checkChoice ],
-            incometest: ['noincomecriterio', checkChoice ],
+            //income: ['noincomecriterio', this.checkChoice ],
+            //income: ['noincomecriterio', Validators.required ],
+            income: [this.selectionIncomeId, this.checkChoice ],
+            //incometest: ['noincomecriterio', checkChoice ],
         });
 
     };
@@ -96,91 +85,45 @@ import {
             if (state.criter.size > 0) {
                 state.criter.reduce(({}, criteria) => {
                     //this.studentCriteriaGroup.setValue(criteria);
-                      if (criteria.selected === true && (criteria.id === "8" || criteria.id === "9" || criteria.id === "10" || criteria.id === "11" ))
+                      if (criteria.selected === true && (criteria.name === "Εισόδημα" ))  {
+                        console.log("MPHKA!!!");
                         this.selectionIncomeId = Number(criteria.id);
-                      console.log("Yes");
-                      console.log(this.selectionIncomeId);
+                      }
                       this.rss.push( new FormControl(criteria.selected, []));
                     return criteria;
                 }, {});
             }
             return state.criter;
         });
+        this.showLoader$ = this.criteria$.map(criter => criter.size === 0);
 
     }
 
     navigateBack() {
-/*        this._ngRedux.select(state => {
-            state.epalclasses.reduce(({}, epalclass) =>{
-              if (epalclass.name === "Α' Λυκείου")
-                this.router.navigate(['/region-schools-select']);
-              else if (epalclass.name === "Β' Λυκείου")
-                  this.router.navigate(['/region-schools-select']);
-              else if (epalclass.name === "Γ' Λυκείου")
-                    this.router.navigate(['/region-schools-select']);
-              return epalclass;
-            }, {});
-            return state.epalclasses;
-        }); */
         this.router.navigate(['/schools-order-select']);
-
     }
 
     submitSelected() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
 
-        this.studentCriteriaGroup.controls['formArray']['controls'][7].setValue(false);
-        this.studentCriteriaGroup.controls['formArray']['controls'][8].setValue(false);
-        this.studentCriteriaGroup.controls['formArray']['controls'][9].setValue(false);
-        this.studentCriteriaGroup.controls['formArray']['controls'][10].setValue(false);
+        for (let i=7; i < 11; i++)
+          this.studentCriteriaGroup.controls['formArray']['controls'][i].setValue(false);
         this.studentCriteriaGroup.controls['formArray']['controls'][this.selectionIncomeId-1].setValue(true);
+
+        console.log(this.studentCriteriaGroup.controls['income']);
+
         this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
 
         this.router.navigate(['/application-submit']);
-    }
-
-    checkorphan(orphanModeName,cb) {
-      if (orphanModeName === "mono" && cb.checked === true)
-        this.studentCriteriaGroup.controls['orphantwice'].setValue(false);
-      else if (orphanModeName === "twice" && cb.checked === true)
-        this.studentCriteriaGroup.controls['orphanmono'].setValue(false);
-
-      this._sdfb.saveCriteria([this.studentCriteriaGroup.value]);
-
-      //console.log("after check");
-      //console.log(this.studentCriteriaGroup.value);
-    }
-
-    checkchildren(childrenModeName, cb) {
-      if (childrenModeName === "three" && cb.checked === true)
-        this.studentCriteriaGroup.controls['manychildren'].setValue(false);
-      else if (childrenModeName === "many" && cb.checked === true)
-        this.studentCriteriaGroup.controls['threechildren'].setValue(false);
-
-      this._sdfb.saveCriteria([this.studentCriteriaGroup.value]);
-
-      //console.log("after check");
-      //console.log(this.studentCriteriaGroup.value);
     }
 
     checkcriteria(cb, mutual_disabled) {
       if (mutual_disabled !== "-1" && cb.checked === true) {
         this.studentCriteriaGroup.controls['formArray']['controls'][mutual_disabled-1].setValue(false);
       }
-      //this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
     }
 
-
-
     checkstatus(cb) {
-        console.log("Hey");
-        console.log(this.studentCriteriaGroup.value.income);
-        //this._sdfb.saveCriteria([this.studentCriteriaGroup.value.income]);
-
-
-        console.log("OK");
-        console.log(cb.value);
-
         if (cb.value === "<= 3000 Ευρώ")
           this.selectionIncomeId = 8;
         else if (cb.value === "<= 6000 Ευρώ")
@@ -189,26 +132,25 @@ import {
           this.selectionIncomeId = 10;
         else if (cb.value === "> 9000 Ευρώ")
           this.selectionIncomeId = 11;
-
-
-          //this.studentCriteriaGroup.value[9] = true;
-          //this.studentCriteriaGroup.value[9] = false;
-        console.log(this.studentCriteriaGroup.value.formArray);
-        console.log(this.studentCriteriaGroup.value);
-        //this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
-
     }
 
+    //checkChoice(c: FormControl) {
+    checkChoice(c: FormControl) {
+      console.log("Nikos");
+      console.log(c.value);
+      //if (c.value === "noincomecriterio" ) {
+      if (c.value === null || c.value ===0 ) {
+      //if (this.selectionIncomeId === null) {
+        console.log("Nikos1");
+        console.log("noincomecriterio");
+        return {status: true}
+      }
+      else
+      // Null means valid, believe it or not
+        return null;
 
 
 }
 
 
-function checkChoice(c: FormControl) {
-  console.log(c.value);
-  if (c.value === "noincomecriterio")
-    return {status: true}
-  else
-  // Null means valid, believe it or not
-    return null;
 }

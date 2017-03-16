@@ -15,7 +15,6 @@ export interface ICriteria {
   id: string;
   name: string;
   mutual_disabled_id: string,
-  //globalIndex: number;
   selected: boolean;
 }
 

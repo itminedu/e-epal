@@ -42,6 +42,7 @@ import {AppSettings} from '../../app.settings';
       -->
 
       <button type="button" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
+      
   `
 })
 

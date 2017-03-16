@@ -1,3 +1,5 @@
+<div class = "loading" *ngIf="showLoader$ | async"></div>
+
 <div class="row equal">
  <div class="col-md-12">
   <form novalidate  [formGroup]="studentDataGroup" #form>
@@ -111,18 +113,19 @@
     </div>
 
 
-    <form novalidate (ngSubmit)="onSubmit(studentCriteriaGroup)" [formGroup]="studentCriteriaGroup">
-
+    <form novalidate [formGroup]="studentCriteriaGroup">
       <!--
         <fieldset class="group">
       -->
         <legend>Εισοδηματικά κριτήρια</legend>
 
+        <!-- TEST for defining income in combolist in a redux-dynamic way
         <select #cblsttest class="form-control" (change)="checkstatus(cblsttest)" formControlName="incometest">
         <option *ngFor="let criter$ of criteria$   | async; let i=index" >
           <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
         {{criter$.name}} </div></option>
         </select>
+      -->
 
 
         <div class="form-group">
@@ -142,64 +145,25 @@
         </div>
 
         <div formArrayName="formArray">
-         <div *ngFor="let criter$ of criteria$ | async; let i=index"> </div>
 
-
-        <legend>Κοινωνικά κριτήρια</legend>
-        <p style="margin-top: 15px; line-height: 1.5em;">Επιλέξτε όσα από τα παρακάτω κριτήρια πληρούνται για εσάς.
-          Οι επιλογές σας επέχουν θέση υπέυθυνης δήλωσης.
-          Θα πρέπει να προσκομίσετε τα αντίστοιχα δικαιολογητικά στο σχολείο εγγραφής σας, όταν σας ζητηθεί.
-        </p>
-        <!--
-        <div class="row">
-          <div class="col-md-1"> <input #cborphanmono type="checkbox" (change)="checkorphan('mono', cborphanmono)"  formControlName="orphanmono" ></div>
-          <div class="col-md-11 pull-left">Ορφανός από τον ένα γονέα</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input #cborphantwice type="checkbox" (change)="checkorphan('twice', cborphantwice)" formControlName="orphantwice" ></div>
-          <div class="col-md-11 pull-left">Ορφανός και από τους δύο γονείς</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input #cbthreechildren type="checkbox" (change)="checkchildren('three', cbthreechildren)"  formControlName="threechildren"></div>
-          <div class="col-md-11 pull-left">Μέλος Τρίτεκνης Οικογένειας</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input #cbmanychildren type="checkbox" (change)="checkchildren('many', cbmanychildren)" formControlName="manychildren"></div>
-          <div class="col-md-11 pull-left">Μέλος Πολύτεκνης Οικογένειας</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="twins"></div>
-          <div class="col-md-11 pull-left">Πολύδυμα Τέκνα</div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="disability"></div>
-          <div class="col-md-11 pull-left">Γονείς, τέκνα, αδέλφια ή σύζυγος με αναπηρία 67% και άνω </div>
-        </div>
-        <div class="row">
-          <div class="col-md-1"> <input type="checkbox" (change)="checkstatus()" formControlName="studies"></div>
-          <div class="col-md-11 pull-left">Αδελφός,-ή που σπουδάζει σε άλλη πόλη</div>
-        </div>
-      -->
-
+          <legend>Κοινωνικά κριτήρια</legend>
+          <p style="margin-top: 15px; line-height: 1.5em;">Επιλέξτε όσα από τα παρακάτω κριτήρια πληρούνται για εσάς.
+            Οι επιλογές σας επέχουν θέση υπέυθυνης δήλωσης.
+            Θα πρέπει να προσκομίσετε τα αντίστοιχα δικαιολογητικά στο σχολείο εγγραφής σας, όταν σας ζητηθεί.
+          </p>
 
           <div *ngFor="let criter$ of criteria$   | async; let i=index">
-
-
-
-
-          <div class="row" *ngIf="criter$.name !== 'Εισόδημα' && criter$.name !== 'Απόσταση'">
-          <div class="col-md-1">
-              <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{i}}>
-          </div>
-          <div class="col-md-11 pull-left">
-              {{criter$.name}}
-          </div>
-          </div>
-
+            <div class="row" *ngIf="criter$.name !== 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+              <div class="col-md-1">
+                  <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{i}}>
+              </div>
+              <div class="col-md-11 pull-left">
+                  {{criter$.name}}
+              </div>
+            </div>
           </div>
 
       <div class="row">
-
       </div>
 
       <!--
@@ -209,7 +173,7 @@
 
     </form>
 
-    <div class="row" style="margin-top: 20px;">
+    <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async)">
         <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                 <i class="fa fa-backward"></i>

@@ -1,5 +1,5 @@
 import { IStudentDataFields, IStudentDataField } from './studentdatafields.types';
-import { INITIAL_STATE } from './studentdatafields.initial-state';
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from './studentdatafields.initial-state';
 import { Seq } from 'immutable';
 
 import {
@@ -7,7 +7,7 @@ import {
   STUDENTDATAFIELDS_SAVE
 } from '../../constants';
 
-export function studentDataFieldsReducer(state: IStudentDataFields = INITIAL_STATE, action): IStudentDataFields {
+export function studentDataFieldsReducer(state: IStudentDataFields = STUDENT_DATA_FIELDS_INITIAL_STATE, action): IStudentDataFields {
   switch (action.type) {
     case STUDENTDATAFIELDS_SAVE:
         let studentDataFields = Array<IStudentDataField>();

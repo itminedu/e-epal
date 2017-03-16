@@ -138,6 +138,7 @@ import {AppSettings} from '../../app.settings';
 
     getAllSchools() {
       //store in Redux the whole schools
+      console.log("sfs-1");
       this._rsr.getRegionSchools(3,"-1", true);
       this.regions$ = this._ngRedux.select(state => {
           let numsel = 0;

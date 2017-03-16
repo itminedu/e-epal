@@ -49,11 +49,13 @@ export class RegionSchoolsActions {
   };
   */
 
-  saveRegionSchoolsSelected = (regionSchoolsSelected) => {
+  saveRegionSchoolsSelected = (checked, i, j) => {
       return this._ngRedux.dispatch({
         type: REGIONSCHOOLS_SELECTED_SAVE,
         payload: {
-          regionSchoolsSelected
+          checked: checked,
+          rIndex: i,
+          sIndex: j
         }
       });
   };

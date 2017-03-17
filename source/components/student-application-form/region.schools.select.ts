@@ -46,7 +46,7 @@ import {AppSettings} from '../../app.settings';
                             <div class="col-md-2 col-md-offset-1">
                                 <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
                                 (change)="saveSelected(cb.checked,i,j)"
-
+                                [hidden] = "numSelected === 3 && cb.checked === false"
                                 >
                              </div>
                             <div class="col-md-8  col-md-offset-1 isclickable">

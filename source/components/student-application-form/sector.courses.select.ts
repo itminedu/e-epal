@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegions } from '../../store/regionschools/regionschools.types';
+import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import {RemoveSpaces} from '../../pipes/removespaces';
@@ -21,7 +20,7 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sectorcourses-fields-select',
     template: `
-    <div class = "loading" *ngIf="(showLoader$ | async) && (showLoader2$ | async)">
+    <div class = "loading" *ngIf="(sectors$ | async).size === 0">
    </div>
       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
@@ -47,9 +46,9 @@ import {AppSettings} from '../../app.settings';
             </ul>
         </div>
 
-        <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async) || !(showLoader2$ | async)">
+        <div class="row" style="margin-top: 20px;" *ngIf="(sectors$ | async).size > 0">
         <div class="col-md-6">
-            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
+            <button type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
           <i class="fa fa-backward"></i>
             </button>
         </div>
@@ -62,11 +61,9 @@ import {AppSettings} from '../../app.settings';
      </form>
   `
 })
-@Injectable() export default class SectorCoursesSelect implements OnInit {
-    private sectors$: Observable<ISectors>;
-    private regions$: Observable<IRegions>;
-    private showLoader$: Observable<boolean>;
-    private showLoader2$: Observable<boolean>;
+@Injectable() export default class SectorCoursesSelect implements OnInit, OnDestroy {
+    private sectors$: BehaviorSubject<ISectors>;
+    private sectorsSub: Subscription;
     private formGroup: FormGroup;
     private rss = new FormArray([]);
     private sectorActive = <number>-1;
@@ -74,35 +71,33 @@ import {AppSettings} from '../../app.settings';
     private sectorsList: Array<boolean> = new Array();
 
     constructor(private fb: FormBuilder,
-                private _rsa: SectorCoursesActions,
-                private _rsr: RegionSchoolsActions,
+                private _sca: SectorCoursesActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
+
+        this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.formGroup = this.fb.group({
             formArray: this.rss
         });
     };
 
     ngOnInit() {
-        //re-initialize schools-redux-state
-        this.getAllSchools();
-
-        this._rsa.getSectorCourses(true);
+        this._sca.getSectorCourses(false);
         let ids = 0;
-        this.sectors$ = this._ngRedux.select(state => {
+        this.sectorsSub = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) =>{
                 this.sectorsList[ids] = sector.sector_selected;
                 ids++;
                 //In case we want to preserve last checked option when we revisit the form
-                //if (sector.sector_selected === true)
-                  //this.sectorActive = ids-1;
+                if (sector.sector_selected === true)
+                    this.sectorActive = ids-1;
                 sector.courses.reduce((prevCourse, course) =>{
                     this.rss.push( new FormControl(course.selected, []));
                     //this.retrieveCheck();
                     if (course.selected === true) {
                       //In case we want to preserve last checked option when we revisit the form
-                      //this.idx = course.globalIndex;
+                      this.idx = course.globalIndex;
                     }
                     return course;
                 }, {});
@@ -110,9 +105,12 @@ import {AppSettings} from '../../app.settings';
             }, {});
             ids = 0;
             return state.sectors;
-        });
-        this.showLoader$ = this.sectors$.map(sectors => sectors.size === 0);
+        }).subscribe(this.sectors$);
 
+    }
+
+    ngOnDestroy() {
+        if (this.sectorsSub) this.sectorsSub.unsubscribe();
     }
 
     setActiveSector(ind) {
@@ -122,7 +120,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     saveSelected() {
-        this._rsa.saveSectorCoursesSelected(this.formGroup.value.formArray, this.sectorsList);
+        this._sca.saveSectorCoursesSelected(this.formGroup.value.formArray, this.sectorsList);
     }
 
     navigateToSchools() {
@@ -142,26 +140,6 @@ import {AppSettings} from '../../app.settings';
       this.sectorsList[this.sectorActive] = true;
 
       this.saveSelected();
-}
-
-getAllSchools() {
-  //store in Redux the whole schools
-  console.log("scs-1");
-  this._rsr.getRegionSchools(3,"-1", true);
-  this.regions$ = this._ngRedux.select(state => {
-      let numsel = 0;
-      state.regions.reduce((prevRegion, region) =>{
-          region.epals.reduce((prevEpal, epal) =>{
-              this.rss.push( new FormControl(epal.selected, []));
-              return epal;
-          }, {});
-          return region;
-      }, {});
-      return state.regions;
-  });
-  this.showLoader2$ = this.regions$.map(regions => regions.size === 0);
-
-}
-
+  }
 
 }

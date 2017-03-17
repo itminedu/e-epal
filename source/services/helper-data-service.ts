@@ -27,13 +27,11 @@ export class HelperDataService {
                 if (state.loginInfo.size > 0) {
                     state.loginInfo.reduce(({}, loginInfoToken) => {
                         this.authToken = loginInfoToken.auth_token;
-                        console.log('hey authtoken:' +  this.authToken  );
                         return loginInfoToken;
                     }, {});
                 }
                 return state.loginInfo;
             });
-            console.log('hey hey authtoken:' + this.authToken);
 
     };
 
@@ -44,7 +42,6 @@ export class HelperDataService {
     getCourseFields() {
 
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -77,7 +74,6 @@ export class HelperDataService {
 
     getSectorFields() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -109,7 +105,6 @@ export class HelperDataService {
 
     getRegionsWithSchools(classActive,courseActive) {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -136,11 +131,6 @@ export class HelperDataService {
             else if (classActive === 3)
               getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
 
-            //getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?${courseActive}`;
-       //     console.log(getConnectionString,class);
-
-            //this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
-            //this.http.get(`${AppSettings.API_ENDPOINT}/`.concat(`coursesperschool/list?course_id=${courseActive}`))
             this.http.get(getConnectionString, options)
                 .map(response => response.json())
                 .subscribe(data => {
@@ -156,7 +146,6 @@ export class HelperDataService {
 
     getSectorsWithCourses() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -176,7 +165,6 @@ export class HelperDataService {
             this.http.get(`${AppSettings.API_ENDPOINT}/coursesectorfields/list`, options)
             .map(response => response.json())
             .subscribe(data => {
-//                console.log(data);
                 resolve(this.transformSectorCoursesSchema(data));
             }, // put the data returned from the server in our variable
             error => {
@@ -248,7 +236,6 @@ export class HelperDataService {
 
     signOut() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -272,7 +259,6 @@ export class HelperDataService {
             .map(response => response)
             .subscribe(data => {
                 resolve(data);
-                console.log(data);
             }, // put the data returned from the server in our variable
             error => {
                 console.log("Error Logout"); // in case of failure show this message

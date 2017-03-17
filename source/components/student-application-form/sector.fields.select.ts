@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { NgRedux, select } from 'ng2-redux';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IAppState } from '../../store/store';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegions } from '../../store/regionschools/regionschools.types';
+import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
 
 import {
     FormBuilder,
@@ -20,11 +19,7 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sector-fields-select',
     template: `
-
-<!--    <div class="row equal">
-
-     <div class="col-md-12"> -->
-     <div class = "loading" *ngIf="(showLoader$ | async) && (showLoader2$ | async)">
+     <div class = "loading" *ngIf="(sectorFields$ | async).size === 0">
     </div>
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
@@ -36,83 +31,63 @@ import {AppSettings} from '../../app.settings';
             </div>
             </ul>
 
-            <!--CHECK BOXES USING BOTSTRAP
-            <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index">
-                <div class="[ form-group ]">
-                  <input type="checkbox" name="{{i}}" id="{{i}}" autocomplete="off" />
-                  <div class="[ btn-group ]">
-                      <label for="{{i}}" class="[ btn btn-primary ]">
-                          <span class="[ glyphicon glyphicon-ok ]"></span>
-                          <span> </span>
-                      </label>
-                      <label for="{{i}}" class="[ btn btn-default active ]">
-                          {{sectorField$.name}}
-                      </label>
-                  </div>
-                </div>
-            </div>
-            -->
         </div>
 
-        <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async) || !(showLoader2$ | async)">
+        <div class="row" style="margin-top: 20px;" *ngIf="(sectorFields$ | async).size > 0">
         <div class="col-md-6">
-            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
+            <button type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
           <i class="fa fa-backward"></i>
             </button>
         </div>
         <div class="col-md-6">
-            <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="sectorActive === -1"  >
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="sectorActive === -1"  >
           <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>
 
       </form>
-<!--    </div>
-
-  </div>  -->
   `
 
 })
 @Injectable() export default class SectorFieldsSelect implements OnInit {
-    private sectorFields$: Observable<ISectorFields>;
-    private regions$: Observable<IRegions>;
-    private showLoader$: Observable<boolean>;
-    private showLoader2$: Observable<boolean>;
+    private sectorFields$: BehaviorSubject<ISectorFields>;
+    private sectorFieldsSub: Subscription;
     public formGroup: FormGroup;
     public cfs = new FormArray([]);
     private sectorActive = <number>-1;
 
     constructor(private fb: FormBuilder,
                 private _cfa: SectorFieldsActions,
-                private _rsr: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
+        this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
+
         this.formGroup = this.fb.group({
             formArray: this.cfs
         });
     };
 
     ngOnInit() {
-        //re-initialize schools-redux-state
-        this.getAllSchools();
-
-        this._cfa.getSectorFields(true);
-        this.sectorFields$ = this._ngRedux.select(state => {
+        this._cfa.getSectorFields(false);
+        this.sectorFieldsSub = this._ngRedux.select(state => {
             state.sectorFields.reduce(({}, sectorField) =>{
                 this.cfs.push(new FormControl(sectorField.selected, []));
                 //in case we want to retrieve last check when we return to the form
-                /*
+
                 if (sectorField.selected === true) {
                   this.sectorActive = sectorField.id - 1;
                 }
-                */
+
                 return sectorField;
             }, {});
             return state.sectorFields;
-        });
-        this.showLoader$ = this.sectorFields$.map(sectorFields => sectorFields.size === 0);
+        }).subscribe(this.sectorFields$);
 
+    }
+
+    ngOnDestroy() {
+        if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
     }
 
     navigateToSchools() {
@@ -134,25 +109,6 @@ import {AppSettings} from '../../app.settings';
           ind = -1;
         this.sectorActive = ind;
         this.saveSelected();
-    }
-
-    getAllSchools() {
-      //store in Redux the whole schools
-      console.log("sfs-1");
-      this._rsr.getRegionSchools(3,"-1", true);
-      this.regions$ = this._ngRedux.select(state => {
-          let numsel = 0;
-          state.regions.reduce((prevRegion, region) =>{
-              region.epals.reduce((prevEpal, epal) =>{
-                  this.cfs.push( new FormControl(epal.selected, []));
-                  return epal;
-              }, {});
-              return region;
-          }, {});
-          return state.regions;
-      });
-      this.showLoader2$ = this.regions$.map(regions => regions.size === 0);
-
     }
 
 }

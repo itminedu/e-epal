@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
@@ -9,14 +9,18 @@ import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { AmkaFillsActions } from '../../actions/amkafill.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IRegions } from '../../store/regionschools/regionschools.types';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import { IAmkaFills } from '../../store/amkafill/amkafills.types';
 import {AppSettings} from '../../app.settings';
+import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
+import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
+import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
+import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
+
 
 
 @Component({
@@ -34,7 +38,6 @@ import {AppSettings} from '../../app.settings';
 
         </ul>
         </div>
-
 
         <div *ngFor="let sectorField$ of sectorFields$ | async">
         <ul class="list-group left-side-view">
@@ -119,12 +122,16 @@ import {AppSettings} from '../../app.settings';
 })
 
 @Injectable() export default class ApplicationPreview implements OnInit {
-    private sectors$: Observable<ISectors>;
-    private regions$: Observable<IRegions>;
-    private sectorFields$: Observable<ISectorFields>;
-    private studentDataFields$: Observable<IStudentDataFields>;
-    private selectedAmkaFills$: Observable<IAmkaFills>;
-    private epalclasses$: Observable<IEpalClasses>;
+    private sectors$: BehaviorSubject<ISectors>;
+    private regions$: BehaviorSubject<IRegions>;
+    private sectorFields$: BehaviorSubject<ISectorFields>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
+    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private sectorsSub: Subscription;
+    private regionsSub: Subscription;
+    private sectorFieldsSub: Subscription;
+    private studentDataFieldsSub: Subscription;
+    private epalclassesSub: Subscription;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;
@@ -133,32 +140,34 @@ import {AppSettings} from '../../app.settings';
     constructor(private _ngRedux: NgRedux<IAppState>,
         private router: Router
     ) {
+
+        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+        this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
+        this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
+        this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
+        this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
     };
 
     ngOnInit() {
-        this.courseActive = this.getCourseActive();
-        this.sectors$ = this._ngRedux.select(state => {
-            //let numsel = 0;
+        this.sectorsSub = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) => {
-                //if (sector.sector_selected)
-                console.log("hello" + sector.sector_selected);
                 sector.courses.reduce((prevCourse, course) => {
-                    //if (course.selected === true)  {
-                    //  numsel++;
-                    //}
+                    if (course.selected === true) {
+                        this.courseActive = course.course_id;
+                    }
+
                     return course;
                 }, {});
                 return sector;
             }, {});
             //this.numSelectedCourses = numsel;
             return state.sectors;
-        });
+        }).subscribe(this.sectors$);
 
-        this.regions$ = this._ngRedux.select(state => {
+        this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0, numsel2 = 0;
             state.regions.reduce((prevRegion, region) => {
                 region.epals.reduce((prevEpal, epal) => {
-                    console.log("hello" + epal.selected);
                     if (epal.selected === true) {
                         numsel++;
                     }
@@ -172,30 +181,30 @@ import {AppSettings} from '../../app.settings';
             this.numSelectedSchools = numsel;
             this.numSelectedOrder = numsel2;
             return state.regions;
-        });
+        }).subscribe(this.regions$);
 
-        this.sectorFields$ = this._ngRedux.select(state => {
+        this.sectorFieldsSub = this._ngRedux.select(state => {
             state.sectorFields.reduce(({}, sectorField) => {
                 return sectorField;
             }, {});
             return state.sectorFields;
-        });
+        }).subscribe(this.sectorFields$);
 
-        this.studentDataFields$ = this._ngRedux.select(state => {
+        this.studentDataFieldsSub = this._ngRedux.select(state => {
             state.studentDataFields.reduce(({}, studentDataField) => {
                 return studentDataField;
             }, {});
             return state.studentDataFields;
-        });
+        }).subscribe(this.studentDataFields$);
 
-        this.selectedAmkaFills$ = this._ngRedux.select(state => {
+/*        this.selectedAmkaFills$ = this._ngRedux.select(state => {
             state.amkafills.reduce(({}, selectedAmkaFill) => {
                 return selectedAmkaFill;
             }, {});
             return state.amkafills;
-        });
+        }); */
 
-        this.epalclasses$ = this._ngRedux.select(state => {
+        this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) => {
                 if (epalclass.name === "Α' Λυκείου")
                     this.classSelected = 1;
@@ -206,42 +215,23 @@ import {AppSettings} from '../../app.settings';
                 return epalclass;
             }, {});
             return state.epalclasses;
-        });
+        }).subscribe(this.epalclasses$);
 
     }
 
-    defineSector() {
-        this.router.navigate(['/sector-fields-select']);
+    ngOnDestroy() {
+        this.regionsSub.unsubscribe();
+        this.epalclassesSub.unsubscribe();
+        this.sectorsSub.unsubscribe();
+        this.sectorFieldsSub.unsubscribe();
+        this.studentDataFieldsSub.unsubscribe();
     }
 
-    defineSchools() {
-        this.router.navigate(['/region-schools-select']);
-    }
-
-    definePersonalData() {
-        this.router.navigate(['/student-application-form-main']);
-    }
-
-    defineClass() {
-        this.router.navigate(['/epal-class-select']);
-    }
-
-    getCourseActive() {
-        const { sectors } = this._ngRedux.getState();
-        let l, m;
-        for (l = 0; l < sectors.size; l++)
-            if (sectors["_tail"]["array"][l]["sector_selected"] === true)
-                for (m = 0; m < sectors["_tail"]["array"][l]["courses"].length; m++)
-                    if (sectors["_tail"]["array"][l]["courses"][m]["selected"] === true)
-                        return sectors["_tail"]["array"][l]["courses"][m]["course_id"];
-    }
-
-    defineCourse() {
-        this.router.navigate(['/sectorcourses-fields-select']);
-    }
-
-    defineOrder() {
-        this.router.navigate(['/schools-order-select']);
+    showValues() {
+        console.log(this.epalclasses$);
+        console.log(this.studentDataFields$);
+        console.log(this.regions$);
+        console.log(this.sectors$);
     }
 
 }

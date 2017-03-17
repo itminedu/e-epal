@@ -23,19 +23,18 @@ epal_auth_test:
     _permission: 'access content'
     _user_is_logged_in: 'TRUE'
 current_user:
-  path: '/epal/curuser/{token_name}'
-  options: 
+  path: '/epal/curuser'
+  options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\CurrentUser::content'
   requirements:
-    _access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.application_submit:
   path: '/epal/appsubmit'
-  options: 
+  options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\ApplicationSubmit::appSubmit'
   requirements:
     _user_is_logged_in: 'TRUE'
-  

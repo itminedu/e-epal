@@ -97,7 +97,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('user_id', $name);
     return $this;
   }
-  
+
    /**
    * {@inheritdoc}
    */
@@ -112,7 +112,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('created', $timestamp);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -134,7 +134,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
   public function getOwner() {
     return $this->get('user_id')->entity;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -172,7 +172,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('status', $published ? TRUE : FALSE);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -187,7 +187,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('epaluser_id', $name);
     return $this;
   }
-  
+
    /**
    * {@inheritdoc}
    */
@@ -211,16 +211,16 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('birthdate', $name);
     return $this;
   }
-  
+
   public function getFatherFirstname() {
     return $this->get('fatherfirstname')->value;
   }
-  
+
   public function setFatherFirstname($name) {
     $this->set('fatherfirstname', $name);
     return $this;
   }
-  
+
   public function getMotherSurname() {
     return $this->get('mothersurname')->value;
   }
@@ -304,7 +304,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('certificatetype', $name);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -319,7 +319,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('currentclass', $name);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -334,7 +334,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('currentepal', $name);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -349,7 +349,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
     $this->set('currentsector', $name);
     return $this;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -418,7 +418,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
       ->setDescription(t('Δώσε το id του αντίστοιχου Epal User.'))
       ->setSetting('target_type', 'epal_users')
       ->setSetting('handler', 'default')
-	  ->setRequired(true)
+	    ->setRequired(true)
  //     ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
               'label' => 'above',
@@ -437,8 +437,28 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	
-	$fields['name'] = BaseFieldDefinition::create('string')
+
+  $fields['student_record_id'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Id μαθητή από myschool'))
+      ->setDescription(t('Δώσε το Id μαθητή από myschool.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+  $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Όνομα μαθητή'))
       ->setDescription(t('Δώσε το μικρό μαθητή.'))
       ->setSettings(array(
@@ -458,8 +478,8 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-  
-	$fields['studentsurname'] = BaseFieldDefinition::create('string')
+
+  $fields['studentsurname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Επώνυμο μαθητή'))
           ->setDescription(t('Δώσε το επώνυμο μαθητή.'))
           ->setSettings(array(
@@ -479,8 +499,8 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
-	  
+
+
 	  $fields['birthdate'] = BaseFieldDefinition::create('datetime')
         ->setLabel(t('Ημερομηνία γέννησης μαθητή'))
         ->setDescription(t('Δώσε την Ημερομηνία γέννησης μαθητή.'))
@@ -496,8 +516,27 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-			  
-	   $fields['fatherfirstname'] = BaseFieldDefinition::create('string')
+
+      $fields['sex'] = BaseFieldDefinition::create('boolean')
+          ->setLabel(t('Φύλο'))
+          ->setDescription(t('Φύλο.'))
+          ->setSettings(array(
+            'text_processing' => 0,
+          ))
+          ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+     $fields['fatherfirstname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Όνομα του πατέρα'))
           ->setDescription(t('Δώσε το όνομα του πατέρα.'))
           ->setSettings(array(
@@ -517,7 +556,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	    $fields['fathersurname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Επώνυμο πατέρα'))
           ->setDescription(t('Δώσε το επώνυμο του πατέρα.'))
@@ -538,7 +577,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 		$fields['motherfirstname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Όνομα μητέρας'))
           ->setDescription(t('Δώσε το όνομα της μητέρας.'))
@@ -559,7 +598,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	    $fields['mothersurname'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Επώνυμο μητέρας'))
           ->setDescription(t('Δώσε το επώνυμο της μητέρας.'))
@@ -580,8 +619,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		
-		 
+
 	   $fields['studentamka'] = BaseFieldDefinition::create('string')
           ->setLabel(t('ΑΜΚΑ μαθητή'))
           ->setDescription(t('Δώσε το ΑΜΚΑ μαθητή.'))
@@ -601,7 +639,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-	  
+
 	   $fields['regionaddress'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Διεύθνση κηδεμόνα'))
           ->setDescription(t('Δώσε τη διεύθυνση κηδεμόνα.'))
@@ -621,7 +659,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-	  
+
 	  $fields['regiontk'] = BaseFieldDefinition::create('string')
           ->setLabel(t('ΤΚ περιοχής'))
           ->setDescription(t('Δώσε τον ΤΚ της διεύθυνσης κατοικίας.'))
@@ -641,7 +679,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-	  
+
 	  $fields['regionarea'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Πόλη-Κοινότητα'))
           ->setDescription(t('Δώσε την πόλη ή κοινότητα που διαμένεις.'))
@@ -661,7 +699,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	  $fields['regionarea'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Πόλη-Κοινότητα'))
           ->setDescription(t('Δώσε την πόλη ή κοινότητα που διαμένεις.'))
@@ -680,8 +718,8 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE); 
-	  	  
+          ->setDisplayConfigurable('view', TRUE);
+
 	  $fields['certificatetype'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Τύπος απολυτηρίου'))
           ->setDescription(t('Δώσε τον τύπο απολυτηρίου, πχ Απολυτήριο Γυμνασίου'))
@@ -701,7 +739,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	  $fields['lastam'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Αριθμός Μητρώου στο τελευταίο σχολείο φοίτησης'))
           ->setDescription(t('Αριθμός Μητρώου στο τελευταίο σχολείο φοίτησης'))
@@ -721,28 +759,89 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-	  
-	  $fields['currentclass'] = BaseFieldDefinition::create('string')
-          ->setLabel(t('Τάξη παρακολούθησης'))
-          ->setDescription(t('Δώσε την τρέχουσα τάξη παρακολούθησης'))
-          ->setSettings(array(
-            'max_length' => 50,
-            'text_processing' => 0,
-          ))
-          ->setDefaultValue('')
+
+      //entity_reference has to be changed to a reference to  new entity containing the whole schools
+      $fields['graduate_school'] = BaseFieldDefinition::create('entity_reference')
+          ->setLabel(t('Σχολείο αποφοίτησης'))
+          ->setDescription(t('Δώσε το σχολείο αποφοίτησης.'))
+          ->setSetting('target_type', 'eepal_school')
+          ->setSetting('handler', 'default')
+          //   ->setTranslatable(TRUE)
           ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'string',
-            'weight' => -4,
-          ))
+                'label' => 'above',
+                'type' => 'author',
+                'weight' => -4,
+              ))
           ->setDisplayOptions('form', array(
-            'type' => 'string_textfield',
-            'weight' => -4,
-          ))
+                'type' => 'entity_reference_autocomplete',
+                'weight' => -4,
+                'settings' => array(
+                  'match_operator' => 'CONTAINS',
+                  'size' => '60',
+                  'autocomplete_type' => 'tags',
+                  'placeholder' => '',
+                ),
+              ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
-	  $fields['currentepal'] = BaseFieldDefinition::create('entity_reference')
+
+    $fields['apolytirio_id'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Αριθμός απολυτηρίου'))
+            ->setDescription(t('Δώσε τον αριθμό απολυτηρίου'))
+            ->setSettings(array(
+              'max_length' => 50,
+              'text_processing' => 0,
+            ))
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+      $fields['apolytirio_date'] = BaseFieldDefinition::create('datetime')
+            ->setLabel(t('Ημερομηνία κτήσης απολυτηρίου'))
+            ->setDescription(t('Δώσε την ημερομηνία κτήσης απολυτηρίου.'))
+            ->setSetting('datetime_type', 'date')
+            ->setRequired(false)
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+      $fields['currentclass'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Τάξη παρακολούθησης'))
+            ->setDescription(t('Δώσε την τρέχουσα τάξη παρακολούθησης'))
+            ->setSettings(array(
+              'max_length' => 50,
+              'text_processing' => 0,
+            ))
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+    $fields['currentepal'] = BaseFieldDefinition::create('entity_reference')
             ->setLabel(t('ΕΠΑΛ παρακολούθησης'))
             ->setDescription(t('Δώσε το τρέχον ΕΠΑΛ παρακολούθησης.'))
             ->setSetting('target_type', 'eepal_school')
@@ -764,8 +863,8 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
               ),
             ))
             ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);		
-		  
+            ->setDisplayConfigurable('view', TRUE);
+
 	  $fields['currentsector'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Τομέας παρακολούθησης'))
           ->setDescription(t('Δώσε τον τομέα παρακολούθησης.'))
@@ -785,8 +884,28 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-			
-	  $fields['relationtostudent'] = BaseFieldDefinition::create('string')
+
+     $fields['currentcourse'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Ειδικότητα παρακολούθησης'))
+            ->setDescription(t('Δώσε την ειδικότητα παρακολούθησης.'))
+            ->setSettings(array(
+              'max_length' => 50,
+              'text_processing' => 0,
+            ))
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+    $fields['relationtostudent'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Σχέση αιτούντα με μαθητή'))
           ->setDescription(t('Δώσε τη σχέση αιτούντα με μαθητή, πχ  Γονέας - Κηδεμόνας - Μαθητής'))
           ->setSettings(array(
@@ -824,7 +943,28 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'weight' => -4,
           ))
           ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE); 
+          ->setDisplayConfigurable('view', TRUE);
+
+      //for test purposes
+      $fields['moria'] = BaseFieldDefinition::create('integer')
+          ->setLabel(t('Συνολικά μόρια αίτησης'))
+          ->setDescription(t('Δώσε τη σειρά προτίμησης.'))
+          ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+      	  ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
 
 	 $fields['status'] = BaseFieldDefinition::create('boolean')
 		  ->setLabel(t('Publishing status'))
@@ -838,7 +978,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
 	  $fields['changed'] = BaseFieldDefinition::create('changed')
 		  ->setLabel(t('Changed'))
 		  ->setDescription(t('The time that the entity was last edited.'));
-		 
+
     return $fields;
   }
 

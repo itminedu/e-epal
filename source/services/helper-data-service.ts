@@ -230,7 +230,30 @@ export class HelperDataService {
         return rsa;
     }
 
-
+    getCriteria() {
+        this.loginInfo$.forEach(loginInfoToken => {
+            console.log(loginInfoToken.get(0));
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list`, options)
+            .map(response => <ISectorField[]>response.json())
+            .subscribe(data => {
+                resolve(data);
+            }, // put the data returned from the server in our variable
+            error => {
+                console.log("Error HTTP GET Service"); // in case of failure show this message
+                reject("Error HTTP GET Service");
+            },
+            () => console.log("Sector Fields Received"));//run this code in all cases); */
+        });
+    };
 
     getCurrentUser(oauthtoken, oauthrole) {
 

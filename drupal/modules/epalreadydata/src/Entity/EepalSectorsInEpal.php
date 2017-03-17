@@ -219,7 +219,7 @@ class EepalSectorsInEpal extends ContentEntityBase implements EepalSectorsInEpal
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	
+
 	$fields['sector_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('Τομέας επιλογής'))
         ->setDescription(t('Τομέας επιλογής.'))
@@ -243,8 +243,28 @@ class EepalSectorsInEpal extends ContentEntityBase implements EepalSectorsInEpal
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	
-	$fields['status'] = BaseFieldDefinition::create('boolean')
+
+    $fields['capacity_class_sector'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Μέγιστος αριθμός τμημάτων τομέα για την Β Λυκείου'))
+      ->setDescription(t('Δώσε τον μέγιστο αριθμό τμημάτων τομέα για την Β Λυκείου.'))
+       ->setSettings(array(
+               'max_length' => 2,
+               'text_processing' => 0,
+             ))
+     ->setRequired(false)
+     ->setDisplayOptions('view', array(
+               'label' => 'above',
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+     ->setDisplayOptions('form', array(
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+     ->setDisplayConfigurable('form', TRUE)
+     ->setDisplayConfigurable('view', TRUE);
+
+  $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal sectors in epal is published.'))
       ->setDefaultValue(TRUE);

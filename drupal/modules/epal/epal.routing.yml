@@ -24,7 +24,7 @@ epal_auth_test:
     _user_is_logged_in: 'TRUE'
 current_user:
   path: '/epal/curuser'
-  options: 
+  options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\CurrentUser::content'
@@ -32,10 +32,9 @@ current_user:
     _user_is_logged_in: 'TRUE'
 epal.application_submit:
   path: '/epal/appsubmit'
-  options: 
+  options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\ApplicationSubmit::appSubmit'
   requirements:
     _user_is_logged_in: 'TRUE'
-  

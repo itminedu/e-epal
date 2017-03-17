@@ -219,7 +219,7 @@ class EepalSpecialtiesInEpal extends ContentEntityBase implements EepalSpecialti
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	
+
 	$fields['specialty_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('Ειδικότητα επιλογής'))
         ->setDescription(t('Ειδικότητα επιλογής.'))
@@ -243,8 +243,28 @@ class EepalSpecialtiesInEpal extends ContentEntityBase implements EepalSpecialti
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	
-	$fields['status'] = BaseFieldDefinition::create('boolean')
+
+    $fields['capacity_class_specialty'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Μέγιστος αριθμός τμημάτων ειδικότητας για την Γ Λυκείου'))
+      ->setDescription(t('Δώσε τον μέγιστο αριθμό τμημάτων ειδικότητας για την Γ Λυκείου.'))
+       ->setSettings(array(
+               'max_length' => 2,
+               'text_processing' => 0,
+             ))
+     ->setRequired(false)
+     ->setDisplayOptions('view', array(
+               'label' => 'above',
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+     ->setDisplayOptions('form', array(
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+     ->setDisplayConfigurable('form', TRUE)
+     ->setDisplayConfigurable('view', TRUE);
+
+  $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal specialties in epal is published.'))
       ->setDefaultValue(TRUE);

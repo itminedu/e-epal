@@ -215,7 +215,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	  
+
 	$fields['registry_no'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Κωδικός Σχολείου'))
       ->setDescription(t('Δώσε τον Κωδικό Σχολείου'))
@@ -255,7 +255,27 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-  
+
+   $fields['unit_type_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Id τύπου σχολείου'))
+      ->setDescription(t('Δώσε το Id τύπου σχολείου.'))
+          ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+      ->setRequired(true)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+      ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
     $fields['street_address'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Διεύθυνση'))
       ->setDescription(t('Δώσε την Διεύθυνση Σχολείου'))
@@ -315,7 +335,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-  
+
     $fields['phone_number'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Τηλέφωνο Σχολείου'))
       ->setDescription(t('Δώσε το Τηλέφωνο Σχολείου'))
@@ -379,7 +399,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-	
+
 	$fields['edu_admin_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('ID Διεύθυνσης Εκπαίδευσης'))
         ->setDescription(t('Δώσε το ID της Διεύθυνσης Εκπαίδευσης στην οποία ανήκει.'))
@@ -403,7 +423,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-		
+
     $fields['prefecture_id'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('ID Νομαρχίας'))
         ->setDescription(t('Δώσε το ID της Νομαρχίας στην οποία ανήκει.'))
@@ -427,7 +447,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-		
+
 	$fields['municipality'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Δήμος-Περιοχή Σχολείου'))
       ->setDescription(t('Δώσε το Δήμο-Περιοχή Σχολείου'))
@@ -447,7 +467,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	  
+
 	$fields['operation_shift'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Τύπος Σχολείου με βάση το ωράριο λειτουργίας'))
       ->setDescription(t('Δώσε τον τύπο σχολείου με βάση το ωράριο λειτουργίας-πχ Ημερήσιο'))
@@ -467,7 +487,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	  
+
 	$fields['metathesis_region'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Περιοχή Μετάθεσης Σχολείου'))
       ->setDescription(t('Δώσε την περιοχή μετάθεσης σχολείου'))
@@ -487,9 +507,47 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	
-	
-	$fields['status'] = BaseFieldDefinition::create('boolean')
+
+    $fields['capacity_class_a'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Μέγιστος αριθμός τμημάτων γενικής παιδείας για την Α Λυκείου'))
+      ->setDescription(t('Δώσε τον μέγιστο αριθμό τμημάτων γενικής παιδείας για την Α Λυκείου.'))
+         ->setSettings(array(
+               'max_length' => 2,
+               'text_processing' => 0,
+             ))
+         ->setRequired(false)
+             ->setDisplayOptions('view', array(
+               'label' => 'above',
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+         ->setDisplayOptions('form', array(
+               'type' => 'integer',
+               'weight' => -4,
+             ))
+         ->setDisplayConfigurable('form', TRUE)
+         ->setDisplayConfigurable('view', TRUE);
+
+     $fields['special_case'] = BaseFieldDefinition::create('boolean')
+         ->setLabel(t('Ειδική περίπτωση'))
+         ->setDescription(t('Ειδική περίπτωση όσον αφορά τον αριθμό επιλογών.'))
+         ->setSettings(array(
+           'text_processing' => 0,
+         ))
+         ->setRequired(false)
+         ->setDisplayOptions('view', array(
+           'label' => 'above',
+           'type' => 'boolean',
+           'weight' => -4,
+         ))
+         ->setDisplayOptions('form', array(
+           'type' => 'boolean',
+           'weight' => -4,
+         ))
+       ->setDisplayConfigurable('form', TRUE)
+       ->setDisplayConfigurable('view', TRUE);
+
+  $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal school is published.'))
       ->setDefaultValue(TRUE);

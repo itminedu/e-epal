@@ -60,9 +60,9 @@ import {
 
         this.studentCriteriaGroup = this.fb.group({
             formArray: this.rss,
-            //income: ['noincomecriterio', this.checkChoice ],
+            income: ['', this.checkChoice ],
             //income: ['noincomecriterio', Validators.required ],
-            income: [this.selectionIncomeId, this.checkChoice ],
+            //income: [this.selectionIncomeId, this.checkChoice ],
             //incometest: ['noincomecriterio', checkChoice ],
         });
 
@@ -86,7 +86,6 @@ import {
                 state.criter.reduce(({}, criteria) => {
                     //this.studentCriteriaGroup.setValue(criteria);
                       if (criteria.selected === true && (criteria.name === "Εισόδημα" ))  {
-                        console.log("MPHKA!!!");
                         this.selectionIncomeId = Number(criteria.id);
                       }
                       this.rss.push( new FormControl(criteria.selected, []));
@@ -109,8 +108,6 @@ import {
         for (let i=7; i < 11; i++)
           this.studentCriteriaGroup.controls['formArray']['controls'][i].setValue(false);
         this.studentCriteriaGroup.controls['formArray']['controls'][this.selectionIncomeId-1].setValue(true);
-
-        console.log(this.studentCriteriaGroup.controls['income']);
 
         this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
 
@@ -136,13 +133,7 @@ import {
 
     //checkChoice(c: FormControl) {
     checkChoice(c: FormControl) {
-      console.log("Nikos");
-      console.log(c.value);
-      //if (c.value === "noincomecriterio" ) {
-      if (c.value === null || c.value ===0 ) {
-      //if (this.selectionIncomeId === null) {
-        console.log("Nikos1");
-        console.log("noincomecriterio");
+      if (c.value === "noincomecriterio" ) {
         return {status: true}
       }
       else

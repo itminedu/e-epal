@@ -180,7 +180,7 @@
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid" >
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || (studentCriteriaGroup.invalid || selectionIncomeId === 0)" >
                 <i class="fa fa-forward"></i>
             </button>
         </div>

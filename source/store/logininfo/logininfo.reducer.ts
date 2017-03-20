@@ -1,5 +1,5 @@
 import { ILoginInfo, ILoginInfoToken } from './logininfo.types';
-import { INITIAL_STATE } from './logininfo.initial-state';
+import { LOGININFO_INITIAL_STATE } from './logininfo.initial-state';
 import { Seq } from 'immutable';
 
 import {
@@ -7,7 +7,7 @@ import {
   LOGININFO_INIT
 } from '../../constants';
 
-export function loginInfoReducer(state: ILoginInfo = INITIAL_STATE, action): ILoginInfo {
+export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, action): ILoginInfo {
   switch (action.type) {
     case LOGININFO_SAVE:
 		let loginInfoTokens = Array<ILoginInfoToken>();
@@ -19,7 +19,7 @@ export function loginInfoReducer(state: ILoginInfo = INITIAL_STATE, action): ILo
         return Seq(loginInfoTokens).map(n => n).toList();
 
     case LOGININFO_INIT:
-        return INITIAL_STATE;
+        return LOGININFO_INITIAL_STATE;
     default:
         return state;
   }

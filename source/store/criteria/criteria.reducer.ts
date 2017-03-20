@@ -1,5 +1,5 @@
 import { ICriteria, ICriter } from './criteria.types';
-import { INITIAL_STATE } from './criteria.initial-state';
+import { CRITERIA_INITIAL_STATE } from './criteria.initial-state';
 import { Seq } from 'immutable';
 
 import {
@@ -7,7 +7,7 @@ import {
   CRITERIA_SAVE
 } from '../../constants';
 
-export function criteriaReducer(state: ICriter = INITIAL_STATE, action): ICriter {
+export function criteriaReducer(state: ICriter = CRITERIA_INITIAL_STATE, action): ICriter {
   switch (action.type) {
     case CRITERIA_RECEIVED:
         let newCriter = Array<ICriteria>();

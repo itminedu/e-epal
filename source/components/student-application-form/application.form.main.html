@@ -1,7 +1,5 @@
-<div class = "loading" *ngIf="showLoader$ | async"></div>
+<div class = "loading" *ngIf="(criteria$ | async).size === 0"></div>
 
-<div class="row equal">
- <div class="col-md-12">
   <form novalidate  [formGroup]="studentDataGroup" #form>
     <form [formGroup]="applicantDataGroup">
       <table>
@@ -17,8 +15,6 @@
         </td></tr>
       </table>
     </form>
-
-    <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
 
     <div class="form-group">
         <label for="name">Όνομα μαθητή</label><input class="form-control" type="text" formControlName="name">
@@ -173,7 +169,7 @@
 
     </form>
 
-    <div class="row" style="margin-top: 20px;" *ngIf="!(showLoader$ | async)">
+    <div class="row" style="margin-top: 20px;" *ngIf="(criteria$ | async).size > 0">
         <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                 <i class="fa fa-backward"></i>
@@ -188,4 +184,3 @@
     </div>
 
   </form>
-</div>

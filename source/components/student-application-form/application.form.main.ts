@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { Router } from '@angular/router';
 import { NgRedux, select } from 'ng2-redux';
@@ -9,6 +9,8 @@ import { CriteriaActions } from '../../actions/criteria.actions';
 import { ICriter } from '../../store/criteria/criteria.types';
 import { IAppState } from '../../store/store';
 import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN } from '../../constants';
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
+import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
 
 import {
     FormBuilder,
@@ -25,9 +27,11 @@ import {
 
 @Injectable() export default class StudentApplicationMain implements OnInit {
 
-    private studentDataFields$: Observable<IStudentDataFields>;
-    private criteria$: Observable<ICriter>;
-    private showLoader$: Observable<boolean>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
+    private criteria$: BehaviorSubject<ICriter>;
+
+    private studentDataFieldsSub: Subscription;
+    private criteriaSub: Subscription;
 
     public studentDataGroup: FormGroup;
     public applicantDataGroup: FormGroup;
@@ -41,6 +45,9 @@ import {
                 private _sdfb: CriteriaActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
+
+        this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
+        this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
         this.studentDataGroup = this.fb.group({
             epaluser_id: [,[]],
             name: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -70,7 +77,7 @@ import {
 
     ngOnInit() {
 
-        this.studentDataFields$ = this._ngRedux.select(state => {
+        this.studentDataFieldsSub = this._ngRedux.select(state => {
             if (state.studentDataFields.size > 0) {
                 state.studentDataFields.reduce(({}, studentDataField) => {
                     this.studentDataGroup.setValue(studentDataField);
@@ -78,10 +85,10 @@ import {
                 }, {});
             }
             return state.studentDataFields;
-        });
+        }).subscribe(this.studentDataFields$);
 
         this._sdfb.getCriteria(true);
-        this.criteria$ = this._ngRedux.select(state => {
+        this.criteriaSub = this._ngRedux.select(state => {
             if (state.criter.size > 0) {
                 state.criter.reduce(({}, criteria) => {
                     //this.studentCriteriaGroup.setValue(criteria);
@@ -93,9 +100,13 @@ import {
                 }, {});
             }
             return state.criter;
-        });
-        this.showLoader$ = this.criteria$.map(criter => criter.size === 0);
+        }).subscribe(this.criteria$);
 
+    }
+
+    ngOnDestroy() {
+        if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
+        if (this.criteriaSub) this.criteriaSub.unsubscribe();
     }
 
     navigateBack() {
@@ -139,9 +150,5 @@ import {
       else
       // Null means valid, believe it or not
         return null;
-
-
-}
-
-
+    }
 }

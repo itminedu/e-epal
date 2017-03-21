@@ -1,33 +1,17 @@
-epal_is_logged_in:
-  path: '/epal/login/check'
-  defaults:
-    _controller: '\Drupal\epal\Controller\Login::helloWorld'
-  requirements:
-    _access: 'TRUE'
-epal_entityapi_test:
-  path: '/epal/entityapi/test'
+user_data:
+  path: '/epal/userdata'
   options:
     _auth: [ 'basic_auth' ]
-  requirements:
-    _user_is_logged_in: 'TRUE'
   defaults:
-    _controller: '\Drupal\epal\Controller\Login::testQuery'
-epal_auth_test:
-  path: 'epal/auth/test'
-  options:
-    _auth: [ 'oauthost' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\Login::helloWorld'
-    _title: 'Greeting'
+    _controller: '\Drupal\epal\Controller\CurrentUser::getEpalUserData'
   requirements:
-    _permission: 'access content'
     _user_is_logged_in: 'TRUE'
 current_user:
   path: '/epal/curuser'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\CurrentUser::content'
+    _controller: '\Drupal\epal\Controller\CurrentUser::getLoginInfo'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.application_submit:

@@ -5,7 +5,7 @@ import {
 
 import {CamelCasePipe} from '../pipes/camelcase';
 import {RemoveSpaces} from '../pipes/removespaces';
-import Form3 from '../components/form-controls/form3';
+import ParentForm from '../components/student-application-form/parent.form';
 import StudentApplicationMain from '../components/student-application-form/application.form.main';
 import StudentsList from '../components/students/students-list';
 import Home from '../components/home';
@@ -15,13 +15,12 @@ import SectorFieldsSelect from '../components/student-application-form/sector.fi
 import RegionSchoolsSelect from '../components/student-application-form/region.schools.select';
 import SectorCoursesSelect from '../components/student-application-form/sector.courses.select';
 import ApplicationPreview from '../components/student-application-form/application.preview';
-import AmkaFill from '../components/student-application-form/amka-fill';
 import SchoolsOrderSelect from '../components/student-application-form/schools-order-select';
 import ApplicationSubmit from '../components/student-application-form/application.submit';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
-  { path: 'form3', component: Form3 },
+  { path: 'parent-form', component: ParentForm },
   { path: 'student-application-form-main', component: StudentApplicationMain },
   { path: 'students-list', component: StudentsList },
   { path: 'course-fields-select', component: CourseFieldsSelect },
@@ -30,7 +29,6 @@ export const MainRoutes: Routes = [
   { path: 'region-schools-select', component: RegionSchoolsSelect },
   { path: 'sectorcourses-fields-select', component: SectorCoursesSelect },
   { path: 'application-preview', component: ApplicationPreview },
-  { path: 'amka-fill', component: AmkaFill },
   { path: 'schools-order-select', component: SchoolsOrderSelect },
   { path: 'application-submit', component: ApplicationSubmit }
 ];
@@ -38,7 +36,6 @@ export const MainRoutes: Routes = [
 export const MainDeclarations = [
   CamelCasePipe,
   RemoveSpaces,
-  Form3,
   StudentsList,
   Home,
   CourseFieldsSelect,
@@ -46,9 +43,9 @@ export const MainDeclarations = [
   SectorFieldsSelect,
   RegionSchoolsSelect,
   SectorCoursesSelect,
+  ParentForm,
   StudentApplicationMain,
   ApplicationPreview,
-  AmkaFill,
   SchoolsOrderSelect,
   ApplicationSubmit
 ];

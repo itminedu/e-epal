@@ -40,6 +40,19 @@ export class HelperDataService {
         headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
     }
 
+    getEpalUserData() {
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/userdata`, options)
+            .map(response => response.json());
+    };
+
     getCourseFields() {
 
         this.loginInfo$.forEach(loginInfoToken => {
@@ -276,13 +289,13 @@ export class HelperDataService {
 
 transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         let rsa = Array<ILoginInfoToken>();
-          
+
             rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
         return rsa;
-            
+
         }
 
-    signOut() { 
+    signOut() {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
         });

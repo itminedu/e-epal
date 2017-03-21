@@ -22,10 +22,6 @@ import { LoginInfoActions } from '../../actions/logininfo.actions';
     private loginInfo$: Observable<ILoginInfo>;
  	public cuser :any;
 
-      
-
-    
-
     constructor( private _ata: LoginInfoActions,
                 private _hds: HelperDataService,
                 private _ngRedux: NgRedux<IAppState>,
@@ -50,7 +46,7 @@ import { LoginInfoActions } from '../../actions/logininfo.actions';
             return state.loginInfo;
         });
 
-    	
+
     }
 
     oauthSignOut() {
@@ -61,6 +57,5 @@ import { LoginInfoActions } from '../../actions/logininfo.actions';
             this.router.navigate(['/']);
         });
     }
-
 
 }

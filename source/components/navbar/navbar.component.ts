@@ -1,12 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import { Injectable } from "@angular/core";
-import { HelperDataService } from '../../services/helper-data-service';
+
 import { Observable } from 'rxjs/Rx';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
+import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
+import { HelperDataService } from '../../services/helper-data-service';
+import { LoginInfoActions } from '../../actions/logininfo.actions';
+
+
 
 @Component({
   selector: 'reg-navbar',
@@ -43,7 +46,7 @@ import { IAppState } from '../../store/store';
             return state.loginInfo;
         });
 
-    	this._hds.getCurrentUser().then( cuser => this.cuser= cuser );
+
     }
 
     oauthSignOut() {
@@ -54,7 +57,5 @@ import { IAppState } from '../../store/store';
             this.router.navigate(['/']);
         });
     }
-
-
 
 }

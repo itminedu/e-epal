@@ -13,7 +13,6 @@ export class RegionSchoolsActions {
   getRegionSchools = (classActive,courseActive, reload) => {
     const { regions } = this._ngRedux.getState();
     if (reload === true || (reload === false && regions.size === 0)) {
-        console.log("test1", classActive,courseActive, reload);
         return this._hds.getRegionsWithSchools(classActive,courseActive).then(regions => {
             return this._ngRedux.dispatch({
                 type: REGIONSCHOOLS_RECEIVED,
@@ -49,11 +48,13 @@ export class RegionSchoolsActions {
   };
   */
 
-  saveRegionSchoolsSelected = (regionSchoolsSelected) => {
+  saveRegionSchoolsSelected = (checked, i, j) => {
       return this._ngRedux.dispatch({
         type: REGIONSCHOOLS_SELECTED_SAVE,
         payload: {
-          regionSchoolsSelected
+          checked: checked,
+          rIndex: i,
+          sIndex: j
         }
       });
   };

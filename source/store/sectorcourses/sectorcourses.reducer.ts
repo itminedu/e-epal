@@ -1,5 +1,5 @@
 import { ISectors, ISector, ISectorCourse } from './sectorcourses.types';
-import { INITIAL_STATE } from './sectorcourses.initial-state';
+import { SECTOR_COURSES_INITIAL_STATE } from './sectorcourses.initial-state';
 import { Seq } from 'immutable';
 
 import {
@@ -8,7 +8,7 @@ import {
   SECTORCOURSES_INIT
 } from '../../constants';
 
-export function sectorCoursesReducer(state: ISectors = INITIAL_STATE, action): ISectors {
+export function sectorCoursesReducer(state: ISectors = SECTOR_COURSES_INITIAL_STATE, action): ISectors {
   switch (action.type) {
     case SECTORCOURSES_RECEIVED:
         let newSectors = Array<ISector>();
@@ -35,7 +35,7 @@ export function sectorCoursesReducer(state: ISectors = INITIAL_STATE, action): I
         });
         return Seq(sectorsWithSelections).map(n => n).toList();
     case SECTORCOURSES_INIT:
-        return INITIAL_STATE;
+        return SECTOR_COURSES_INITIAL_STATE;
     default: return state;
   }
 };

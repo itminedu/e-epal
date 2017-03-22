@@ -192,8 +192,8 @@ class EpalClassLimits extends ContentEntityBase implements EpalClassLimitsInterf
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	  
-	$fields['category'] = BaseFieldDefinition::create('string')
+
+  $fields['category'] = BaseFieldDefinition::create('string')
           ->setLabel(t('Κατηγορία σύμφωνα με την περιοχή μετάθεσης'))
           ->setDescription(t('Κατηγορία σύμφωνα με την περιοχή μετάθεσης.'))
           ->setSettings(array(
@@ -212,7 +212,7 @@ class EpalClassLimits extends ContentEntityBase implements EpalClassLimitsInterf
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	$fields['limit_down'] = BaseFieldDefinition::create('integer')
           ->setLabel(t('Κατώτατο όριο μαθητών'))
           ->setDescription(t('Κατώτατο όριο μαθητών.'))
@@ -232,7 +232,7 @@ class EpalClassLimits extends ContentEntityBase implements EpalClassLimitsInterf
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-		  
+
 	$fields['limit_up'] = BaseFieldDefinition::create('integer')
           ->setLabel(t('Ανώτατο όριο μαθητών'))
           ->setDescription(t('Ανώτατο όριο μαθητών.'))

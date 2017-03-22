@@ -53,7 +53,7 @@ class CBController extends ControllerBase
     public static function create(ContainerInterface $container)
     {
         return new static(
-          $container->get('entity.manager'),
+          $container->get('entity_type.manager'),
           $container->get('entity.query'),
           $container->get('database'),
           $container->get('logger.factory')
@@ -157,7 +157,7 @@ class CBController extends ControllerBase
             //Create a User
             $user = User::create();
             //Mandatory settings
-            $unique_id = uniqid('id');
+            $unique_id = uniqid('####');
             $user->setPassword($epalToken);
             $user->enforceIsNew();
             $user->setEmail($unique_id);

@@ -17,6 +17,8 @@ import SectorCoursesSelect from '../components/student-application-form/sector.c
 import ApplicationPreview from '../components/student-application-form/application.preview';
 import SchoolsOrderSelect from '../components/student-application-form/schools-order-select';
 import ApplicationSubmit from '../components/student-application-form/application.submit';
+import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
+
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -30,7 +32,8 @@ export const MainRoutes: Routes = [
   { path: 'sectorcourses-fields-select', component: SectorCoursesSelect },
   { path: 'application-preview', component: ApplicationPreview },
   { path: 'schools-order-select', component: SchoolsOrderSelect },
-  { path: 'application-submit', component: ApplicationSubmit }
+  { path: 'application-submit', component: ApplicationSubmit },
+  { path: 'submited-preview', component: SubmitedPreview },
 ];
 
 export const MainDeclarations = [
@@ -47,5 +50,6 @@ export const MainDeclarations = [
   StudentApplicationMain,
   ApplicationPreview,
   SchoolsOrderSelect,
-  ApplicationSubmit
+  ApplicationSubmit,
+  SubmitedPreview,
 ];

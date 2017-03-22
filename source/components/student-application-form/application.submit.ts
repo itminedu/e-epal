@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
@@ -12,36 +12,22 @@ import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
+import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
+import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
+import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
+import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
+import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
+import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
 import { Student, StudentEpalChosen, StudentCourseChosen, StudentSectorChosen, StudentCriteriaChosen } from '../students/student';
 import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'application-submit',
     template: `
-      <application-preview-select></application-preview-select>
-
-      <div class = "loading" *ngIf="showLoaderLogin$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderClasses$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderStudent$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderSchools$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderCriteria$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderCourses$ | async"></div>
-      <div class = "loading" *ngIf="showLoaderSectors$ | async"></div>
-
-      <!--
-      <div *ngFor="let loginInfoToken$ of loginInfo$ | async;"> </div>
-      <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
-      <div *ngFor="let studentDataField$ of studentDataFields$ | async; "> </div>
-      <div *ngFor="let region$ of regions$ | async;">
-        <div *ngFor="let epal$ of region$.epals "> </div> </div>
-      <div *ngFor="let sector$ of sectors$ | async;">
-        <div *ngFor="let course$ of sector$.courses;"> </div> </div>
-      <div *ngFor="let sectorField$ of sectorFields$ | async;"></div>
-      <div *ngFor="let criter$ of criteria$ | async;"> </div>
-      -->
-
-      <button type="button" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
+        <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0"></div>
+        <application-preview-select></application-preview-select>
+        <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
   `
 })
 
@@ -55,31 +41,38 @@ import {AppSettings} from '../../app.settings';
     private courseSelected;
     private sectorSelected;
     private classSelected;
-
-    private showLoaderLogin$: Observable<boolean>;
-    private showLoaderClasses$: Observable<boolean>;
-    private showLoaderStudent$: Observable<boolean>;
-    private showLoaderSchools$: Observable<boolean>;
-    private showLoaderCriteria$: Observable<boolean>;
-    private showLoaderCourses$: Observable<boolean>;
-    private showLoaderSectors$: Observable<boolean>;
-
-    private studentDataFields$: Observable<IStudentDataFields>;
-    private regions$: Observable<IRegions>;
-    private criteria$: Observable<ICriter>;
-    private sectors$: Observable<ISectors>;
-    private sectorFields$: Observable<ISectorFields>;
-    private epalclasses$: Observable<IEpalClasses>;
-    private loginInfo$: Observable<ILoginInfo>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
+    private regions$: BehaviorSubject<IRegions>;
+    private criteria$: BehaviorSubject<ICriter>;
+    private sectors$: BehaviorSubject<ISectors>;
+    private sectorFields$: BehaviorSubject<ISectorFields>;
+    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private studentDataFieldsSub: Subscription;
+    private regionsSub: Subscription;
+    private criteriaSub: Subscription;
+    private sectorsSub: Subscription;
+    private sectorFieldsSub: Subscription;
+    private epalclassesSub: Subscription;
+    private loginInfoSub: Subscription;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
                 private http: Http
             ) {
+
+                this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+                this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
+                this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
+                this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
+                this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
+                this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
+                this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+
     };
 
     ngOnInit() {
-      this.loginInfo$ = this._ngRedux.select(state => {
+      this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
                   this.authToken = loginInfoToken.auth_token;
@@ -87,10 +80,9 @@ import {AppSettings} from '../../app.settings';
               }, {});
           }
           return state.loginInfo;
-      });
-      this.showLoaderLogin$ = this.loginInfo$.map(loginInfo => loginInfo.size === 0);
+      }).subscribe(this.loginInfo$);
 
-      this.epalclasses$ = this._ngRedux.select(state => {
+      this.epalclassesSub = this._ngRedux.select(state => {
         if (state.epalclasses.size > 0) {
             state.epalclasses.reduce(({}, epalclass) => {
                 this.classSelected = epalclass.name;
@@ -98,10 +90,9 @@ import {AppSettings} from '../../app.settings';
             }, {});
         }
         return state.epalclasses;
-      });
-      this.showLoaderClasses$ = this.epalclasses$.map(epalclasses => epalclasses.size === 0);
+      }).subscribe(this.epalclasses$);
 
-      this.studentDataFields$ = this._ngRedux.select(state => {
+      this.studentDataFieldsSub = this._ngRedux.select(state => {
           if (state.studentDataFields.size > 0) {
               state.studentDataFields.reduce(({}, studentDataField) => {
                   this.student = studentDataField;
@@ -109,10 +100,9 @@ import {AppSettings} from '../../app.settings';
               }, {});
           }
           return state.studentDataFields;
-      });
-      this.showLoaderStudent$ = this.studentDataFields$.map(studentDataFields => studentDataFields.size === 0);
+      }).subscribe(this.studentDataFields$);
 
-      this.regions$ = this._ngRedux.select(state => {
+      this.regionsSub = this._ngRedux.select(state => {
           state.regions.reduce((prevRegion, region) =>{
               region.epals.reduce((prevEpal, epal) =>{
                   if (epal.selected === true) {
@@ -124,42 +114,23 @@ import {AppSettings} from '../../app.settings';
               return region;
           }, {});
           return state.regions;
-      });
-      this.showLoaderSchools$ = this.regions$.map(regions => regions.size === 0);
+      }).subscribe(this.regions$);
 
-      this.criteria$ = this._ngRedux.select(state => {
+      this.criteriaSub = this._ngRedux.select(state => {
           if (state.criter.size > 0) {
               state.criter.reduce(({}, criteria) => {
                 //code to be replaced in next version
-                  if (criteria.orphanmono === true)
-                    this.studentCriteria.push(6);
-                  else if (criteria.orphantwice === true)
-                    this.studentCriteria.push(1);
-                  if (criteria.threechildren === true)
-                    this.studentCriteria.push(11);
-                  else if (criteria.manychildren === true)
-                    this.studentCriteria.push(2);
-                  if (criteria.twins === true)
-                    this.studentCriteria.push(3);
-                  if (criteria.disability === true)
-                    this.studentCriteria.push(5);
-                  if (criteria.studies === true)
-                    this.studentCriteria.push(4);
-                  if (criteria.income === '<= 3000 Ευρώ')
-                    this.studentCriteria.push(7);
-                  else if (criteria.income === '<= 6000 Ευρώ')
-                    this.studentCriteria.push(8);
-                  else if (criteria.income === '<= 9000 Ευρώ')
-                    this.studentCriteria.push(9);
+                  if (criteria.selected === true && Number(criteria.id) !== 11)
+                      this.studentCriteria.push(Number(criteria.id));
 
                   return criteria;
               }, {});
           }
           return state.criter;
-      });
-      this.showLoaderCriteria$ = this.criteria$.map(criter => criter.size === 0);
+      }).subscribe(this.criteria$);
 
-      this.sectors$ = this._ngRedux.select(state => {
+
+      this.sectorsSub = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
               sector.courses.reduce((prevCourse, course) =>{
                   if (course.selected === true) {
@@ -170,10 +141,9 @@ import {AppSettings} from '../../app.settings';
               return sector;
           }, {});
           return state.sectors;
-      });
-      this.showLoaderCourses$ = this.sectors$.map(sectors => sectors.size === 0 && this.classSelected === "Γ' Λυκείου");
+      }).subscribe(this.sectors$);
 
-      this.sectorFields$ = this._ngRedux.select(state => {
+      this.sectorFieldsSub = this._ngRedux.select(state => {
           state.sectorFields.reduce(({}, sectorField) =>{
             if (sectorField.selected === true) {
               this.sectorSelected = sectorField.id
@@ -181,12 +151,19 @@ import {AppSettings} from '../../app.settings';
             return sectorField;
           }, {});
           return state.sectorFields;
-      });
-
-      this.showLoaderSectors$ = this.sectorFields$.map(sectorFields => sectorFields.size === 0 && this.classSelected === "Β' Λυκείου");
-
+      }).subscribe(this.sectorFields$);
 
     };
+
+    ngOnDestroy() {
+        if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
+        if (this.criteriaSub) this.criteriaSub.unsubscribe();
+        if (this.regionsSub) this.regionsSub.unsubscribe();
+        if (this.sectorsSub) this.sectorsSub.unsubscribe();
+        if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
+        if (this.epalclassesSub) this.epalclassesSub.unsubscribe();
+        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
+    }
 
     submitNow() {
           //αποστολή στοιχείων μαθητή στο entity: epal_student

@@ -1,5 +1,5 @@
 import { IRegions, IRegion, IRegionSchool } from './regionschools.types';
-import { INITIAL_STATE } from './regionschools.initial-state';
+import { REGION_SCHOOLS_INITIAL_STATE } from './regionschools.initial-state';
 import { Seq } from 'immutable';
 
 import {
@@ -9,7 +9,7 @@ import {
   REGIONSCHOOLS_INIT
 } from '../../constants';
 
-export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): IRegions {
+export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_STATE, action): IRegions {
   switch (action.type) {
     case REGIONSCHOOLS_RECEIVED:
         let newRegions = Array<IRegion>();
@@ -23,17 +23,17 @@ export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): I
         });
         return Seq(newRegions).map(n => n).toList();
     case REGIONSCHOOLS_SELECTED_SAVE:
-        let regionsWithSelections = Array<IRegion>();
-        let ind=0, j = 0;
+        let ind=0;
         state.forEach(region => {
-            regionsWithSelections.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>()});
-            region.epals.forEach(epal => {
-                regionsWithSelections[ind].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, globalIndex: epal.globalIndex, selected: action.payload.regionSchoolsSelected[j], order_id: 0});
-                j++;
-            })
+            if (ind === action.payload.rIndex) {
+                region.epals[action.payload.sIndex].selected = action.payload.checked;
+                return state.withMutations(function (list) {
+                    list.set(ind++, region);
+                });
+            }
             ind++;
         });
-        return Seq(regionsWithSelections).map(n => n).toList();
+        return state;
 
         case REGIONSCHOOLS_ORDER_SAVE:
             let regionsWithOrders = Array<IRegion>();
@@ -48,8 +48,8 @@ export function regionSchoolsReducer(state: IRegions = INITIAL_STATE, action): I
             });
             return Seq(regionsWithOrders).map(n => n).toList();
 
-            case REGIONSCHOOLS_INIT:
-                return INITIAL_STATE;
+        case REGIONSCHOOLS_INIT:
+            return REGION_SCHOOLS_INITIAL_STATE;
     default: return state;
   }
 };

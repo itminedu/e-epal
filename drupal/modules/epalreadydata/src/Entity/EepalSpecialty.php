@@ -183,7 +183,7 @@ class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterfac
         'max_length' => 100,
         'text_processing' => 0,
       ))
-      ->setDefaultValue('')
+	  ->setRequired(true)
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
@@ -202,6 +202,7 @@ class EepalSpecialty extends ContentEntityBase implements EepalSpecialtyInterfac
         ->setSetting('target_type', 'eepal_sectors')
         ->setSetting('handler', 'default')
         ->setTranslatable(TRUE)
+		//->setRequired(TRUE)
         ->setDisplayOptions('view', array(
               'label' => 'above',
               'type' => 'author',

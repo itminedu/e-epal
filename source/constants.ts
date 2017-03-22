@@ -18,7 +18,6 @@ export const STUDENTDATAFIELDS_RECEIVED = 'STUDENTDATAFIELDS_RECEIVED';
 export const STUDENTDATAFIELDS_SAVE = 'STUDENTDATAFIELDS_SAVE';
 
 export const EPALCLASSES_SAVE = 'EPALCLASSES_SAVE';
-export const AMKAFILL_SAVE = 'AMKAFILL_SAVE';
 
 export const LOGININFO_SAVE = 'LOGININFO_SAVE';
 
@@ -29,6 +28,7 @@ export const USERINFO_SELECTED_SAVE = 'USERINFO_SELECTED_SAVE';
 
 export const LOGININFO_INIT = 'LOGININFO_INIT';
 
+export const CRITERIA_RECEIVED = 'CRITERIA_RECEIVED';
 export const CRITERIA_SAVE = 'CRITERIA_SAVE';
 
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
@@ -36,3 +36,4 @@ export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύό�
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 export const VALID_DIGITS_PATTERN = '[0-9]*$';
+export const VALID_EMAIL_PATTERN = "/^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i";

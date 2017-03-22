@@ -5,7 +5,6 @@ import * as regions from './regionschools';
 import * as sectors from './sectorcourses';
 import * as studentDataFields from './studentdatafields';
 import * as epalclasses from './epalclasses';
-import * as amkafills from './amkafill';
 import * as loginInfo from './logininfo';
 import * as criter from './criteria';
 
@@ -20,10 +19,8 @@ export interface IAppState {
     sectors?: sectors.ISectors;
     studentDataFields?: studentDataFields.IStudentDataFields;
     epalclasses?: epalclasses.IEpalClasses;
-    amkafills?: amkafills.IAmkaFills;
     loginInfo?: loginInfo.ILoginInfo;
     criter?: criter.ICriter;
-    
 };
 
 export const rootReducer = combineReducers<IAppState>({
@@ -33,10 +30,9 @@ export const rootReducer = combineReducers<IAppState>({
    sectors: sectors.sectorCoursesReducer,
    studentDataFields: studentDataFields.studentDataFieldsReducer,
    epalclasses: epalclasses.epalclassesReducer,
-   amkafills: amkafills.amkafillReducer,
    loginInfo: loginInfo.loginInfoReducer,
    criter: criter.criteriaReducer,
-   
+
 });
 
 export function deimmutify(state: IAppState): Object {
@@ -47,11 +43,7 @@ export function deimmutify(state: IAppState): Object {
     sectors: sectors.deimmutifySectorCourses(state.sectors),
     studentdataFields: studentDataFields.deimmutifyStudentDataFields(state.studentDataFields),
     epalclasses: epalclasses.deimmutifyEpalClasses(state.epalclasses),
-    amkafills: amkafills.deimmutifyAmkaFills(state.amkafills),
     loginInfo: loginInfo.deimmutifyLoginInfo(state.loginInfo),
-    criter: criter.deimmutifyCriteria(state.criter),
-    
+    criter: criter.deimmutifyCriteria(state.criter)
   };
 }
-
-

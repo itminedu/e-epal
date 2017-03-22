@@ -28,13 +28,11 @@ export class HelperDataService {
                 if (state.loginInfo.size > 0) {
                     state.loginInfo.reduce(({}, loginInfoToken) => {
                         this.authToken = loginInfoToken.auth_token;
-                        console.log('hey authtoken:' +  this.authToken  );
                         return loginInfoToken;
                     }, {});
                 }
                 return state.loginInfo;
             });
-            console.log('hey hey authtoken:' + this.authToken);
 
     };
 
@@ -42,10 +40,22 @@ export class HelperDataService {
         headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
     }
 
+    getEpalUserData() {
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/userdata`, options)
+            .map(response => response.json());
+    };
+
     getCourseFields() {
 
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -78,7 +88,6 @@ export class HelperDataService {
 
     getSectorFields() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -110,7 +119,6 @@ export class HelperDataService {
 
     getRegionsWithSchools(classActive,courseActive) {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -137,11 +145,6 @@ export class HelperDataService {
             else if (classActive === 3)
               getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
 
-            //getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?${courseActive}`;
-       //     console.log(getConnectionString,class);
-
-            //this.http.get(`${AppSettings.API_ENDPOINT}/regions/list`)
-            //this.http.get(`${AppSettings.API_ENDPOINT}/`.concat(`coursesperschool/list?course_id=${courseActive}`))
             this.http.get(getConnectionString, options)
                 .map(response => response.json())
                 .subscribe(data => {
@@ -157,7 +160,6 @@ export class HelperDataService {
 
     getSectorsWithCourses() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -177,7 +179,6 @@ export class HelperDataService {
             this.http.get(`${AppSettings.API_ENDPOINT}/coursesectorfields/list`, options)
             .map(response => response.json())
             .subscribe(data => {
-//                console.log(data);
                 resolve(this.transformSectorCoursesSchema(data));
             }, // put the data returned from the server in our variable
             error => {
@@ -230,11 +231,49 @@ export class HelperDataService {
         return rsa;
     }
 
-
+    getCriteria() {
+        this.loginInfo$.forEach(loginInfoToken => {
+            console.log(loginInfoToken.get(0));
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list`, options)
+            .map(response => <ISectorField[]>response.json())
+            .subscribe(data => {
+                resolve(data);
+            }, // put the data returned from the server in our variable
+            error => {
+                console.log("Error HTTP GET Service"); // in case of failure show this message
+                reject("Error HTTP GET Service");
+            },
+            () => console.log("Sector Fields Received"));//run this code in all cases); */
+        });
+    };
 
     getCurrentUser(oauthtoken, oauthrole) {
+
+        this.authToken = oauthtoken;
+        let headers = new Headers({
+            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
+            "Content-Type": "application/json",
+            // "Content-Type": "text/plain",  // try to skip preflight
+            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
+            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
+            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+//            "X-oauth-enabled": "true",
+//            "X-Auth-Token": this.authToken
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
            return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser/${oauthtoken}   `)
+            this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser`, options)
             .map(response => response.json())
             .subscribe(data => {
                 resolve(this.transformUserSchema(data, oauthtoken, oauthrole));
@@ -250,15 +289,14 @@ export class HelperDataService {
 
 transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         let rsa = Array<ILoginInfoToken>();
-          
+
             rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
         return rsa;
-            
+
         }
 
     signOut() {
         this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
@@ -283,7 +321,6 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
             .map(response => response)
             .subscribe(data => {
                 resolve(data);
-                console.log(data);
             }, // put the data returned from the server in our variable
             error => {
                 console.log("Error Logout"); // in case of failure show this message

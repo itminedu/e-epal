@@ -34,9 +34,22 @@ class SubmitedApplications extends ControllerBase
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
-            return $this->respondWithStatus([
-                    'id' => $epalUser->entity->id(),
-                ], Response::HTTP_OK);
+            $userid => $epalUser -> user_id -> entity ->id();
+            
+            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('user_id' => $userid));
+            $epalStudent = reset($epalStudents);
+            if ($epalStudent) {
+                return $this->respondWithStatus([
+                    'name' => $epalStudent ->name->value,
+                    'studentsurname' => $epalStudent ->studentsurname->value,
+                    ], Response::HTTP_OK);
+                }
+            else {
+                       return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+                
         } else {
             return $this->respondWithStatus([
                     'message' => t("EPAL user not found"),

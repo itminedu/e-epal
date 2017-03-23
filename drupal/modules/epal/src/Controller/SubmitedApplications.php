@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SubmittedApplication extends ControllerBase
+class SubmitedApplications extends ControllerBase
 {
     protected $entityTypeManager;
 
@@ -29,9 +29,25 @@ class SubmittedApplication extends ControllerBase
     public function getSubmittedApplications(Request $request)
     {
   
-        return "aaaaaaaaaaaaaaaaa" ;
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            return $this->respondWithStatus([
+                    'id' => $epalUser->entity->id(),
+                ], Response::HTTP_OK);
+        } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
     }
 
 
-  
+   private function respondWithStatus($arr, $s) {
+        $res = new JsonResponse($arr);
+        $res->setStatusCode($s);
+        return $res;
+    }
 }

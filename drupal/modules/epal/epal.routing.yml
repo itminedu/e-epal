@@ -19,7 +19,7 @@ submitedapplications:
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\SubmittedApplication::getSubmittedApplications'
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.application_submit:

@@ -34,7 +34,7 @@ class SubmitedApplications extends ControllerBase
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
-            $userid => $epalUser -> user_id -> entity ->id();
+            $userid = $epalUser -> user_id -> entity ->id();
             
             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('user_id' => $userid));
             $epalStudent = reset($epalStudents);
@@ -49,7 +49,26 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-                
+        if ($studentid){
+
+            $StudentSelection = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id' => $studentid, 'user_id' => $userid ));
+            $StudentSel = reset($StudentSelection);
+            if ($StudentSel) {
+                return $this->respondWithStatus([
+                    'epal_id' => $epalStudent ->epal_id->entity->getEpal_id(),
+                    ], Response::HTTP_OK);
+                }
+            else {
+                       return $this->respondWithStatus([
+                    'message' => t("SpecificStudent not found"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+
+        }        
+        
+
+
+
         } else {
             return $this->respondWithStatus([
                     'message' => t("EPAL user not found"),

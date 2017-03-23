@@ -15,11 +15,13 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
 
+
 @Component({
-    selector: 'submited-preview',
+    selector: 'submited-person',
     template: `
 
-    <h5 style="margin-top: 20px; line-height: 2em; ">Έχετε ολοκληρώσει την αίτηση για εγγραφή στην επαγγελπατική εκπαίδευση των παρακάτω ατόμων:</h5>
+    <h5 style="margin-top: 20px; line-height: 2em; ">Στοιχεία Μαθητή</h5>
+
         <div *ngFor="let userdata$ of submitedapplic$ | async; ">
         
             <ul class="list-group left-side-view" style="margin-bottom: 20px;">
@@ -28,13 +30,11 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                </li>
             </ul>
         </div>
-         <button type="submit"  (click)="studentpreview()">  Λεπτομέρειες
-         </button>
                   
    `
 })
 
-@Injectable() export default class SubmitedPreview implements OnInit {
+@Injectable() export default class SubmitedPerson implements OnInit {
 
 
     
@@ -42,13 +42,13 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
    
     private submitedapplic$: BehaviorSubject<any>;
     private submitedusers$: Subscription;
-    public studentid = 1 ;
+    public userid: number;
+    public authToken : string ;
     
     constructor(private _hds: HelperDataService, 
                 public http: Http,
                 private _ngRedux: NgRedux<IAppState>,
-                private activatedRoute: ActivatedRoute,
-                private router: Router )
+                private activatedRoute: ActivatedRoute )
     {
        this.submitedapplic$ = new BehaviorSubject({});
     }
@@ -56,11 +56,21 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
 
     ngOnInit() {
-     
+    
 
-        this.submitedusers$ = this._hds.getSubmittedPreviw(0).subscribe(this.submitedapplic$);
-        console.log("subscription", this.submitedusers$, "behavior", this.submitedapplic$);
            
+         this.activatedRoute.queryParams.subscribe((params: Params) => {
+            if (params) {
+                this.userid = 1;
+                console.log("userid", this.userid, this.authToken);
+            }
+        });
+
+        this.submitedusers$ = this._hds.getSubmittedPreviw(this.userid).subscribe(this.submitedapplic$);
+        console.log("subscription", this.submitedusers$, "behavior", this.submitedapplic$);
+        
+
+
 
     }
 
@@ -78,12 +88,4 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
    
     );
     }
-
-    studentpreview()
-    {
-     console.log(this.studentid);       
-     this.router.navigate(['/submited-person', { id: this.studentid}]);
-    }
-
-
 }

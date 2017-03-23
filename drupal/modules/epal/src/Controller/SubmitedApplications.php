@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SubmittedApplication extends ControllerBase
+class SubmitedApplications extends ControllerBase
 {
     protected $entityTypeManager;
 
@@ -29,9 +29,57 @@ class SubmittedApplication extends ControllerBase
     public function getSubmittedApplications(Request $request)
     {
   
-        return "aaaaaaaaaaaaaaaaa" ;
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $userid = $epalUser -> user_id -> entity ->id();
+            
+            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('user_id' => $userid));
+            $epalStudent = reset($epalStudents);
+            if ($epalStudent) {
+                return $this->respondWithStatus([
+                    'name' => $epalStudent ->name->value,
+                    'studentsurname' => $epalStudent ->studentsurname->value,
+                    ], Response::HTTP_OK);
+                }
+            else {
+                       return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+        if ($studentid){
+
+            $StudentSelection = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id' => $studentid, 'user_id' => $userid ));
+            $StudentSel = reset($StudentSelection);
+            if ($StudentSel) {
+                return $this->respondWithStatus([
+                    'epal_id' => $epalStudent ->epal_id->entity->getEpal_id(),
+                    ], Response::HTTP_OK);
+                }
+            else {
+                       return $this->respondWithStatus([
+                    'message' => t("SpecificStudent not found"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+
+        }        
+        
+
+
+
+        } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
     }
 
 
-  
+   private function respondWithStatus($arr, $s) {
+        $res = new JsonResponse($arr);
+        $res->setStatusCode($s);
+        return $res;
+    }
 }

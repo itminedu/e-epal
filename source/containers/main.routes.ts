@@ -18,7 +18,7 @@ import ApplicationPreview from '../components/student-application-form/applicati
 import SchoolsOrderSelect from '../components/student-application-form/schools-order-select';
 import ApplicationSubmit from '../components/student-application-form/application.submit';
 import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
-
+import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -34,6 +34,7 @@ export const MainRoutes: Routes = [
   { path: 'schools-order-select', component: SchoolsOrderSelect },
   { path: 'application-submit', component: ApplicationSubmit },
   { path: 'submited-preview', component: SubmitedPreview },
+  { path: 'submited-person', component: SubmitedPerson },
 ];
 
 export const MainDeclarations = [
@@ -52,4 +53,5 @@ export const MainDeclarations = [
   SchoolsOrderSelect,
   ApplicationSubmit,
   SubmitedPreview,
+  SubmitedPerson
 ];

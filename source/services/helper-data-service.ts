@@ -333,7 +333,7 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
 
 
 
-    getSubmittedPreviw(stud_id) {
+    getSubmittedPreviw() {
 
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
@@ -343,8 +343,12 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/subapplic`, options , {params:{"param1": stud_id}})
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/subapplic`, options )
             .map(response => response.json());
+
+
+
+            
 
 }
 

@@ -34,44 +34,38 @@ class SubmitedApplications extends ControllerBase
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
-            $userid = $epalUser -> user_id -> entity ->id();
+            $userid = $epalUser -> id();
             
-            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('user_id' => $userid));
-            $epalStudent = reset($epalStudents);
-            if ($epalStudent) {
-                return $this->respondWithStatus([
-                    'name' => $epalStudent ->name->value,
-                    'studentsurname' => $epalStudent ->studentsurname->value,
-                    ], Response::HTTP_OK);
+            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
+            //$epalStudent = reset($epalStudents);
+            $i = 0;
+            if ($epalStudents) {
+                 $list = array();
+                foreach ($epalStudents as $object) {
+                   
+                
+                    $list[] = array('name' => $object -> name ->value,
+
+                            'studentsurname' => $object -> studentsurname ->value);
+                    $i++;
+                }
+                
+                return $this->respondWithStatus(
+                        $list
+                    , Response::HTTP_OK);
                 }
             else {
                        return $this->respondWithStatus([
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-        if ($studentid){
-
-            $StudentSelection = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id' => $studentid, 'user_id' => $userid ));
-            $StudentSel = reset($StudentSelection);
-            if ($StudentSel) {
-                return $this->respondWithStatus([
-                    'epal_id' => $epalStudent ->epal_id->entity->getEpal_id(),
-                    ], Response::HTTP_OK);
-                }
-            else {
-                       return $this->respondWithStatus([
-                    'message' => t("SpecificStudent not found"),
-                ], Response::HTTP_FORBIDDEN);
-                }
-
-        }        
-        
+  
 
 
 
         } else {
             return $this->respondWithStatus([
-                    'message' => t("EPAL user not found"),
+                    'message' => t(" user not found"),
                 ], Response::HTTP_FORBIDDEN);
         }
     }

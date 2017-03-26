@@ -15,7 +15,7 @@ current_user:
   requirements:
     _user_is_logged_in: 'TRUE'
 submitedapplications:
-  path: '/epal/subapplic/{$studentid}'
+  path: '/epal/subapplic'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

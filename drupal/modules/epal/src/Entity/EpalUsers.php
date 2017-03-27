@@ -473,6 +473,31 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+   $fields['verificationcode'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('Email Verification Code'))
+        ->setDescription(t('Generated email verification code'))
+        ->setSettings(array(
+          'max_length' => 20,
+          'text_processing' => 0,
+        ))
+        ->setDefaultValue('')
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'string',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'string_textfield',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
+    $fields['verificationcodeverified'] = BaseFieldDefinition::create('boolean')
+          ->setLabel(t('Email Verification Code Verified'))
+          ->setDescription(t('A boolean indicating whether the email verification code was verified.'))
+          ->setDefaultValue(FALSE);
+
 	$fields['accesstoken'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Access-Token από taxis'))
       ->setDescription(t('Access-Token από taxis.'))

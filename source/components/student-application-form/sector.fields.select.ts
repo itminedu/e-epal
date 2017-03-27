@@ -50,7 +50,7 @@ import {AppSettings} from '../../app.settings';
   `
 
 })
-@Injectable() export default class SectorFieldsSelect implements OnInit {
+@Injectable() export default class SectorFieldsSelect implements OnInit, OnDestroy {
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private sectorFieldsSub: Subscription;
     public formGroup: FormGroup;

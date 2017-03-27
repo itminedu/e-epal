@@ -53,6 +53,59 @@ export class HelperDataService {
             .map(response => response.json());
     };
 
+    sendVerificationCode(email) {
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+//            "Accept": "*/*",
+//            "Access-Control-Allow-Credentials": "true",
+        });
+        this.createAuthorizationHeader(headers);
+//        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/sendvercode`, {userEmail: email}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            }, // put the data returned from the server in our variable
+            error => {
+                console.log("Error Sending Verification Code"); // in case of failure show this message
+                reject("Error Sending Verification Code");
+            },
+            () => console.log("Sending Verification Code"));//run this code in all cases); */
+        });
+    }
+
+    verifyVerificationCode(verificationCode) {
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+//            "Accept": "*/*",
+//            "Access-Control-Allow-Credentials": "true",
+        });
+        this.createAuthorizationHeader(headers);
+//        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            console.log("verificationCode=" + verificationCode);
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/verifyvercode`, {verificationCode: verificationCode}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(<any>data);
+            }, // put the data returned from the server in our variable
+            error => {
+                console.log("Error Verifying Verification Code"); // in case of failure show this message
+                reject("Error Verifying Verification Code");
+            },
+            () => console.log("Verifying Verification Code"));//run this code in all cases); */
+        });
+    }
+
     getCourseFields() {
 
         this.loginInfo$.forEach(loginInfoToken => {

@@ -1,0 +1,94 @@
+<div class = "loading" *ngIf="(epalUserData$ | async) === {}"></div>
+<form [formGroup]="formGroup">
+
+    <div class="form-group">
+        <label for="userEmail">Email Επικοινωνίας</label><input #userEmail class="form-control" type="text" formControlName="userEmail" value="{{ (epalUserData$ | async).userEmail }}">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').touched && formGroup.get('userEmail').hasError('required') ">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('pattern')">
+        Πληκτρολογήστε ένα σωστό συντακτικά email!
+    </div>
+    <div class="row" *ngIf="verificationCodeVerified | async">
+        <div class="col-md-12">
+            <div *ngIf="userEmailEnabled | async">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="disableUserEmail();">
+            Ακύρωση Αλλαγής Email
+            </button>
+            </div>
+            <div *ngIf="!(userEmailEnabled | async)">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="enableUserEmail();">
+            Αλλαγή Email
+            </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="(showSendVerification | async) && !(verificationCodeSent | async) && !formGroup.get('userEmail').hasError('required') && !formGroup.get('userEmail').hasError('pattern')">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="sendVerificationCode()">
+            Λήψη Κωδικού Επαλήθευσης
+            </button>
+        </div>
+    </div>
+    <div class="form-group" *ngIf="(verificationCodeSent | async) && !(verificationCodeVerified | async)">
+        <label for="verificationCode">Κωδικός επαλήθευσης</label><input class="form-control" type="text" formControlName="verificationCode">
+    </div>
+    <div class="row" *ngIf="(verificationCodeSent | async) && !(verificationCodeVerified | async)">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="verifyVerificationCode()">
+            Αποστολή Κωδικού Επαλήθευσης
+            </button>
+        </div>
+    </div>
+
+
+    <div class="form-group"  *ngIf="verificationCodeVerified | async">
+        <label for="userName">Όνομα</label><input class="form-control" type="text" formControlName="userName" value="{{ (epalUserData$ | async).userName }}">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userName').touched && formGroup.get('userName').hasError('required') ">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userName').hasError('pattern')">
+        Πληκτρολογήστε το όνομά σας!
+    </div>
+
+    <div class="form-group"  *ngIf="verificationCodeVerified | async">
+        <label for="userSurname">Επώνυμο</label><input class="form-control" type="text" formControlName="userSurname" value="{{ (epalUserData$ | async).userSurname }}">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').touched && formGroup.get('userSurname').hasError('required') ">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').hasError('pattern')">
+        Πληκτρολογήστε το επώνυμό σας!
+    </div>
+
+    <div class="form-group"  *ngIf="verificationCodeVerified | async">
+        <label for="userFathername">Πατρώνυμο</label><input class="form-control" type="text" formControlName="userFathername" value="{{ (epalUserData$ | async).userFathername }}">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').touched && formGroup.get('userFathername').hasError('required') ">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').hasError('pattern')">
+        Πληκτρολογήστε το όνομα του πατέρα σας!
+    </div>
+
+    <div class="form-group"  *ngIf="verificationCodeVerified | async">
+        <label for="userMothername">Μητρώνυμο</label><input class="form-control" type="text" formControlName="userMothername" value="{{ (epalUserData$ | async).userMothername }}">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').touched && formGroup.get('userMothername').hasError('required') ">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').hasError('pattern')">
+        Πληκτρολογήστε το όνομα της μητέρας σας!
+    </div>
+
+    <div class="row" *ngIf="!(showSendVerification | async) && (verificationCodeVerified | async)">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="verifyCodeAndContinue()">
+            Αποθήκευση - Συνέχεια
+            <i class="fa fa-forward"></i>  </button>
+        </div>
+    </div>
+ </form>

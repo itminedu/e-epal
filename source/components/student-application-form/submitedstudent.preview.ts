@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
 let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
@@ -15,61 +15,66 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
 
 
+
 @Component({
-    selector: 'submited-person',
+    selector: 'submited-student',
     template: `
-
-    <h5 style="margin-top: 20px; line-height: 2em; ">Στοιχεία Μαθητή</h5>
-
-        <div *ngFor="let userdata$ of submitedapplic$ | async; ">
-        
-            <ul class="list-group left-side-view" style="margin-bottom: 20px;">
-                <li class="list-group-item active">
-                    Μαθητής: {{userdata$.name}}
-               </li>
-            </ul>
-        </div>
-                  
+            <div id = "target">
+            <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async">
+                 {{StudentDetails$.name}}
+            </div>
+            </div>
+            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>                       
    `
 })
 
-@Injectable() export default class SubmitedPerson implements OnInit {
+@Injectable() export default class SubmitedStudentDetails implements OnInit , OnDestroy{
 
-
-    
-    public html2canvas: any;
    
-    private submitedapplic$: BehaviorSubject<any>;
-    private submitedusers$: Subscription;
-    public userid: number;
-    public authToken : string ;
+    private SubmitedDetails$: BehaviorSubject<any>;
+    private SubmitedDetailsSub: Subscription;
+    public StudentId: Number;
     
     constructor(private _hds: HelperDataService, 
-                public http: Http,
-                private _ngRedux: NgRedux<IAppState>,
-                private activatedRoute: ActivatedRoute )
+                private route: ActivatedRoute,
+                private router: Router )
     {
-       this.submitedapplic$ = new BehaviorSubject({});
+       this.SubmitedDetails$ = new BehaviorSubject([{}]);
     }
 
+    ngOnDestroy()
+    {
+        if (this.SubmitedDetailsSub)
+            this.SubmitedDetailsSub.unsubscribe();
 
+    }
 
     ngOnInit() {
-    
+         
 
+        this.getApplicationId();
+        this.SubmitedDetailsSub = this._hds.getStudentDetails(this.StudentId).subscribe(this.SubmitedDetails$);
+        
            
-         this.activatedRoute.queryParams.subscribe((params: Params) => {
-            if (params) {
-                this.userid = 1;
-                console.log("userid", this.userid, this.authToken);
-            }
-        });
-
-       
-
 
     }
 
+    getApplicationId()
+    {
+            this.route.params.subscribe(params => {this.StudentId = params['id'];});
+    }
+
+    createPdf()
+    {
+        
+        html2canvas(document.getElementById("target")).then(function(canvas)
+        {
+            var img = canvas.toDataURL();
+            var doc = new jsPDF('p', 'mm');
+            doc.addImage(img, 'PNG', 10, 10);
+            doc.save('applications.pdf');
+        });
+    }
 
     
 }

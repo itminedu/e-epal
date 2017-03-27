@@ -23,29 +23,32 @@ class SubmitedApplications extends ControllerBase
         return new static(
             $container->get('entity_type.manager')
         );
-    }
+    } 
 
 
     public function getSubmittedApplications(Request $request)
     {
   
         $authToken = $request->headers->get('PHP_AUTH_USER');
-
+        $studentId = $request->headers->get('id');
+     
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
             $userid = $epalUser -> id();
             
+            if ($studentId ==="")
+            {
             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
-            //$epalStudent = reset($epalStudents);
             $i = 0;
             if ($epalStudents) {
                  $list = array();
                 foreach ($epalStudents as $object) {
                    
                 
-                    $list[] = array('name' => $object -> name ->value,
-
+                    $list[] = array(
+                            'id' => $object -> id(),
+                            'name' => $object -> name ->value,
                             'studentsurname' => $object -> studentsurname ->value);
                     $i++;
                 }
@@ -59,15 +62,45 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-  
+            }
+            else
+            {
+                $studentIdNew = intval($studentId) ;
+                $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid, 'id'=> $studentIdNew));
+                $i = 0;
+
+                 if ($epalStudents) {
+                 $list = array();
+                foreach ($epalStudents as $object) {
+                   
+                
+                    $list[] = array(
+                            'id' => $object -> id(),
+                            'name' => $object -> name ->value,
+                            'studentsurname' => $object -> studentsurname ->value);
+                    $i++;
+                }
+                
+                return $this->respondWithStatus(
+                        $list
+                    , Response::HTTP_OK);
+                }
+             else {
+                       return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+
+            }
 
 
 
         } else {
             return $this->respondWithStatus([
-                    'message' => t(" user not found"),
+                    'message' => t("User not found"),
                 ], Response::HTTP_FORBIDDEN);
         }
+        
     }
 
 

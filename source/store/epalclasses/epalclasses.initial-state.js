@@ -1,4 +1,0 @@
-"use strict";
-const immutable_1 = require("immutable");
-exports.EPALCLASSES_INITIAL_STATE = immutable_1.List();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZXBhbGNsYXNzZXMuaW5pdGlhbC1zdGF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImVwYWxjbGFzc2VzLmluaXRpYWwtc3RhdGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBLHlDQUFpQztBQUlwQixRQUFBLHlCQUF5QixHQUFHLGdCQUFJLEVBQWMsQ0FBQyJ9

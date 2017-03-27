@@ -17,8 +17,10 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 @Component({
     selector: 'submited-preview',
     template: `
-            <div *ngFor="let userdata$  of submitedapplic$ | async">
-               {{userdata$.name}}
+            lalalalalal
+            <div *ngFor="let UserData$  of SubmitedApplic$ | async">
+                 {{UserData$.name}}
+                 <button type="button" (click)="studentpreview(UserData$.id)"> Λεπτομέρειες </button>
             </div>
                     
                         
@@ -27,33 +29,31 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
 @Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
 
-
-    
    
-   
-    private submitedapplic$: BehaviorSubject<any>;
-    private submitedusersSub: Subscription;
-    public studentid = 1 ;
+    private SubmitedApplic$: BehaviorSubject<any>;
+    private SubmitedUsersSub: Subscription;
+    public StudentId;
     
     constructor(private _hds: HelperDataService, 
                 private activatedRoute: ActivatedRoute,
                 private router: Router )
     {
-       this.submitedapplic$ = new BehaviorSubject([{}]);
+       this.SubmitedApplic$ = new BehaviorSubject([{}]);
     }
 
     ngOnDestroy()
     {
-        if (this.submitedusersSub)
-            this.submitedusersSub.unsubscribe();
+        if (this.SubmitedUsersSub)
+            this.SubmitedUsersSub.unsubscribe();
 
     }
 
     ngOnInit() {
      
 
-        this.submitedusersSub = this._hds.getSubmittedPreviw().subscribe(this.submitedapplic$);
-              this.submitedapplic$.subscribe( function (x) { console.log("I am in next"); console.log(x); }, function (err) { console.log('Error: ' + err); }, function () { console.log('Completed='); } );
+        this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(this.SubmitedApplic$);
+        console.log(this.SubmitedApplic$);
+        
            
 
     }
@@ -61,10 +61,9 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     
 
-    studentpreview()
+    studentpreview(StudentId)
     {
-     console.log(this.studentid);       
-     this.router.navigate(['/submited-person', { id: this.studentid}]);
+      this.router.navigate(['/submited-person', {'id':StudentId}]);
     }
 
 

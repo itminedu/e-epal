@@ -352,17 +352,32 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
 
      getStudentDetails(headerid)
      {
-          let headerIdNew = headerid.toString();
+         let headerIdNew = headerid.toString();
          this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
             "Content-Type": "application/json",
-             "id": headerIdNew
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/subapplic`, options )
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/student/`+headerIdNew, options )
+            .map(response => response.json());
+     }
+
+
+ getEpalchosen(headerid)
+     {
+         let headerIdNew = headerid.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/epalchosen/`+headerIdNew, options )
             .map(response => response.json());
      }
 

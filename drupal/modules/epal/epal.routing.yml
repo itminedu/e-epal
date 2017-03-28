@@ -22,6 +22,22 @@ submitedapplications:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
+studentapplication:
+  path: '/epal/student/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getStudentApplications'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epalchosen:
+  path: '/epal/epalchosen/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getEpalChosen'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.application_submit:
   path: '/epal/appsubmit'
   options:

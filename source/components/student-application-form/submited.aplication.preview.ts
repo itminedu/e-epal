@@ -17,11 +17,19 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 @Component({
     selector: 'submited-preview',
     template: `
-            lalalalalal
-            <div *ngFor="let UserData$  of SubmitedApplic$ | async">
-                 {{UserData$.name}}
-                 <button type="button" (click)="studentpreview(UserData$.id)"> Λεπτομέρειες </button>
-            </div>
+            Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων: 
+            <table class = "submited">
+              <tr>
+                <th>Όνομα</th>
+                <th>Επώνυμο</th>
+                <th></th>
+              </tr>
+
+               <tr *ngFor="let UserData$  of SubmitedApplic$ | async">
+                <td>{{UserData$.name}} </td>
+                <td>{{UserData$.studentsurname}} </td>
+                <td> <button type="button" (click)="studentpreview(UserData$.id)"> <i class="fa fa-eye" aria-hidden="true"></i> </button> </td>
+              </tr>
                     
                         
    `

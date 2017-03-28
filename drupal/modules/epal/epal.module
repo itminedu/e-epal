@@ -34,3 +34,17 @@ function epal_theme() {
     ],
   ];
 }
+
+function epal_mail($key, &$message, $params) {
+    $options = array(
+      'langcode' => $message['langcode'],
+    );
+
+    switch ($key) {
+      case 'send_verification_code':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Email Confirmation Needed', $options);
+        $message['body'][] = $params['message'];
+        break;
+    }
+}

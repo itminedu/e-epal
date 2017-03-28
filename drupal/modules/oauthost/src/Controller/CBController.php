@@ -216,7 +216,7 @@ class CBController extends ControllerBase
         $this->logger->warning($e->getMessage());
         $trx->rollback();
         return false;
-    } catch (Exception $ee) {
+    } catch (\Exception $ee) {
         $this->logger->warning($ee->getMessage());
         $trx->rollback();
         return false;

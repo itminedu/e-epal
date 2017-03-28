@@ -36,4 +36,4 @@ export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύό�
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 export const VALID_DIGITS_PATTERN = '[0-9]*$';
-export const VALID_EMAIL_PATTERN = "/^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i";
+export const VALID_EMAIL_PATTERN = '[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}';

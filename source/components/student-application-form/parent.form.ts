@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, Injectable } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injectable, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { VALID_EMAIL_PATTERN } from '../../constants';
+import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import { HelperDataService } from '../../services/helper-data-service';
 
 import {
@@ -15,60 +15,117 @@ import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'parent-form',
-    template: `
-    <div class = "loading" *ngIf="(epalUserData$ | async) === {}"></div>
-    <form [formGroup]="formGroup">
-
-        <div class="form-group">
-              <label for="email">Email Επικοινωνίας</label><input class="form-control" type="text" formControlName="email">
-        </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('email').touched && formGroup.get('email').hasError('required') ">
-                Το πεδίο δεν μπορεί να αφεθεί κενό!
-        </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('email').dirty && formGroup.get('email').hasError('pattern')">
-                Πληκτρολογήστε ένα σωστό συντακτικά email!
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <button type="button" class="btn-primary btn-lg pull-right" (click)="sendVerificationCode()">
-                Αποστολή Κωδικού Επαλήθευσης  </button>
-            </div>
-        </div>
-        <div class="form-group">
-              <label for="verification_code">Κωδικός επαλήθευσης</label><input class="form-control" type="text" formControlName="verification_code">
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <button type="button" class="btn-primary btn-lg pull-right" (click)="verifyCodeAndContinue()">
-                <i class="fa fa-forward"></i>  </button>
-            </div>
-        </div>
-     </form>
-   `
+    templateUrl: 'parent.form.html'
 })
 
-@Injectable() export default class ParentForm implements OnInit {
+@Injectable() export default class ParentForm implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     private respond: any;
     private epalUserData$: BehaviorSubject<any>;
     private epalUserDataSub: Subscription;
+    private userEmailSub: Subscription;
+    private verificationCodeSent: BehaviorSubject<boolean>;
+    private verificationCodeVerified: BehaviorSubject<boolean>;
+    private userEmailEnabled: BehaviorSubject<boolean>;
+    @ViewChild('userEmail') userEmail: ElementRef;
 
        constructor(private fb: FormBuilder,
                 private router: Router,
-                private hds: HelperDataService) {
-            this.epalUserData$ = new BehaviorSubject({});
-       this.formGroup = this.fb.group({
-            name: ['', [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
-            });
-        };
+                private hds: HelperDataService,
+                private rd: Renderer) {
+            this.verificationCodeSent = new BehaviorSubject(false);
+            this.verificationCodeVerified = new BehaviorSubject(false);
 
+            this.userEmailEnabled = new BehaviorSubject(false);
+            this.formGroup = this.fb.group({
+                 userName: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+                 userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+                 userFathername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+                 userMothername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+                 userEmail: [{value: '', disabled: true}, [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
+                 verificationCode: ['', []]
+                 });
+            this.epalUserData$ = new BehaviorSubject({});
+        }
     ngOnInit() {
-        this.epalUserDataSub = this.hds.getEpalUserData().subscribe(this.epalUserData$);
+        this.epalUserDataSub = this.hds.getEpalUserData().subscribe(
+            x => {
+                this.epalUserData$.next(x);
+                this.formGroup.get('userEmail').setValue(x.userEmail);
+                this.formGroup.get('userName').setValue(x.userName);
+                this.formGroup.get('userSurname').setValue(x.userSurname);
+                this.formGroup.get('userFathername').setValue(x.userFathername);
+                this.formGroup.get('userMothername').setValue(x.userMothername);
+
+                if (typeof(x.verificationCodeVerified) !== 'undefined' && x.verificationCodeVerified === "1") {
+                    this.verificationCodeVerified.next(true);
+                } else {
+                    this.verificationCodeVerified.next(false);
+                }
+
+                if (typeof(x.userEmail) !== 'undefined' && x.userEmail.length > 0)
+                    this.userEmailEnabled.next(false);
+                else {
+                    this.enableUserEmail();
+                    this.userEmailEnabled.next(true);
+                }
+
+            }
+        );
+
+        this.userEmailSub = this.formGroup.get('userEmail').valueChanges.subscribe(
+            x => {
+                if (this.formGroup.get('userEmail').value === '') {
+                    this.enableUserEmail();
+                }
+            }
+        );
     }
 
-    verifyCodeAndContinue() {
-        this.router.navigate(['/epal-class-select']);
+    ngOnDestroy() {
+        if (this.epalUserDataSub) this.epalUserDataSub.unsubscribe();
+        if (this.userEmailSub) this.epalUserDataSub.unsubscribe();
+    }
+
+    sendVerificationCode() {
+        this.hds.sendVerificationCode(this.formGroup.value.userEmail)
+            .then(res => {
+                this.verificationCodeSent.next(true);
+                this.verificationCodeVerified.next(false);
+                this.disableUserEmail();})
+            .catch(err => {console.log(err)});
+    }
+
+    verifyVerificationCode() {
+        this.hds.verifyVerificationCode(this.formGroup.value.verificationCode)
+            .then(res => {
+                this.verificationCodeVerified.next((<any>res).verificationCodeVerified);
+                this.formGroup.value.userEmail=(<any>res).userEmail;})
+            .catch(err => {console.log(err)});
+    }
+
+    saveProfileAndContinue() {
+        this.hds.saveProfile(this.formGroup.value)
+            .then(res => {
+                this.router.navigate(['/epal-class-select']);})
+            .catch(err => {console.log(err)});
+    }
+
+    enableUserEmail() {
+        this.userEmailEnabled.next(true);
+        this.formGroup.get("userEmail").enable({emitEvent: false});
+        this.rd.invokeElementMethod(this.userEmail.nativeElement,'focus');
+    }
+
+    disableUserEmail() {
+        this.userEmailEnabled.next(false);
+        this.formGroup.get("userEmail").disable({emitEvent: false});
+    }
+
+    resetUserEmail() {
+        this.userEmailEnabled.next(false);
+        this.formGroup.get("userEmail").setValue(this.epalUserData$.getValue().userEmail);
+        this.formGroup.get("userEmail").disable({emitEvent: false});
     }
 }

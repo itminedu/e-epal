@@ -1,4 +1,28 @@
-user_data:
+epal.user.send_verification_code:
+  path: '/epal/user/sendvercode'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::sendVerificationCode'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.user.verify_verification_code:
+  path: '/epal/user/verifyvercode'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::verifyVerificationCode'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.user.save_profile:
+  path: '/epal/user/save'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::saveUserProfile'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.user.get_data:
   path: '/epal/userdata'
   options:
     _auth: [ 'basic_auth' ]
@@ -6,7 +30,7 @@ user_data:
     _controller: '\Drupal\epal\Controller\CurrentUser::getEpalUserData'
   requirements:
     _user_is_logged_in: 'TRUE'
-current_user:
+epal.current_user:
   path: '/epal/curuser'
   options:
     _auth: [ 'basic_auth' ]

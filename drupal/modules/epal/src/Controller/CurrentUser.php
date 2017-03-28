@@ -214,6 +214,43 @@ class CurrentUser extends ControllerBase
         }
     }
 
+    public function saveUserProfile(Request $request)
+    {
+
+        if (!$request->isMethod('POST')) {
+			return $this->respondWithStatus([
+					"message" => t("Method Not Allowed")
+				], Response::HTTP_METHOD_NOT_ALLOWED);
+    	}
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $postData = null;
+            if ($content = $request->getContent()) {
+                $postData = json_decode($content);
+                $epalUser->set('name', $postData->userProfile->userName);
+                $epalUser->set('surname', $postData->userProfile->userSurname);
+                $epalUser->set('mothername', $postData->userProfile->userMothername);
+                $epalUser->set('fathername', $postData->userProfile->userFathername);
+                $epalUser->save();
+                return $this->respondWithStatus([
+                    'message' => t("profile saved"),
+                ], Response::HTTP_OK);
+            } else {
+                return $this->respondWithStatus([
+                    'message' => t("post with no data"),
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+        } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
     private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

@@ -106,6 +106,29 @@ export class HelperDataService {
         });
     }
 
+    saveProfile(userProfile) {
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/save`, {userProfile: userProfile}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error Saving Profile");
+                reject("Error Saving Profile");
+            },
+            () => console.log("Saving Profile"));
+        });
+    }
+
     getCourseFields() {
 
         this.loginInfo$.forEach(loginInfoToken => {

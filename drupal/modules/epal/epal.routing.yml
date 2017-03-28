@@ -14,6 +14,14 @@ epal.user.verify_verification_code:
     _controller: '\Drupal\epal\Controller\CurrentUser::verifyVerificationCode'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.user.save_profile:
+  path: '/epal/user/save'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\CurrentUser::saveUserProfile'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.user.get_data:
   path: '/epal/userdata'
   options:

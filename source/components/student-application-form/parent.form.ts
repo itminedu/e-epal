@@ -25,7 +25,6 @@ import {AppSettings} from '../../app.settings';
     private epalUserData$: BehaviorSubject<any>;
     private epalUserDataSub: Subscription;
     private userEmailSub: Subscription;
-    private showSendVerification: BehaviorSubject<boolean>;
     private verificationCodeSent: BehaviorSubject<boolean>;
     private verificationCodeVerified: BehaviorSubject<boolean>;
     private userEmailEnabled: BehaviorSubject<boolean>;
@@ -35,7 +34,6 @@ import {AppSettings} from '../../app.settings';
                 private router: Router,
                 private hds: HelperDataService,
                 private rd: Renderer) {
-            this.showSendVerification = new BehaviorSubject(false);
             this.verificationCodeSent = new BehaviorSubject(false);
             this.verificationCodeVerified = new BehaviorSubject(false);
 
@@ -46,32 +44,39 @@ import {AppSettings} from '../../app.settings';
                  userFathername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
                  userMothername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
                  userEmail: [{value: '', disabled: true}, [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
-                 verificationCode: ['', [Validators.required]]
+                 verificationCode: ['', []]
                  });
             this.epalUserData$ = new BehaviorSubject({});
         }
     ngOnInit() {
-        // this.epalUserDataSub = this.hds.getEpalUserData().subscribe(this.epalUserData$);
-
         this.epalUserDataSub = this.hds.getEpalUserData().subscribe(
             x => {
                 this.epalUserData$.next(x);
+                this.formGroup.get('userEmail').setValue(x.userEmail);
+                this.formGroup.get('userName').setValue(x.userName);
+                this.formGroup.get('userSurname').setValue(x.userSurname);
+                this.formGroup.get('userFathername').setValue(x.userFathername);
+                this.formGroup.get('userMothername').setValue(x.userMothername);
 
                 if (typeof(x.verificationCodeVerified) !== 'undefined' && x.verificationCodeVerified === "1") {
                     this.verificationCodeVerified.next(true);
+                } else {
+                    this.verificationCodeVerified.next(false);
                 }
 
                 if (typeof(x.userEmail) !== 'undefined' && x.userEmail.length > 0)
                     this.userEmailEnabled.next(false);
-                else
+                else {
+                    this.enableUserEmail();
                     this.userEmailEnabled.next(true);
+                }
+
             }
         );
 
-
-        this.userEmailSub = this.formGroup.controls['userEmail'].valueChanges.subscribe(
+        this.userEmailSub = this.formGroup.get('userEmail').valueChanges.subscribe(
             x => {
-                if (this.formGroup.controls['userEmail'].value === '') {
+                if (this.formGroup.get('userEmail').value === '') {
                     this.enableUserEmail();
                 }
             }
@@ -85,30 +90,42 @@ import {AppSettings} from '../../app.settings';
 
     sendVerificationCode() {
         this.hds.sendVerificationCode(this.formGroup.value.userEmail)
-            .then(res => {this.verificationCodeSent.next(true); this.showSendVerification.next(false);})
+            .then(res => {
+                this.verificationCodeSent.next(true);
+                this.verificationCodeVerified.next(false);
+                this.disableUserEmail();})
             .catch(err => {console.log(err)});
     }
-
 
     verifyVerificationCode() {
         this.hds.verifyVerificationCode(this.formGroup.value.verificationCode)
-            .then(res => {this.verificationCodeSent.next(true); this.showSendVerification.next(false); this.verificationCodeVerified.next((<any>res).verificationCodeVerified === "1" ? true : false); this.formGroup.value.userEmail=(<any>res).userEmail;})
+            .then(res => {
+                this.verificationCodeVerified.next((<any>res).verificationCodeVerified);
+                this.formGroup.value.userEmail=(<any>res).userEmail;})
             .catch(err => {console.log(err)});
     }
 
-    verifyCodeAndContinue() {
-        this.router.navigate(['/epal-class-select']);
+    saveProfileAndContinue() {
+        this.hds.saveProfile(this.formGroup.value)
+            .then(res => {
+                this.router.navigate(['/epal-class-select']);})
+            .catch(err => {console.log(err)});
     }
 
     enableUserEmail() {
         this.userEmailEnabled.next(true);
-        this.formGroup.controls["userEmail"].enable({emitEvent: false});
+        this.formGroup.get("userEmail").enable({emitEvent: false});
         this.rd.invokeElementMethod(this.userEmail.nativeElement,'focus');
     }
 
     disableUserEmail() {
         this.userEmailEnabled.next(false);
-        this.formGroup.controls["userEmail"].setValue(this.epalUserData$.getValue().userEmail);
-        this.formGroup.controls["userEmail"].disable({emitEvent: false});
+        this.formGroup.get("userEmail").disable({emitEvent: false});
+    }
+
+    resetUserEmail() {
+        this.userEmailEnabled.next(false);
+        this.formGroup.get("userEmail").setValue(this.epalUserData$.getValue().userEmail);
+        this.formGroup.get("userEmail").disable({emitEvent: false});
     }
 }

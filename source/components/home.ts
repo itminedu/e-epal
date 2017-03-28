@@ -19,6 +19,8 @@ import { API_ENDPOINT } from '../app.settings';
     template: `
   <div>
        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login" #form>
+<!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
+
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row" style="min-height: 300px; margin-top: 100px;">
 

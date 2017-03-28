@@ -21,7 +21,7 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\epal\EpalStudentClassListBuilder",
  *     "views_data" = "Drupal\epal\Entity\EpalStudentClassViewsData",
- *  
+ *
  *
  *     "form" = {
  *       "default" = "Drupal\epal\Form\EpalStudentClassForm",
@@ -44,7 +44,7 @@ use Drupal\user\UserInterface;
  *     "langcode" = "langcode",
  *     "status" = "status",
  *     "student_id" = "student_id",
- *     "epal_id" = "epal_id", 
+ *     "epal_id" = "epal_id",
  *   },
  *   links = {
  *     "canonical" = "/admin/epal/epal_student_class/{epal_student_class}",
@@ -252,13 +252,13 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
             ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-	
+
 	 $fields['epal_id'] = BaseFieldDefinition::create('entity_reference')
             ->setLabel(t('Id ΕΠΑΛ'))
             ->setDescription(t('Δώσε το όνομα - id σχολείου που επιλέχτηκε ο μαθητής.'))
             ->setSetting('target_type', 'eepal_school')
             ->setSetting('handler', 'default')
-			->setRequired(true)
+			      ->setRequired(true)
             ->setTranslatable(TRUE)
             ->setDisplayOptions('view', array(
               'label' => 'above',
@@ -276,7 +276,125 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
               ),
             ))
             ->setDisplayConfigurable('form', TRUE)
-            ->setDisplayConfigurable('view', TRUE);	
+            ->setDisplayConfigurable('view', TRUE);
+
+      $fields['currentclass'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Τάξη παρακολούθησης'))
+            ->setDescription(t('Τάξη παρακολούθησης'))
+            ->setSettings(array(
+              'max_length' => 50,
+              'text_processing' => 0,
+            ))
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+             'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+       $fields['currentepal'] = BaseFieldDefinition::create('integer')
+          ->setLabel(t('Id ΕΠΑΛ που φοιτεί ήδη'))
+          ->setDescription(t('Id ΕΠΑΛ που φοιτεί ήδη.'))
+          ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+          ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+      $fields['specialization_id'] = BaseFieldDefinition::create('integer')
+          ->setLabel(t('Id Τομέα ή Ειδικότητας'))
+          ->setDescription(t('Id Τομέα ή Ειδικότητας.'))
+          ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+          ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+      $fields['points'] = BaseFieldDefinition::create('float')
+          ->setLabel(t('Μόρια'))
+          ->setDescription(t('Μόρια.'))
+          ->setSettings(array(
+            'text_processing' => 0,
+          ))
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'float',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'float',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+       $fields['distribution_id'] = BaseFieldDefinition::create('integer')
+          ->setLabel(t('Id Κατανομής'))
+          ->setDescription(t('Id Κατανομής.'))
+          ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+          ->setRequired(false)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+      $fields['finalized'] = BaseFieldDefinition::create('boolean')
+        ->setLabel(t('Οριστικοποίηση κατανομής'))
+        ->setDescription(t('Οριστικοποίηση κατανομής.'))
+        ->setSettings(array(
+          'text_processing' => 0,
+        ))
+        ->setDefaultValue(false)
+        ->setRequired(false)
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
 
     $fields['directorconfirm'] = BaseFieldDefinition::create('boolean')
           ->setLabel(t('Επιβεβαίωση Διευθυντή'))
@@ -296,7 +414,7 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
           ))
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
-	
+
 	$fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the EPAL Student Class is published.'))

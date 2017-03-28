@@ -945,28 +945,25 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
 
-      //for test purposes
-      $fields['moria'] = BaseFieldDefinition::create('integer')
-          ->setLabel(t('Συνολικά μόρια αίτησης'))
-          ->setDescription(t('Δώσε τη σειρά προτίμησης.'))
-          ->setSettings(array(
-            'max_length' => 2,
-            'text_processing' => 0,
-          ))
-      	  ->setRequired(false)
-          ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayOptions('form', array(
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE);
+    $fields['points'] = BaseFieldDefinition::create('float')
+        ->setLabel(t('Μόρια'))
+        ->setDescription(t('Μόρια.'))
+        ->setSettings(array(
+          'text_processing' => 0,
+        ))
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'float',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'float',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
 
-	 $fields['status'] = BaseFieldDefinition::create('boolean')
+   $fields['status'] = BaseFieldDefinition::create('boolean')
 		  ->setLabel(t('Publishing status'))
 		  ->setDescription(t('A boolean indicating whether the EPAL Student is published.'))
 			->setDefaultValue(TRUE);

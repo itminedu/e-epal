@@ -4,18 +4,25 @@ import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
 import {Observable} from "rxjs/Observable";
 import {Http, Headers, RequestOptions} from '@angular/http';
-import {Removetags} from '../../pipes/removehtmltags';
+import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
-
 @Component({
     selector: 'director-view',
     template: `
-            a;wsdlk;QK;QKWd;qwk;
-                        
-                            
+          
+    
+    
+              <label for="name">Παρακαλώ επιλέξτε τάξη </label><br/>
+                    <select>
+                        <option value=1>Α' Λυκείου</option>
+                        <option value=2>Β' Λυκείου</option>
+                        <option value=3>Γ' Λυκείου</option>
+                    </select>
+
+           
    `
 })
 
@@ -24,7 +31,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
    
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
-  
+       
     constructor(private _hds: HelperDataService, 
                 private activatedRoute: ActivatedRoute,
                 private router: Router )
@@ -38,14 +45,14 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             this.StudentSelectedSub.unsubscribe();
 
     }
-
+ 
     ngOnInit() {
      
-
+   
+           
 
     }
 
-   
 
 
 }

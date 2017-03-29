@@ -55,7 +55,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             this.SubmitedUsersSub.unsubscribe();
 
     }
-
+ 
     ngOnInit() {
      
 
@@ -65,9 +65,6 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
            
 
     }
-
-
-    
 
     studentpreview(StudentId)
     {

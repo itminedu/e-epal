@@ -458,5 +458,22 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
      }
 
 
+    getSectorPerSchool(SchoolId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperSchool/`+SchoolIdNew, options )
+            .map(response => response.json());
+     }
+
+
+
 
 }

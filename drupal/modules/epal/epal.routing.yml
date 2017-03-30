@@ -82,3 +82,11 @@ epal.allocation:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
       _access: 'TRUE'
+sectorperschool:
+  path: '/epal/sectorperSchool/{epalId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getSectorsPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'

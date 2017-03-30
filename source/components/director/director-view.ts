@@ -8,6 +8,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {
     FormBuilder,
     FormGroup,
@@ -18,30 +19,24 @@ import {
 @Component({
     selector: 'director-view',
     template: `
-          
+
     <form [formGroup]="formGroup">
-         
-            <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
+            <div class="form-group" >
               <label for="name">Τάξη</label><br/>
-                    <select class="form-control" formControlName="name" (change)="verifyclass()">
-                        <option value="Α' Λυκείου">Α' Λυκείου</option>
-                        <option value="Β' Λυκείου">Β' Λυκείου</option>
-                        <option value="Γ' Λυκείου">Γ' Λυκείου</option>
+                    <select class="form-control" formControlName="taxi" (change)="verifyclass()">
+                        <option value="1" >Α' Λυκείου</option>
+                        <option value="2" >Β' Λυκείου</option>
+                        <option value="3" >Γ' Λυκείου</option>
                     </select>
 
-           <div>
-    
-        <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
-              <label for="name1">Τάξη1</label><br/>
-                    <select class="form-control" formControlName="name1" (change)="verifyclass()">
-                        <option value="Α' Λυκείου">Α' Λυκείου</option>
-                        <option value="Β' Λυκείου">Β' Λυκείου</option>
-                        <option value="Γ' Λυκείου">Γ' Λυκείου</option>
+            <div>
+            <div class="form-group" *ngIf="(StudentSelected$ | async).size > 0" >
+                    <label for="tomeas">Τομέας</label><br/>
+                     <select #cblst [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}" (change)="verifyclass(cblst)" >
+                      <option *ngFor="let SectorSelection$  of StudentSelected$ | async" [ngValue]="SectorSelection$.id">{{SectorSelection$.sector_id}}</option>
                     </select>
-
-         <div>
-    
-               
+             <div>
+              
    `
 })
 
@@ -51,6 +46,9 @@ import {
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
     public bClassEnabled: boolean;
+    public gClassEnabled: boolean;
+    private SchoolId = 12 ;
+    
 
     constructor(private fb: FormBuilder,
                 private _hds: HelperDataService, 
@@ -59,8 +57,8 @@ import {
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.formGroup = this.fb.group({
-                name:[],
-                name1 :[]
+                taxi:[],
+              
                  });
     }
 
@@ -73,15 +71,30 @@ import {
  
     ngOnInit() {
      
-       this.bClassEnabled = false;
-               
+       this.bClassEnabled = false;    
+       this.gClassEnabled = false;   
+       this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);    
+       console.log(this.StudentSelected$);        
 
     }
 
 
     verifyclass()
     {
-       this.bClassEnabled = true;
+           
+            if (this.formGroup.value.taxi === "1")
+            {     this.bClassEnabled = false;
+                  this.gClassEnabled = false;
+            }
+            else if (this.formGroup.value.taxi === "2")
+            {
+                this.bClassEnabled = true;
+                this.gClassEnabled = false;
+            }
+            else if (this.formGroup.value.taxi === "3")
+            {   this.bClassEnabled = true;
+                this.gClassEnabled = true;
+            }            
     }
 
 

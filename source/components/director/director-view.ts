@@ -23,16 +23,16 @@ import {
     <form [formGroup]="formGroup">
             <div class="form-group" >
               <label for="name">Τάξη</label><br/>
-                    <select class="form-control" formControlName="taxi" (change)="verifyclass()">
+                    <select #txoption [(ngModel)]="taxi" [ngModelOptions]="{standalone: true}" (change)="verifyclass(txoption)" >
                         <option value="1" >Α' Λυκείου</option>
                         <option value="2" >Β' Λυκείου</option>
                         <option value="3" >Γ' Λυκείου</option>
                     </select>
 
             <div>
-            <div class="form-group" *ngIf="(StudentSelected$ | async).size > 0" >
+            <div class="form-group" *ngIf="(StudentSelected$ != {}) && (bclassenabled === true)">
                     <label for="tomeas">Τομέας</label><br/>
-                     <select #cblst [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}" (change)="verifyclass(cblst)" >
+                     <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}"  >
                       <option *ngFor="let SectorSelection$  of StudentSelected$ | async" [ngValue]="SectorSelection$.id">{{SectorSelection$.sector_id}}</option>
                     </select>
              <div>
@@ -58,7 +58,7 @@ import {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.formGroup = this.fb.group({
                 taxi:[],
-              
+                tomeas: []
                  });
     }
 
@@ -79,19 +79,20 @@ import {
     }
 
 
-    verifyclass()
+    verifyclass(txop)
     {
-           
-            if (this.formGroup.value.taxi === "1")
+            console.log(txop.value);
+            if (txop.value === "1")
             {     this.bClassEnabled = false;
                   this.gClassEnabled = false;
             }
-            else if (this.formGroup.value.taxi === "2")
+            else if (txop.value === "2")
             {
+                console.log(txop.value,"aaaaaa");
                 this.bClassEnabled = true;
                 this.gClassEnabled = false;
             }
-            else if (this.formGroup.value.taxi === "3")
+            else if (txop.value === "3")
             {   this.bClassEnabled = true;
                 this.gClassEnabled = true;
             }            

@@ -8,6 +8,8 @@ import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IAppState } from '../../store/store';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
 
+//import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+
 import {
     FormBuilder,
     FormGroup,
@@ -59,6 +61,7 @@ import {AppSettings} from '../../app.settings';
 
     constructor(private fb: FormBuilder,
                 private _cfa: SectorFieldsActions,
+                //private _rsa: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
@@ -91,7 +94,6 @@ import {AppSettings} from '../../app.settings';
     }
 
     navigateToSchools() {
-        //this.saveSelected();
         this.router.navigate(['/region-schools-select']);
     }
 
@@ -102,6 +104,8 @@ import {AppSettings} from '../../app.settings';
         this.formGroup.value.formArray[this.sectorActive] = true;
 
       this._cfa.saveSectorFieldsSelected(this.formGroup.value.formArray);
+
+      //this._rsa.initRegionSchools();
     }
 
     setActiveSectorAndSave(ind) {

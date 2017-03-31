@@ -17,7 +17,7 @@ export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_ST
         action.payload.regions.forEach(region => {
             newRegions.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>() });
             region.epals.forEach(epal => {
-                newRegions[i].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id });
+                newRegions[i].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id });
             })
             i++;
         });
@@ -41,7 +41,7 @@ export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_ST
             state.forEach(region => {
                 regionsWithOrders.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>()});
                 region.epals.forEach(epal => {
-                    regionsWithOrders[idx].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, globalIndex: epal.globalIndex, selected: epal.selected, order_id: action.payload.regionSchoolsOrder[k]});
+                    regionsWithOrders[idx].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: action.payload.regionSchoolsOrder[k]});
                     k++;
                 })
                 idx++;

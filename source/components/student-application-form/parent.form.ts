@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import { HelperDataService } from '../../services/helper-data-service';
+import { ModalDirective } from 'ng2-bootstrap/modal';
 
 import {
     FormBuilder,
@@ -29,6 +30,8 @@ import {AppSettings} from '../../app.settings';
     private verificationCodeVerified: BehaviorSubject<boolean>;
     private userEmailEnabled: BehaviorSubject<boolean>;
     @ViewChild('userEmail') userEmail: ElementRef;
+    @ViewChild('autoShownModal') public autoShownModal: ModalDirective;
+    public isModalShown: BehaviorSubject<boolean>;
 
        constructor(private fb: FormBuilder,
                 private router: Router,
@@ -38,6 +41,7 @@ import {AppSettings} from '../../app.settings';
             this.verificationCodeVerified = new BehaviorSubject(false);
 
             this.userEmailEnabled = new BehaviorSubject(false);
+            this.isModalShown = new BehaviorSubject(false);
             this.formGroup = this.fb.group({
                  userName: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
                  userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -48,6 +52,20 @@ import {AppSettings} from '../../app.settings';
                  });
             this.epalUserData$ = new BehaviorSubject({});
         }
+
+    public showModal():void {
+        console.log("about to show modal");
+        this.isModalShown.next(true);
+    }
+
+    public hideModal():void {
+        this.autoShownModal.hide();
+    }
+
+    public onHidden():void {
+        this.isModalShown.next(false);
+    }
+
     ngOnInit() {
         this.epalUserDataSub = this.hds.getEpalUserData().subscribe(
             x => {
@@ -93,7 +111,9 @@ import {AppSettings} from '../../app.settings';
             .then(res => {
                 this.verificationCodeSent.next(true);
                 this.verificationCodeVerified.next(false);
-                this.disableUserEmail();})
+                this.disableUserEmail();
+//                this.showModal();
+            })
             .catch(err => {console.log(err)});
     }
 
@@ -101,7 +121,9 @@ import {AppSettings} from '../../app.settings';
         this.hds.verifyVerificationCode(this.formGroup.value.verificationCode)
             .then(res => {
                 this.verificationCodeVerified.next((<any>res).verificationCodeVerified);
-                this.formGroup.value.userEmail=(<any>res).userEmail;})
+                this.formGroup.value.userEmail=(<any>res).userEmail;
+//                this.showModal();
+            })
             .catch(err => {console.log(err)});
     }
 

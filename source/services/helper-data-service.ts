@@ -473,6 +473,40 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
             .map(response => response.json());
      }
 
+     getSpecialityPerSchool(SchoolId, SectorId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         let SectorIdNew = SectorId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperSchool/`+SchoolIdNew+'/'+SectorIdNew, options )
+            .map(response => response.json());
+     }
+
+
+
+      getStudentPerSchool(SchoolId, SelectId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         let SelectIdNew = SelectId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/`+SchoolIdNew+'/'+SelectIdNew, options )
+            .map(response => response.json());
+     }
+
 
 
 

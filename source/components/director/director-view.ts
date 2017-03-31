@@ -20,7 +20,7 @@ import {
     selector: 'director-view',
     template: `
 
-    <form [formGroup]="formGroup">
+        <form [formGroup]="formGroup">
             <div class="form-group" >
               <label for="name">Τάξη</label><br/>
                     <select #txoption [(ngModel)]="taxi" [ngModelOptions]="{standalone: true}" (change)="verifyclass(txoption)" >
@@ -30,12 +30,23 @@ import {
                     </select>
 
             <div>
-            <div class="form-group" *ngIf="(StudentSelected$ != {}) && (bclassenabled === true)">
+            <div class="form-group" *ngIf="StudentSelected$ != {}"  >
                     <label for="tomeas">Τομέας</label><br/>
-                     <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}"  >
+                     <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}"  (change) ="checkbclass(tmop,txoption)" >
                       <option *ngFor="let SectorSelection$  of StudentSelected$ | async" [ngValue]="SectorSelection$.id">{{SectorSelection$.sector_id}}</option>
                     </select>
              <div>
+
+            <div class="form-group" *ngIf="StudentSelectedSpecial$ != {}">
+                    <label for="special">Ειδικότητα</label><br/>
+                     <select #spop [(ngModel)]="specialit" [ngModelOptions]="{standalone: true}"  >
+                      <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async" [ngValue]="SpecialSelection$.id">{{SpecialSelection$.specialty_id}}</option>
+                    </select>
+             <div>
+             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent()">
+                Αναζήτηση
+             </button>
+
               
    `
 })
@@ -45,10 +56,13 @@ import {
     public formGroup: FormGroup;
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
+    private StudentSelectedSpecial$: BehaviorSubject<any>;
+    private StudentSelectedSpecialSub: Subscription;
+
     public bClassEnabled: boolean;
     public gClassEnabled: boolean;
-    private SchoolId = 12 ;
-    
+    private SchoolId = 147 ;
+
 
     constructor(private fb: FormBuilder,
                 private _hds: HelperDataService, 
@@ -56,9 +70,11 @@ import {
                 private router: Router )
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
+       this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
        this.formGroup = this.fb.group({
                 taxi:[],
-                tomeas: []
+                tomeas: [],
+                specialit :[]
                  });
     }
 
@@ -66,6 +82,9 @@ import {
     {
         if (this.StudentSelectedSub)
             this.StudentSelectedSub.unsubscribe();
+        if (this.StudentSelectedSpecialSub)
+            this.StudentSelectedSpecialSub.unsubscribe();
+
 
     }
  
@@ -73,7 +92,10 @@ import {
      
        this.bClassEnabled = false;    
        this.gClassEnabled = false;   
-       this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);    
+       this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
+
+
+           
        console.log(this.StudentSelected$);        
 
     }
@@ -97,6 +119,27 @@ import {
                 this.gClassEnabled = true;
             }            
     }
+
+
+    checkbclass(tmop,txop)
+    {
+        const [id, sector] = tmop.value.split(': ');
+        var sectorint = +sector; 
+        if (txop.value === "3")
+        {
+            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+        }
+    }
+
+    findstudent(tmop,txop)
+    {
+        let sectorint = 8;
+        {
+            this.StudentSelectedSpecialSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+        }
+    }
+
+
 
 
 }

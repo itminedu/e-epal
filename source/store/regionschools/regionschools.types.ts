@@ -9,6 +9,7 @@ export interface IRegion {
 export interface IRegionSchool {
     epal_id: string;
     epal_name: string;
+    epal_special_case: string;
     globalIndex: number;
     selected: boolean;
     order_id: number;

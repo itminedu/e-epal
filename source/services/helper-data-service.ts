@@ -280,7 +280,7 @@ export class HelperDataService {
                 rsa.push(<IRegion>{'region_id': regionSchool.region_id, 'region_name': regionSchool.region_name, 'epals': Array<IRegionSchool>()});
                 trackRegionId = regionSchool.region_id;
             }
-            rsa[trackIndex].epals.push(<IRegionSchool>{'epal_id': regionSchool.epal_id, 'epal_name': regionSchool.epal_name, 'globalIndex': j, 'selected': false, 'order_id': 0});
+            rsa[trackIndex].epals.push(<IRegionSchool>{'epal_id': regionSchool.epal_id, 'epal_name': regionSchool.epal_name, 'epal_special_case': regionSchool.epal_special_case, 'globalIndex': j, 'selected': false, 'order_id': 0});
             j++;
         });
         return rsa;
@@ -411,13 +411,13 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
 
     getSubmittedPreviw() {
 
-       
+
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
         });
         let headers = new Headers({
             "Content-Type": "application/json",
-             "id": ""  
+             "id": ""
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });

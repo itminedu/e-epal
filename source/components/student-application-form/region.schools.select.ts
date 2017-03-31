@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
@@ -66,14 +66,12 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "numSelected === 0"  >
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "selectionLimitOptional === false && numSelected < selectionLimit "  >
           <i class="fa fa-forward"></i>
             </button>
         </div>
         </div>
     </form>
-<!--   </div>
-  </div>  -->
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
@@ -90,9 +88,14 @@ import {AppSettings} from '../../app.settings';
     private rss = new FormArray([]);
     private classActive = "-1";
     private regionActive = <number>-1;
+    private regionActiveId = <number>-1;
     private courseActive = <number>-1;
     private numSelected = <number>0;
+    private selectionLimit = <number>3;
+    private regionSizeLimit = <number>3;
+    private selectionLimitOptional = <boolean>false;
     //private schoolArray: Array<boolean> = new Array();
+
     constructor(private fb: FormBuilder,
                 private _rsa: RegionSchoolsActions,
                 private _rsb: SectorCoursesActions,
@@ -112,6 +115,7 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
+
         this.selectEpalClasses();
 
         this.selectRegionSchools();
@@ -141,14 +145,30 @@ import {AppSettings} from '../../app.settings';
 
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0;
+            let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
+            this.selectionLimitOptional = false;
+
             state.regions.reduce((prevRegion, region) =>{
+                numreg++;
                 region.epals.reduce((prevEpal, epal) =>{
                     this.rss.push( new FormControl(epal.selected, []));
                     if (epal.selected === true) {
                       numsel++;
+                      if ( epal.epal_special_case === "1") {
+                        this.selectionLimitOptional = true;
+                      }
+                      this.regionActiveId = Number(region.region_id);
+                      this.regionActive = numreg - 1;
+                      //console.log("HERE1: ");
+                      //console.log(this.regionActive);
+                    }
+                    if (Number(region.region_id) ===  this.regionActiveId)  {
+                      if (region.epals.length < this.regionSizeLimit)
+                        this.selectionLimitOptional = true;
                     }
                     return epal;
                 }, {});
+
                 return region;
             }, {});
             this.numSelected = numsel;

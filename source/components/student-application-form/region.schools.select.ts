@@ -122,10 +122,23 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnDestroy() {
-        if (this.epalclassesSub) this.epalclassesSub.unsubscribe();
-        if (this.regionsSub) this.regionsSub.unsubscribe();
-        if (this.sectorsSub) this.sectorsSub.unsubscribe();
-        if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
+        console.log("on destroy");
+        if (this.epalclassesSub) {
+            this.epalclassesSub.unsubscribe();
+        }
+        if (this.regionsSub) {
+            this.regionsSub.unsubscribe();
+        }
+        if (this.sectorsSub) {
+            this.sectorsSub.unsubscribe();
+        }
+        if (this.sectorFieldsSub) {
+            this.sectorFieldsSub.unsubscribe();
+        }
+        if (this.sectorFields$) this.sectorFields$.unsubscribe();
+        if (this.sectors$) this.sectors$.unsubscribe();
+        if (this.regions$) this.regions$.unsubscribe();
+        if (this.epalclasses$) this.epalclasses$.unsubscribe();
     }
 
     selectEpalClasses() {
@@ -181,6 +194,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     getAppropriateSchools(epalClass) {
+
         if (epalClass === "Α' Λυκείου")  {
             this._rsa.getRegionSchools(1,"-1", false);
         }
@@ -189,6 +203,7 @@ import {AppSettings} from '../../app.settings';
                 state.sectorFields.reduce(({}, sectorField) =>{
                     if (sectorField.selected === true) {
                         this.courseActive = sectorField.id;
+                        console.log(epalClass);
                         this._rsa.getRegionSchools(2,this.courseActive, false);
                     }
                     return sectorField;
@@ -203,6 +218,7 @@ import {AppSettings} from '../../app.settings';
                           sector.courses.reduce((prevCourse, course) =>{
                               if (course.selected === true) {
                                   this.courseActive = parseInt(course.course_id);
+                                  console.log(epalClass);
                                   this._rsa.getRegionSchools(3,this.courseActive, false);
                               }
                               return course;

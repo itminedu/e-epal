@@ -107,6 +107,8 @@ import {
     ngOnDestroy() {
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
         if (this.criteriaSub) this.criteriaSub.unsubscribe();
+        if (this.studentDataFields$) this.studentDataFields$.unsubscribe();
+        if (this.criteria$) this.criteria$.unsubscribe();
     }
 
     navigateBack() {

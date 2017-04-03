@@ -35,23 +35,23 @@ import * as html2canvas from "html2canvas"
                      Σχολείο: {{epalChoices$.epal_id}}
                      Σειρά Προτίμισης:{{epalChoices$.choice_no}}
                 </div>
-   
+
             </div>
-            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>                       
+            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
    `
 })
 
 @Injectable() export default class SubmitedStudentDetails implements OnInit , OnDestroy{
 
-   
+
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
 
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
     public StudentId: Number;
-    
-    constructor(private _hds: HelperDataService, 
+
+    constructor(private _hds: HelperDataService,
                 private route: ActivatedRoute,
                 private router: Router )
     {
@@ -65,17 +65,17 @@ import * as html2canvas from "html2canvas"
             this.SubmitedDetailsSub.unsubscribe();
         if (this.EpalChosenSub)
             this.EpalChosenSub.unsubscribe();
-
-
+        this.SubmitedDetails$.unsubscribe();
+        this.EpalChosen$.unsubscribe();
     }
 
     ngOnInit() {
-         
+
 
         this.getApplicationId();
         this.SubmitedDetailsSub = this._hds.getStudentDetails(this.StudentId).subscribe(this.SubmitedDetails$);
-        this.EpalChosenSub = this._hds.getEpalchosen(this.StudentId).subscribe(this.EpalChosen$);        
-           
+        this.EpalChosenSub = this._hds.getEpalchosen(this.StudentId).subscribe(this.EpalChosen$);
+
 
     }
 
@@ -86,7 +86,7 @@ import * as html2canvas from "html2canvas"
 
     createPdf()
     {
-        
+
         html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
@@ -96,5 +96,5 @@ import * as html2canvas from "html2canvas"
         });
     }
 
-    
+
 }

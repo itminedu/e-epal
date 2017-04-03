@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy,ElementRef, NgZone, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -9,6 +9,7 @@ import { IAppState } from '../../store/store';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
+
 import {
     FormBuilder,
     FormGroup,
@@ -28,9 +29,9 @@ import {
                         <option value="2" >Β' Λυκείου</option>
                         <option value="3" >Γ' Λυκείου</option>
                     </select>
-
+ 
             <div>
-            <div class="form-group" *ngIf="StudentSelected$ != {}"  >
+            <div class="form-group" *ngIf="StudentSelected$ != {} || (verificationCodeVerified | async)"  >
                     <label for="tomeas">Τομέας</label><br/>
                      <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}"  (change) ="checkbclass(tmop,txoption)" >
                       <option *ngFor="let SectorSelection$  of StudentSelected$ | async" [ngValue]="SectorSelection$.id">{{SectorSelection$.sector_id}}</option>
@@ -58,19 +59,21 @@ import {
     private StudentSelectedSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
-
+    private verificationCodeVerified: BehaviorSubject<boolean>;
     public bClassEnabled: boolean;
     public gClassEnabled: boolean;
     private SchoolId = 147 ;
 
 
-    constructor(private fb: FormBuilder,
-                private _hds: HelperDataService, 
-                private activatedRoute: ActivatedRoute,
-                private router: Router )
+    constructor(  private zone: NgZone,
+                  private fb: FormBuilder,
+                  private _hds: HelperDataService, 
+                  private activatedRoute: ActivatedRoute,
+                  private router: Router )
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
+       this.verificationCodeVerified = new BehaviorSubject(false);
        this.formGroup = this.fb.group({
                 taxi:[],
                 tomeas: [],
@@ -92,7 +95,7 @@ import {
      
        this.bClassEnabled = false;    
        this.gClassEnabled = false;   
-       this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
+       
 
 
            
@@ -105,11 +108,16 @@ import {
     {
             console.log(txop.value);
             if (txop.value === "1")
-            {     this.bClassEnabled = false;
+                 {
+                this.zone.run(()=>this.verificationCodeVerified.next(false));
+
+                this.bClassEnabled = false;
                   this.gClassEnabled = false;
             }
             else if (txop.value === "2")
             {
+                this.verificationCodeVerified.next(true);
+                this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
                 console.log(txop.value,"aaaaaa");
                 this.bClassEnabled = true;
                 this.gClassEnabled = false;
@@ -125,15 +133,18 @@ import {
     {
         const [id, sector] = tmop.value.split(': ');
         var sectorint = +sector; 
+        console.log(sectorint);
         if (txop.value === "3")
         {
+
             this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+            this.findstudent(sectorint);         
         }
     }
 
-    findstudent(tmop,txop)
+    findstudent(sectorint)
     {
-        let sectorint = 8;
+       
         {
             this.StudentSelectedSpecialSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
         }

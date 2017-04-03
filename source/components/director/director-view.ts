@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy,ElementRef, NgZone, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -21,33 +21,33 @@ import {
     selector: 'director-view',
     template: `
 
-        <form [formGroup]="formGroup">
-            <div class="form-group" >
-              <label for="name">Τάξη</label><br/>
-                    <select #txoption [(ngModel)]="taxi" [ngModelOptions]="{standalone: true}" (change)="verifyclass(txoption)" >
+        
+            
+              <label for="taxi">Τάξη</label><br/>
+                    <select #txoption [(ngModel)]="taxi" [ngModelOptions]="{standalone: false}" (ngModelChange)="verifyclass(txoption)" >
                         <option value="1" >Α' Λυκείου</option>
                         <option value="2" >Β' Λυκείου</option>
                         <option value="3" >Γ' Λυκείου</option>
                     </select>
  
-            <div>
-            <div class="form-group" *ngIf="StudentSelected$ != {} || (verificationCodeVerified | async)"  >
+            
+            <div  *ngIf="StudentSelected$ != {} || (selectionBClass | async)"  >
                     <label for="tomeas">Τομέας</label><br/>
-                     <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: true}"  (change) ="checkbclass(tmop,txoption)" >
+                     <select #tmop [(ngModel)]="tomeas" [ngModelOptions]="{standalone: false}"  (ngModelChange) ="checkbclass(tmop,txoption)" >
                       <option *ngFor="let SectorSelection$  of StudentSelected$ | async" [ngValue]="SectorSelection$.id">{{SectorSelection$.sector_id}}</option>
+
                     </select>
              <div>
 
-            <div class="form-group" *ngIf="StudentSelectedSpecial$ != {}">
+            <div  *ngIf="StudentSelectedSpecial$ != {} || (selectionCClass | async)">
                     <label for="special">Ειδικότητα</label><br/>
-                     <select #spop [(ngModel)]="specialit" [ngModelOptions]="{standalone: true}"  >
+                     <select #spop [(ngModel)]="specialit" [ngModelOptions]="{standalone: false}"  >
                       <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async" [ngValue]="SpecialSelection$.id">{{SpecialSelection$.specialty_id}}</option>
                     </select>
              <div>
-             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent()">
+             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(tmop,txoption)">
                 Αναζήτηση
              </button>
-
               
    `
 })
@@ -59,21 +59,22 @@ import {
     private StudentSelectedSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
-    private verificationCodeVerified: BehaviorSubject<boolean>;
-    public bClassEnabled: boolean;
-    public gClassEnabled: boolean;
+    private selectionAClass: BehaviorSubject<boolean>;
+    private selectionBClass: BehaviorSubject<boolean>;
+    private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId = 147 ;
 
 
-    constructor(  private zone: NgZone,
-                  private fb: FormBuilder,
+    constructor(  private fb: FormBuilder,
                   private _hds: HelperDataService, 
                   private activatedRoute: ActivatedRoute,
                   private router: Router )
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-       this.verificationCodeVerified = new BehaviorSubject(false);
+       this.selectionAClass = new BehaviorSubject(false);
+       this.selectionBClass = new BehaviorSubject(false);
+       this.selectionCClass = new BehaviorSubject(false);
        this.formGroup = this.fb.group({
                 taxi:[],
                 tomeas: [],
@@ -93,13 +94,6 @@ import {
  
     ngOnInit() {
      
-       this.bClassEnabled = false;    
-       this.gClassEnabled = false;   
-       
-
-
-           
-       console.log(this.StudentSelected$);        
 
     }
 
@@ -108,23 +102,21 @@ import {
     {
             console.log(txop.value);
             if (txop.value === "1")
-                 {
-                this.zone.run(()=>this.verificationCodeVerified.next(false));
-
-                this.bClassEnabled = false;
-                  this.gClassEnabled = false;
+            {
+                this.selectionBClass.next(false);
+                this.selectionCClass.next(false);
             }
             else if (txop.value === "2")
             {
-                this.verificationCodeVerified.next(true);
+                this.selectionBClass.next(true);
                 this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
-                console.log(txop.value,"aaaaaa");
-                this.bClassEnabled = true;
-                this.gClassEnabled = false;
+                
             }
             else if (txop.value === "3")
-            {   this.bClassEnabled = true;
-                this.gClassEnabled = true;
+            {   
+              this.selectionBClass.next(true);
+              this.selectionCClass.next(true);              
+              this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
             }            
     }
 
@@ -136,18 +128,18 @@ import {
         console.log(sectorint);
         if (txop.value === "3")
         {
-
             this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
-            this.findstudent(sectorint);         
         }
     }
 
-    findstudent(sectorint)
+    findstudent(tmop,txop)
     {
        
-        {
+            const [id, sector] = tmop.value.split(': ');
+            var sectorint = +sector; 
+            console.log(sectorint,"aaaaaa");
             this.StudentSelectedSpecialSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
-        }
+        
     }
 
 

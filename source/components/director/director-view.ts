@@ -21,7 +21,7 @@ import {
     selector: 'director-view',
     template: `
 
-        
+         
             
               <label for="taxi">Τάξη</label><br/>
                     <select #txoption [(ngModel)]="taxi" [ngModelOptions]="{standalone: false}" (ngModelChange)="verifyclass(txoption)" >
@@ -48,6 +48,24 @@ import {
              <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(tmop,txoption)">
                 Αναζήτηση
              </button>
+             <div *ngIf="StudentInfo$ != {} || (retrievedStudent | async)">
+              <div *ngFor="let StudentDetails$  of StudentInfo$ | async">
+                 Όνομα:         {{StudentDetails$.name}} <br>
+                 Επώνυμο:       {{StudentDetails$.studentsurname}}<br>
+                 Όνομα Πατέρα:  {{StudentDetails$.fatherfirstname}}<br>
+                 Επώνυμο Πατέρα:{{StudentDetails$.fathersurname}}<br>
+                 Όνομα Μητέρας: {{StudentDetails$.motherfirstname}}<br>
+                 Επώνυμο Μητέρας:{{StudentDetails$.mothersurname}}<br>
+                 Ημερομηνία Γέννησης: {{StudentDetails$.birthdate}}<br>
+                 <br>
+                 <input #cb type="checkbox" name="{{ StudentDetails$.id }}" (change)="updateCheckedOptions(StudentDetails$.id, $event)" >
+                 
+             </div>
+             </div>
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
+                 Επιβεβαίωση Εγγραφής
+             </button>
+         
               
    `
 })
@@ -57,12 +75,15 @@ import {
     public formGroup: FormGroup;
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
+    private StudentInfo$: BehaviorSubject<any>;
+    private StudentInfoSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
-    private selectionAClass: BehaviorSubject<boolean>;
+    private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId = 147 ;
+    private saved :Array<number> = new Array();
 
 
     constructor(  private fb: FormBuilder,
@@ -72,14 +93,11 @@ import {
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-       this.selectionAClass = new BehaviorSubject(false);
+       this.StudentInfo$ = new BehaviorSubject([{}]);
+       this.retrievedStudent = new BehaviorSubject(false);
        this.selectionBClass = new BehaviorSubject(false);
        this.selectionCClass = new BehaviorSubject(false);
-       this.formGroup = this.fb.group({
-                taxi:[],
-                tomeas: [],
-                specialit :[]
-                 });
+       
     }
 
     ngOnDestroy()
@@ -88,6 +106,10 @@ import {
             this.StudentSelectedSub.unsubscribe();
         if (this.StudentSelectedSpecialSub)
             this.StudentSelectedSpecialSub.unsubscribe();
+        if (this.selectionBClass)
+            this.selectionBClass.unsubscribe();
+        if (this.selectionCClass)
+            this.selectionCClass.unsubscribe();  
 
 
     }
@@ -138,11 +160,40 @@ import {
             const [id, sector] = tmop.value.split(': ');
             var sectorint = +sector; 
             console.log(sectorint,"aaaaaa");
-            this.StudentSelectedSpecialSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentInfo$);        
+            this.retrievedStudent.next(true);
         
     }
 
+updateCheckedOptions(id, event)
+{
 
+    let i = this.saved.length;
+
+       
+    if (event.target.checked === false) 
+    {
+      var count=this.saved.length;
+      for(var j=0;j<count;j++)
+      {
+        if(this.saved[j]===id)
+        {
+         this.saved.splice(j, 1);
+        }
+      }
+    }
+    else
+    {
+      this.saved[i] = id ;
+    }
+
+}
+
+confirmStudent()
+{
+    
+     this._hds.saveConfirmStudents(this.saved);
+}
 
 
 }

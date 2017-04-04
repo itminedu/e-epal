@@ -144,17 +144,19 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
                         {     
                         $studentId = $object -> id() ;
                         $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $studentId));
+                        $epalStudent = reset($epalStudents);
                         $i = 0;
                         if ($epalStudents) {
                              
                            $list[] = array(
-                            'name' => $epalStudents -> name ->value,
-                            'studentsurname' => $epalStudents -> studentsurname ->value,
-                            'fatherfirstname' => $epalStudents -> fatherfirstname ->value,
-                            'fathersurname' =>$epalStudents -> fathersurtname ->value,
-                            'motherfirstname' => $epalStudents -> motherfirstname ->value,
-                            'mothersurname' =>$epalStudents -> mothersurname ->value,
-                            'birthdate' =>$epalStudents -> birthdate ->value,
+                            'id' => $epalStudent -> id(),
+                            'name' => $epalStudent -> name ->value,
+                            'studentsurname' => $epalStudent -> studentsurname ->value,
+                            'fatherfirstname' => $epalStudent -> fatherfirstname ->value,
+                            'fathersurname' =>$epalStudent -> fathersurtname ->value,
+                            'motherfirstname' => $epalStudent -> motherfirstname ->value,
+                            'mothersurname' =>$epalStudent -> mothersurname ->value,
+                            'birthdate' =>$epalStudent -> birthdate ->value,
                             );
 
                              $i++;
@@ -181,6 +183,60 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
         }
         
     }
+
+
+
+    public function ConfirmStudents(Request $request)
+    {
+
+        if (!$request->isMethod('POST')) {
+            return $this->respondWithStatus([ 
+                    "message" => t("Method Not Allowed")
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $postData = null;
+            if ($content = $request->getContent())
+             {
+                foreach ($content as &$value) {
+                 $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => &$value ));
+                  if ($studentForConfirm) {
+           
+                      $studentForConfirm->set('directorconfirm', "yes"); 
+                      $studentForConfirm->save();
+                 
+                }   
+                } 
+                return $this->respondWithStatus([
+                    'message' => t("saved"),
+                ], Response::HTTP_OK);
+            }
+             else
+              {
+                  return $this->respondWithStatus([
+                    'message' => t("post with no data"),
+                ], Response::HTTP_BAD_REQUEST);
+                }
+
+            } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
+
+
+
+
+
+
+
 
 
 

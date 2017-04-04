@@ -363,7 +363,7 @@ export class HelperDataService {
 }
 
 
-transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
+        transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         let rsa = Array<ILoginInfoToken>();
 
             rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
@@ -507,6 +507,33 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
             .map(response => response.json());
      }
 
+
+
+    saveConfirmStudents(students)
+    {
+        console.log(students,"hds");
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, {students: students}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error Saving Profile");
+                reject("Error Saving Profile");
+            },
+            () => console.log("Saving Profile"));
+        });
+
+    }    
 
 
 

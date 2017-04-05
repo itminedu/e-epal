@@ -31,8 +31,8 @@ import {
       </div>      
       <div class="form-group">
         <div *ngIf="(selectionBClass | async)"  >
-            <select #tmop class="form-control" (change)="checkbclass(tmop,txoption,i)" formControlName="tomeas">
-              <option *ngFor="let SectorSelection$  of StudentSelected$ | async; let i=index">    {{SectorSelection$.sector_id}} </option>
+            <select #tmop class="form-control" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
+              <option *ngFor="let SectorSelection$  of StudentSelected$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.sector_id}} </option>
             </select>
         </div>
       </div>
@@ -50,7 +50,7 @@ import {
              <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(tmop,txoption)">
                 Αναζήτηση
              </button>
-             <div *ngIf="StudentInfo$ != {} || (retrievedStudent | async)">
+             <div *ngIf="(retrievedStudent | async)">
               <div *ngFor="let StudentDetails$  of StudentInfo$ | async">
                  Όνομα:         {{StudentDetails$.name}} <br>
                  Επώνυμο:       {{StudentDetails$.studentsurname}}<br>
@@ -143,7 +143,8 @@ import {
                 
             }
             else if (txop.value === "3")
-            {   
+            {  
+            console.log("trith"); 
               this.selectionBClass.next(true);
               this.selectionCClass.next(true);              
               this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
@@ -151,12 +152,12 @@ import {
     }
 
 
-    checkbclass(tmop,txop,id)
+    checkbclass(tmop,txop)
     {
 
 
-        console.log(id, "aaaaaaa!!!");
-        var sectorint = +id ;
+        console.log(tmop.value, "aaaaaaa!!!");
+        var sectorint = +tmop.value;
         if (txop.value === "3")
         {
             this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
@@ -166,11 +167,10 @@ import {
     findstudent(tmop,txop)
     {
        
-            const [id, sector] = tmop.value.split(': ');
-            var sectorint = +sector; 
+            var sectorint = document.getElementById(tmop);
             console.log(sectorint,"aaaaaa");
-            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentInfo$);        
-            this.retrievedStudent.next(true);
+   //         this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentInfo$);        
+   //         this.retrievedStudent.next(true);
         
     }
 

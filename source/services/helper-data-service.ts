@@ -521,7 +521,7 @@ export class HelperDataService {
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, {students: students}, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, {students}, options)
             .map(response => response.json())
             .subscribe(data => {
                 resolve(data);

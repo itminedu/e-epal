@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 class DirectorView extends ControllerBase
 {
@@ -153,7 +155,7 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
                             'name' => $epalStudent -> name ->value,
                             'studentsurname' => $epalStudent -> studentsurname ->value,
                             'fatherfirstname' => $epalStudent -> fatherfirstname ->value,
-                            'fathersurname' =>$epalStudent -> fathersurtname ->value,
+                            'fathersurname' =>$epalStudent -> fathersurname ->value,
                             'motherfirstname' => $epalStudent -> motherfirstname ->value,
                             'mothersurname' =>$epalStudent -> mothersurname ->value,
                             'birthdate' =>$epalStudent -> birthdate ->value,
@@ -200,16 +202,20 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
         $epalUser = reset($epalUsers);
         if ($epalUser) {
             $postData = null;
+
             if ($content = $request->getContent())
-             {
-                foreach ($content as &$value) {
-                 $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => &$value ));
-                  if ($studentForConfirm) {
-           
-                      $studentForConfirm->set('directorconfirm', "yes"); 
-                      $studentForConfirm->save();
-                 
-                }   
+            {
+                 $postData = json_decode($content);
+                 $arr = $postData->students;
+
+                foreach ($arr as $value) {
+                    $valnew = intval($value);  
+                 $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => $valnew ));
+                    $studentConfirm = reset($studentForConfirm);
+                  if ($studentConfirm) {
+                         $studentConfirm->set('directorconfirm', true);
+                         $studentConfirm->save();
+                    }   
                 } 
                 return $this->respondWithStatus([
                     'message' => t("saved"),
@@ -228,14 +234,6 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
                 ], Response::HTTP_FORBIDDEN);
         }
     }
-
-
-
-
-
-
-
-
 
 
 

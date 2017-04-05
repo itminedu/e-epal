@@ -98,6 +98,14 @@ specialityperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getSpecialPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
+confirmstudents:
+  path: '/epal/confirmstudent'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::ConfirmStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'  
 studentperschool:
   path: '/epal/studentperSchool/{epalId}/{selectId}'
   options:
@@ -106,4 +114,5 @@ studentperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getStudentPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
+  
 

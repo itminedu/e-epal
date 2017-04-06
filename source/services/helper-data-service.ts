@@ -491,7 +491,7 @@ export class HelperDataService {
 
 
 
-      getStudentPerSchool(SchoolId, SelectId)
+      getStudentPerSchool(SchoolId, SelectId, classId)
      {
          let SchoolIdNew = SchoolId.toString();
          let SelectIdNew = SelectId.toString();
@@ -503,7 +503,7 @@ export class HelperDataService {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/`+SchoolIdNew+'/'+SelectIdNew, options )
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/`+SchoolIdNew+'/'+SelectIdNew+'/'+classId, options )
             .map(response => response.json());
      }
 

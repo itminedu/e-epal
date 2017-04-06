@@ -30,24 +30,17 @@ import {
             </select>
       </div>      
       <div class="form-group">
-        <div *ngIf="(selectionBClass | async)"  >
-            <select #tmop class="form-control" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
+
+            <select #tmop class="form-control" *ngIf="(selectionBClass | async)" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
               <option *ngFor="let SectorSelection$  of StudentSelected$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.sector_id}} </option>
             </select>
-        </div>
       </div>
       <div class="form-group">
-      <div *ngIf="(selectionCClass | async)">
-            <select #spop class="form-control" formControlName="specialit">
-              <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index">    {{SpecialSelection$.specialty_id}} </option>
+            <select #spop class="form-control" *ngIf="(selectionCClass | async)" (change) ="checkcclass()" formControlName="specialit">
+              <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
-       </div>     
       </div>
-         
-
-            
-             
-             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(tmop,txoption)">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption)">
                 Αναζήτηση
              </button>
              <div *ngIf="(retrievedStudent | async)">
@@ -67,8 +60,6 @@ import {
             <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
                  Επιβεβαίωση Εγγραφής
              </button>
-         
-              
    `
 })
 
@@ -85,6 +76,7 @@ import {
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId = 147 ;
+    private currentclass: Number;
     private saved :Array<number> = new Array();
 
 
@@ -117,36 +109,34 @@ import {
             this.selectionBClass.unsubscribe();
         if (this.selectionCClass)
             this.selectionCClass.unsubscribe();  
-
-
     }
  
     ngOnInit() {
-     
 
     }
 
 
     verifyclass(txop)
     {
-            console.log(txop.value,"aaaaa");
+            this.retrievedStudent.next(false);
             if (txop.value === "1")
             {
                 this.selectionBClass.next(false);
                 this.selectionCClass.next(false);
+
             }
             else if (txop.value === "2")
             {
-                console.log(this.SchoolId, "school_id");
                 this.selectionBClass.next(true);
+                this.selectionCClass.next(false);
+                this.StudentSelected$ = new BehaviorSubject([{}]);
                 this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
-                
             }
             else if (txop.value === "3")
             {  
-            console.log("trith"); 
               this.selectionBClass.next(true);
               this.selectionCClass.next(true);              
+              this.StudentSelected$ = new BehaviorSubject([{}]);
               this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
             }            
     }
@@ -154,23 +144,37 @@ import {
 
     checkbclass(tmop,txop)
     {
-
-
-        console.log(tmop.value, "aaaaaaa!!!");
-        var sectorint = +tmop.value;
+        this.retrievedStudent.next(false);
+        var sectorint = +this.formGroup.value.tomeas;
+        console.log(sectorint,"tomeas");
         if (txop.value === "3")
         {
+            this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
             this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
         }
     }
 
-    findstudent(tmop,txop)
+    findstudent(txop)
     {
-       
-            var sectorint = document.getElementById(tmop);
-            console.log(sectorint,"aaaaaa");
-   //         this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint).subscribe(this.StudentInfo$);        
-   //         this.retrievedStudent.next(true);
+            
+            var sectorint = +this.formGroup.value.tomeas;
+            if (txop.value === "1")
+            {
+              this.currentclass = 1;
+            }
+            else if (txop.value === "2")
+            {
+                this.currentclass = 2;
+            }
+            else if (txop.value === "3")
+            {  
+              this.currentclass = 3;
+            }       
+            this.retrievedStudent.next(true);
+            this.retrievedStudent = new BehaviorSubject(false);
+            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);        
+         
+         
         
     }
 
@@ -200,9 +204,12 @@ updateCheckedOptions(id, event)
 
 confirmStudent()
 {
-      
-     this._hds.saveConfirmStudents(this.saved);
+   this._hds.saveConfirmStudents(this.saved);
 }
 
+checkcclass()
+{
+  this.retrievedStudent.next(false);
+}
 
 }

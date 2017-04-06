@@ -126,7 +126,7 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
     }
 
 
-public function getStudentPerSchool(Request $request, $epalId , $selectId)
+public function getStudentPerSchool(Request $request, $epalId , $selectId, $classId)
     {
   
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -137,7 +137,16 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId)
                 $userid = $epalUser -> user_id -> entity -> id();
                 $epalIdNew = intval($epalId);
                 $selectIdNew = intval($selectId);
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalIdNew, 'specialization_id' => $selectIdNew ));
+                if ($classId == 1)
+                {
+                 $selectIdNew = -1;
+                 $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalIdNew, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
+                   
+                }
+                else
+                {    
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalIdNew, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
+                }   
                 $i = 0;
 
             if ($studentPerSchool) {

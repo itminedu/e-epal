@@ -107,7 +107,7 @@ confirmstudents:
   requirements:
     _user_is_logged_in: 'TRUE'  
 studentperschool:
-  path: '/epal/studentperSchool/{epalId}/{selectId}'
+  path: '/epal/studentperSchool/{epalId}/{selectId}/{classId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

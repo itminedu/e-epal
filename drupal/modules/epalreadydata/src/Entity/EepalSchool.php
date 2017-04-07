@@ -356,7 +356,7 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-	$fields['e-mail'] = BaseFieldDefinition::create('string')
+	$fields['maile'] = BaseFieldDefinition::create('string')
       ->setLabel(t('e-mail Σχολείου'))
       ->setDescription(t('Δώσε το e-mail Σχολείου'))
       ->setSettings(array(

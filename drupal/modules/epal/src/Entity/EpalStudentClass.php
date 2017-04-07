@@ -122,6 +122,7 @@ class EpalStudentClass extends ContentEntityBase implements EpalStudentClassInte
     return $this;
   }
 
+
   /**
    * {@inheritdoc}
    */

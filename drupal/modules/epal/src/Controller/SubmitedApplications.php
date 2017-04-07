@@ -23,32 +23,32 @@ class SubmitedApplications extends ControllerBase
         return new static(
             $container->get('entity_type.manager')
         );
-    } 
+    }
 
 
     public function getSubmittedApplications(Request $request)
     {
-  
+
         $authToken = $request->headers->get('PHP_AUTH_USER');
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
             $userid = $epalUser -> id();
-            
+
             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
             $i = 0;
             if ($epalStudents) {
                  $list = array();
                 foreach ($epalStudents as $object) {
-                   
-                
+
+
                     $list[] = array(
                             'id' => $object -> id(),
                             'name' => $object -> name ->value,
                             'studentsurname' => $object -> studentsurname ->value);
                     $i++;
                 }
-                
+
                 return $this->respondWithStatus(
                         $list
                     , Response::HTTP_OK);
@@ -58,8 +58,8 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-            
-            
+
+
 
 
         } else {
@@ -67,15 +67,15 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("User not found"),
                 ], Response::HTTP_FORBIDDEN);
         }
-        
+
     }
 
 
-   
+
 
  public function getStudentApplications(Request $request, $studentId)
     {
-  
+
         $authToken = $request->headers->get('PHP_AUTH_USER');
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
@@ -100,7 +100,7 @@ class SubmitedApplications extends ControllerBase
 
                     $i++;
                 }
-                
+
                 return $this->respondWithStatus(
                         $list
                     , Response::HTTP_OK);
@@ -110,7 +110,7 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-            
+
 
 
         } else {
@@ -118,13 +118,13 @@ class SubmitedApplications extends ControllerBase
                     'message' => t("User not found"),
                 ], Response::HTTP_FORBIDDEN);
         }
-        
+
     }
 
 
 public function getEpalChosen(Request $request, $studentId)
     {
-  
+
         $authToken = $request->headers->get('PHP_AUTH_USER');
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
@@ -144,7 +144,7 @@ public function getEpalChosen(Request $request, $studentId)
 
                     $i++;
                 }
-                
+
                 return $this->respondWithStatus(
                         $list
                     , Response::HTTP_OK);
@@ -154,7 +154,7 @@ public function getEpalChosen(Request $request, $studentId)
                     'message' => t("EPAL chosen not found!!!"),
                 ], Response::HTTP_FORBIDDEN);
                 }
-            
+
 
 
         } else {
@@ -162,7 +162,7 @@ public function getEpalChosen(Request $request, $studentId)
                     'message' => t("User not found"),
                 ], Response::HTTP_FORBIDDEN);
         }
-        
+
     }
 
 
@@ -180,8 +180,3 @@ public function getEpalChosen(Request $request, $studentId)
 
 
 }
-
-
-
-
-

@@ -12,7 +12,7 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-
+//import * as html2canvas from "html2canvas"
 
 
 
@@ -86,8 +86,8 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     createPdf()
     {
-
-        html2canvas(document.getElementById("target")).then(function(canvas)
+        
+       html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
             var doc = new jsPDF('p', 'mm');

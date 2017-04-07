@@ -71,7 +71,7 @@ class CreateDemoData extends ControllerBase {
 
 			$epaluserid = \Drupal::currentUser()->id();
 
-			for ($i = 1; $i <= 1100; $i++) {
+			for ($i = 1; $i <= 10000; $i++) {
 				//srand($this->make_seed());
 
 				//$curclass = rand(1,3);

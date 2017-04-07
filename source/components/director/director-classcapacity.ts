@@ -36,7 +36,7 @@ import {
             </select>
       </div>
       <div class="form-group">
-            <select #spop class="form-control" *ngIf="(selectionCClass | async)" (change) ="checkcclass()" formControlName="specialit">
+            <select #spop class="form-control" *ngIf="(selectionCClass | async)"  formControlName="specialit">
               <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
       </div>

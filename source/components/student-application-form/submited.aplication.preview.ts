@@ -17,7 +17,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 @Component({
     selector: 'submited-preview',
     template: `
-            Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων: 
+            Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
             <table class = "submited">
               <tr>
                 <th>Όνομα</th>
@@ -30,19 +30,19 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 <td>{{UserData$.studentsurname}} </td>
                 <td> <button type="button" (click)="studentpreview(UserData$.id)"> <i class="fa fa-eye" aria-hidden="true"></i> </button> </td>
               </tr>
-                    
-                        
+
+
    `
 })
 
 @Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
 
-   
+
     private SubmitedApplic$: BehaviorSubject<any>;
     private SubmitedUsersSub: Subscription;
     public StudentId;
-    
-    constructor(private _hds: HelperDataService, 
+
+    constructor(private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
                 private router: Router )
     {
@@ -53,16 +53,17 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
     {
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
+        this.SubmitedApplic$.unsubscribe();
 
     }
  
     ngOnInit() {
-     
+
 
         this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(this.SubmitedApplic$);
         console.log(this.SubmitedApplic$);
-        
-           
+
+
 
     }
 

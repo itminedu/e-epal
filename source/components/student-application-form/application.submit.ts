@@ -163,6 +163,13 @@ import {AppSettings} from '../../app.settings';
         if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
         if (this.epalclassesSub) this.epalclassesSub.unsubscribe();
         if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
+        this.regions$.unsubscribe();
+        this.epalclasses$.unsubscribe();
+        this.sectors$.unsubscribe();
+        this.sectorFields$.unsubscribe();
+        this.studentDataFields$.unsubscribe();
+        this.criteria$.unsubscribe();
+        this.loginInfo$.unsubscribe();
     }
 
     submitNow() {

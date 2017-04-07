@@ -225,6 +225,11 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
         this.sectorsSub.unsubscribe();
         this.sectorFieldsSub.unsubscribe();
         this.studentDataFieldsSub.unsubscribe();
+        this.regions$.unsubscribe();
+        this.epalclasses$.unsubscribe();
+        this.sectors$.unsubscribe();
+        this.sectorFields$.unsubscribe();
+        this.studentDataFields$.unsubscribe();
     }
 
     showValues() {

@@ -9,6 +9,8 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import {RemoveSpaces} from '../../pipes/removespaces';
 
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+
 import {
     FormBuilder,
     FormGroup,
@@ -72,6 +74,7 @@ import {AppSettings} from '../../app.settings';
 
     constructor(private fb: FormBuilder,
                 private _sca: SectorCoursesActions,
+                private _rsa: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
             ) {
@@ -111,6 +114,7 @@ import {AppSettings} from '../../app.settings';
 
     ngOnDestroy() {
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
+        this.sectors$.unsubscribe();
     }
 
     setActiveSector(ind) {
@@ -121,9 +125,12 @@ import {AppSettings} from '../../app.settings';
 
     saveSelected() {
         this._sca.saveSectorCoursesSelected(this.formGroup.value.formArray, this.sectorsList);
+
+        this._rsa.initRegionSchools();
     }
 
     navigateToSchools() {
+
         this.router.navigate(['/region-schools-select']);
     }
 

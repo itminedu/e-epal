@@ -64,6 +64,7 @@ class CreateDemoData extends ControllerBase {
 
 	public function createData() {
 
+        $transaction = $this->connection->startTransaction();
 		try {
 			//insert demo records in entity: epal_student
 			$entity_manager = \Drupal::entityTypeManager();
@@ -132,7 +133,7 @@ class CreateDemoData extends ControllerBase {
 
 
 				for ($j = 0; $j < $numEpalsChosen ; $j++) {
-					print_r("<br>Data: Student" . $created_student_id . "EPAL" . $epal_id . "CHOICE"  . $j );
+//					print_r("<br>Data: Student" . $created_student_id . "EPAL" . $epal_id . "CHOICE"  . $j );
 						$epalchosen = array(
 							'student_id' => $created_student_id,
 							'epal_id' => $epal_id[$j],
@@ -186,6 +187,7 @@ class CreateDemoData extends ControllerBase {
 
 			$returnmsg = "Αποτυχία καταχώρησης demo data!";
 			$response = new JsonResponse([$returnmsg]);
+            $transaction->rollback();
 			return $response;
 	}
 

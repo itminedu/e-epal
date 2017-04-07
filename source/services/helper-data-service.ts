@@ -537,4 +537,34 @@ export class HelperDataService {
 
 
 
+ saveCapacity(taxi,tomeas, specialit, capacity, schoolid)
+    {
+
+        console.log(taxi, capacity,"hds");
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/`+taxi+'/'+tomeas+'/'+specialit+'/'+schoolid, {capacity}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error Saving Capacity");
+                reject("Error Saving Capacity");
+            },
+            () => console.log("Saving Capacity"));
+        });
+
+    }    
+
+
+
+
 }

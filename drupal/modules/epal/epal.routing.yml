@@ -114,5 +114,12 @@ studentperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getStudentPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-  
+savecapacity:
+  path: '/epal/savecapacity/{taxi}/{tomeas}/{specialit}/{schoolid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::SaveCapacity'
+  requirements:
+    _user_is_logged_in: 'TRUE'  
 

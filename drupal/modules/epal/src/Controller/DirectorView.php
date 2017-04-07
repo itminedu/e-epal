@@ -247,6 +247,90 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
 
 
 
+
+
+public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid)
+    {
+
+        if (!$request->isMethod('POST')) {
+            return $this->respondWithStatus([ 
+                    "message" => t("Method Not Allowed")
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $postData = null;
+
+            if ($content = $request->getContent())
+            {
+                 $postData = json_decode($content);
+                 $cap = $postData->capacity;
+                if (($tomeas == 0) || ($specialit == 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                         $classcapacity->set('capacity_class_a', $cap);
+                         $classcapacity->save();
+                    }   
+                }
+
+
+                if (($tomeas != 0) || ($specialit == 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeas ));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                         $classcapacity->set('capacity_class_sector', $cap);
+                         $classcapacity->save();
+                    }   
+                }
+
+
+                if (($tomeas != 0) || ($specialit != 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                         $classcapacity->set('capacity_class_specialty', $cap);
+                         $classcapacity->save();
+                    }   
+                }
+
+
+
+
+
+
+                return $this->respondWithStatus([
+                    'message' => t("saved"),
+                ], Response::HTTP_OK);
+            }
+             else
+              {
+                  return $this->respondWithStatus([
+                    'message' => t("post with no data"),
+                ], Response::HTTP_BAD_REQUEST);
+                }
+
+            } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
+
+
+
+
+
+
+
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

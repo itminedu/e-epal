@@ -18,7 +18,7 @@ import {
     Validators,
 } from '@angular/forms';
 @Component({
-    selector: 'director-view',
+    selector: 'director-classcapacity',
     template: `
   <form [formGroup]="formGroup">
       <label for="taxi">Τάξη</label><br/>
@@ -40,47 +40,27 @@ import {
               <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
       </div>
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption)">
-                Αναζήτηση
-             </button>
-             <div *ngIf="(retrievedStudent | async)">
-              <div *ngFor="let StudentDetails$  of StudentInfo$ | async">
-                <br>
-                <br>
-                 Όνομα:         {{StudentDetails$.name}} <br>
-                 Επώνυμο:       {{StudentDetails$.studentsurname}}<br>
-                 Όνομα Πατέρα:  {{StudentDetails$.fatherfirstname}}<br>
-                 Επώνυμο Πατέρα:{{StudentDetails$.fathersurname}}<br>
-                 Όνομα Μητέρας: {{StudentDetails$.motherfirstname}}<br>
-                 Επώνυμο Μητέρας:{{StudentDetails$.mothersurname}}<br>
-                 Ημερομηνία Γέννησης: {{StudentDetails$.birthdate}}<br>
-                
-                 <strong>Επιβεβαίωση Εγγραφής: </strong> 
-                 <input #cb class="pull-right" type="checkbox" name="{{ StudentDetails$.id }}" (change)="updateCheckedOptions(StudentDetails$.id, $event)" >
-                
-             </div>
-             </div>
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
-                 Επιβεβαίωση Εγγραφής
+      <strong>Δυναμική σε τμήματα:</strong>
+      <input  type="number" formControlName="capacity" min="1" max="10">
+      
+            <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
+                Αποθήκευση
              </button>
    `
 })
 
-@Injectable() export default class DirectorView implements OnInit , OnDestroy{
+@Injectable() export default class DirectorClassCapacity implements OnInit , OnDestroy{
 
     public formGroup: FormGroup;
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
-    private StudentInfo$: BehaviorSubject<any>;
-    private StudentInfoSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
-    private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId = 147 ;
     private currentclass: Number;
-    private saved :Array<number> = new Array();
+    
 
 
     constructor(  private fb: FormBuilder,
@@ -90,14 +70,13 @@ import {
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-       this.StudentInfo$ = new BehaviorSubject([{}]);
-       this.retrievedStudent = new BehaviorSubject(false);
        this.selectionBClass = new BehaviorSubject(false);
        this.selectionCClass = new BehaviorSubject(false);
        this.formGroup = this.fb.group({
          tomeas: ['', []],
          taxi: ['', []],
          specialit: ['', []],
+         capacity: ['', []],
        });
        
     }
@@ -112,8 +91,7 @@ import {
             this.selectionBClass.unsubscribe();
         if (this.selectionCClass)
             this.selectionCClass.unsubscribe();  
-         if (this.retrievedStudent)
-            this.retrievedStudent.unsubscribe();
+         
     }
  
     ngOnInit() {
@@ -123,15 +101,22 @@ import {
 
     verifyclass(txop)
     {
-            this.retrievedStudent.next(false);
+            
             if (txop.value === "1")
             {
                 this.selectionBClass.next(false);
                 this.selectionCClass.next(false);
+                this.formGroup.patchValue({
+                  tomeas: '',
+                  specialit: '',
+                 });
 
             }
             else if (txop.value === "2")
             {
+                this.formGroup.patchValue({
+                  specialit: '',
+                 });
                 this.selectionBClass.next(true);
                 this.selectionCClass.next(false);
                 this.StudentSelected$ = new BehaviorSubject([{}]);
@@ -157,7 +142,7 @@ import {
 
     checkbclass(tmop,txop)
     {
-        this.retrievedStudent.next(false);
+       
         var sectorint = +this.formGroup.value.tomeas;
         console.log(sectorint,"tomeas");
         if (txop.value === "3")
@@ -167,62 +152,17 @@ import {
         }
     }
 
-    findstudent(txop)
-    {
-            
-            var sectorint = +this.formGroup.value.tomeas;
-            if (txop.value === "1")
-            {
-              this.currentclass = 1;
-            }
-            else if (txop.value === "2")
-            {
-                this.currentclass = 2;
-            }
-            else if (txop.value === "3")
-            {  
-              this.currentclass = 3;
-            }       
-            this.retrievedStudent.next(true);
-            this.StudentInfo$ = new BehaviorSubject(false);
-            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);        
-         
-         
-        
-    }
 
-updateCheckedOptions(id, event)
+
+
+saveCapacity()
 {
 
-    let i = this.saved.length;
+  var tomeas = +this.formGroup.value.tomeas;
+  var specialit = +this.formGroup.value.specialit;
+  console.log(tomeas, specialit);
+  this._hds.saveCapacity(this.formGroup.value.taxi,tomeas,specialit, this.formGroup.value.capacity, this.SchoolId );
 
-       
-    if (event.target.checked === false) 
-    {
-      var count=this.saved.length;
-      for(var j=0;j<count;j++)
-      {
-        if(this.saved[j]===id)
-        {
-         this.saved.splice(j, 1);
-        }
-      }
-    }
-    else
-    {
-      this.saved[i] = id ;
-    }
-
-}
-
-confirmStudent()
-{
-   this._hds.saveConfirmStudents(this.saved);
-}
-
-checkcclass()
-{
-  this.retrievedStudent.next(false);
 }
 
 }

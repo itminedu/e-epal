@@ -40,6 +40,9 @@ import {
     private rss = new FormArray([]);
     private selectionIncomeId = <number>0;
 
+    private  sdate; // = Date.now();
+    //date: [datePipe.transform(this.event.date, 'yyyy-MM-dd'), [Validators.required]]
+
     constructor(private fb: FormBuilder,
                 private _sdfa: StudentDataFieldsActions,
                 private _sdfb: CriteriaActions,
@@ -52,6 +55,12 @@ import {
             epaluser_id: [,[]],
             name: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentsurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            studentbirthdate: [this.sdate, [Validators.required]],
+            //studentbirthdate: [datePipe.transform(this.event.date, 'yyyy-MM-dd'), [Validators.required]],
+            fatherfirstname: ['ΑΝΑΣΤΑΣΙΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            fathersurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            motherfirstname: ['ΚΑΤΕΡΙΝΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            mothersurname: ['ΚΑΤΣΑΟΥΝΟΥ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionaddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['26334', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -70,7 +79,7 @@ import {
             income: ['', this.checkChoice ],
             //income: ['noincomecriterio', Validators.required ],
             //income: [this.selectionIncomeId, this.checkChoice ],
-            //incometest: ['noincomecriterio', checkChoice ],
+            incometest: ['noincomecriterio', this. checkChoice ],
         });
 
     };

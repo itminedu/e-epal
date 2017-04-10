@@ -180,6 +180,7 @@ import {AppSettings} from '../../app.settings';
 
           //aitisiObj[0] = studentDataFields["_tail"]["array"][0];
           aitisiObj[0] = this.student;
+          console.log("Hello:"); console.log(aitisiObj[0]['studentbirthdate']);
           aitisiObj[0]['currentclass'] = this.classSelected;
           //aitisiObj[0]['studentamka'] = ...;
 

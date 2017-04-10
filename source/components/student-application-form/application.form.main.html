@@ -36,6 +36,50 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
+    <div class="form-group">
+        <label for="fatherfirstname">Όνομα πατέρα</label><input class="form-control" type="text" formControlName="fatherfirstname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fatherfirstname').touched && studentDataGroup.get('fatherfirstname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fatherfirstname').dirty && studentDataGroup.get('fatherfirstname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="fathersurname">Επώνυμο πατέρα</label><input class="form-control" type="text" formControlName="fathersurname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fathersurname').touched && studentDataGroup.get('fathersurname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fathersurname').dirty && studentDataGroup.get('fathersurname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="motherfirstname">Όνομα μητέρας</label><input class="form-control" type="text" formControlName="motherfirstname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('motherfirstname').touched && studentDataGroup.get('motherfirstname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('motherfirstname').dirty && studentDataGroup.get('motherfirstname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="mothersurname">Γένος μητέρας</label><input class="form-control" type="text" formControlName="mothersurname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('mothersurname').touched && studentDataGroup.get('mothersurname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('mothersurname').dirty && studentDataGroup.get('mothersurname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="studentbirthdate">Ημερομηνία γέννησης</label><input class="form-control" type="date" formControlName="studentbirthdate">
+    </div>
+
     <table>
         <tr>
             <td>
@@ -115,13 +159,13 @@
       -->
         <legend>Εισοδηματικά κριτήρια</legend>
 
-        <!-- TEST for defining income in combolist in a redux-dynamic way
+        <!-- TEST for defining income in combolist in a redux-dynamic way-->
         <select #cblsttest class="form-control" (change)="checkstatus(cblsttest)" formControlName="incometest">
-        <option *ngFor="let criter$ of criteria$   | async; let i=index" >
-          <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
-        {{criter$.name}} </div></option>
+        <option *ngFor="let criter$ of criteria$   | async; let i=index">
+           <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+             {{criter$.name}}> </div>  </option>
         </select>
-      -->
+
 
 
         <div class="form-group">
@@ -158,6 +202,19 @@
               </div>
             </div>
           </div>
+
+
+          <div *ngFor="let criter$ of criteria$   | async; let i=index">
+            <div class="row" *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+              <div class="col-md-1">
+                  <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{i}}>
+              </div>
+              <div class="col-md-11 pull-left">
+                  {{criter$.name}}
+              </div>
+            </div>
+          </div>
+
 
       <div class="row">
       </div>

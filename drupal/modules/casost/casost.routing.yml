@@ -1,0 +1,20 @@
+casost.log_in_go:
+  path: /cas/login
+  defaults:
+    _controller: '\Drupal\casost\Controller\CASLogin::loginGo'
+  requirements:
+    _access: 'TRUE'
+casost.callback_log_in:
+  path: /cas/cb
+  defaults:
+    _controller: '\Drupal\casost\Controller\CBController::loginCB'
+  requirements:
+    _permission: 'access content'
+casost.log_out_go:
+  path: /cas/logout
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\casost\Controller\CASLogout::logoutGo'
+  requirements:
+    _user_is_logged_in: 'TRUE'

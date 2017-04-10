@@ -1,0 +1,43 @@
+# CASOST Config routing definition
+casost_config.settings_tab:
+  route_name: casost_config.settings
+  title: 'Settings'
+  base_route: casost_config.settings
+
+entity.casost_config.canonical:
+  route_name: entity.casost_config.canonical
+  base_route: entity.casost_config.canonical
+  title: 'View'
+
+entity.casost_config.edit_form:
+  route_name: entity.casost_config.edit_form
+  base_route: entity.casost_config.canonical
+  title: 'Edit'
+
+entity.casost_config.delete_form:
+  route_name:  entity.casost_config.delete_form
+  base_route:  entity.casost_config.canonical
+  title: Delete
+  weight: 10
+
+# CASOST Session routing definition
+casost_session.settings_tab:
+  route_name: casost_session.settings
+  title: 'Settings'
+  base_route: casost_session.settings
+
+entity.casost_session.canonical:
+  route_name: entity.casost_session.canonical
+  base_route: entity.casost_session.canonical
+  title: 'View'
+
+entity.casost_session.edit_form:
+  route_name: entity.casost_session.edit_form
+  base_route: entity.casost_session.canonical
+  title: 'Edit'
+
+entity.casost_session.delete_form:
+  route_name:  entity.casost_session.delete_form
+  base_route:  entity.casost_session.canonical
+  title: Delete
+  weight: 10

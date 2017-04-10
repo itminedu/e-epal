@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Contains casost.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function casost_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the casost module.
+    case 'help.page.casost':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Authentication Provider OST') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function casost_theme() {
+  return [
+    'casost' => [
+      'template' => 'casost',
+      'render element' => 'children',
+    ],
+  ];
+}

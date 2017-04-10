@@ -9,6 +9,7 @@ import ParentForm from '../components/student-application-form/parent.form';
 import StudentApplicationMain from '../components/student-application-form/application.form.main';
 import StudentsList from '../components/students/students-list';
 import Home from '../components/home';
+import SchoolHome from '../components/school.home';
 import CourseFieldsSelect from '../components/student-application-form/course.fields.select';
 import EpalClassesSelect from '../components/student-application-form/epal.class.select';
 import SectorFieldsSelect from '../components/student-application-form/sector.fields.select';
@@ -22,6 +23,7 @@ import SubmitedPerson from '../components/student-application-form/submitedstude
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
+  { path: 'school', component: SchoolHome },
   { path: 'parent-form', component: ParentForm },
   { path: 'student-application-form-main', component: StudentApplicationMain },
   { path: 'students-list', component: StudentsList },
@@ -42,6 +44,7 @@ export const MainDeclarations = [
   RemoveSpaces,
   StudentsList,
   Home,
+  SchoolHome,
   CourseFieldsSelect,
   EpalClassesSelect,
   SectorFieldsSelect,

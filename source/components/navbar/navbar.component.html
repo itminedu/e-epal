@@ -20,13 +20,17 @@
                 </button>
         </div>
 
-    </ul>
-    </div>
-</div>
-
-<div *ngIf="(loginInfo$ | async).size > 0" class="pull-right" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+        <div *ngIf="(loginInfo$ | async).size > 0" class="pull-right" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
              <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες αιτήσεις</b></a>
+             <a class="nav-link" [routerLink]="['/director-view']" [routerLinkActive]="['active']"><b>Επιλεχθέντες Μαθητές</b></a>
+             <a class="nav-link" [routerLink]="['/director-classcapacity']" [routerLinkActive]="['active']"><b>Δυναμική Σχολείου</b></a>
         </div>
+
+    </ul>
+
+  </div>
+  </div>
+
 </nav>
    </div>
 </div>

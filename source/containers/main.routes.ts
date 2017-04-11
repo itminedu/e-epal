@@ -20,6 +20,8 @@ import SchoolsOrderSelect from '../components/student-application-form/schools-o
 import ApplicationSubmit from '../components/student-application-form/application.submit';
 import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
+import DirectorView from '../components/director/director-view';
+import DirectorClassCapacity from '../components/director/director-classcapacity';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -37,6 +39,8 @@ export const MainRoutes: Routes = [
   { path: 'application-submit', component: ApplicationSubmit },
   { path: 'submited-preview', component: SubmitedPreview },
   { path: 'submited-person', component: SubmitedPerson },
+  { path: 'director-view', component: DirectorView },
+  { path: 'director-classcapacity', component: DirectorClassCapacity },
 ];
 
 export const MainDeclarations = [
@@ -56,5 +60,7 @@ export const MainDeclarations = [
   SchoolsOrderSelect,
   ApplicationSubmit,
   SubmitedPreview,
-  SubmitedPerson
+  SubmitedPerson,
+  DirectorView,
+  DirectorClassCapacity
 ];

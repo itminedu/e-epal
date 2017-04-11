@@ -383,7 +383,7 @@ export class HelperDataService implements OnInit, OnDestroy{
 }
 
 
-transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
+        transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         let rsa = Array<ILoginInfoToken>();
 
             rsa.push(<ILoginInfoToken>{'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name':userlogin.name});
@@ -482,6 +482,114 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/epalchosen/`+headerIdNew, options )
             .map(response => response.json());
      }
+
+
+    getSectorPerSchool(SchoolId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperSchool/`+SchoolIdNew, options )
+            .map(response => response.json());
+     }
+
+     getSpecialityPerSchool(SchoolId, SectorId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         let SectorIdNew = SectorId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperSchool/`+SchoolIdNew+'/'+SectorIdNew, options )
+            .map(response => response.json());
+     }
+
+
+
+      getStudentPerSchool(SchoolId, SelectId, classId)
+     {
+         let SchoolIdNew = SchoolId.toString();
+         let SelectIdNew = SelectId.toString();
+         this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/`+SchoolIdNew+'/'+SelectIdNew+'/'+classId, options )
+            .map(response => response.json());
+     }
+
+
+
+    saveConfirmStudents(students)
+    {
+        console.log(students,"hds");
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, {students}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error Saving Profile");
+                reject("Error Saving Profile");
+            },
+            () => console.log("Saving Profile"));
+        });
+
+    }    
+
+
+
+ saveCapacity(taxi,tomeas, specialit, capacity, schoolid)
+    {
+
+        console.log(taxi, capacity,"hds");
+        this.loginInfo$.forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.get(0).auth_token;
+        });
+        let headers = new Headers({
+           "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/`+taxi+'/'+tomeas+'/'+specialit+'/'+schoolid, {capacity}, options)
+            .map(response => response.json())
+            .subscribe(data => {
+                resolve(data);
+            },
+            error => {
+                console.log("Error Saving Capacity");
+                reject("Error Saving Capacity");
+            },
+            () => console.log("Saving Capacity"));
+        });
+
+    }    
+
 
 
 

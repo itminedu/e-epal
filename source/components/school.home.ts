@@ -65,7 +65,7 @@ export default class SchoolHome implements OnInit {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     if (this.authToken && this.authToken.length > 0)
-                        this.router.navigate(['/parent-form']);
+                        this.router.navigate(['/submited-preview']);
                     return loginInfoToken;
                 }, {});
             }

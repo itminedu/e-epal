@@ -8,28 +8,23 @@
           <img src="../myschool/assets/images/myschool_logo.png" alt="Αρχική" />
   </a>
   <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
-      <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index "></div>
+      <div *ngIf="(loginInfo$ | async).size > 0">
     <ul class="navbar-nav">
-          <div *ngFor="let username$ of loginInfo$ | async;">
-             
-                  <b>Όνομα Χρήστη:</b> {{username$.cu_name}}
-             
+        <div *ngIf="(loginInfo$ | async).cu_name !== ''">
+                  <b>Όνομα Χρήστη:</b> {{ cuName }}
+
 
        &nbsp;&nbsp;
-        <div *ngIf="authToken">
                 <button type="button" class="btn-primary btn-sm pull-right" (click)="oauthSignOut()">
                <i class="fa fa-sign-out"></i>
                 </button>
         </div>
-        
-
-    </div>
-   
 
     </ul>
-    
-  </div>
-<div class="pull-right" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+    </div>
+</div>
+
+<div *ngIf="(loginInfo$ | async).size > 0" class="pull-right" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
              <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες αιτήσεις</b></a>
         </div>
 </nav>

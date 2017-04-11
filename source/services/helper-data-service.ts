@@ -1,6 +1,6 @@
 import {Http, Headers, RequestOptions} from '@angular/http';
-import {Injectable} from '@angular/core';
-import {Observable} from "rxjs/Observable";
+import {Injectable, OnInit, OnDestroy} from '@angular/core';
+import {BehaviorSubject} from "rxjs/Rx";
 import 'rxjs/add/operator/map';
 import { ICourseField } from '../store/coursefields/coursefields.types';
 import { ISectorField } from '../store/sectorfields/sectorfields.types';
@@ -11,31 +11,41 @@ import { AppSettings } from '../app.settings';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../store/logininfo/logininfo.types';
+import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-state';
 
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
 
 @Injectable()
-export class HelperDataService {
+export class HelperDataService implements OnInit, OnDestroy{
 
     private authToken: string;
-    private loginInfo$: Observable<ILoginInfo>;
+    private authRole: string;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
 
     constructor(
         private http: Http,
         private _ngRedux: NgRedux<IAppState>) {
-            this.loginInfo$ = this._ngRedux.select(state => {
-                if (state.loginInfo.size > 0) {
-                    state.loginInfo.reduce(({}, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        return loginInfoToken;
-                    }, {});
-                }
-                return state.loginInfo;
-            });
+            this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
     };
 
+    ngOnInit() {
+        this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.authToken = loginInfoToken.auth_token;
+                    this.authRole = loginInfoToken.auth_role;
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
+    }
+
+    ngOnDestroy() {
+        this.loginInfo$.unsubscribe();
+    }
     createAuthorizationHeader(headers: Headers) {
         headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
     }
@@ -43,6 +53,7 @@ export class HelperDataService {
     getEpalUserData() {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -56,6 +67,7 @@ export class HelperDataService {
     sendVerificationCode(email) {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
            "Content-Type": "application/json",
@@ -82,6 +94,7 @@ export class HelperDataService {
     verifyVerificationCode(verificationCode) {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
            "Content-Type": "application/json",
@@ -109,6 +122,7 @@ export class HelperDataService {
     saveProfile(userProfile) {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
            "Content-Type": "application/json",
@@ -133,6 +147,7 @@ export class HelperDataService {
 
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
@@ -165,6 +180,7 @@ export class HelperDataService {
     getSectorFields() {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
@@ -196,6 +212,7 @@ export class HelperDataService {
     getRegionsWithSchools(classActive,courseActive) {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
@@ -237,6 +254,7 @@ export class HelperDataService {
     getSectorsWithCourses() {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
@@ -311,6 +329,7 @@ export class HelperDataService {
         this.loginInfo$.forEach(loginInfoToken => {
             console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -335,6 +354,7 @@ export class HelperDataService {
     getCurrentUser(oauthtoken, oauthrole) {
 
         this.authToken = oauthtoken;
+        this.authRole = oauthrole;
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -374,6 +394,7 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
     signOut() {
         this.loginInfo$.forEach(loginInfoToken => {
             this.authToken = loginInfoToken.get(0).auth_token;
+            this.authRole = loginInfoToken.get(0).auth_role;
         });
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
@@ -392,8 +413,13 @@ transformUserSchema(userlogin:any,oauthtoken:string, oauthrole:string){
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let logoutRoute = '/oauth/logout';
+        console.log(this.authRole);
+        if (this.authRole === 'director')
+            logoutRoute = '/cas/logout';
+
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/oauth/logout`, {}, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}`, {}, options)
             .map(response => response)
             .subscribe(data => {
                 resolve(data);

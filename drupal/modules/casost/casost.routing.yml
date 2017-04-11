@@ -4,12 +4,6 @@ casost.log_in_go:
     _controller: '\Drupal\casost\Controller\CASLogin::loginGo'
   requirements:
     _access: 'TRUE'
-casost.callback_log_in:
-  path: /cas/cb
-  defaults:
-    _controller: '\Drupal\casost\Controller\CBController::loginCB'
-  requirements:
-    _permission: 'access content'
 casost.log_out_go:
   path: /cas/logout
   options:

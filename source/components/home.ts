@@ -64,7 +64,7 @@ export default class Home implements OnInit {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0)
+                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === 'student')
                         this.router.navigate(['/parent-form']);
                     return loginInfoToken;
                 }, {});

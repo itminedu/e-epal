@@ -1,0 +1,4 @@
+services:
+  logger.channel.cas:
+    parent: 'logger.channel_base'
+    arguments: ['epal']

@@ -30,6 +30,7 @@ class OAuthLogin extends ControllerBase
     protected $api_url;
     protected $callback_url;
     protected $logout_url;
+    protected $redirect_url;
 
     public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
@@ -67,6 +68,7 @@ class OAuthLogin extends ControllerBase
             $this->api_url = $ostauthConfig->api_url->value;
             $this->callback_url = $ostauthConfig->callback_url->value;
             $this->logout_url = $ostauthConfig->logout_url->value;
+            $this->redirect_url = $ostauthConfig->redirect_url->value;
         } else {
             $response = new Response();
             $response->setContent('forbidden');

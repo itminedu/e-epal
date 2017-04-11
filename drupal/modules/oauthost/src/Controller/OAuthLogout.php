@@ -11,6 +11,8 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class OAuthLogout extends ControllerBase
 {
@@ -28,6 +30,7 @@ class OAuthLogout extends ControllerBase
     protected $api_url;
     protected $callback_url;
     protected $logout_url;
+    protected $redirect_url;
 
     public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
@@ -67,6 +70,7 @@ class OAuthLogout extends ControllerBase
             $this->api_url = $ostauthConfig->api_url->value;
             $this->callback_url = $ostauthConfig->callback_url->value;
             $this->logout_url = $ostauthConfig->logout_url->value;
+            $this->redirect_url = $ostauthConfig->redirect_url->value;
         } else {
             $response = new Response();
             $response->setContent('forbidden');
@@ -121,7 +125,7 @@ class OAuthLogout extends ControllerBase
         $response->setStatusCode(Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
         return $response;
-
+//        return new RedirectResponse($this->redirect_url . '&auth_role=', 302, []);
 
 
         } catch (Exception $e) {

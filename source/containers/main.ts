@@ -61,6 +61,7 @@ import {
 })
 export default class Main {
   public path: string = '';
+  public pathSchool: string = 'school';
 
   constructor(
     private router: Router,
@@ -70,6 +71,7 @@ export default class Main {
   ) {
     router.events.subscribe((data) => {
       this.path = data.url.substr(1);
+      this.pathSchool = data.url.substr(1);
     });
 
 

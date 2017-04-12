@@ -1,0 +1,14 @@
+{
+  "name": "drupal/casost",
+  "type": "drupal-module",
+  "description": "Authentication Provider OST",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/casost",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/casost",
+    "source": "http://cgit.drupalcode.org/casost"
+  },
+  "require": { }
+}

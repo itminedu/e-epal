@@ -15,10 +15,10 @@ import {
 
 import { API_ENDPOINT } from '../app.settings';
 @Component({
-    selector: 'home',
+    selector: 'school-home',
     template: `
   <div>
-       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login" #form>
+       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
@@ -26,7 +26,7 @@ import { API_ENDPOINT } from '../app.settings';
 
             <div *ngIf="!authToken" class="col-md-8 offset-md-4">
                 <button type="submit" class="btn-primary btn-lg" (click)="form.submit()">
-                Είσοδος μέσω TaxisNet<span class="glyphicon glyphicon-menu-right"></span>
+                Είσοδος μέσω Π.Σ.Δ<span class="glyphicon glyphicon-menu-right"></span>
                 </button>
             </div>
             </div>
@@ -35,7 +35,7 @@ import { API_ENDPOINT } from '../app.settings';
   `
 })
 
-export default class Home implements OnInit {
+export default class SchoolHome implements OnInit {
     public formGroup: FormGroup;
     private authToken: string;
     private authRole: string;
@@ -64,8 +64,8 @@ export default class Home implements OnInit {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === 'student')
-                        this.router.navigate(['/parent-form']);
+                    if (this.authToken && this.authToken.length > 0)
+                        this.router.navigate(['/director-view']);
                     return loginInfoToken;
                 }, {});
             }

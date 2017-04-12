@@ -521,9 +521,16 @@ export class HelperDataService implements OnInit, OnDestroy{
      {
          let SchoolIdNew = SchoolId.toString();
          let SelectIdNew = SelectId.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+
+
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
+
+
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -559,7 +566,7 @@ export class HelperDataService implements OnInit, OnDestroy{
             () => console.log("Saving Profile"));
         });
 
-    }    
+    }
 
 
 
@@ -588,7 +595,7 @@ export class HelperDataService implements OnInit, OnDestroy{
             () => console.log("Saving Capacity"));
         });
 
-    }    
+    }
 
 
 

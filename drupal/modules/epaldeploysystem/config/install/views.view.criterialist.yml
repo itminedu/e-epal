@@ -12,6 +12,8 @@ dependencies:
     - rest
     - serialization
     - user
+_core:
+  default_config_hash: 2NbNzaqbe_smf6WW5GA6xdNaOyLrqo5IfrwynZngc0k
 id: criterialist
 label: criteriaList
 module: views
@@ -213,6 +215,71 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        category:
+          id: category
+          table: epal_criteria
+          field: category
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: epal_criteria
+          entity_field: category
+          plugin_id: field
         mutual_disabled_id:
           id: mutual_disabled_id
           table: epal_criteria
@@ -279,6 +346,74 @@ display:
           entity_type: epal_criteria
           entity_field: mutual_disabled_id
           plugin_id: field
+        moria:
+          id: moria
+          table: epal_criteria
+          field: moria
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 2
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: epal_criteria
+          entity_field: moria
+          plugin_id: field
       filters: {  }
       sorts: {  }
       header: {  }
@@ -326,8 +461,14 @@ display:
             name:
               alias: ''
               raw_output: true
+            category:
+              alias: ''
+              raw_output: true
             mutual_disabled_id:
               alias: ''
+              raw_output: true
+            moria:
+              alias: points
               raw_output: true
       auth:
         - basic_auth

@@ -8,7 +8,7 @@ import { IStudentDataFields } from '../../store/studentdatafields/studentdatafie
 import { CriteriaActions } from '../../actions/criteria.actions';
 import { ICriter } from '../../store/criteria/criteria.types';
 import { IAppState } from '../../store/store';
-import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN } from '../../constants';
+import { VALID_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN,  VALID_DATE_PATTERN } from '../../constants';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
 import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
 
@@ -38,7 +38,10 @@ import {
     public studentCriteriaGroup: FormGroup;
 
     private rss = new FormArray([]);
-    private selectionIncomeId = <number>0;
+    //private selectionIncomeId = <number>0;
+
+    //private  sdate;// = new Date(2013,7,29); // = Date.now();
+    //date: [datePipe.transform(this.event.date, 'yyyy-MM-dd'), [Validators.required]]
 
     constructor(private fb: FormBuilder,
                 private _sdfa: StudentDataFieldsActions,
@@ -52,6 +55,12 @@ import {
             epaluser_id: [,[]],
             name: ['ΝΙΚΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentsurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            //studentbirthdate: [this.sdate, [Validators.required]],
+            studentbirthdate: ['', [Validators.pattern(VALID_DATE_PATTERN),Validators.required]],
+            fatherfirstname: ['ΑΝΑΣΤΑΣΙΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            fathersurname: ['ΚΑΤΣΑΟΥΝΟΣ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            motherfirstname: ['ΚΑΤΕΡΙΝΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+            mothersurname: ['ΚΑΤΣΑΟΥΝΟΥ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionaddress: ['ΓΙΑΝΝΙΤΣΩΝ 5', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['26334', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -67,10 +76,10 @@ import {
 
         this.studentCriteriaGroup = this.fb.group({
             formArray: this.rss,
-            income: ['', this.checkChoice ],
+            //income: ['', this.checkChoice ],
             //income: ['noincomecriterio', Validators.required ],
             //income: [this.selectionIncomeId, this.checkChoice ],
-            //incometest: ['noincomecriterio', checkChoice ],
+            //incometest: ['noincomecriterio', this. checkChoice ],
         });
 
     };
@@ -92,9 +101,10 @@ import {
             if (state.criter.size > 0) {
                 state.criter.reduce(({}, criteria) => {
                     //this.studentCriteriaGroup.setValue(criteria);
-                      if (criteria.selected === true && (criteria.name === "Εισόδημα" ))  {
-                        this.selectionIncomeId = Number(criteria.id);
-                      }
+
+                      //if (criteria.selected === true && (criteria.name === "Εισόδημα" ))  {
+                      //  this.selectionIncomeId = Number(criteria.id);
+                      //}
                       this.rss.push( new FormControl(criteria.selected, []));
                     return criteria;
                 }, {});
@@ -117,11 +127,6 @@ import {
 
     submitSelected() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-
-        for (let i=7; i < 11; i++)
-          this.studentCriteriaGroup.controls['formArray']['controls'][i].setValue(false);
-        this.studentCriteriaGroup.controls['formArray']['controls'][this.selectionIncomeId-1].setValue(true);
-
         this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
 
         this.router.navigate(['/application-submit']);
@@ -129,11 +134,21 @@ import {
 
     checkcriteria(cb, mutual_disabled) {
       if (mutual_disabled !== "-1" && cb.checked === true) {
-        this.studentCriteriaGroup.controls['formArray']['controls'][mutual_disabled-1].setValue(false);
+        //this.studentCriteriaGroup.controls['formArray']['controls'][mutual_disabled-1].setValue(false);
+        let  mutual_ids = mutual_disabled.split(",");
+        for (let i=0; i<mutual_ids.length; i++) {
+          this.studentCriteriaGroup.controls['formArray']['controls'][mutual_ids[i]-1].setValue(false);
+        }
+
       }
+
+     //this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
+
     }
 
+/*
     checkstatus(cb) {
+
         if (cb.value === "<= 3000 Ευρώ")
           this.selectionIncomeId = 8;
         else if (cb.value === "<= 6000 Ευρώ")
@@ -143,6 +158,7 @@ import {
         else if (cb.value === "> 9000 Ευρώ")
           this.selectionIncomeId = 11;
     }
+    */
 
     //checkChoice(c: FormControl) {
     checkChoice(c: FormControl) {

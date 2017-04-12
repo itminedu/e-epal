@@ -18,6 +18,11 @@ export interface IStudentDataField {
   epaluser_id: number;
   name: string;
   studentsurname: string;
+  fatherfirstname:string;
+  fathersurname:string;
+  motherfirstname:string;
+  mothersurname:string;
+  studentbirthdate: Date;
   studentamka: string;
   regionaddress: string;
   regiontk: string;
@@ -25,6 +30,7 @@ export interface IStudentDataField {
   certificatetype: string;
   relationtostudent: string;
   currentclass: string;
+  points: number;
 }
 
 export type IStudentDataFields = List<IStudentDataField>;

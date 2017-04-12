@@ -41,6 +41,7 @@ import {AppSettings} from '../../app.settings';
     private courseSelected;
     private sectorSelected;
     private classSelected;
+    private totalPoints=  <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private regions$: BehaviorSubject<IRegions>;
     private criteria$: BehaviorSubject<ICriter>;
@@ -120,15 +121,17 @@ import {AppSettings} from '../../app.settings';
           if (state.criter.size > 0) {
               state.criter.reduce(({}, criteria) => {
                 //code to be replaced in next version
-                  if (criteria.selected === true && Number(criteria.id) !== 11)
+                  //if (criteria.selected === true && Number(criteria.id) !== 11)
+                  if (criteria.selected === true )  {
                       this.studentCriteria.push(Number(criteria.id));
+                      this.totalPoints = this.totalPoints + Number(criteria.points);
+                    }
 
                   return criteria;
               }, {});
           }
           return state.criter;
       }).subscribe(this.criteria$);
-
 
       this.sectorsSub = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
@@ -178,11 +181,11 @@ import {AppSettings} from '../../app.settings';
           let epalObj: Array<StudentEpalChosen> = [];
           let criteriaObj: Array<StudentCriteriaChosen> = [];
 
-          //aitisiObj[0] = studentDataFields["_tail"]["array"][0];
           aitisiObj[0] = this.student;
-          console.log("Hello:"); console.log(aitisiObj[0]['studentbirthdate']);
+          //console.log(aitisiObj[0]['studentbirthdate']);
           aitisiObj[0]['currentclass'] = this.classSelected;
           //aitisiObj[0]['studentamka'] = ...;
+          aitisiObj[0]['points'] = this.totalPoints;
 
           for (let i=0; i < this.epalSelected.length; i++)
             epalObj[i] =new StudentEpalChosen(null, this.epalSelected[i] , this.epalSelectedOrder[i]);

@@ -308,6 +308,7 @@ export class HelperDataService {
     }
 
     getCriteria() {
+
         this.loginInfo$.forEach(loginInfoToken => {
             console.log(loginInfoToken.get(0));
             this.authToken = loginInfoToken.get(0).auth_token;
@@ -320,6 +321,7 @@ export class HelperDataService {
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
             this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list`, options)
+            //this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list?category=${category}`, options)
             .map(response => <ISectorField[]>response.json())
             .subscribe(data => {
                 resolve(data);
@@ -533,7 +535,7 @@ export class HelperDataService {
             () => console.log("Saving Profile"));
         });
 
-    }    
+    }
 
 
 
@@ -562,7 +564,7 @@ export class HelperDataService {
             () => console.log("Saving Capacity"));
         });
 
-    }    
+    }
 
 
 

@@ -21,7 +21,7 @@ export function deimmutifyStudentDataFields(state: IStudentDataFields): IStudent
           studentamka: studentdataField.studentamka, regionaddress: studentdataField.regionaddress,
           regiontk: studentdataField.regiontk,regionarea: studentdataField.regionarea,
           certificatetype: studentdataField.certificatetype, relationtostudent: studentdataField.relationtostudent,
-          currentclass: studentdataField.currentclass
+          currentclass: studentdataField.currentclass, points: studentdataField.points
         });
     });
     return fetchedStudentDataFields;

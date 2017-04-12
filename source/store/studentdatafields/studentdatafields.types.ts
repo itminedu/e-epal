@@ -30,6 +30,7 @@ export interface IStudentDataField {
   certificatetype: string;
   relationtostudent: string;
   currentclass: string;
+  points: number;
 }
 
 export type IStudentDataFields = List<IStudentDataField>;

@@ -193,25 +193,25 @@ class EpalCriteria extends ContentEntityBase implements EpalCriteriaInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-      $fields['category'] = BaseFieldDefinition::create('string')
-        ->setLabel(t('Κατηγορα'))
-        ->setDescription(t('Κατηγορία κριτηρίου.'))
-        ->setSettings(array(
-          'max_length' => 100,
-          'text_processing' => 0,
-        ))
-  	  ->setRequired(true)
-        ->setDisplayOptions('view', array(
-          'label' => 'above',
-          'type' => 'string',
-          'weight' => -4,
-        ))
-        ->setDisplayOptions('form', array(
-          'type' => 'string_textfield',
-          'weight' => -4,
-        ))
-        ->setDisplayConfigurable('form', TRUE)
-        ->setDisplayConfigurable('view', TRUE);
+   $fields['category'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Ονομασία κατηγορίας'))
+      ->setDescription(t('Ονομασία κατηγορίας.'))
+      ->setSettings(array(
+        'max_length' => 100,
+        'text_processing' => 0,
+      ))
+     ->setRequired(true)
+     ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textfield',
+        'weight' => -4,
+      ))
+     ->setDisplayConfigurable('form', TRUE)
+     ->setDisplayConfigurable('view', TRUE);
 
 	$fields['value_limit'] = BaseFieldDefinition::create('float')
           ->setLabel(t('Αριθμητικό όριο'))
@@ -249,25 +249,25 @@ class EpalCriteria extends ContentEntityBase implements EpalCriteriaInterface {
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
 
-	$fields['mutual_disabled_id'] = BaseFieldDefinition::create('integer')
-          ->setLabel(t('Id αμοιβαία αποκλειόμενου κριτηρίου'))
-          ->setDescription(t('Id αμοιβαία αποκλειόμενου κριτηρίου.'))
-          ->setSettings(array(
-            'max_length' => 2,
-            'text_processing' => 0,
-          ))
-		  ->setRequired(true)
-          ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayOptions('form', array(
-            'type' => 'integer',
-            'weight' => -4,
-          ))
-          ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE);
+	$fields['mutual_disabled_id'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('Id αμοιβαία αποκλειόμενου κριτηρίου'))
+        ->setDescription(t('Id αμοιβαία αποκλειόμενου κριτηρίου.'))
+        ->setSettings(array(
+          'max_length' => 100,
+          'text_processing' => 0,
+        ))
+        ->setRequired(true)
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'string',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'string_textfield',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
 
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))

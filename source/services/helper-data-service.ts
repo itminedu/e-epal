@@ -51,10 +51,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     }
 
     getEpalUserData() {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -65,10 +67,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     };
 
     sendVerificationCode(email) {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
            "Content-Type": "application/json",
 //            "Accept": "*/*",
@@ -92,10 +96,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     }
 
     verifyVerificationCode(verificationCode) {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
            "Content-Type": "application/json",
 //            "Accept": "*/*",
@@ -120,10 +126,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     }
 
     saveProfile(userProfile) {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
            "Content-Type": "application/json",
         });
@@ -145,10 +153,12 @@ export class HelperDataService implements OnInit, OnDestroy{
 
     getCourseFields() {
 
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -178,10 +188,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     };
 
     getSectorFields() {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -210,10 +222,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     };
 
     getRegionsWithSchools(classActive,courseActive) {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -252,10 +266,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     };
 
     getSectorsWithCourses() {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -327,11 +343,12 @@ export class HelperDataService implements OnInit, OnDestroy{
 
     getCriteria() {
 
-        this.loginInfo$.forEach(loginInfoToken => {
-            console.log(loginInfoToken.get(0));
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
@@ -394,10 +411,12 @@ export class HelperDataService implements OnInit, OnDestroy{
         }
 
     signOut() {
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-            this.authRole = loginInfoToken.get(0).auth_role;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -440,9 +459,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     getSubmittedPreviw() {
 
 
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
              "id": ""
@@ -457,9 +479,12 @@ export class HelperDataService implements OnInit, OnDestroy{
      getStudentDetails(headerid)
      {
          let headerIdNew = headerid.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -473,9 +498,12 @@ export class HelperDataService implements OnInit, OnDestroy{
  getEpalchosen(headerid)
      {
          let headerIdNew = headerid.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -489,9 +517,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     getSectorPerSchool(SchoolId)
      {
          let SchoolIdNew = SchoolId.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -505,9 +536,12 @@ export class HelperDataService implements OnInit, OnDestroy{
      {
          let SchoolIdNew = SchoolId.toString();
          let SectorIdNew = SectorId.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -523,9 +557,16 @@ export class HelperDataService implements OnInit, OnDestroy{
      {
          let SchoolIdNew = SchoolId.toString();
          let SelectIdNew = SelectId.toString();
-         this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
-        });
+
+
+         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+         });
+         console.log("authToken=" + this.authToken);
+         console.log("authRole=" + this.authRole);
+
+
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -540,9 +581,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     saveConfirmStudents(students)
     {
         console.log(students,"hds");
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
            "Content-Type": "application/json",
         });
@@ -569,9 +613,12 @@ export class HelperDataService implements OnInit, OnDestroy{
     {
 
         console.log(taxi, capacity,"hds");
-        this.loginInfo$.forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.get(0).auth_token;
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+           this.authToken = loginInfoToken.auth_token;
+           this.authRole = loginInfoToken.auth_role;
         });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
         let headers = new Headers({
            "Content-Type": "application/json",
         });

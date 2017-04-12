@@ -28,7 +28,7 @@ import {
               <option value="2" >Β' Λυκείου</option>
               <option value="3" >Γ' Λυκείου</option>
             </select>
-      </div>      
+      </div>
       <div class="form-group">
 
             <select #tmop class="form-control" *ngIf="(selectionBClass | async)" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
@@ -54,10 +54,10 @@ import {
                  Όνομα Μητέρας: {{StudentDetails$.motherfirstname}}<br>
                  Επώνυμο Μητέρας:{{StudentDetails$.mothersurname}}<br>
                  Ημερομηνία Γέννησης: {{StudentDetails$.birthdate}}<br>
-                
-                 <strong>Επιβεβαίωση Εγγραφής: </strong> 
+
+                 <strong>Επιβεβαίωση Εγγραφής: </strong>
                  <input #cb class="pull-right" type="checkbox" name="{{ StudentDetails$.id }}" (change)="updateCheckedOptions(StudentDetails$.id, $event)" >
-                
+
              </div>
              </div>
             <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
@@ -84,7 +84,7 @@ import {
 
 
     constructor(  private fb: FormBuilder,
-                  private _hds: HelperDataService, 
+                  private _hds: HelperDataService,
                   private activatedRoute: ActivatedRoute,
                   private router: Router )
     {
@@ -99,7 +99,7 @@ import {
          taxi: ['', []],
          specialit: ['', []],
        });
-       
+
     }
 
     ngOnDestroy()
@@ -111,11 +111,11 @@ import {
         if (this.selectionBClass)
             this.selectionBClass.unsubscribe();
         if (this.selectionCClass)
-            this.selectionCClass.unsubscribe();  
+            this.selectionCClass.unsubscribe();
          if (this.retrievedStudent)
             this.retrievedStudent.unsubscribe();
     }
- 
+
     ngOnInit() {
 
     }
@@ -134,24 +134,23 @@ import {
             {
                 this.selectionBClass.next(true);
                 this.selectionCClass.next(false);
-                this.StudentSelected$ = new BehaviorSubject([{}]);
+
                 this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
             }
             else if (txop.value === "3")
-            {  
+            {
               var sectorint = +this.formGroup.value.tomeas;
               console.log(sectorint,"test");
               if (this.formGroup.value.tomeas != '')
               {
                   var sectorint = +this.formGroup.value.tomeas;
-                  this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-                  this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+
+                  this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);
               }
               this.selectionBClass.next(true);
-              this.selectionCClass.next(true);              
-              this.StudentSelected$ = new BehaviorSubject([{}]);
+              this.selectionCClass.next(true);
               this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
-            }            
+            }
     }
 
 
@@ -163,13 +162,13 @@ import {
         if (txop.value === "3")
         {
             this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);
         }
     }
 
     findstudent(txop)
     {
-            
+
             var sectorint = +this.formGroup.value.tomeas;
             if (txop.value === "1")
             {
@@ -180,15 +179,15 @@ import {
                 this.currentclass = 2;
             }
             else if (txop.value === "3")
-            {  
+            {
               this.currentclass = 3;
-            }       
+            }
             this.retrievedStudent.next(true);
             this.StudentInfo$ = new BehaviorSubject(false);
-            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);        
-         
-         
-        
+            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);
+
+
+
     }
 
 updateCheckedOptions(id, event)
@@ -196,8 +195,8 @@ updateCheckedOptions(id, event)
 
     let i = this.saved.length;
 
-       
-    if (event.target.checked === false) 
+
+    if (event.target.checked === false)
     {
       var count=this.saved.length;
       for(var j=0;j<count;j++)

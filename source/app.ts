@@ -80,5 +80,5 @@ class MyLocalization extends NgLocalization {
 })
 class AppModule {}
 
- enableProdMode();
+// enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);

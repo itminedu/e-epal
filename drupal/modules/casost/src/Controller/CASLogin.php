@@ -5,8 +5,6 @@ use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Controller\ControllerBase;
-// require_once '/home/haris/devel/eepal/drupal/modules/casost/src/CAS/phpCAS.php';
-
 use phpCAS;
 use Drupal\user\Entity\User;
 use Drupal\Core\Database\Connection;

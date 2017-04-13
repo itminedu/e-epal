@@ -22,25 +22,27 @@ import SubmitedPreview from '../components/student-application-form/submited.apl
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 import DirectorView from '../components/director/director-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
+import SchoolAuthGuard from '../guards/school.auth.guard';
+import StudentAuthGuard from '../guards/student.auth.guard';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
   { path: 'school', component: SchoolHome },
-  { path: 'parent-form', component: ParentForm },
-  { path: 'student-application-form-main', component: StudentApplicationMain },
-  { path: 'students-list', component: StudentsList },
-  { path: 'course-fields-select', component: CourseFieldsSelect },
-  { path: 'epal-class-select', component: EpalClassesSelect },
-  { path: 'sector-fields-select', component: SectorFieldsSelect },
-  { path: 'region-schools-select', component: RegionSchoolsSelect },
-  { path: 'sectorcourses-fields-select', component: SectorCoursesSelect },
-  { path: 'application-preview', component: ApplicationPreview },
-  { path: 'schools-order-select', component: SchoolsOrderSelect },
-  { path: 'application-submit', component: ApplicationSubmit },
-  { path: 'submited-preview', component: SubmitedPreview },
-  { path: 'submited-person', component: SubmitedPerson },
-  { path: 'director-view', component: DirectorView },
-  { path: 'director-classcapacity', component: DirectorClassCapacity },
+  { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard] },
+  { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
+//  { path: 'students-list', component: StudentsList },
+  { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard] },
+  { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard] },
+  { path: 'sector-fields-select', component: SectorFieldsSelect, canActivate: [StudentAuthGuard] },
+  { path: 'region-schools-select', component: RegionSchoolsSelect, canActivate: [StudentAuthGuard] },
+  { path: 'sectorcourses-fields-select', component: SectorCoursesSelect, canActivate: [StudentAuthGuard] },
+  { path: 'application-preview', component: ApplicationPreview, canActivate: [StudentAuthGuard] },
+  { path: 'schools-order-select', component: SchoolsOrderSelect, canActivate: [StudentAuthGuard] },
+  { path: 'application-submit', component: ApplicationSubmit, canActivate: [StudentAuthGuard] },
+  { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard] },
+  { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
+  { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
+  { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
 ];
 
 export const MainDeclarations = [

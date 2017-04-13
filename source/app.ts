@@ -27,6 +27,9 @@ import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 /* Here we import services */
 import {HelperDataService} from './services/helper-data-service';
 import {LoaderService} from './services/Spinner.service';
+import {AuthService} from './services/auth.service';
+import SchoolAuthGuard from './guards/school.auth.guard';
+import StudentAuthGuard from './guards/student.auth.guard';
 
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
@@ -76,6 +79,9 @@ class MyLocalization extends NgLocalization {
     //Service1, again services here
     HelperDataService,
     LoaderService,
+    AuthService,
+    SchoolAuthGuard,
+    StudentAuthGuard
   ]
 })
 class AppModule {}

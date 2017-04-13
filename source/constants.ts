@@ -47,3 +47,6 @@ export const VALID_EMAIL_PATTERN = '[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{
 
 //DD-MM-YYYY
 export const VALID_DATE_PATTERN = '([1-9]|0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|0[1-9]|1[012])[- /.](19|20)[0-9][0-9]';
+
+export const SCHOOL_ROLE = 'director';
+export const STUDENT_ROLE = 'student';

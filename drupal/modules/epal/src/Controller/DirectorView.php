@@ -219,9 +219,8 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
                     , Response::HTTP_OK);
                 }
              else {
-                       return $this->respondWithStatus([
-                    'message' => t("No students found!!!"),
-                ], Response::HTTP_OK);
+                 $list = array();
+                       return $this->respondWithStatus($list, Response::HTTP_OK);
                 }
 
 

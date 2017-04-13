@@ -1,0 +1,44 @@
+add casost config entities:
+  title: 'Create new CASOST Config entities'
+
+administer casost config entities:
+  title: 'Administer CASOST Config entities'
+  description: 'Allow to access the administration form to configure CASOST Config entities.'
+  restrict access: true
+
+delete casost config entities:
+  title: 'Delete CASOST Config entities'
+
+edit casost config entities:
+  title: 'Edit CASOST Config entities'
+
+access casost config overview:
+  title: 'Access the CASOST Config overview page'
+
+view published casost config entities:
+  title: 'View published CASOST Config entities'
+
+view unpublished casost config entities:
+  title: 'View unpublished CASOST Config entities'
+add casost session entities:
+  title: 'Create new CASOST Session entities'
+
+administer casost session entities:
+  title: 'Administer CASOST Session entities'
+  description: 'Allow to access the administration form to configure CASOST Session entities.'
+  restrict access: true
+
+delete casost session entities:
+  title: 'Delete CASOST Session entities'
+
+edit casost session entities:
+  title: 'Edit CASOST Session entities'
+
+access casost session overview:
+  title: 'Access the CASOST Session overview page'
+
+view published casost session entities:
+  title: 'View published CASOST Session entities'
+
+view unpublished casost session entities:
+  title: 'View unpublished CASOST Session entities'

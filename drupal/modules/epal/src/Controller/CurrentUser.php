@@ -39,7 +39,28 @@ class CurrentUser extends ControllerBase
 
     public function getLoginInfo(Request $request)
     {
+
         $authToken = $request->headers->get('PHP_AUTH_USER');
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if (!$user) {
+            return $this->respondWithStatus([
+                    'message' => t("User not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+
+        $userRoles = $user->getRoles();
+        foreach ($userRoles as $userRole) {
+            if ($userRole === 'epal') {
+                return $this->respondWithStatus([
+                        'name' => $user->mail->value,
+                        'title' => $user->init->value,
+                    ], Response::HTTP_OK);
+            } else if ($userRole === 'applicant') {
+                break;
+            }
+
+        }
 
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);

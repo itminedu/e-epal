@@ -6,6 +6,7 @@ export class Student {
         public epaluser_id: number,
         public name: string,
         public studentsurname: string,
+        //public studentbirthdate: Date,
         public regionaddress: string,
         public regiontk: string,
         public regionarea: string,

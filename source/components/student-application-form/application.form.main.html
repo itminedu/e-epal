@@ -36,6 +36,63 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
+    <div class="form-group">
+        <label for="fatherfirstname">Όνομα πατέρα</label><input class="form-control" type="text" formControlName="fatherfirstname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fatherfirstname').touched && studentDataGroup.get('fatherfirstname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fatherfirstname').dirty && studentDataGroup.get('fatherfirstname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="fathersurname">Επώνυμο πατέρα</label><input class="form-control" type="text" formControlName="fathersurname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fathersurname').touched && studentDataGroup.get('fathersurname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('fathersurname').dirty && studentDataGroup.get('fathersurname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="motherfirstname">Όνομα μητέρας</label><input class="form-control" type="text" formControlName="motherfirstname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('motherfirstname').touched && studentDataGroup.get('motherfirstname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('motherfirstname').dirty && studentDataGroup.get('motherfirstname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="mothersurname">Γένος μητέρας</label><input class="form-control" type="text" formControlName="mothersurname">
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('mothersurname').touched && studentDataGroup.get('mothersurname').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('mothersurname').dirty && studentDataGroup.get('mothersurname').hasError('pattern')">
+        Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
+    </div>
+
+    <div class="form-group">
+        <label for="studentbirthdate">Ημερομηνία γέννησης</label>
+        <input class="form-control" type="text" formControlName="studentbirthdate">
+    </div>
+
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').pristine ">
+        Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
+    </div>
+
+    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').dirty && studentDataGroup.get('studentbirthdate').hasError('pattern')">
+        Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
+    </div>
+
+
+
+
+
     <table>
         <tr>
             <td>
@@ -113,19 +170,19 @@
       <!--
         <fieldset class="group">
       -->
-        <legend>Εισοδηματικά κριτήρια</legend>
 
-        <!-- TEST for defining income in combolist in a redux-dynamic way
+        <!-- TEST for defining income in combolist in a redux-dynamic way-->
+        <!--
         <select #cblsttest class="form-control" (change)="checkstatus(cblsttest)" formControlName="incometest">
-        <option *ngFor="let criter$ of criteria$   | async; let i=index" >
-          <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
-        {{criter$.name}} </div></option>
+        <option *ngFor="let criterIncome$ of criteriaIncome$   | async; let i=index">
+           <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+             {{criterIncome$.name}}> </div>  </option>
         </select>
       -->
 
 
+      <!--
         <div class="form-group">
-
             <label for="income">Το κατά κεφαλήν εισόδημα στο προηγούμενο φορολογικό έτος είναι:</label><br/>
               <select #cblst class="form-control" (change)="checkstatus(cblst)" formControlName="income">
               <option value="noincomecriterio" [selected] = "selectionIncomeId === 0" >Παρακαλώ επιλέξτε..</option>
@@ -139,8 +196,21 @@
                   Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
             </div>
         </div>
+      -->
 
         <div formArrayName="formArray">
+
+          <legend>Εισοδηματικά κριτήρια</legend>
+          <div *ngFor="let criter$ of criteria$   | async; let j=index">
+            <div class="row" *ngIf="criter$.category === 'Εισοδηματικό' ">
+              <div class="col-md-1">
+                  <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{j}}>
+              </div>
+              <div class="col-md-11 pull-left">
+                  {{criter$.name}}
+              </div>
+            </div>
+          </div>
 
           <legend>Κοινωνικά κριτήρια</legend>
           <p style="margin-top: 15px; line-height: 1.5em;">Επιλέξτε όσα από τα παρακάτω κριτήρια πληρούνται για εσάς.
@@ -149,7 +219,7 @@
           </p>
 
           <div *ngFor="let criter$ of criteria$   | async; let i=index">
-            <div class="row" *ngIf="criter$.name !== 'Εισόδημα' && criter$.name !== 'Απόσταση'">
+            <div class="row" *ngIf="criter$.category === 'Κοινωνικό' ">
               <div class="col-md-1">
                   <input #cb type="checkbox" (change)="checkcriteria(cb, criter$.mutual_disabled_id)" formControlName={{i}}>
               </div>
@@ -158,6 +228,7 @@
               </div>
             </div>
           </div>
+
 
       <div class="row">
       </div>
@@ -176,7 +247,7 @@
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || (studentCriteriaGroup.invalid || selectionIncomeId === 0)" >
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid " >
                 <i class="fa fa-forward"></i>
             </button>
         </div>

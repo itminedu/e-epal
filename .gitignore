@@ -8,6 +8,7 @@ drupal/modules/*
 !drupal/modules/epal/
 !drupal/modules/epalreadydata/
 !drupal/modules/oauthost/
+!drupal/modules/casost/
 !drupal/modules/epaldeploysystem/
 
 # Logs

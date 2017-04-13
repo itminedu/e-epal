@@ -13,7 +13,8 @@ export function criteriaReducer(state: ICriter = CRITERIA_INITIAL_STATE, action)
         let newCriter = Array<ICriteria>();
         let i=0;
         action.payload.criteria.forEach(criteria => {
-            newCriter.push(<ICriteria>{id: criteria.id, name: criteria.name, mutual_disabled_id: criteria.mutual_disabled_id, selected:  false});
+            newCriter.push(<ICriteria>{id: criteria.id, name: criteria.name, category: criteria.category,
+              points: criteria.points, mutual_disabled_id: criteria.mutual_disabled_id, selected:  false});
             i++;
         });
         return Seq(newCriter).map(n => n).toList();
@@ -22,7 +23,8 @@ export function criteriaReducer(state: ICriter = CRITERIA_INITIAL_STATE, action)
         let criter = Array<ICriteria>();
         let ind=0;
         state.forEach(criteria => {
-            criter.push(<ICriteria>{id: criteria.id, name: criteria.name, mutual_disabled_id: criteria.mutual_disabled_id, selected: action.payload.criter[0][ind]});
+            criter.push(<ICriteria>{id: criteria.id, name: criteria.name, category: criteria.category,
+              points: criteria.points, mutual_disabled_id: criteria.mutual_disabled_id, selected: action.payload.criter[0][ind]});
             ind++;
         });
 

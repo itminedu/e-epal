@@ -36,4 +36,14 @@ export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύό�
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 export const VALID_DIGITS_PATTERN = '[0-9]*$';
+
 export const VALID_EMAIL_PATTERN = '[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}';
+
+//YYYY-MM-DD FULL
+//export const VALID_DATE_PATTERN = '(?:19|20)[0-9]{2}/(?:(?:0[1-9]|1[0-2])/(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))';
+
+//MM-DD-YYYY FULL
+//export const VALID_DATE_PATTERN = '(?:(?:0[1-9]|1[0-2])[\/\\-. ]?(?:0[1-9]|[12][0-9])|(?:(?:0[13-9]|1[0-2])[\/\\-. ]?30)|(?:(?:0[13578]|1[02])[\/\\-. ]?31))[\/\\-. ]?(?:19|20)[0-9]{2}';
+
+//DD-MM-YYYY
+export const VALID_DATE_PATTERN = '([1-9]|0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|0[1-9]|1[012])[- /.](19|20)[0-9][0-9]';

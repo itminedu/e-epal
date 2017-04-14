@@ -290,6 +290,26 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
                     ->setDisplayConfigurable('form', true)
                     ->setDisplayConfigurable('view', true);
 
+                    $fields['redirecturl'] = BaseFieldDefinition::create('string')
+                                 ->setLabel(t('Redirect Url'))
+                                 ->setDescription(t('Redirect Url'))
+                                 ->setSettings(array(
+                                   'max_length' => 200,
+                                   'text_processing' => 0,
+                                 ))
+                                 ->setDefaultValue('/dist/#/school')
+                                 ->setDisplayOptions('view', array(
+                                   'label' => 'above',
+                                   'type' => 'string',
+                                   'weight' => -4,
+                                 ))
+                                 ->setDisplayOptions('form', array(
+                                   'type' => 'string_textfield',
+                                   'weight' => -4,
+                                 ))
+                                 ->setDisplayConfigurable('form', true)
+                                 ->setDisplayConfigurable('view', true);
+
         $fields['changesessionid'] = BaseFieldDefinition::create('boolean')
             ->setLabel(t('Change Session Id'))
             ->setDescription(t('A boolean indicating whether we change session id.'))

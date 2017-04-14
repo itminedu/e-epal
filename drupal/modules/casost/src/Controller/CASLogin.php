@@ -21,6 +21,7 @@ class CASLogin extends ControllerBase
     protected $serverHostname;
     protected $serverPort;
     protected $serverUri;
+    protected $redirectUrl;
     protected $changeSessionId;
     protected $CASServerCACert;
     protected $CASServerCNValidate;
@@ -75,6 +76,7 @@ class CASLogin extends ControllerBase
                 $this->serverHostname = $CASOSTConfig->serverhostname->value;
                 $this->serverPort = $CASOSTConfig->serverport->value;
                 $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
+                $this->redirectUrl = $CASOSTConfig->redirecturl->value;
                 $this->changeSessionId = $CASOSTConfig->changesessionid->value;
                 $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
                 $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
@@ -175,8 +177,7 @@ class CASLogin extends ControllerBase
 // $this->logger->warning('cn=' . $filterAttribute('cn'));
             $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
             if ($epalToken) {
-
-                return new RedirectResponse('/dist/#/school?auth_token=' . $epalToken.'&auth_role=director', 302, []);
+                return new RedirectResponse($this->redirectUrl . '?auth_token=' . $epalToken.'&auth_role=director', 302, []);
             } else {
                 $response = new Response();
                 $response->setContent('forbidden');

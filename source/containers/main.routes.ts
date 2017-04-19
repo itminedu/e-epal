@@ -10,6 +10,7 @@ import StudentApplicationMain from '../components/student-application-form/appli
 import StudentsList from '../components/students/students-list';
 import Home from '../components/home';
 import SchoolHome from '../components/school.home';
+import MinistryHome from '../components/ministry.home';
 import CourseFieldsSelect from '../components/student-application-form/course.fields.select';
 import EpalClassesSelect from '../components/student-application-form/epal.class.select';
 import SectorFieldsSelect from '../components/student-application-form/sector.fields.select';
@@ -22,12 +23,14 @@ import SubmitedPreview from '../components/student-application-form/submited.apl
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 import DirectorView from '../components/director/director-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
+import MinisterView from '../components/minister/minister-view';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
   { path: 'school', component: SchoolHome },
+  { path: 'ministry', component: MinistryHome },
   { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard] },
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
 //  { path: 'students-list', component: StudentsList },
@@ -43,6 +46,7 @@ export const MainRoutes: Routes = [
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
+  { path: 'ministry/minister-view', component: MinisterView },
 ];
 
 export const MainDeclarations = [
@@ -51,6 +55,7 @@ export const MainDeclarations = [
   StudentsList,
   Home,
   SchoolHome,
+  MinistryHome,
   CourseFieldsSelect,
   EpalClassesSelect,
   SectorFieldsSelect,
@@ -64,5 +69,6 @@ export const MainDeclarations = [
   SubmitedPreview,
   SubmitedPerson,
   DirectorView,
-  DirectorClassCapacity
+  DirectorClassCapacity,
+  MinisterView
 ];

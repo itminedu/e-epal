@@ -76,8 +76,15 @@ export default class SchoolHome implements OnInit {
         // subscribe to router event
         this.activatedRoute.queryParams.subscribe((params: Params) => {
             if (params) {
+
                 this.authToken = params['auth_token'];
+                console.log("NIKOS1");
+                console.log(this.authToken );
+
+
                 this.authRole = params['auth_role'];
+                console.log("NIKOS2");
+                console.log(this.authRole );
             }
 
             if (this.authToken && this.authRole)

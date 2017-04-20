@@ -105,7 +105,7 @@ confirmstudents:
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::ConfirmStudents'
   requirements:
-    _user_is_logged_in: 'TRUE'  
+    _user_is_logged_in: 'TRUE'
 studentperschool:
   path: '/epal/studentperSchool/{epalId}/{selectId}/{classId}'
   options:
@@ -121,5 +121,12 @@ savecapacity:
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::SaveCapacity'
   requirements:
-    _user_is_logged_in: 'TRUE'  
-
+    _user_is_logged_in: 'TRUE'
+epal.ministry.log_in_go:
+  path: '/ministry/login'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\MinistryLogin::loginGo'
+  requirements:
+      _user_is_logged_in: 'TRUE'

@@ -428,6 +428,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             "Content-Type": "application/json",
             "Accept": "*/*",
             "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Origin": "*",
             // "Content-Type": "text/plain",  // try to skip preflight
             //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
             //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"

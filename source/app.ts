@@ -5,6 +5,7 @@ import 'core-js/es7/reflect';
 import { NgModule } from '@angular/core';
 import { NgReduxModule, DevToolsExtension, NgRedux } from 'ng2-redux';
 import {BrowserModule} from '@angular/platform-browser';
+import { CookieModule } from 'ngx-cookie';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -63,7 +64,8 @@ class MyLocalization extends NgLocalization {
     Ng2SmartTableModule,
     NgReduxModule,
     ModalModule.forRoot(),
-    AlertModule.forRoot()
+    AlertModule.forRoot(),
+    CookieModule.forRoot()
   ],
   declarations: [
     Main, FooterComponent, HeaderComponent, NavbarComponent, MainComponent,

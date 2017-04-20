@@ -65,6 +65,7 @@
     "ng2-bootstrap": "^1.4.2",
     "ng2-redux": "^5.1.0",
     "ng2-smart-table": "^0.4.0-5",
+    "ngx-cookie": "^1.0.0",
     "ngx-uploader": "^2.2.5",
     "raw-loader": "^0.5.1",
     "redux": "^3.6.0",

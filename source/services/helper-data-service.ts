@@ -553,7 +553,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    getStudentPerSchool(SchoolId, SelectId, classId) {
+    getStudentPerSchool(SchoolId, SelectId, classId, limitdown, limitup) {
         let SchoolIdNew = SchoolId.toString();
         let SelectIdNew = SelectId.toString();
 
@@ -571,7 +571,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SchoolIdNew + '/' + SelectIdNew + '/' + classId, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SchoolIdNew + '/' + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
             .map(response => response.json());
     }
 

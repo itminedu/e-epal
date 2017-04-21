@@ -15,6 +15,8 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+require ('RedirectResponseWithCookie.php');
 
 class CBController extends ControllerBase
 {
@@ -104,7 +106,12 @@ class CBController extends ControllerBase
         $epalToken = $this->authenticatePhase2($request, $authToken, $authVerifier);
 
         if ($epalToken) {
-            return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+            $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+            $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false);
+
+            return new RedirectResponseWithCookie($this->redirect_url, 302, array ($cookie, $cookie2));
+
+//            return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
         } else {
             $response = new Response();
             $response->setContent('forbidden');

@@ -74,8 +74,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             //            "Accept": "*/*",
@@ -103,8 +101,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             //            "Accept": "*/*",
@@ -114,7 +110,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         //        let options = new RequestOptions({ headers: headers, withCredentials: true });
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            console.log("verificationCode=" + verificationCode);
             this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/verifyvercode`, { verificationCode: verificationCode }, options)
                 .map(response => response.json())
                 .subscribe(data => {
@@ -133,8 +128,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -160,8 +153,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -195,8 +186,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -229,8 +218,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -273,8 +260,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -350,8 +335,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
@@ -418,8 +401,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -439,7 +420,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
-        console.log(this.authRole);
         if (this.authRole === 'director')
             logoutRoute = '/cas/logout';
 
@@ -467,8 +447,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             "id": ""
@@ -486,8 +464,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -504,8 +480,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -522,8 +496,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -540,8 +512,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -562,9 +532,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
-
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -578,13 +545,10 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
     saveConfirmStudents(students) {
-        console.log(students, "hds");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -609,13 +573,10 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     saveCapacity(taxi, tomeas, specialit, capacity, schoolid) {
 
-        console.log(taxi, capacity, "hds");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -654,7 +615,6 @@ export class HelperDataService implements OnInit, OnDestroy {
                     resolve(data);
                 },
                 error => {
-                    //console.log("Error Sending Ministry Credentials");
                     reject("Error Sending Ministry Credentials");
                 },
                 () => console.log(""));

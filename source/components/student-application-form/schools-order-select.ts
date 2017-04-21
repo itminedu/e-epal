@@ -7,12 +7,6 @@ import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { IRegions } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { IAppState } from '../../store/store';
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl
-} from '@angular/forms';
 import {AppSettings} from '../../app.settings';
 
 @Component({
@@ -26,12 +20,11 @@ import {AppSettings} from '../../app.settings';
     Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
-       <form [formGroup]="formGroup">
             <ul class="list-group main-view">
             <div *ngFor="let schoolField$ of schoolNames$ | async; let i=index; let isOdd=odd; let isEven=even">
                 <li class="list-group-item"  [class.oddout]="isOdd" [class.evenout]="isEven">
                 Προτίμηση {{i+1}}:  {{schoolField$}}
-                <div (click)="changeOrder(i,'up')" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></div>
+                <i (click)="changeOrder(i,'up')" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
                 </li>
             </div>
             </ul>
@@ -47,13 +40,11 @@ import {AppSettings} from '../../app.settings';
                   </button>
               </div>
               </div>
-      </form>
-
   `
 
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
-    public formGroup: FormGroup;
+//    public formGroup: FormGroup;
     private numSelected$: BehaviorSubject<number> = new BehaviorSubject(0);
     private schoolNames$: BehaviorSubject<Array<string>> = new BehaviorSubject(Array());
     private schoolSelectedIds$: BehaviorSubject<Array<number>> = new BehaviorSubject(Array());
@@ -61,40 +52,42 @@ import {AppSettings} from '../../app.settings';
     private regions$: BehaviorSubject<IRegions>;
     private regionsSub: Subscription;
 
-    constructor(private fb: FormBuilder,
-                private _cfa: RegionSchoolsActions,
+    constructor(private _cfa: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
-        this.formGroup = this.fb.group({
-        });
         this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
     };
 
     ngOnInit() {
-
           this.regionsSub = this._ngRedux.select(state => {
               let numSelected = 0;
               let idx = -1;
-              let nm = 1;
+              let nm = 0;
               let schoolNames = new Array();
               let schoolSelectedIds = new Array();
               let schoolArrayOrders = new Array();
+              let maxOrderId = 3;
 
               state.regions.reduce((prevRegion, region) =>{
                   region.epals.reduce((prevEpal, epal) =>{
                       ++idx;
                       if (epal.selected === true) {
                             numSelected++;
-                            schoolArrayOrders[idx] = nm;
-                            nm++;
+
+
                             if (epal.order_id === 0) {
-                                schoolNames[idx] = epal.epal_name;
-                                schoolSelectedIds[idx] = idx;
+                                schoolArrayOrders[idx] = maxOrderId;
+                                maxOrderId--;
+                                schoolNames[nm] = epal.epal_name;
+                                schoolSelectedIds[nm] = idx;
                             }
                             else {
+                                schoolArrayOrders[nm] = epal.order_id;
                                 schoolNames[epal.order_id - 1] = epal.epal_name;
                                 schoolSelectedIds[epal.order_id - 1] = idx;
                             }
+
+                            nm++;
 
 
                         } else {
@@ -113,12 +106,9 @@ import {AppSettings} from '../../app.settings';
               return state.regions;
           }).subscribe(this.regions$);
 
-
-
     }
 
     ngOnDestroy() {
-        console.log("on destroy");
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
         }
@@ -152,7 +142,5 @@ import {AppSettings} from '../../app.settings';
     navigateBack() {
 
         this.router.navigate(['/region-schools-select']);
-
     }
-
 }

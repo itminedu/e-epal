@@ -233,10 +233,10 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     }
 
     showValues() {
-        console.log(this.epalclasses$);
+/*        console.log(this.epalclasses$);
         console.log(this.studentDataFields$);
         console.log(this.regions$);
-        console.log(this.sectors$);
+        console.log(this.sectors$); */
     }
 
 }

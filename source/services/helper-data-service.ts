@@ -46,8 +46,13 @@ export class HelperDataService implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.loginInfo$.unsubscribe();
     }
+
     createAuthorizationHeader(headers: Headers) {
         headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
+    }
+
+    createMinistryAuthorizationHeader(headers: Headers, username: string, passwd: string) {
+        headers.append('Authorization', 'Basic ' + btoa(username + ':' + passwd));
     }
 
     getEpalUserData() {
@@ -55,8 +60,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -425,6 +428,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             "Content-Type": "application/json",
             "Accept": "*/*",
             "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Allow-Origin": "*",
             // "Content-Type": "text/plain",  // try to skip preflight
             //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
             //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
@@ -628,6 +632,32 @@ export class HelperDataService implements OnInit, OnDestroy {
                     reject("Error Saving Capacity");
                 },
                 () => console.log("Saving Capacity"));
+        });
+
+    }
+
+    sendMinisrtyCredentials(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+            //"Accept": "*/*",
+            //"Access-Control-Allow-Credentials": "true",
+            //"X-CSRF-Token": "..."
+            //"Authorization": "Basic " + btoa("..."),
+        });
+        this.createMinistryAuthorizationHeader(headers, username, userpassword);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/ministry/login`,  {username: username, userpassword: userpassword}, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    //console.log("Error Sending Ministry Credentials");
+                    reject("Error Sending Ministry Credentials");
+                },
+                () => console.log(""));
         });
 
     }

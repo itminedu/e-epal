@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+require ('RedirectResponseWithCookie.php');
 
 class CASLogin extends ControllerBase
 {
@@ -177,7 +179,12 @@ class CASLogin extends ControllerBase
 // $this->logger->warning('cn=' . $filterAttribute('cn'));
             $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
             if ($epalToken) {
-                return new RedirectResponse($this->redirectUrl . '?auth_token=' . $epalToken.'&auth_role=director', 302, []);
+                $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', 'director', 0, '/', null, false, false);
+
+                return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
+//                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
+//                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {
                 $response = new Response();
                 $response->setContent('forbidden');

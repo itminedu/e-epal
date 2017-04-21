@@ -6,6 +6,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { Observable } from 'rxjs/Rx';
 import { IAppState } from '../store/store';
 import { HelperDataService } from '../services/helper-data-service';
+import { CookieService } from 'ngx-cookie';
 import {
     FormBuilder,
     FormGroup,
@@ -49,7 +50,8 @@ export default class SchoolHome implements OnInit {
         private _ngRedux: NgRedux<IAppState>,
         private activatedRoute: ActivatedRoute,
         private _hds: HelperDataService,
-        private router: Router
+        private router: Router,
+        private _cookieService:CookieService
     ) {
         this.authToken = '';
         this.authRole = '';
@@ -59,6 +61,14 @@ export default class SchoolHome implements OnInit {
     };
 
     ngOnInit() {
+        this.authToken = this.getCookie('auth_token');
+        this.authRole = this.getCookie('auth_role');
+        if (this.authToken && this.authRole) {
+            this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
+            this.removeCookie('auth_token');
+            this.removeCookie('auth_role');
+        }
+
         this.loginInfo$ = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -72,19 +82,16 @@ export default class SchoolHome implements OnInit {
 
             return state.loginInfo;
         });
-
-        // subscribe to router event
-        this.activatedRoute.queryParams.subscribe((params: Params) => {
-            if (params) {
-                this.authToken = params['auth_token'];
-                this.authRole = params['auth_role'];
-            }
-
-            if (this.authToken && this.authRole)
-                this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
-
-        });
     }
+
+    getCookie(key: string){
+        return this._cookieService.get(key);
+    }
+
+    removeCookie(key: string){
+        return this._cookieService.remove(key);
+    }
+
     checkvalidation() {
 
     }

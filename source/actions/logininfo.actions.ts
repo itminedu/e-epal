@@ -11,7 +11,7 @@ export class LoginInfoActions {
     private _ngRedux: NgRedux<IAppState>,
     private _hds: HelperDataService) {}
 
- 
+
  getloginInfo = (loginInfo) => {
  return this._hds.getCurrentUser(loginInfo.auth_token, loginInfo.auth_role).then (loginInfos => {
       return this._ngRedux.dispatch({
@@ -22,6 +22,16 @@ export class LoginInfoActions {
       });
   });
 }
+
+ saveMinEduloginInfo = (loginInfos) => {
+   return this._ngRedux.dispatch({
+    type: LOGININFO_SAVE,
+    payload: {
+      loginInfos
+    }
+  });
+};
+
 
   initLoginInfo = () => {
       return this._ngRedux.dispatch({

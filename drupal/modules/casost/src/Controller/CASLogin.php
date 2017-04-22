@@ -89,7 +89,7 @@ class CASLogin extends ControllerBase
             }
 //            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
             // Enable verbose error messages. Disable in production!
-            phpCAS::setVerbose(true);
+            //phpCAS::setVerbose(true);
 
             phpCAS::client($this->serverVersion,
                 $this->serverHostname,
@@ -176,7 +176,7 @@ class CASLogin extends ControllerBase
             $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
             if ($epalToken) {
 
-                return new RedirectResponse('/dist/#/school?auth_token=' . $epalToken.'&auth_role=director', 302, []);
+                return new RedirectResponse('/angular/eepal-front/dist/#/school?auth_token=' . $epalToken.'&auth_role=director', 302, []);
             } else {
                 $response = new Response();
                 $response->setContent('forbidden');

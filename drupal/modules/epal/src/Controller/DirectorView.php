@@ -155,7 +155,7 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
     }
 
 
-public function getStudentPerSchool(Request $request, $epalId , $selectId, $classId)
+public function getStudentPerSchool(Request $request, $epalId , $selectId, $classId, $limitdown, $limitup)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -192,36 +192,49 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
 
             if ($studentPerSchool) {
                  $list = array();
-                 foreach ($studentPerSchool as $object)
-                        {
-                        $studentId = $object -> id() ;
-                        $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $studentId));
-                        $epalStudent = reset($epalStudents);
-                        $i = 0;
-                        if ($epalStudents) {
+                 $i = 0;
+                 if  ($limitdown==$limitup && $limitup == 0)
+                     {
+                            $list=array(
+                                   'id' => sizeof($studentPerSchool)  
+                                ); 
+                     }
 
-                           $list[] = array(
-                            'id' => $epalStudent -> id(),
-                            'name' => $epalStudent -> name ->value,
-                            'studentsurname' => $epalStudent -> studentsurname ->value,
-                            'fatherfirstname' => $epalStudent -> fatherfirstname ->value,
-                            'fathersurname' =>$epalStudent -> fathersurname ->value,
-                            'motherfirstname' => $epalStudent -> motherfirstname ->value,
-                            'mothersurname' =>$epalStudent -> mothersurname ->value,
-                            'birthdate' =>$epalStudent -> birthdate ->value,
-                            );
+                  else   
+                  {
+                         foreach ($studentPerSchool as $object)
+                                {
+                                $studentId = $object -> id() ;
+                                $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $studentId));
+                                $epalStudent = reset($epalStudents);
+                               
+                                if ($epalStudents) {
 
-                             $i++;
+                                   if ($i >= $limitdown && $i < $limitup)
+                                   { 
+                                   $list[] = array(
+                                    'i' => $i,
+                                    'id' => $epalStudent -> id(),
+                                    'name' => $epalStudent -> name ->value,
+                                    'studentsurname' => $epalStudent -> studentsurname ->value,
+                                    'fatherfirstname' => $epalStudent -> fatherfirstname ->value,
+                                    'fathersurname' =>$epalStudent -> fathersurname ->value,
+                                    'motherfirstname' => $epalStudent -> motherfirstname ->value,
+                                    'mothersurname' =>$epalStudent -> mothersurname ->value,
+                                    'birthdate' =>$epalStudent -> birthdate ->value,
+                                    );
+                                   }
+                                   $i++;
+                                }
+                            }
                         }
-                }
-                return $this->respondWithStatus(
-                        $list
-                    , Response::HTTP_OK);
-                }
+                        return $this->respondWithStatus(
+                                $list
+                            , Response::HTTP_OK);
+                        }
              else {
-                       return $this->respondWithStatus([
-                    'message' => t("No students found!!!"),
-                ], Response::HTTP_OK);
+                 $list = array();
+                       return $this->respondWithStatus($list, Response::HTTP_OK);
                 }
 
 

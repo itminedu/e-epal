@@ -1,127 +1,138 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { IRegions } from '../../store/regionschools/regionschools.types';
+import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { IAppState } from '../../store/store';
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl
-} from '@angular/forms';
 import {AppSettings} from '../../app.settings';
 
 @Component({
     selector: 'schools-order-select',
     template: `
-    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "numSelected === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
-    πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας πατώντας <i>Τα σχολεία μου</i> από τον κατάλογο επιλογών.</p>
-    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "numSelected > 1" >Έχετε επιλέξει {{numSelected}} σχολεία.
-    Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα κουμπάκια δίπλα στα ονόματα των σχολείων.
+    <div class = "loading" *ngIf="(regions$ | async).size === 0">
+    </div>
+    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(numSelected$ | async) === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
+    πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας επιστρέφοντας στην προηγούμενη οθόνη από το αριστερό βέλος κάτω αριστερά.</p>
+    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(numSelected$ | async) > 1" >Έχετε επιλέξει {{numSelected}} σχολεία.
+    Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
-<!--    <div class="row equal">
-     <div class="col-md-12"> -->
-       <form [formGroup]="formGroup">
-            <div *ngFor="let schoolField$ of schoolNames; let i=index; let isOdd=odd; let isEven=even" [class.odd]="isOdd" [class.even]="isEven">
-                <button type="button" class="btn btn-info btn-sm  pull-right" style="width:120px;margin-bottom:4px;white-space: normal;word-wrap:break-word;"
-                (click)="changeOrder(i,'up')" *ngIf = "i !== 0">Ανέβασέ με</button>
-                  <!--
-                  <button type="button" class="btn btn-info btn-sm  pull-right" (click)="changeOrder(i,'down')" style="width:120px;margin-bottom:4px;white-space: normal;word-wrap:break-word;"
-                   *ngIf = "i !== numSelected-1">Κατέβασέ με</button>
-                   -->
-                <li class="list-group-item" >
-                <!--
-                <button type="button" class="btn btn-info btn-sm  pull-left" style="width:120px;" [disabled] = "true" >Προτίμηση {{i+1}}</button>
-                -->
+            <ul class="list-group main-view">
+            <div *ngFor="let schoolField$ of schoolNames$ | async; let i=index; let isOdd=odd; let isEven=even">
+                <li class="list-group-item"  [class.oddout]="isOdd" [class.evenout]="isEven">
                 Προτίμηση {{i+1}}:  {{schoolField$}}
+                <i (click)="changeOrder(i,'up')" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
                 </li>
             </div>
+            </ul>
               <div class="row" style="margin-top: 20px;">
               <div class="col-md-6">
-                  <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack();" >
+                  <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack();" >
                 <i class="fa fa-backward"></i>
                   </button>
               </div>
               <div class="col-md-6">
-                  <button [hidden] = "objLoaderStatus == true" type="button" class="btn-primary btn-lg pull-right" (click)="navigateToStudentForm()" [disabled] = "numSelected === 0"  >
+                  <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToStudentForm()" [disabled] = "numSelected === 0"  >
                 <i class="fa fa-forward"></i>
                   </button>
               </div>
               </div>
-      </form>
-<!--    </div>
-
-  </div>  -->
   `
 
 })
-@Injectable() export default class SchoolsOrderSelect implements OnInit {
-    //private sectorFields$: Observable<ISectorFields>;
-    private regions$: Observable<IRegions>;
-    public formGroup: FormGroup;
-    private numSelected = <number>0;
-    private schoolNames: Array<string> = new Array();
-    private schoolSelectedIds: Array<number> = new Array();
-    private schoolArrayOrders: Array<number> = new Array();
+@Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
+//    public formGroup: FormGroup;
+    private numSelected$: BehaviorSubject<number> = new BehaviorSubject(0);
+    private schoolNames$: BehaviorSubject<Array<string>> = new BehaviorSubject(Array());
+    private schoolSelectedIds$: BehaviorSubject<Array<number>> = new BehaviorSubject(Array());
+    private schoolArrayOrders$: BehaviorSubject<Array<number>> = new BehaviorSubject(Array());
+    private regions$: BehaviorSubject<IRegions>;
+    private regionsSub: Subscription;
 
-    constructor(private fb: FormBuilder,
-                private _cfa: RegionSchoolsActions,
+    constructor(private _cfa: RegionSchoolsActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router) {
-        this.formGroup = this.fb.group({
-        });
+        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
     };
 
     ngOnInit() {
-        const { regions } = this._ngRedux.getState();
-        let idx = -1;
-        let nm = 1;
-        for (let l=0; l<regions.size; l++) {
-            for (let m=0; m < regions["_tail"]["array"][l]["epals"].length; m++) {
-              ++idx;
-              if (regions["_tail"]["array"][l]["epals"][m]["selected"] === true)  {
-                 this.numSelected++;
-                 this.schoolNames.push(regions["_tail"]["array"][l]["epals"][m]["epal_name"]);
-                 this.schoolSelectedIds.push(idx);
-                 this.schoolArrayOrders.push(nm++);
-               }
-               else
-                this.schoolArrayOrders.push(0);
-             }
-          }
-          this.saveSelected();
+          this.regionsSub = this._ngRedux.select(state => {
+              let numSelected = 0;
+              let idx = -1;
+              let nm = 0;
+              let schoolNames = new Array();
+              let schoolSelectedIds = new Array();
+              let schoolArrayOrders = new Array();
+              let maxOrderId = 3;
+
+              state.regions.reduce((prevRegion, region) =>{
+                  region.epals.reduce((prevEpal, epal) =>{
+                      ++idx;
+                      if (epal.selected === true) {
+                            numSelected++;
+
+
+                            if (epal.order_id === 0) {
+                                schoolArrayOrders[idx] = maxOrderId;
+                                maxOrderId--;
+                                schoolNames[nm] = epal.epal_name;
+                                schoolSelectedIds[nm] = idx;
+                            }
+                            else {
+                                schoolArrayOrders[nm] = epal.order_id;
+                                schoolNames[epal.order_id - 1] = epal.epal_name;
+                                schoolSelectedIds[epal.order_id - 1] = idx;
+                            }
+
+                            nm++;
+
+
+                        } else {
+                            schoolArrayOrders[idx] = 0;
+                        }
+                        return epal;
+                    }, {});
+
+                    return region;
+                }, {});
+                this.numSelected$.next(numSelected);
+                this.schoolNames$.next(schoolNames);
+                this.schoolSelectedIds$.next(schoolSelectedIds);
+                this.schoolArrayOrders$.next(schoolArrayOrders);
+
+              return state.regions;
+          }).subscribe(this.regions$);
+
+    }
+
+    ngOnDestroy() {
+        if (this.regionsSub) {
+            this.regionsSub.unsubscribe();
+        }
+        if (this.regions$) this.regions$.unsubscribe();
     }
 
     changeOrder(i, orient) {
+      let sn = this.schoolNames$.getValue();
+      let ssi = this.schoolSelectedIds$.getValue();
+      let sao = this.schoolArrayOrders$.getValue();
       let ind = 1;
       if (orient === "up")
         ind = -1;
-      //αλλιώς (αν orient = "down") είναι ind = 1
 
-      //classic swap!
-      /*
-      let tempSchoolName = this.schoolNames[i] ;
-      this.schoolNames[i] = this.schoolNames[i+ind];
-      this.schoolNames[i+ind] = tempSchoolName;
-      */
-      //another way of swap..
-      //this.schoolNames[i] = [this.schoolNames[i+ind],this.schoolNames[i+ind]=this.schoolNames[i]][0];
+      [ sn[i], sn[i+ind] ] = [ sn[i+ind], sn[i] ];
+      [ ssi[i], ssi[i+ind] ] = [ ssi[i+ind], ssi[i] ];
 
-      //smart way of swap!
-      [ this.schoolNames[i], this.schoolNames[i+ind] ] = [ this.schoolNames[i+ind], this.schoolNames[i] ];
-      [ this.schoolSelectedIds[i], this.schoolSelectedIds[i+ind] ] = [ this.schoolSelectedIds[i+ind], this.schoolSelectedIds[i] ];
-
-      this.saveSelected();
+      this.saveSelected(ssi, sao);
     }
 
-    saveSelected() {
-      for (let i=0; i < this.schoolSelectedIds.length; i++)
-        this.schoolArrayOrders[this.schoolSelectedIds[i]] = i+1;
-      this._cfa.saveRegionSchoolsOrder(this.schoolArrayOrders);
+    saveSelected(ssi, sao) {
+      for (let i=0; i < ssi.length; i++)
+        sao[ssi[i]] = i+1;
+      this._cfa.saveRegionSchoolsOrder(sao);
     }
 
     navigateToStudentForm() {
@@ -129,20 +140,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     navigateBack() {
-/*        this._ngRedux.select(state => {
-            state.epalclasses.reduce(({}, epalclass) =>{
-              if (epalclass.name === "Α' Λυκείου")
-                this.router.navigate(['/region-schools-select']);
-              else if (epalclass.name === "Β' Λυκείου")
-                  this.router.navigate(['/region-schools-select']);
-              else if (epalclass.name === "Γ' Λυκείου")
-                    this.router.navigate(['/region-schools-select']);
-              return epalclass;
-            }, {});
-            return state.epalclasses;
-        }); */
+
         this.router.navigate(['/region-schools-select']);
-
     }
-
 }

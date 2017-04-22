@@ -122,7 +122,6 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnDestroy() {
-        console.log("on destroy");
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
         }
@@ -172,8 +171,6 @@ import {AppSettings} from '../../app.settings';
                       }
                       this.regionActiveId = Number(region.region_id);
                       this.regionActive = numreg - 1;
-                      //console.log("HERE1: ");
-                      //console.log(this.regionActive);
                     }
                     if (Number(region.region_id) ===  this.regionActiveId)  {
                       if (region.epals.length < this.regionSizeLimit)
@@ -203,7 +200,6 @@ import {AppSettings} from '../../app.settings';
                 state.sectorFields.reduce(({}, sectorField) =>{
                     if (sectorField.selected === true) {
                         this.courseActive = sectorField.id;
-                        console.log(epalClass);
                         this._rsa.getRegionSchools(2,this.courseActive, false);
                     }
                     return sectorField;
@@ -218,7 +214,6 @@ import {AppSettings} from '../../app.settings';
                           sector.courses.reduce((prevCourse, course) =>{
                               if (course.selected === true) {
                                   this.courseActive = parseInt(course.course_id);
-                                  console.log(epalClass);
                                   this._rsa.getRegionSchools(3,this.courseActive, false);
                               }
                               return course;

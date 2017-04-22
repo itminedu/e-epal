@@ -70,6 +70,7 @@ class CASLogout extends ControllerBase
             $this->serverHostname = $CASOSTConfig->serverhostname->value;
             $this->serverPort = $CASOSTConfig->serverport->value;
             $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
+            $this->redirectUrl = $CASOSTConfig->redirecturl->value;
             $this->changeSessionId = $CASOSTConfig->changesessionid->value;
             $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
             $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
@@ -94,7 +95,7 @@ class CASLogout extends ControllerBase
             // Enable debugging
 //            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
             // Enable verbose error messages. Disable in production!
-            //phpCAS::setVerbose(true);
+   //         phpCAS::setVerbose(true);
 
             // Initialize phpCAS
             phpCAS::client($this->serverVersion,
@@ -116,15 +117,15 @@ class CASLogout extends ControllerBase
                 return $response;
             }
 //            phpCAS::handleLogoutRequests();
-//            phpCAS::logout();
+//            phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
+            session_unset();
+            session_destroy();
             $user->setPassword(uniqid('pw'));
             $user->save();
             $response = new Response();
             $response->setContent('logout successful');
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
-            $this->logger->warning("/dist/#/school?auth_token=&auth_role=");
-//            return new RedirectResponse('/dist/#/school?auth_token=&auth_role=', 302, []);
             return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());

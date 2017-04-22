@@ -13,7 +13,8 @@ export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, ac
 		let loginInfoTokens = Array<ILoginInfoToken>();
         let i=0;
         action.payload.loginInfos.forEach(loginInfo => {
-            loginInfoTokens.push(<ILoginInfoToken>{auth_token: loginInfo.auth_token, auth_role: loginInfo.auth_role, cu_name: loginInfo.cu_name});
+            loginInfoTokens.push(<ILoginInfoToken>{auth_token: loginInfo.auth_token, auth_role: loginInfo.auth_role, cu_name: loginInfo.cu_name,
+                                                    minedu_username: loginInfo.minedu_username, minedu_userpassword: loginInfo.minedu_userpassword});
             i++;
         });
         return Seq(loginInfoTokens).map(n => n).toList();

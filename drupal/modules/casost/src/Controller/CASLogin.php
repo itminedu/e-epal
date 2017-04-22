@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+require ('RedirectResponseWithCookie.php');
 
 class CASLogin extends ControllerBase
 {
@@ -21,6 +23,7 @@ class CASLogin extends ControllerBase
     protected $serverHostname;
     protected $serverPort;
     protected $serverUri;
+    protected $redirectUrl;
     protected $changeSessionId;
     protected $CASServerCACert;
     protected $CASServerCNValidate;
@@ -75,6 +78,7 @@ class CASLogin extends ControllerBase
                 $this->serverHostname = $CASOSTConfig->serverhostname->value;
                 $this->serverPort = $CASOSTConfig->serverport->value;
                 $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
+                $this->redirectUrl = $CASOSTConfig->redirecturl->value;
                 $this->changeSessionId = $CASOSTConfig->changesessionid->value;
                 $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
                 $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
@@ -175,8 +179,12 @@ class CASLogin extends ControllerBase
 // $this->logger->warning('cn=' . $filterAttribute('cn'));
             $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
             if ($epalToken) {
+                $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', 'director', 0, '/', null, false, false);
 
-                return new RedirectResponse('/angular/eepal-front/dist/#/school?auth_token=' . $epalToken.'&auth_role=director', 302, []);
+                return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
+//                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
+//                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {
                 $response = new Response();
                 $response->setContent('forbidden');

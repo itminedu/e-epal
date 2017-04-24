@@ -37,7 +37,7 @@ class ApplicationSubmit extends ControllerBase {
           $container->get('logger.factory')
       );
     }
-
+ 
  	public function appSubmit(Request $request) {
 
 		if (!$request->isMethod('POST')) {
@@ -52,6 +52,8 @@ class ApplicationSubmit extends ControllerBase {
 
 		if (!empty($content)) {
 			$applicationForm = json_decode($content, TRUE);
+			$arr = json_decode($content);
+			$lala = $arr->StudentCourseChosen->coursefield_id;
 		}
 		else {
 			return $this->respondWithStatus([
@@ -155,7 +157,7 @@ class ApplicationSubmit extends ControllerBase {
 				$entity_storage_sector->save($entity_object);
 			}
 			return $this->respondWithStatus([
-					"message" => t("Application saved successfully")
+					"message" => t("Application saved successfully").$lala
 				], Response::HTTP_OK);
 		}
 
@@ -163,7 +165,7 @@ class ApplicationSubmit extends ControllerBase {
 			$this->logger->warning($e->getMessage());
 			$transaction->rollback();
 			return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured")
+					"message" => t("An unexpected problem occured").$lala
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	 }

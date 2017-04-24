@@ -22,6 +22,7 @@ import ApplicationSubmit from '../components/student-application-form/applicatio
 import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 import DirectorView from '../components/director/director-view';
+import PerfectureView from '../components/infoviews/perfecture-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
 import MinisterView from '../components/minister/minister-view';
 import SchoolAuthGuard from '../guards/school.auth.guard';
@@ -46,6 +47,7 @@ export const MainRoutes: Routes = [
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
+  { path: 'perfecture-view', component: PerfectureView, canActivate: [StudentAuthGuard]},
   { path: 'ministry/minister-view', component: MinisterView },
 ];
 
@@ -70,5 +72,6 @@ export const MainDeclarations = [
   SubmitedPerson,
   DirectorView,
   DirectorClassCapacity,
-  MinisterView
+  MinisterView,
+  PerfectureView 
 ];

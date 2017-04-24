@@ -228,6 +228,7 @@ import {AppSettings} from '../../app.settings';
 
 
   submitRecord(record) {
+    console.log(record,"record");
     let auth_str = this.authToken + ":" + this.authToken;
     //let authTokenPost = "nkatsaounos" + ":" + "...";
     let authTokenPost = this.authToken + ":" + this.authToken;

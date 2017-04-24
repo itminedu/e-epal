@@ -20,10 +20,10 @@ import {AppSettings} from '../../app.settings';
     Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
-            <ul class="list-group main-view">
+            <ul class="list-group main-view" style="margin-top: 50px; margin-bottom: 50px;">
             <div *ngFor="let schoolField$ of schoolNames$ | async; let i=index; let isOdd=odd; let isEven=even">
                 <li class="list-group-item"  [class.oddout]="isOdd" [class.evenout]="isEven">
-                Προτίμηση {{i+1}}:  {{schoolField$}}
+                <b>({{(i+1)}}):</b> {{schoolField$}}
                 <i (click)="changeOrder(i,'up')" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
                 </li>
             </div>

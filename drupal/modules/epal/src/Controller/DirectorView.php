@@ -208,7 +208,7 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
                                 $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $studentId));
                                 $epalStudent = reset($epalStudents);
                                
-                                if ($epalStudents) {
+                                if ($epalStudent) {
 
                                    if ($i >= $limitdown && $i < $limitup)
                                    { 
@@ -399,6 +399,58 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 ], Response::HTTP_FORBIDDEN);
         }
     }
+
+
+
+
+
+
+
+public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
+    {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $perfectureId ));
+                if ($schools)        
+                {
+                    $list = array();
+                    foreach ($schools as $object) {
+                            $list[] = array(
+                                    'id' => $schools -> id(),
+                                    'name' => $schools -> name ->value,
+                                    );
+
+                                 $i++;
+                            }
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+
+    }
+
+
+
 
 
 

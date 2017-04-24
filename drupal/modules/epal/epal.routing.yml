@@ -130,3 +130,11 @@ epal.ministry.log_in_go:
     _controller: '\Drupal\epal\Controller\MinistryLogin::loginGo'
   requirements:
       _user_is_logged_in: 'TRUE'
+schoolsperperf:
+  path: '/epal/ScoolperPerf/{perfectureId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfetcure'
+  requirements:
+    _user_is_logged_in: 'TRUE'

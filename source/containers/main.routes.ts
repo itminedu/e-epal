@@ -27,6 +27,7 @@ import DirectorClassCapacity from '../components/director/director-classcapacity
 import MinisterView from '../components/minister/minister-view';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
+import RegionAuthGuard from '../guards/region.auth.guard';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -45,9 +46,9 @@ export const MainRoutes: Routes = [
   { path: 'application-submit', component: ApplicationSubmit, canActivate: [StudentAuthGuard] },
   { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard] },
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
-  { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
+  { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard, RegionAuthGuard] },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
-  { path: 'perfecture-view', component: PerfectureView, canActivate: [StudentAuthGuard]},
+  { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionAuthGuard]},
   { path: 'ministry/minister-view', component: MinisterView },
 ];
 

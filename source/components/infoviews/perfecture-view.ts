@@ -21,9 +21,20 @@ import {
     selector: 'perfecture-view',
     template: `
      
-       <div *ngFor="let SchoolNames$  of SchoolsPerPerf$ | async; let i=index">
-                 {{SchoolNames$.name}} <br>
-       </div>
+
+            <ul class="list-group main-view">
+              <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
+                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id ">
+                     <h5>{{SchoolNames$.name}}</h5>
+                  </li>
+              </div>
+             </ul>  
+             <div class="col-md-6">
+                <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" >
+                <i class="fa fa-forward"></i>
+                </button>
+            </div>  
+
 
    `
 })
@@ -34,9 +45,11 @@ import {
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
     public perfecture = 1;
+    private regionActive = <number>-1;
     
 
     constructor(private fb: FormBuilder,
+      private router: Router,
       private _hds: HelperDataService,
       ) {
         this.SchoolsPerPerf$ = new BehaviorSubject([{}]);
@@ -65,5 +78,17 @@ import {
     }
 
 
+     setActiveRegion(ind) {
+      console.log(ind,"ind");
+      if (ind === this.regionActive)
+        ind = -1;
+      this.regionActive = ind;
+    }
+
+
+    navigateToApplication()
+    {
+     this.router.navigate(['/school/director-view']); 
+    }
 
 }

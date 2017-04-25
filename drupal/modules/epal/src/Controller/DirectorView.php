@@ -403,9 +403,6 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
 
 
 
-
-
-
 public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
     {
 
@@ -421,8 +418,8 @@ public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
                     $list = array();
                     foreach ($schools as $object) {
                             $list[] = array(
-                                    'id' => $schools -> id(),
-                                    'name' => $schools -> name ->value,
+                                    'id' =>$object -> id(),
+                                    'name' => $object -> name ->value,
                                     );
 
                                  $i++;
@@ -448,8 +445,6 @@ public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
             }
 
     }
-
-
 
 
 

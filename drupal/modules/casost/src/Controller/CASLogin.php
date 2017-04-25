@@ -180,7 +180,7 @@ class CASLogin extends ControllerBase
             $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
             if ($epalToken) {
                 $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                $cookie2 = new Cookie('auth_role', 'director', 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', 'region', 0, '/', null, false, false);
 
                 return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");

@@ -29,8 +29,8 @@
       </div>
 
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
-         <li *ngIf="authRole=='student'"class="nav-item" > 
-             <a class="nav-link" [routerLink]="['/perfecture-view']" [routerLinkActive]="['active']"><b>Κατανομή μαθητών σε σχολεία</b></a>
+         <li *ngIf="authRole=='region'"class="nav-item" > 
+             <a class="nav-link" [routerLink]="['school/perfecture-view']" [routerLinkActive]="['active']"><b>Κατανομή μαθητών σε σχολεία</b></a>
          </li>
       </div>
 

@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegions } from '../../store/regionschools/regionschools.types';
+import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { IAppState } from '../../store/store';
 import {AppSettings} from '../../app.settings';
@@ -12,19 +12,19 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'schools-order-select',
     template: `
-    <div class = "loading" *ngIf="(regions$ | async).size === 0">
+    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
     </div>
-    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(numSelected$ | async) === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
+    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
     πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας επιστρέφοντας στην προηγούμενη οθόνη από το αριστερό βέλος κάτω αριστερά.</p>
-    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(numSelected$ | async) > 1" >Έχετε επιλέξει {{numSelected}} σχολεία.
+    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length > 1" >Έχετε επιλέξει {{(selectedSchools$ | async).length}} σχολεία.
     Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
-            <ul class="list-group main-view">
-            <div *ngFor="let schoolField$ of schoolNames$ | async; let i=index; let isOdd=odd; let isEven=even">
+            <ul class="list-group main-view" style="margin-top: 50px; margin-bottom: 50px;">
+            <div *ngFor="let selectedSchool$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even">
                 <li class="list-group-item"  [class.oddout]="isOdd" [class.evenout]="isEven">
-                Προτίμηση {{i+1}}:  {{schoolField$}}
-                <i (click)="changeOrder(i,'up')" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
+                <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{selectedSchool$.epal_name}}
+                <i (click)="changeOrder(i)" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
                 </li>
             </div>
             </ul>
@@ -44,67 +44,43 @@ import {AppSettings} from '../../app.settings';
 
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
-//    public formGroup: FormGroup;
-    private numSelected$: BehaviorSubject<number> = new BehaviorSubject(0);
-    private schoolNames$: BehaviorSubject<Array<string>> = new BehaviorSubject(Array());
-    private schoolSelectedIds$: BehaviorSubject<Array<number>> = new BehaviorSubject(Array());
-    private schoolArrayOrders$: BehaviorSubject<Array<number>> = new BehaviorSubject(Array());
+    //    public formGroup: FormGroup;
     private regions$: BehaviorSubject<IRegions>;
     private regionsSub: Subscription;
+    private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
 
     constructor(private _cfa: RegionSchoolsActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router) {
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router) {
         this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
     };
 
     ngOnInit() {
-          this.regionsSub = this._ngRedux.select(state => {
-              let numSelected = 0;
-              let idx = -1;
-              let nm = 0;
-              let schoolNames = new Array();
-              let schoolSelectedIds = new Array();
-              let schoolArrayOrders = new Array();
-              let maxOrderId = 3;
+        this.regionsSub = this._ngRedux.select(state => {
+            let selectedSchools = Array<IRegionSchool>();
 
-              state.regions.reduce((prevRegion, region) =>{
-                  region.epals.reduce((prevEpal, epal) =>{
-                      ++idx;
-                      if (epal.selected === true) {
-                            numSelected++;
+            state.regions.reduce((prevRegion, region) => {
+                region.epals.reduce((prevEpal, epal) => {
+                    if (epal.selected === true) {
+                        selectedSchools.push(epal);
 
+                    }
 
-                            if (epal.order_id === 0) {
-                                schoolArrayOrders[idx] = maxOrderId;
-                                maxOrderId--;
-                                schoolNames[nm] = epal.epal_name;
-                                schoolSelectedIds[nm] = idx;
-                            }
-                            else {
-                                schoolArrayOrders[nm] = epal.order_id;
-                                schoolNames[epal.order_id - 1] = epal.epal_name;
-                                schoolSelectedIds[epal.order_id - 1] = idx;
-                            }
-
-                            nm++;
-
-
-                        } else {
-                            schoolArrayOrders[idx] = 0;
-                        }
-                        return epal;
-                    }, {});
-
-                    return region;
+                    return epal;
                 }, {});
-                this.numSelected$.next(numSelected);
-                this.schoolNames$.next(schoolNames);
-                this.schoolSelectedIds$.next(schoolSelectedIds);
-                this.schoolArrayOrders$.next(schoolArrayOrders);
 
-              return state.regions;
-          }).subscribe(this.regions$);
+                return region;
+            }, {});
+
+            selectedSchools.sort(this.compareSchools);
+            selectedSchools[0].order_id = 1;
+            selectedSchools[1].order_id = 2;
+            selectedSchools[2].order_id = 3;
+
+            this.selectedSchools$.next(selectedSchools);
+
+            return state.regions;
+        }).subscribe(this.regions$);
 
     }
 
@@ -115,32 +91,37 @@ import {AppSettings} from '../../app.settings';
         if (this.regions$) this.regions$.unsubscribe();
     }
 
-    changeOrder(i, orient) {
-      let sn = this.schoolNames$.getValue();
-      let ssi = this.schoolSelectedIds$.getValue();
-      let sao = this.schoolArrayOrders$.getValue();
-      let ind = 1;
-      if (orient === "up")
-        ind = -1;
-
-      [ sn[i], sn[i+ind] ] = [ sn[i+ind], sn[i] ];
-      [ ssi[i], ssi[i+ind] ] = [ ssi[i+ind], ssi[i] ];
-
-      this.saveSelected(ssi, sao);
+    compareSchools(a: IRegionSchool, b: IRegionSchool) {
+        if (a.order_id < b.order_id)
+            return -1;
+        if (a.order_id > b.order_id)
+            return 1;
+        return 0;
     }
 
-    saveSelected(ssi, sao) {
-      for (let i=0; i < ssi.length; i++)
-        sao[ssi[i]] = i+1;
-      this._cfa.saveRegionSchoolsOrder(sao);
+    changeOrder(i) {
+        let selectedSchools = Array<IRegionSchool>();
+        selectedSchools = this.selectedSchools$.getValue();
+        if (i === 1) {
+            selectedSchools[0].order_id = 2;
+            selectedSchools[1].order_id = 1;
+            selectedSchools[2].order_id = 3;
+        }
+        else if (i === 2) {
+            selectedSchools[0].order_id = 1;
+            selectedSchools[1].order_id = 3;
+            selectedSchools[2].order_id = 2;
+        }
+        this._cfa.saveRegionSchoolsOrder(selectedSchools);
     }
 
     navigateToStudentForm() {
+        this._cfa.saveRegionSchoolsOrder(this.selectedSchools$.getValue());
         this.router.navigate(['/student-application-form-main']);
     }
 
     navigateBack() {
-
+        this._cfa.saveRegionSchoolsOrder(this.selectedSchools$.getValue());
         this.router.navigate(['/region-schools-select']);
     }
 }

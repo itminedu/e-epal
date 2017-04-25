@@ -78,10 +78,12 @@ epal.demo_data:
       _access: 'TRUE'
 epal.allocation:
   path: '/epal/distribution'
+  options:
+      _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
-      _access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 sectorperschool:
   path: '/epal/sectorperSchool/{epalId}'
   options:
@@ -128,5 +130,21 @@ epal.ministry.log_in_go:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\MinistryLogin::loginGo'
+  requirements:
+      _user_is_logged_in: 'TRUE'
+epal.ministry.log_out_go:
+  path: '/ministry/logout'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\MinistryLogin::logoutGo'
+  requirements:
+      _user_is_logged_in: 'TRUE'
+epal.ministry.general_report:
+  path: '/ministry/general-report'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\Distribution::makegGeneralReport'
   requirements:
       _user_is_logged_in: 'TRUE'

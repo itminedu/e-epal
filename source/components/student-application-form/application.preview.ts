@@ -67,7 +67,7 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
                 <div *ngFor="let epal$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even" >
 
                 <li class="list-group-item" [class.oddout]="isOdd" [class.evenout]="isEven">
-                    <b>({{ (i+1) }}):</b> {{epal$.epal_name}}
+                    <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{epal$.epal_name}}
                 </li>
               </div>
         </ul>
@@ -158,7 +158,7 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             this.numSelectedSchools = numsel;
             this.numSelectedOrder = numsel2;
             this.selectedSchools$.next(selectedSchools.sort(this.compareSchools));
-            this.selectedSchools$.next(selectedSchools);
+//            this.selectedSchools$.next(selectedSchools);
             return state.regions;
         }).subscribe(this.regions$);
 

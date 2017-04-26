@@ -61,6 +61,7 @@ export default class SchoolHome implements OnInit {
     };
 
     ngOnInit() {
+        
         this.authToken = this.getCookie('auth_token');
         this.authRole = this.getCookie('auth_role');
         if (this.authToken && this.authRole) {
@@ -75,7 +76,10 @@ export default class SchoolHome implements OnInit {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     if (this.authToken && this.authToken.length > 0)
-                        this.router.navigate(['/school/director-view']);
+                        if (this.authRole == 'director')
+                           this.router.navigate(['/school/director-view']);
+                       if (this.authRole == 'region')
+                           this.router.navigate(['/school/perfecture-view']);
                     return loginInfoToken;
                 }, {});
             }

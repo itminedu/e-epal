@@ -15,14 +15,14 @@ export class AuthService {
 
     };
 
-    isLoggedIn(role) {
+    isLoggedIn(role,role2) {
         return new Promise((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
                     loginInfo.reduce(({}, loginInfoToken) => {
-                        if (loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) {
+                        if ((role2 == '' && loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) || (role2!='' && loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && (loginInfoToken.auth_role === role || loginInfoToken.auth_role === role2))) {
                             resolve(true);
                         }
                         else {

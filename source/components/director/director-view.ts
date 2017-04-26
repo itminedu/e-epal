@@ -153,9 +153,14 @@ import {
             this.retrievedStudent.unsubscribe();
     }
 
-    ngOnInit() {
-
-    }
+    ngOnInit()
+    {
+      this.activatedRoute.params.subscribe((params: Params) => {
+            params => console.log('queryParams', params['ids']);
+            this.SchoolId = params['ids'];
+          });
+        console.log(this.SchoolId);
+    }      
 
 
     verifyclass(txop) {

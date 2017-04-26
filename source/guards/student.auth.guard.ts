@@ -9,6 +9,6 @@ export default class StudentAuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
   canActivate() {
-    return this.authService.isLoggedIn(STUDENT_ROLE).then(loggedIn => {return loggedIn;}).catch(err => {return false;});
+    return this.authService.isLoggedIn(STUDENT_ROLE,'').then(loggedIn => {return loggedIn;}).catch(err => {return false;});
   }
 }

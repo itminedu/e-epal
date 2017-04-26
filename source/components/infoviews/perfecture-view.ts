@@ -88,7 +88,10 @@ import {
 
     navigateToApplication()
     {
-     this.router.navigate(['/school/director-view']); 
+     
+     var id: string= String(this.regionActive);
+     this.router.navigate(['/school/director-view', {ids:id}]); 
+
     }
 
 }

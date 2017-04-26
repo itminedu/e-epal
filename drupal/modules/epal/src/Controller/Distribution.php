@@ -73,15 +73,37 @@ class Distribution extends ControllerBase {
 		$numDistributions = 3;
 		$sizeOfBlock = 100000;
 
-		/*
+		//POST method is checked
 		if (!$request->isMethod('POST')) {
 			return $this->respondWithStatus([
 					"message" => t("Method Not Allowed")
 				], Response::HTTP_METHOD_NOT_ALLOWED);
-    	}
-		*/
+    }
 
-		//clearDistributionResults();
+		//user validation
+		$authToken = $request->headers->get('PHP_AUTH_USER');
+		$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+		$user = reset($users);
+		if (!$user) {
+				return $this->respondWithStatus([
+								'message' => t("User not found"),
+						], Response::HTTP_FORBIDDEN);
+		}
+
+		//user role validation
+		$roles = $user->getRoles();
+		$validRole = false;
+		foreach ($roles as $role)
+			if ($role === "ministry") {
+				$validRole = true;
+				break;
+			}
+		if (!$validRole) {
+				return $this->respondWithStatus([
+								'message' => t("User Invalid Role"),
+						], Response::HTTP_FORBIDDEN);
+		}
+
 
 		$transaction = $this->connection->startTransaction();
 
@@ -91,18 +113,18 @@ class Distribution extends ControllerBase {
 			$this->connection->delete('epal_student_class')->execute();
 
 			$limitUp_class = $this->retrieveCapacityLimitUp("Α");
-			print_r("<br> ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ: " . $limitUp_class);
+			//print_r("<br> ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ: " . $limitUp_class);
 
 			while ($this->choice_id <= $numDistributions)	 {
 
-				print_r("<br>ΠΕΡΑΣΜΑ: " . $this->choice_id);
+				//print_r("<br>ΠΕΡΑΣΜΑ: " . $this->choice_id);
 
 				//υπολογισμός πλήθους non-finalized αιτήσεων για να καθοριστεί ο αριθμός των fetches που θα κάνουμε με συγκεκριμένο sizeOfBlock
 				if ($this->choice_id === 1)	{
 					$sCon = $this->connection->select('epal_student', 'eStudent')
 																		->fields('eStudent', array('id'));
 			 	  $numData = $sCon->countQuery()->execute()->fetchField();
-					print_r("<br>numData: " .  $numData);
+					//print_r("<br>numData: " .  $numData);
 				}
 
 				$j = 1;
@@ -110,7 +132,7 @@ class Distribution extends ControllerBase {
 				if ($this->choice_id === 1) {
 							while ($num <= $numData)	{
 
-								print_r("<br>FETCH: " .  $j);
+								//print_r("<br>FETCH: " .  $j);
 								$sCon = $this->connection->select('epal_student', 'eStudent')
 																					->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
 																			    ->condition('eStudent.id', 1+ $sizeOfBlock*($j-1), '>=')
@@ -130,9 +152,6 @@ class Distribution extends ControllerBase {
 																						->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
 																						->condition('eStudent.id', $this->pendingStudents, 'IN');
 									$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-
-									//foreach ($epalStudents as $x)
-									//	print_r("<br> TEST:" .  $x->id . "  ");
 
 									$this->locateStudent($this->choice_id, $epalStudents);
 								}
@@ -177,6 +196,7 @@ class Distribution extends ControllerBase {
 
 	  	} //end while
 
+
 		}	//end try
 
 		catch (\Exception $e) {
@@ -187,9 +207,26 @@ class Distribution extends ControllerBase {
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
+		//return new RedirectResponse($this->redirectUrl . '?auth_token=' . $epalToken.'&auth_role=director', 302, []);
+		//return new RedirectResponse("../eepal/dist/#/minister/minister-view");
+
+		/*
 		return $this->respondWithStatus([
 					"message" => t("Distribution has made successfully")
 				], Response::HTTP_OK);
+		*/
+		$postData = null;
+		if ($content = $request->getContent()) {
+				$postData = json_decode($content);
+				return $this->respondWithStatus([
+						'message' => "Distribution has made successfu",
+				], Response::HTTP_OK);
+			}
+			else {
+				return $this->respondWithStatus([
+						'message' => t("post with no data"),
+				], Response::HTTP_BAD_REQUEST);
+			}
 
 	}
 
@@ -204,8 +241,8 @@ class Distribution extends ControllerBase {
 		try {
 
 			foreach ($epalStudents as $epalStudent)	{
-				print_r("<br>ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ ΝΟ: " . $choice_id);
-				print_r("<br>ΜΑΘΗΤΗΣ: " .  $epalStudent->id);
+				//print_r("<br>ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ ΝΟ: " . $choice_id);
+				//print_r("<br>ΜΑΘΗΤΗΣ: " .  $epalStudent->id);
 
 				$clCon = $this->connection->select('epal_student_epal_chosen', 'epals')
 					->fields('epals', array('student_id', 'epal_id', 'choice_no'))
@@ -215,7 +252,7 @@ class Distribution extends ControllerBase {
 
 				if (sizeof($epalSchoolsChosen) !==  0)	{
 					$epalSchoolChos = reset($epalSchoolsChosen);
-					print_r(" SCHOOL_ID:" . $epalSchoolChos->epal_id . " STUDENT_ID " . $epalStudent->id);
+					//print_r(" SCHOOL_ID:" . $epalSchoolChos->epal_id . " STUDENT_ID " . $epalStudent->id);
 					$epal_dist_id = $epalSchoolChos->epal_id;
 
 					if ($epalStudent->currentclass === "2")	{
@@ -316,7 +353,7 @@ class Distribution extends ControllerBase {
 				->condition('studentClass.specialization_id', $secCourId, '=');
 			$epalStudentClass = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-			print_r("<br> ΣΧΟΛΕΙΟ: " .  $epalId . " ΤΑΞΗ: "  . $classId . " ΤΟΜΕΑΣ/ΕΙΔΙΚΟΤΗΤΑ: " . $secCourId .  " ΧΩΡΗΤΙΚΟΤΗΤΑ: " . sizeof($epalStudentClass));
+			//print_r("<br> ΣΧΟΛΕΙΟ: " .  $epalId . " ΤΑΞΗ: "  . $classId . " ΤΟΜΕΑΣ/ΕΙΔΙΚΟΤΗΤΑ: " . $secCourId .  " ΧΩΡΗΤΙΚΟΤΗΤΑ: " . sizeof($epalStudentClass));
 
 			//ΕΠΙΠΛΕΟΝ ΕΠΙΠΕΔΟ ΑΣΦΑΛΕΙΑΣ: αν δεν υπάρχει ο συγκεκριμένος τομέας/ειδικότητα στο σχολείο
 			//ο μαθητής που τοποθετήθηκε με την locateStudent να διαγραφεί
@@ -337,7 +374,7 @@ class Distribution extends ControllerBase {
 
 			$limit = $limitup * $capacity;
 			if (sizeof($epalStudentClass) > $limit)	{
-				print_r("<br>ΥΠΕΡΧΕΙΛΙΣΗ!");
+				//print_r("<br>ΥΠΕΡΧΕΙΛΙΣΗ!");
 				foreach ($epalStudentClass as $epalStudCl)	{
 					//Υπολογισμός μορίων του μαθητή και (πιθανή) αποθήκευσή τους
 					//ΣΗΜΕΙΩΣΗ: Ο υπoλογισμός γίνεται στο front-end
@@ -395,7 +432,7 @@ class Distribution extends ControllerBase {
 
 		foreach($students as $student)	{
 			$student->student_id;
-			print_r("<br>STUDENT_ID:" . $student->student_id);
+			//print_r("<br>STUDENT_ID:" . $student->student_id);
 		}
 
 		//εύρεση αριθμού μαθητών που ήδη φοιτούσαν στο σχολείο
@@ -408,11 +445,11 @@ class Distribution extends ControllerBase {
 					$this->removeFromPendingStudents($student->student_id);
 			}
 		}
-		print_r("<br>#ΕΓΓΡΑΦΩΝ ΠΟΥ ΟΙ ΜΑΘΗΤΕΣ ΦΟΙΤΟΥΣΑΝ ΗΔΗ:" . $cnt);
+		//print_r("<br>#ΕΓΓΡΑΦΩΝ ΠΟΥ ΟΙ ΜΑΘΗΤΕΣ ΦΟΙΤΟΥΣΑΝ ΗΔΗ:" . $cnt);
 
 		$newlimit = $limit - $cnt;
-		print_r("<br>ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ:" . $limit);
-		print_r("<br>#ΜΑΘΗΤΩΝ ΓΙΑ ΝΑ ΕΠΙΛΕΓΟΥΝ ΜΕ ΜΟΡΙΑ:" . $newlimit);
+		//print_r("<br>ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ:" . $limit);
+		//print_r("<br>#ΜΑΘΗΤΩΝ ΓΙΑ ΝΑ ΕΠΙΛΕΓΟΥΝ ΜΕ ΜΟΡΙΑ:" . $newlimit);
 
 		$points_arr = [];
 		foreach($students as $student)	{
@@ -421,17 +458,17 @@ class Distribution extends ControllerBase {
 		}
 
 		rsort($points_arr);
-		for ($i=0; $i < sizeof($points_arr); $i++)
-			print_r("<br>ΜΟΡΙΑ ΜΕΤΑ ΤΗΝ ΤΑΞΙΝΟΜΙΣΗ: " . $points_arr[$i]);
+		//for ($i=0; $i < sizeof($points_arr); $i++)
+			//print_r("<br>ΜΟΡΙΑ ΜΕΤΑ ΤΗΝ ΤΑΞΙΝΟΜΙΣΗ: " . $points_arr[$i]);
 
-		print_r("<br>ΟΡΙΟ ΜΟΡΙΩΝ: " . $points_arr[$newlimit-1]);
+		//print_r("<br>ΟΡΙΟ ΜΟΡΙΩΝ: " . $points_arr[$newlimit-1]);
 
 		$transaction = $this->connection->startTransaction();
 
 		foreach($students as $student)	{
 			if ($student->currentepal !== $student->epal_id)	{
 				if ($student->points < $points_arr[$newlimit-1]) {
-					print_r("<br>ΣΕ ΕΚΚΡΕΜΟΤΗΤΑ - ΔΙΑΓΡΑΦΗ: " . $student->student_id);
+					//print_r("<br>ΣΕ ΕΚΚΡΕΜΟΤΗΤΑ - ΔΙΑΓΡΑΦΗ: " . $student->student_id);
 					//βάλε τον μαθητή στον πίνακα εκκρεμοτήτων και διέγραψέ τον από τον προσωρινό πίνακα αποτελεσμάτων
 					array_push($this->pendingStudents, $student->student_id);
 					try {
@@ -471,6 +508,93 @@ class Distribution extends ControllerBase {
 				$res = new JsonResponse($arr);
 				$res->setStatusCode($s);
 				return $res;
+		}
+
+
+
+
+		public function makegGeneralReport(Request $request) {
+
+			try  {
+				if (!$request->isMethod('GET')) {
+					 return $this->respondWithStatus([
+							"message" => t("Method Not Allowed")
+							 ], Response::HTTP_METHOD_NOT_ALLOWED);
+				}
+
+				//user validation
+				//Note:  $authToken =  $postData->username
+				$authToken = $request->headers->get('PHP_AUTH_USER');
+				$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+				$user = reset($users);
+				if (!$user) {
+						return $this->respondWithStatus([
+										'message' => t("User not found"),
+								], Response::HTTP_FORBIDDEN);
+				}
+
+				//user role validation
+				//$user = \Drupal\user\Entity\User::load($user->id());
+				$roles = $user->getRoles();
+				$validRole = false;
+				foreach ($roles as $role)
+					if ($role === "ministry") {
+						$validRole = true;
+						break;
+					}
+				if (!$validRole) {
+						return $this->respondWithStatus([
+										'message' => t("User Invalid Role"),
+								], Response::HTTP_FORBIDDEN);
+				}
+
+				//υπολογισμός αριθμού αιτήσεων
+				$sCon = $this->connection->select('epal_student', 'eStudent')
+																	->fields('eStudent', array('id'));
+				$numTotal = $sCon->countQuery()->execute()->fetchField();
+
+				//υπολογισμός αριθμού αιτήσεων που ικανοποιήθηκαν στην i προτίμηση
+				$numData = array();
+				for ($i=0; $i < 3; $i++)	{
+					$sCon = $this->connection->select('epal_student_class', 'eStudent')
+																		->fields('eStudent', array('id', 'distribution_id'))
+																		->condition('eStudent.distribution_id', $i+1, '=');
+					array_push($numData, $sCon->countQuery()->execute()->fetchField());
+				}
+
+				// υπολογισμός αριθμού αιτήσεων που ΔΕΝ ικανοποιήθηκαν
+				//Σημείωση: υπολογισμός με queries στη βάση
+				$sCon = $this->connection->select('epal_student_class', 'eStudent')
+																	->fields('eStudent', array('id'));
+				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+				$studentIds = array();
+				foreach ($epalStudents as $epalStudent)
+					array_push($studentIds, $epalStudent->id);
+				$sCon = $this->connection->select('epal_student', 'eStudent')
+																	->fields('eStudent', array('id'))
+																	->condition('eStudent.id', $studentIds, 'NOT IN');
+				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
+
+				$list[] = array(
+					 'num_applications' => $numTotal,
+				 	 'numchoice1' => $numData[0],
+					 'numchoice2' => $numData[1],
+					 'numchoice3' => $numData[2],
+					 'num_noallocated' => $numNoAllocated,
+				 );
+
+				 return $this->respondWithStatus(
+								 $list
+						 , Response::HTTP_OK);
+			}	 //end try
+
+			catch (\Exception $e) {
+				$this->logger->warning($e->getMessage());
+				return $this->respondWithStatus([
+							"message" => t("An unexpected problem occured during DELETE proccess in makeSelectionOfStudents Method of Distribution")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+			}
+
 		}
 
 

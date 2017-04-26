@@ -23,51 +23,48 @@ import {
 import { API_ENDPOINT } from '../../app.settings';
 
 @Component({
-    selector: 'minister-view',
+    selector: 'minister-reports',
     template: `
 
-    <div
-      class = "loading" *ngIf=" distStatus === 'STARTED'" >
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'STARTED'">
-      Παρακαλώ περιμένετε...Η εκτέλεση της κατανομής ενδέχεται να διαρκέσει μερικά λεπτά. Παρακαλώ μην εκτελείται οποιαδήποτε ενέργεια μετακίνησης στον φυλλομετρητή σας, μέχρι να ολοκληρωθεί η κατανομή.
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'FINISHED'">
-      Η κατανομή ολοκληρώθηκε με επιτυχία!
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'ERROR'">
-      Αποτυχία κατανομής!
-    </div>
+
 
   <div>
-      <!--
-      <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/epal/distribution" #form>
-      -->
       <form [formGroup]="formGroup"  #form>
-        <!--<div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>-->
         <!--<button type="submit" class="btn-primary btn-md" (click)="form.submit()" >-->
-        <button type="submit" class="btn-primary btn-md"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" >
-            Εκτέλεση Κατανομής Μαθητών
+        <button type="submit" class="btn btn-default btn-block"  (click)="reportGeneral()" >
+            Συγκεντρωτικά Αποτελέσματα Κατανομής
         </button>
+        <div *ngFor="let generalReports$  of generalReport$ | async; let i=index">
+          <div *ngIf="showMessage">
+          <br>
+           Αριθμός Αιτήσεων: {{generalReports$.num_applications}}<br>
+           Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση: {{generalReports$.numchoice1}}<br>
+           Αριθμός μαθητών που τοποθετήθηκαν στη δεύτερή τους προτίμηση: {{generalReports$.numchoice2}}<br>
+           Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση: {{generalReports$.numchoice3}}<br>
+           Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση: {{generalReports$.num_noallocated}}<br>
+        </div>
+        </div>
       </form>
     </div>
 
    `
 })
 
-@Injectable() export default class MinisterView implements OnInit, OnDestroy {
+@Injectable() export default class MinisterReports implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
-    //private loginInfo$: Observable<ILoginInfo>;
     loginInfo$: BehaviorSubject<ILoginInfo>;
     loginInfoSub: Subscription;
+    private generalReport$: BehaviorSubject<any>;
+    private generalReportSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
+    private data: string;
+    private showMessage: boolean;
 
     constructor(private fb: FormBuilder,
-      //  private _ata: LoginInfoActions,
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
@@ -78,13 +75,21 @@ import { API_ENDPOINT } from '../../app.settings';
           });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+          this.generalReport$ = new BehaviorSubject([{}]);
+
+          this.showMessage = false;
 
     }
 
     ngOnDestroy() {
 
-      if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
+      if (this.loginInfoSub)
+        this.loginInfoSub.unsubscribe();
       this.loginInfo$.unsubscribe();
+
+      if (this.generalReportSub)
+          this.generalReportSub.unsubscribe();
+      this.generalReport$.unsubscribe();
 
     }
 
@@ -101,21 +106,29 @@ import { API_ENDPOINT } from '../../app.settings';
           return state.loginInfo;
       }).subscribe(this.loginInfo$);
 
+
+
     }
 
 
+    reportGeneral() {
 
-
-    runDistribution() {
-      this.distStatus = "STARTED";
-      this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
-      .catch(err => {console.log(err); this.distStatus = "ERROR"; })
-      .then(msg => {
-          console.log("KATANOMH TELEIOSE");
-          if (this.distStatus !== "ERROR")
-            this.distStatus = "FINISHED";
-      });
-    }
+      this.generalReportSub = this._hds.makeGeneralReport(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+          this.generalReport$.next(data);
+          this.data = data;
+      },
+        error => {
+          this.generalReport$.next([{}]);
+          console.log("Error Getting generalReport");
+        },
+        () => {
+          console.log("Getting generalReport");
+          /*this.numChoice1 = this.data['numchoice1'];
+          console.log(this.numChoice1);*/
+          this.showMessage = true;
+        }
+      )
+  }
 
 
 

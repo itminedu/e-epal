@@ -67,6 +67,9 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
             else if (this.authRole === 'student') {
                 this.router.navigate(['']);
             }
+            else if (this.authRole === 'supervisor') {
+                this.router.navigate(['/ministry']);
+            }
             this.authToken = '';
             this.authRole = '';
         });

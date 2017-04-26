@@ -21,6 +21,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     private authToken: string;
     private authRole: string;
+    private minedu_userName: string;
+    private minedu_userPassword: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
 
     constructor(
@@ -36,11 +38,14 @@ export class HelperDataService implements OnInit, OnDestroy {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
+                    //this.minedu_userName = loginInfoToken.minedu_username;
+                    //this.minedu_userPassword = loginInfoToken.minedu_userpassword;
                     return loginInfoToken;
                 }, {});
             }
             return state.loginInfo;
         }).subscribe(this.loginInfo$);
+
     }
 
     ngOnDestroy() {
@@ -360,6 +365,9 @@ export class HelperDataService implements OnInit, OnDestroy {
 
         this.authToken = oauthtoken;
         this.authRole = oauthrole;
+
+        //console.log("MIPOS");
+
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -387,6 +395,12 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
+    setMineduCurrentUser(minedu_username, minedu_pwd, role) {
+        this.minedu_userName = minedu_username;
+        this.minedu_userPassword = minedu_pwd;
+        this.authRole = role;
+      }
+
 
     transformUserSchema(userlogin: any, oauthtoken: string, oauthrole: string) {
         let rsa = Array<ILoginInfoToken>();
@@ -397,31 +411,33 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
     signOut() {
+        //loginInfo$ take values only in case getCurrentUser (epal module) has been used ...WHY? TO BE CHECKED..
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
+
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
-            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
-
-
             "Content-Type": "application/json",
             "Accept": "*/*",
             "Access-Control-Allow-Credentials": "true",
             "Access-Control-Allow-Origin": "*",
-            // "Content-Type": "text/plain",  // try to skip preflight
-            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
-            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
-            "X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
+            //"X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
             //            "X-oauth-enabled": "true",
             //            "X-Auth-Token": this.authToken
         });
-        this.createAuthorizationHeader(headers);
+
+        if (this.authRole === "supervisor")
+          this.createMinistryAuthorizationHeader(headers, this.minedu_userName, this.minedu_userPassword);
+        else
+          this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
         if (this.authRole === 'director')
-            logoutRoute = '/cas/logout';
+          logoutRoute = '/cas/logout';
+        else if (this.authRole === 'supervisor')
+          logoutRoute = '/ministry/logout';
 
         return new Promise((resolve, reject) => {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}`, {}, options)
@@ -619,6 +635,60 @@ export class HelperDataService implements OnInit, OnDestroy {
                 },
                 () => console.log(""));
         });
+
+    }
+
+    makeDistribution(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword );
+        let options = new RequestOptions({ headers: headers });
+
+        //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/distribution/` , options)
+        //    .map(response => response.json());
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {username: username, userpassword: userpassword}, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistribution");
+                },
+                () => console.log(""));
+        });
+
+    }
+
+    makeGeneralReport(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword );
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/general-report/` , options)
+            .map(response => response.json());
+
+        /*
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {username: username, userpassword: userpassword}, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistribution");
+                },
+                () => console.log(""));
+        });
+        */
 
     }
 

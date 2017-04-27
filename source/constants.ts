@@ -50,3 +50,6 @@ export const VALID_DATE_PATTERN = '([1-9]|0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|0[
 
 export const SCHOOL_ROLE = 'director';
 export const STUDENT_ROLE = 'student';
+export const PDE_ROLE = 'pde';
+export const DIDE_ROLE = 'dide';
+export const MINISTRY_ROLE = 'minister';

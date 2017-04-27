@@ -1,4 +1,5 @@
 import { EPALCLASSES_SAVE } from '../constants';
+import { EPALCLASSES_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -19,9 +20,12 @@ export class EpalClassesActions {
       });
   };
 
+  initEpalClasses = () => {
+      return this._ngRedux.dispatch({
+          type: EPALCLASSES_INIT,
+          payload: {
+          }
+      });
+  };
+
 }
-
-
-
-
-

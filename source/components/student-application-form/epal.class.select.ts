@@ -106,15 +106,6 @@ import {AppSettings} from '../../app.settings';
        this._sfa.initSectorFields();
        this._rsa.initRegionSchools();
        this._csa.initSectorCourses();
-/*       this._sfa.getSectorFields(true);
-       this._rsa.getRegionSchools(1,"-1", true);
-       console.log("Here I am!");
-
-       //this._rsa.saveRegionSchoolsOrder(true);
-
-       this._csa.getSectorCourses(true);
-       this._csa.getSectorCourses(true); */
-
     }
 
 }

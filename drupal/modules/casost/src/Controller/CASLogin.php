@@ -124,10 +124,10 @@ class CASLogin extends ControllerBase
                 return $response;
             }
             $attributes = phpCAS::getAttributes();
-            foreach ($attributes as $attr_key => $attr_value) {
+/*            foreach ($attributes as $attr_key => $attr_value) {
                 $this->logger->warning($attr_key);
                 $this->logger->warning(phpCAS::getAttribute($attr_key));
-            }
+            } */
 
 /*            $isAllowed = true;
             $att1 = $attributes[$this->allowed1];
@@ -207,7 +207,7 @@ class CASLogin extends ControllerBase
 //                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {
                 $response = new Response();
-                $response->setContent('forbidden');
+                $response->setContent('No proper authentication');
                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
                 $response->headers->set('Content-Type', 'application/json');
                 return $response;
@@ -216,7 +216,7 @@ class CASLogin extends ControllerBase
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('Unexpected Problem');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;

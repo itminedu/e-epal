@@ -52,4 +52,4 @@ export const SCHOOL_ROLE = 'director';
 export const STUDENT_ROLE = 'student';
 export const PDE_ROLE = 'pde';
 export const DIDE_ROLE = 'dide';
-export const MINISTRY_ROLE = 'minister';
+export const MINISTRY_ROLE = 'supervisor';

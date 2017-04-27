@@ -21,6 +21,8 @@ import {
     selector: 'director-view',
     template: `
   <form [formGroup]="formGroup">
+       
+
       <label for="taxi">Τάξη</label><br/>
       <div class="form-group">
             <select #txoption  class="form-control" (change)="verifyclass(txoption)" formControlName="taxi">
@@ -30,7 +32,6 @@ import {
             </select>
       </div>
       <div class="form-group">
-
             <select #tmop class="form-control" *ngIf="(selectionBClass | async)" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
               <option *ngFor="let SectorSelection$  of StudentSelected$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.sector_id}} </option>
             </select>
@@ -40,7 +41,7 @@ import {
               <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
       </div>
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption)">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption,1)">
                 Αναζήτηση
              </button>
              <div *ngIf="(retrievedStudent | async)">
@@ -60,9 +61,38 @@ import {
 
 <!--             </div>  -->
              </div>
+
+          <br>
+          <br>
+         <div class="form-group" class="row">
+          Βρίσκεστε στη σελίδα:
+          <div class="col-1">
+           <input #pageno type="text" class="form-control" placeholder=".col-1" formControlName="pageno">
+          </div> 
+           απο  
+           <div class="col-1">
+           <input #maxpage type="text" class="form-control" placeholder=".col-1" formControlName="maxpage">
+           </div>   
+         </div>
+ 
             <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
                  Επιβεβαίωση Εγγραφής
              </button>
+             <br>
+             <nav aria-label="pagination">
+              <ul class="pagination justify-content-center">
+                <li class="page-item " >
+                  <button class="page-link" (click)="prevpage(txoption)">Προηγούμενη</button>
+                </li>
+                <li class="page-item">
+                  <button class="page-link" (click) ="nextpage(txoption,maxpage) ">Επόμενη</button>
+                </li>
+              </ul>
+              
+            </nav>
+     
+       
+
    `
 })
 
@@ -73,6 +103,8 @@ import {
     private StudentSelectedSub: Subscription;
     private StudentInfo$: BehaviorSubject<any>;
     private StudentInfoSub: Subscription;
+    private StudentsSize$: BehaviorSubject<any>;
+    private StudentsSizeSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
@@ -81,6 +113,10 @@ import {
     private SchoolId = 147;
     private currentclass: Number;
     private saved: Array<number> = new Array();
+    private limitdown = 0; 
+    private limitup=  5;
+    private pageno = 1;
+    //private maxpage:Number;
 
 
     constructor(private fb: FormBuilder,
@@ -90,6 +126,7 @@ import {
         this.StudentSelected$ = new BehaviorSubject([{}]);
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.StudentInfo$ = new BehaviorSubject([{}]);
+        this.StudentsSize$ = new BehaviorSubject({});
         this.retrievedStudent = new BehaviorSubject(false);
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
@@ -97,6 +134,8 @@ import {
             tomeas: ['', []],
             taxi: ['', []],
             specialit: ['', []],
+            maxpage:[{value: '', disabled: true}, []],
+            pageno:[{value: '', disabled: true}, []],
         });
 
     }
@@ -120,6 +159,7 @@ import {
 
 
     verifyclass(txop) {
+        this.pageno = 1;
         this.retrievedStudent.next(false);
         if (txop.value === "1") {
             this.selectionBClass.next(false);
@@ -170,6 +210,7 @@ import {
 
 
     checkbclass(tmop, txop) {
+        this.pageno = 1;
         this.retrievedStudent.next(false);
         var sectorint = +this.formGroup.value.tomeas;
         console.log(sectorint, "tomeas");
@@ -187,8 +228,9 @@ import {
         }
     }
 
-    findstudent(txop) {
+    findstudent(txop, pageno) {
 
+        var tot_pages: Number;
         var sectorint = +this.formGroup.value.tomeas;
         if (txop.value === "1") {
             this.currentclass = 1;
@@ -200,9 +242,24 @@ import {
             this.currentclass = 3;
         }
 
+         this.formGroup.get('pageno').setValue(this.pageno); 
+         if (this.pageno == 1){
+            console.log(this.SchoolId, sectorint, this.currentclass,"test");            
+            this.StudentsSizeSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, 0, 0).subscribe(x => {
+                this.StudentsSize$.next(x);
+                tot_pages = x.id /5;
+                if (x.id%5 >0)
+                {
+                    tot_pages = (x.id - (x.id%5))/5 +1;
+                }  
+                this.formGroup.get('maxpage').setValue(tot_pages); 
+                });
+
+        }            
+     
         //            this.StudentInfo$ = new BehaviorSubject([{}]);
         //            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);
-        this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(data => {
+        this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
             this.StudentInfo$.next(data);
             this.retrievedStudent.next(true);
         },
@@ -238,7 +295,32 @@ import {
     }
 
     checkcclass() {
+        this.pageno = 1;
         this.retrievedStudent.next(false);
     }
+
+    nextpage(txop, maxpage){
+     console.log(maxpage.value);   
+     if (this.pageno < maxpage.value)
+      {
+           this.pageno = this.pageno+1;
+           this.limitdown = (this.pageno-1) * 5 ;
+           this.limitup = this.pageno * 5;
+           this.findstudent(txop, this.pageno)
+       }
+    }
+
+    prevpage(txop){
+       console.log(this.pageno,"pageno");
+       if (this.pageno > 1)
+       {
+           this.pageno = this.pageno-1;
+           this.limitdown = (this.pageno-1) * 5 ;
+           this.limitup = this.pageno * 5;
+           this.findstudent(txop, this.pageno)
+       }
+
+    }
+
 
 }

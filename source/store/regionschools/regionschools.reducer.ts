@@ -35,18 +35,33 @@ export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_ST
         });
         return state;
 
-        case REGIONSCHOOLS_ORDER_SAVE:
-            let regionsWithOrders = Array<IRegion>();
-            let idx=0, k = 0;
-            state.forEach(region => {
-                regionsWithOrders.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>()});
-                region.epals.forEach(epal => {
-                    regionsWithOrders[idx].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: action.payload.regionSchoolsOrder[k]});
-                    k++;
-                })
-                idx++;
-            });
-            return Seq(regionsWithOrders).map(n => n).toList();
+    case REGIONSCHOOLS_ORDER_SAVE:
+        let ind2=0;
+        state.forEach(region => {
+            for(let i=0; i<region.epals.length; i++){
+                if (region.epals[i].globalIndex === action.payload.selectedSchools[0].globalIndex) {
+                    region.epals[i].order_id = action.payload.selectedSchools[0].order_id
+                    return state.withMutations(function (list) {
+                        list.set(ind2++, region);
+                    });
+                }
+                if (region.epals[i].globalIndex === action.payload.selectedSchools[1].globalIndex) {
+                    region.epals[i].order_id = action.payload.selectedSchools[1].order_id
+                    return state.withMutations(function (list) {
+                        list.set(ind2++, region);
+                    });
+                }
+                if (region.epals[i].globalIndex === action.payload.selectedSchools[2].globalIndex) {
+                    region.epals[i].order_id = action.payload.selectedSchools[2].order_id
+                    return state.withMutations(function (list) {
+                        list.set(ind2++, region);
+                    });
+                }
+
+            }
+            ind2++;
+        });
+        return state;
 
         case REGIONSCHOOLS_INIT:
             return REGION_SCHOOLS_INITIAL_STATE;

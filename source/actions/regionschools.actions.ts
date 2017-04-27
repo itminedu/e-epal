@@ -59,11 +59,11 @@ export class RegionSchoolsActions {
       });
   };
 
-  saveRegionSchoolsOrder = (regionSchoolsOrder) => {
+  saveRegionSchoolsOrder = (selectedSchools) => {
       return this._ngRedux.dispatch({
         type: REGIONSCHOOLS_ORDER_SAVE,
         payload: {
-          regionSchoolsOrder
+          selectedSchools
         }
       });
   };

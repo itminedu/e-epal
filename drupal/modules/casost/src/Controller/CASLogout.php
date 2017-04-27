@@ -95,7 +95,7 @@ class CASLogout extends ControllerBase
             // Enable debugging
 //            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
             // Enable verbose error messages. Disable in production!
-         //   phpCAS::setVerbose(true);
+   //         phpCAS::setVerbose(true);
 
             // Initialize phpCAS
             phpCAS::client($this->serverVersion,
@@ -110,6 +110,7 @@ class CASLogout extends ControllerBase
 
             if (!$user) {
                 $this->logger->warning("user not found");
+
                 $response = new Response();
                 $response->setContent('forbidden');
                 $response->setStatusCode(Response::HTTP_FORBIDDEN);

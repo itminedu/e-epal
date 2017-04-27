@@ -11,7 +11,7 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { IRegions } from '../../store/regionschools/regionschools.types';
+import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
@@ -20,8 +20,6 @@ import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.i
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
-
-
 
 @Component({
     selector: 'application-preview-select',
@@ -47,7 +45,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             </ul>
         </div>
 
-
     <div *ngFor="let sector$ of sectors$  | async;">
             <ul class="list-group left-side-view" style="margin-bottom: 20px;" *ngIf="sector$.sector_selected === true">
                 <li class="list-group-item active" *ngIf="sector$.sector_selected === true" >
@@ -65,39 +62,15 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
 
 
+        <ul *ngIf="(regions$ | async).size > 0" class="list-group left-side-view" style="margin-bottom: 20px;">
 
+                <div *ngFor="let epal$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even" >
 
-        <ul class="list-group left-side-view" style="margin-bottom: 20px;">
-              <div *ngFor="let region$ of regions$ | async;">
-
-                <div *ngFor="let epal$ of region$.epals; " >
-
-                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 1">
-                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name}}
-                </li>
-                  <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 0">
-                      {{epal$.epal_name   }}
-                  </li>
-
-                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 2">
-                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
-                </li>
-
-                <li class="list-group-item" *ngIf="epal$.selected === true && epal$.order_id === 3">
-                    Προτίμηση {{epal$.order_id}}: {{epal$.epal_name   }}
+                <li class="list-group-item" [class.oddout]="isOdd" [class.evenout]="isEven">
+                    <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{epal$.epal_name}}
                 </li>
               </div>
-            </div>
-<!--            <div class="btn-group inline pull-right">
-              <button type="button" class="btn-primary btn-sm pull-right" (click)="defineOrder()"
-              [hidden] = "numSelectedSchools <= 1 ">> Σειρά προτίμησης</button>
-            </div> -->
         </ul>
-
-
-
-
-
 
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
               <ul class="list-group left-side-view" style="margin-bottom: 20px;">
@@ -124,6 +97,7 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 @Injectable() export default class ApplicationPreview implements OnInit {
     private sectors$: BehaviorSubject<ISectors>;
     private regions$: BehaviorSubject<IRegions>;
+    private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
@@ -143,6 +117,7 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
         this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
         this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
+
         this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
@@ -166,10 +141,12 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0, numsel2 = 0;
+            let selectedSchools = Array<IRegionSchool>();
             state.regions.reduce((prevRegion, region) => {
                 region.epals.reduce((prevEpal, epal) => {
                     if (epal.selected === true) {
                         numsel++;
+                        selectedSchools.push(epal);
                     }
                     if (epal.order_id !== 0) {
                         numsel2++;
@@ -180,6 +157,8 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             }, {});
             this.numSelectedSchools = numsel;
             this.numSelectedOrder = numsel2;
+            this.selectedSchools$.next(selectedSchools.sort(this.compareSchools));
+//            this.selectedSchools$.next(selectedSchools);
             return state.regions;
         }).subscribe(this.regions$);
 
@@ -219,6 +198,14 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
     }
 
+    compareSchools(a: IRegionSchool,b: IRegionSchool) {
+        if (a.order_id < b.order_id)
+            return -1;
+        if (a.order_id > b.order_id)
+            return 1;
+        return 0;
+    }
+
     ngOnDestroy() {
         this.regionsSub.unsubscribe();
         this.epalclassesSub.unsubscribe();
@@ -233,10 +220,10 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     }
 
     showValues() {
-        console.log(this.epalclasses$);
+/*        console.log(this.epalclasses$);
         console.log(this.studentDataFields$);
         console.log(this.regions$);
-        console.log(this.sectors$);
+        console.log(this.sectors$); */
     }
 
 }

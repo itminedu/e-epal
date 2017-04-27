@@ -34,7 +34,7 @@ export class AuthService {
                     resolve(false);
             },
                 error => {
-                    console.log("Error Sending Verification Code");
+                    console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
                 },
                 () => console.log("Getting Auth Data"));

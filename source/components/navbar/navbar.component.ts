@@ -44,7 +44,6 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     this.cuName = loginInfoToken.cu_name;
-                    console.log(loginInfoToken.cu_name);
                     return loginInfoToken;
                 }, {})
             }
@@ -62,14 +61,14 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
     oauthSignOut() {
         this._hds.signOut().then(data => {
             this._ata.initLoginInfo();
-            console.log(this.authRole);
             if (this.authRole === 'director') {
-                console.log("director");
                 this.router.navigate(['/school']);
             }
             else if (this.authRole === 'student') {
-                console.log("applicant");
                 this.router.navigate(['']);
+            }
+            else if (this.authRole === 'supervisor') {
+                this.router.navigate(['/ministry']);
             }
             this.authToken = '';
             this.authRole = '';

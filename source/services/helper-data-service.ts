@@ -21,6 +21,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     private authToken: string;
     private authRole: string;
+    private minedu_userName: string;
+    private minedu_userPassword: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
 
     constructor(
@@ -36,11 +38,14 @@ export class HelperDataService implements OnInit, OnDestroy {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
+                    //this.minedu_userName = loginInfoToken.minedu_username;
+                    //this.minedu_userPassword = loginInfoToken.minedu_userpassword;
                     return loginInfoToken;
                 }, {});
             }
             return state.loginInfo;
         }).subscribe(this.loginInfo$);
+
     }
 
     ngOnDestroy() {
@@ -74,8 +79,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             //            "Accept": "*/*",
@@ -103,8 +106,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             //            "Accept": "*/*",
@@ -114,7 +115,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         //        let options = new RequestOptions({ headers: headers, withCredentials: true });
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            console.log("verificationCode=" + verificationCode);
             this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/verifyvercode`, { verificationCode: verificationCode }, options)
                 .map(response => response.json())
                 .subscribe(data => {
@@ -133,8 +133,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -160,8 +158,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -195,8 +191,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -229,8 +223,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -273,8 +265,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -350,8 +340,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
@@ -377,6 +365,9 @@ export class HelperDataService implements OnInit, OnDestroy {
 
         this.authToken = oauthtoken;
         this.authRole = oauthrole;
+
+        //console.log("MIPOS");
+
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
@@ -404,6 +395,12 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
+    setMineduCurrentUser(minedu_username, minedu_pwd, role) {
+        this.minedu_userName = minedu_username;
+        this.minedu_userPassword = minedu_pwd;
+        this.authRole = role;
+      }
+
 
     transformUserSchema(userlogin: any, oauthtoken: string, oauthrole: string) {
         let rsa = Array<ILoginInfoToken>();
@@ -414,34 +411,33 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
     signOut() {
+        //loginInfo$ take values only in case getCurrentUser (epal module) has been used ...WHY? TO BE CHECKED..
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
+
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
-            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
-
-
             "Content-Type": "application/json",
             "Accept": "*/*",
             "Access-Control-Allow-Credentials": "true",
             "Access-Control-Allow-Origin": "*",
-            // "Content-Type": "text/plain",  // try to skip preflight
-            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
-            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
-            "X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
+            //"X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
             //            "X-oauth-enabled": "true",
             //            "X-Auth-Token": this.authToken
         });
-        this.createAuthorizationHeader(headers);
+
+        if (this.authRole === "supervisor")
+          this.createMinistryAuthorizationHeader(headers, this.minedu_userName, this.minedu_userPassword);
+        else
+          this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
-        console.log(this.authRole);
         if (this.authRole === 'director')
-            logoutRoute = '/cas/logout';
+          logoutRoute = '/cas/logout';
+        else if (this.authRole === 'supervisor')
+          logoutRoute = '/ministry/logout';
 
         return new Promise((resolve, reject) => {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}`, {}, options)
@@ -467,8 +463,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
             "id": ""
@@ -486,8 +480,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -504,8 +496,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -522,8 +512,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -540,8 +528,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -553,7 +539,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    getStudentPerSchool(SchoolId, SelectId, classId) {
+    getStudentPerSchool(SchoolId, SelectId, classId, limitdown, limitup) {
         let SchoolIdNew = SchoolId.toString();
         let SelectIdNew = SelectId.toString();
 
@@ -562,29 +548,23 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
-
 
         let headers = new Headers({
             "Content-Type": "application/json",
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SchoolIdNew + '/' + SelectIdNew + '/' + classId, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SchoolIdNew + '/' + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
             .map(response => response.json());
     }
 
 
 
     saveConfirmStudents(students) {
-        console.log(students, "hds");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -609,13 +589,10 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     saveCapacity(taxi, tomeas, specialit, capacity, schoolid) {
 
-        console.log(taxi, capacity, "hds");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
-        console.log("authToken=" + this.authToken);
-        console.log("authRole=" + this.authRole);
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -654,11 +631,64 @@ export class HelperDataService implements OnInit, OnDestroy {
                     resolve(data);
                 },
                 error => {
-                    //console.log("Error Sending Ministry Credentials");
                     reject("Error Sending Ministry Credentials");
                 },
                 () => console.log(""));
         });
+
+    }
+
+    makeDistribution(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword );
+        let options = new RequestOptions({ headers: headers });
+
+        //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/distribution/` , options)
+        //    .map(response => response.json());
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {username: username, userpassword: userpassword}, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistribution");
+                },
+                () => console.log(""));
+        });
+
+    }
+
+    makeGeneralReport(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword );
+        let options = new RequestOptions({ headers: headers });
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/general-report/` , options)
+            .map(response => response.json());
+
+        /*
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {username: username, userpassword: userpassword}, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistribution");
+                },
+                () => console.log(""));
+        });
+        */
 
     }
 

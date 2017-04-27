@@ -91,9 +91,9 @@ class CASLogin extends ControllerBase
                 $this->allowed2 = $CASOSTConfig->allowed2->value;
                 $this->allowed2Value = $CASOSTConfig->allowed2value->value;
             }
-//            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
+            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
             // Enable verbose error messages. Disable in production!
-           // phpCAS::setVerbose(true);
+            phpCAS::setVerbose(true);
 
             phpCAS::client($this->serverVersion,
                 $this->serverHostname,
@@ -124,6 +124,10 @@ class CASLogin extends ControllerBase
                 return $response;
             }
             $attributes = phpCAS::getAttributes();
+            foreach ($attributes as $attr_key => $attr_value) {
+                $this->logger->warning($attr_key);
+                $this->logger->warning(phpCAS::getAttribute($attr_key));
+            }
 
 /*            $isAllowed = true;
             $att1 = $attributes[$this->allowed1];
@@ -166,21 +170,37 @@ class CASLogin extends ControllerBase
 
             $filterAttribute = function ($attribute) use ($attributes) {
                 if (!isset($attributes[$attribute])) {
-                    return;
+                    return false;
                 }
-
-                if (is_array($attributes[$attribute])) {
-                    return $attributes[$attribute];
-                }
-
                 return $attributes[$attribute];
             };
 
+            $exposedRole = 'director';
+            $internalRole = 'epal';
+            $CASTitle = preg_replace('/\s+/', '', $filterAttribute('title'));
+            if ($CASTitle === 'ΠΕΡΙΦΕΡΕΙΑΚΗΔΙΕΥΘΥΝΣΗΕΚΠΑΙΔΕΥΣΗΣ-ΠΔΕ') {
+                $exposedRole = 'pde';
+                $internalRole = 'regioneduadmin';
+            } else if ($CASTitle === 'ΔΙΕΥΘΥΝΣΗΔΕ-ΔIΔΕ') {
+                $exposedRole = 'dide';
+                $internalRole = 'eduadmin';
+            } else if ($CASTitle === 'ΕΠΑΛ') {
+                $exposedRole = 'director';
+                $internalRole = 'epal';
+            } else {
+                $response = new Response();
+                $this->logger->warning(t('Access is allowed only to official school accounts or administration'));
+                $response->setContent(t('Access is allowed only to official school accounts or administration'));
+                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $response->headers->set('Content-Type', 'application/json;charset=UTF-8');
+                return $response;
+            }
+
 // $this->logger->warning('cn=' . $filterAttribute('cn'));
-            $epalToken = $this->authenticatePhase2($request, $CASUser, $filterAttribute('cn'));
+            $epalToken = $this->authenticatePhase2($request, $CASUser, $internalRole, $filterAttribute('cn'));
             if ($epalToken) {
                 $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                $cookie2 = new Cookie('auth_role', 'director', 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false);
 
                 return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
@@ -203,7 +223,7 @@ class CASLogin extends ControllerBase
         }
     }
 
-    public function authenticatePhase2($request, $CASUser, $cn)
+    public function authenticatePhase2($request, $CASUser, $internalRole, $cn)
     {
     $trx = $this->connection->startTransaction();
     try {
@@ -241,7 +261,7 @@ class CASLogin extends ControllerBase
             $user->set('preferred_admin_langcode', $language_interface->getId());
 
             //Adding default user role
-            $user->addRole('epal');
+            $user->addRole($internalRole);
             $user->save();
         }
 

@@ -402,6 +402,51 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
 
 
 
+    public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
+    {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $perfectureId ));
+                if ($schools)        
+                {
+                    $list = array();
+                    foreach ($schools as $object) {
+                            $list[] = array(
+                                    'id' =>$object -> id(),
+                                    'name' => $object -> name ->value,
+                                    );
+
+                                 $i++;
+                            }
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+
+    }
+
+
+
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

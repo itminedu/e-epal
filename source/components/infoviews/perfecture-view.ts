@@ -24,8 +24,8 @@ import {
             
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
-                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id ">
-                     <h5>{{SchoolNames$.name}}</h5>
+                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changecolor]="calccolor(SchoolNames$.id)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id ">
+                     <h5 [class.changecolor]="calccolor(SchoolNames$.id)"> {{SchoolNames$.name}}</h5>
                   </li>
               </div>
              </ul>  
@@ -44,6 +44,8 @@ import {
     public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
+    private StudentsSize$: BehaviorSubject<any>;
+    private StudentsSizeSub: Subscription;
     public perfecture = 1;
     private regionActive = <number>-1;
     
@@ -53,6 +55,7 @@ import {
       private _hds: HelperDataService,
       ) {
         this.SchoolsPerPerf$ = new BehaviorSubject([{}]);
+        this.StudentsSize$ = new BehaviorSubject({});
         this.formGroup = this.fb.group({
         });
 
@@ -91,6 +94,22 @@ import {
      
      var id: string= String(this.regionActive);
      this.router.navigate(['', {ids:id}]); 
+
+    }
+
+
+    calccolor(id)
+    {
+
+    this.StudentsSizeSub = this._hds.getStudentPerSchool(id, '5', 2, 0, 0).subscribe(x => {
+                this.StudentsSize$.next(x);                
+                console.log(id, x, "test");
+                });
+
+      if (id == 147)
+        return true;
+      if (id == 150)
+        return true;
 
     }
 

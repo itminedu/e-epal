@@ -148,3 +148,14 @@ epal.ministry.general_report:
     _controller: '\Drupal\epal\Controller\Distribution::makegGeneralReport'
   requirements:
       _user_is_logged_in: 'TRUE'
+regionview:
+  path: '/epal/ScoolperPerf/{perfectureId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfetcure'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+
+

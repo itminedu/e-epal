@@ -440,7 +440,7 @@ export class HelperDataService implements OnInit, OnDestroy {
           logoutRoute = '/ministry/logout';
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}`, {}, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)
                 .map(response => response)
                 .subscribe(data => {
                     resolve(data);

@@ -14,12 +14,12 @@ import {
     FormArray
 } from '@angular/forms';
 
-import { API_ENDPOINT } from '../app.settings';
+import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
 @Component({
     selector: 'school-home',
     template: `
   <div>
-       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login" #form>
+       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
@@ -44,6 +44,7 @@ export default class SchoolHome implements OnInit {
     private xcsrftoken: any;
     private loginInfo$: Observable<ILoginInfo>;
     private apiEndPoint = API_ENDPOINT;
+    private apiEndPointParams = API_ENDPOINT_PARAMS;
 
     constructor(private fb: FormBuilder,
         private _ata: LoginInfoActions,

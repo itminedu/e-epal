@@ -11,8 +11,6 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use phpCAS;
 
 class CASLogout extends ControllerBase
@@ -63,34 +61,38 @@ class CASLogout extends ControllerBase
     public function logoutGo(Request $request)
     {
         try {
-        $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => 'casost_sch_sso_config'));
-        $CASOSTConfig = reset($CASOSTConfigs);
-        if ($CASOSTConfig) {
-            $this->serverVersion = $CASOSTConfig->serverversion->value;
-            $this->serverHostname = $CASOSTConfig->serverhostname->value;
-            $this->serverPort = $CASOSTConfig->serverport->value;
-            $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
-            $this->redirectUrl = $CASOSTConfig->redirecturl->value;
-            $this->changeSessionId = $CASOSTConfig->changesessionid->value;
-            $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
-            $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
-            $this->noCASServerValidation = $CASOSTConfig->nocasservervalidation->value;
-            $this->proxy = $CASOSTConfig->proxy->value;
-            $this->handleLogoutRequests = $CASOSTConfig->handlelogoutrequests->value;
-            $this->CASLang = $CASOSTConfig->caslang->value;
-            $this->allowed1 = $CASOSTConfig->allowed1->value;
-            $this->allowed1Value = $CASOSTConfig->allowed1value->value;
-            $this->allowed2 = $CASOSTConfig->allowed2->value;
-            $this->allowed2Value = $CASOSTConfig->allowed2value->value;
-        } else {
-            $response = new Response();
-            $response->setContent('forbidden. No config');
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->headers->set('Content-Type', 'application/json');
-            return $response;
-        }
+            $configRowName = 'casost_sch_sso_config';
+            $configRowId = $request->query->get('config');
+            if ($configRowId) {
+                $configRowName = $configRowName.'_'.$configRowId;
+            }
+            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => $configRowName));
+            $CASOSTConfig = reset($CASOSTConfigs);
+            if ($CASOSTConfig) {
+                $this->serverVersion = $CASOSTConfig->serverversion->value;
+                $this->serverHostname = $CASOSTConfig->serverhostname->value;
+                $this->serverPort = $CASOSTConfig->serverport->value;
+                $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
+                $this->redirectUrl = $CASOSTConfig->redirecturl->value;
+                $this->changeSessionId = $CASOSTConfig->changesessionid->value;
+                $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
+                $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
+                $this->noCASServerValidation = $CASOSTConfig->nocasservervalidation->value;
+                $this->proxy = $CASOSTConfig->proxy->value;
+                $this->handleLogoutRequests = $CASOSTConfig->handlelogoutrequests->value;
+                $this->CASLang = $CASOSTConfig->caslang->value;
+                $this->allowed1 = $CASOSTConfig->allowed1->value;
+                $this->allowed1Value = $CASOSTConfig->allowed1value->value;
+                $this->allowed2 = $CASOSTConfig->allowed2->value;
+                $this->allowed2Value = $CASOSTConfig->allowed2value->value;
+            } else {
+                $response = new Response();
+                $response->setContent('forbidden. No config');
+                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $response->headers->set('Content-Type', 'application/json');
 
-
+                return $response;
+            }
 
             // Enable debugging
 //            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
@@ -109,12 +111,13 @@ class CASLogout extends ControllerBase
             $user = reset($users);
 
             if (!$user) {
-                $this->logger->warning("user not found");
+                $this->logger->warning('user not found');
 
                 $response = new Response();
                 $response->setContent('forbidden');
                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
                 $response->headers->set('Content-Type', 'application/json');
+
                 return $response;
             }
 //            phpCAS::handleLogoutRequests();
@@ -127,6 +130,7 @@ class CASLogout extends ControllerBase
             $response->setContent('logout successful');
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
+
             return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
@@ -134,8 +138,8 @@ class CASLogout extends ControllerBase
             $response->setContent('forbidden');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
+
             return $response;
         }
     }
-
 }

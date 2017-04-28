@@ -15,12 +15,12 @@ import {
     FormArray
 } from '@angular/forms';
 
-import { API_ENDPOINT } from '../app.settings';
+import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
 @Component({
     selector: 'home',
     template: `
   <div>
-       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login" #form>
+       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
@@ -45,6 +45,7 @@ export default class Home implements OnInit {
     private xcsrftoken: any;
     private loginInfo$: Observable<ILoginInfo>;
     private apiEndPoint = API_ENDPOINT;
+    private apiEndPointParams = API_ENDPOINT_PARAMS;
 
     constructor(private fb: FormBuilder,
         private _ata: LoginInfoActions,
@@ -64,6 +65,8 @@ export default class Home implements OnInit {
     ngOnInit() {
         this.authToken = this.getCookie('auth_token');
         this.authRole = this.getCookie('auth_role');
+//        console.log(this.authToken);
+//        console.log(this.authRole);
         if (this.authToken && this.authRole) {
             this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             this.removeCookie('auth_token');
@@ -85,7 +88,7 @@ export default class Home implements OnInit {
         });
 
         // subscribe to router event
-/*        this.activatedRoute.queryParams.subscribe((params: Params) => {
+        this.activatedRoute.queryParams.subscribe((params: Params) => {
             if (params) {
                 this.authToken = params['auth_token'];
                 this.authRole = params['auth_role'];
@@ -94,7 +97,7 @@ export default class Home implements OnInit {
             if (this.authToken && this.authRole)
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
 
-        });  */
+        });
     }
 
     getCookie(key: string){

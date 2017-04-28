@@ -14,7 +14,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
-require ('RedirectResponseWithCookie.php');
+require ('RedirectResponseWithCookieExt.php');
 
 class CASLogin extends ControllerBase
 {
@@ -70,8 +70,11 @@ class CASLogin extends ControllerBase
     {
 
         try {
-
-            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => 'casost_sch_sso_config'));
+            $configRowName = 'casost_sch_sso_config';
+            $configRowId = $request->query->get('config');
+            if ($configRowId)
+                $configRowName = $configRowName . '_' . $configRowId;
+            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => $configRowName));
             $CASOSTConfig = reset($CASOSTConfigs);
             if ($CASOSTConfig) {
                 $this->serverVersion = $CASOSTConfig->serverversion->value;
@@ -199,10 +202,14 @@ class CASLogin extends ControllerBase
 // $this->logger->warning('cn=' . $filterAttribute('cn'));
             $epalToken = $this->authenticatePhase2($request, $CASUser, $internalRole, $filterAttribute('cn'));
             if ($epalToken) {
-                $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false);
+                if ('casost_sch_sso_config' === $configRowName) {
+                    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                    $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false);
 
-                return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
+                    return new RedirectResponseWithCookieExt($this->redirectUrl, 302, array ($cookie, $cookie2));
+                } else {
+                    return new RedirectResponseWithCookieExt($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+                }
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
 //                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {

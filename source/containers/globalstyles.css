@@ -175,3 +175,23 @@
 .selectedout {
     background-color: #fd9665;
 }
+
+.roundedNumber{
+    width: 2em;
+    background-color: coral;
+    color: white;
+    font-weight: bold;
+    border:1px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    /* Prevent background color leak outs */
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    padding: 0px 10px 0px 10px;
+    text-align: center;
+}
+
+.reportScroll {
+overflow-x: scroll;
+}

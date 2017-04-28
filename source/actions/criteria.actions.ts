@@ -1,4 +1,4 @@
-import { CRITERIA_RECEIVED, CRITERIA_SAVE} from '../constants';
+import { CRITERIA_RECEIVED, CRITERIA_SAVE, CRITERIA_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
 import { IAppState } from '../store';
@@ -33,5 +33,13 @@ export class CriteriaActions {
         }
       });
   };
+
+  initCriteria = () => {
+        return this._ngRedux.dispatch({
+            type: CRITERIA_INIT,
+            payload: {
+            }
+        });
+    };
 
 }

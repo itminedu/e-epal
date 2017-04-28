@@ -46,13 +46,14 @@ class MinistryLogin extends ControllerBase
 
     public function loginGo(Request $request)
     {
-      if (!$request->isMethod('POST')) {
-         return $this->respondWithStatus([
-            "message" => t("Method Not Allowed")
-             ], Response::HTTP_METHOD_NOT_ALLOWED);
-      }
 
       try  {
+
+        if (!$request->isMethod('POST')) {
+           return $this->respondWithStatus([
+              "message" => t("Method Not Allowed")
+               ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
 
         //user validation
         //Note:  $authToken =  $postData->username
@@ -86,9 +87,9 @@ class MinistryLogin extends ControllerBase
             $postData = json_decode($content);
             //return new RedirectResponse("/drupal-8.2.6/eepal/dist/"  . '?auth_token=' . $postData->username .'&auth_role=supervisor', 302, []);
             return $this->respondWithStatus([
-                'auth_token' => $postData->username,
-                'userpassword' => $postData->userpassword,
-                'auth_role' => $currentRoleName,
+                //'auth_token' => $postData->username,
+                //'userpassword' => $postData->userpassword,
+                //'auth_role' => $currentRoleName,
             ], Response::HTTP_OK);
           }
           else {
@@ -108,6 +109,65 @@ class MinistryLogin extends ControllerBase
             return $response;
         }
 
+    }
+
+    public function logoutGo(Request $request)
+    {
+      try  {
+
+          if (!$request->isMethod('POST')) {
+             return $this->respondWithStatus([
+                "message" => t("Method Not Allowed")
+                 ], Response::HTTP_METHOD_NOT_ALLOWED);
+          }
+
+          //user validation
+          //Note:  $authToken =  $postData->username
+          $authToken = $request->headers->get('PHP_AUTH_USER');
+          $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+          $user = reset($users);
+          if (!$user) {
+              return $this->respondWithStatus([
+                      'message' => t("User not found"),
+                  ], Response::HTTP_FORBIDDEN);
+          }
+
+          //user role validation
+          //$user = \Drupal\user\Entity\User::load($user->id());
+          /*
+          $roles = $user->getRoles();
+          $validRole = false;
+          foreach ($roles as $role)
+            if ($role === "ministry") {
+              $validRole = true;
+              break;
+            }
+          if (!$validRole) {
+              return $this->respondWithStatus([
+                      'message' => t("User Invalid Role"),
+                  ], Response::HTTP_FORBIDDEN);
+          }
+          */
+
+        session_unset();
+        session_destroy();
+
+        $response = new Response();
+        $response->setContent('logout successful');
+        $response->setStatusCode(Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+
+        } //end try
+
+        catch (\Exception $e) {
+            $this->logger->warning($e->getMessage());
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
     }
 
 

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Rx';
 import { IAppState } from '../store/store';
 import { HelperDataService } from '../services/helper-data-service';
 import { CookieService } from 'ngx-cookie';
+import { STUDENT_ROLE } from '../constants';
 import {
     FormBuilder,
     FormGroup,
@@ -74,7 +75,7 @@ export default class Home implements OnInit {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === 'student')
+                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE)
                         this.router.navigate(['/parent-form']);
                     return loginInfoToken;
                 }, {});

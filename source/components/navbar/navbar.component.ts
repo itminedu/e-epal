@@ -9,8 +9,13 @@ import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.typ
 import { HelperDataService } from '../../services/helper-data-service';
 import { LoginInfoActions } from '../../actions/logininfo.actions';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-
-
+import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../../constants';
+import { EpalClassesActions } from '../../actions/epalclass.actions';
+import { SectorFieldsActions } from '../../actions/sectorfields.actions';
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
+import { CriteriaActions } from '../../actions/criteria.actions';
+import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 
 @Component({
   selector: 'reg-navbar',
@@ -26,6 +31,12 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 
     constructor( private _ata: LoginInfoActions,
                 private _hds: HelperDataService,
+                private _csa: SectorCoursesActions,
+                private _sfa: SectorFieldsActions,
+                private _rsa: RegionSchoolsActions,
+                private _eca: EpalClassesActions,
+                private _sdfa: StudentDataFieldsActions,
+                private _cria: CriteriaActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
                 ) {
@@ -58,14 +69,29 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 
     }
 
-    oauthSignOut() {
+    signOut() {
         this._hds.signOut().then(data => {
             this._ata.initLoginInfo();
-            if (this.authRole === 'director') {
+            if (this.authRole === SCHOOL_ROLE) {
                 this.router.navigate(['/school']);
             }
-            else if (this.authRole === 'student') {
+            else if (this.authRole === PDE_ROLE) {
+                this.router.navigate(['/school']);
+            }
+            else if (this.authRole === DIDE_ROLE) {
+                this.router.navigate(['/school']);
+            }
+            else if (this.authRole === STUDENT_ROLE) {
+                this._eca.initEpalClasses();
+                this._sfa.initSectorFields();
+                this._rsa.initRegionSchools();
+                this._csa.initSectorCourses();
+                this._sdfa.initStudentDataFields();
+                this._cria.initCriteria();
                 this.router.navigate(['']);
+            }
+            else if (this.authRole === MINISTRY_ROLE) {
+                this.router.navigate(['/ministry']);
             }
             this.authToken = '';
             this.authRole = '';

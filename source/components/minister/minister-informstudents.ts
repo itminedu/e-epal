@@ -17,45 +17,20 @@ import {
     FormGroup,
     FormControl,
     FormArray,
-    Validators,
 } from '@angular/forms';
 
 import { API_ENDPOINT } from '../../app.settings';
 
 @Component({
-    selector: 'minister-view',
+    selector: 'minister-informstudents',
     template: `
 
-    <div
-      class = "loading" *ngIf=" distStatus === 'STARTED'" >
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'STARTED'">
-      Παρακαλώ περιμένετε...Η εκτέλεση της κατανομής ενδέχεται να διαρκέσει μερικά λεπτά. Παρακαλώ μην εκτελείται οποιαδήποτε ενέργεια μετακίνησης στον φυλλομετρητή σας, μέχρι να ολοκληρωθεί η κατανομή.
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'FINISHED'">
-      Η κατανομή ολοκληρώθηκε με επιτυχία!
-    </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'ERROR'">
-      Αποτυχία κατανομής!
-    </div>
 
-  <div>
-      <!--
-      <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/epal/distribution" #form>
-      -->
-      <form [formGroup]="formGroup"  #form>
-        <!--<div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>-->
-        <!--<button type="submit" class="btn-primary btn-md" (click)="form.submit()" >-->
-        <button type="submit" class="btn-primary btn-md"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" >
-            Εκτέλεση Κατανομής Μαθητών
-        </button>
-      </form>
-    </div>
 
    `
 })
 
-@Injectable() export default class MinisterView implements OnInit, OnDestroy {
+@Injectable() export default class InformStudents implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     //private loginInfo$: Observable<ILoginInfo>;
@@ -64,7 +39,6 @@ import { API_ENDPOINT } from '../../app.settings';
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
-    private distStatus = "READY";
 
     constructor(private fb: FormBuilder,
       //  private _ata: LoginInfoActions,
@@ -102,21 +76,6 @@ import { API_ENDPOINT } from '../../app.settings';
       }).subscribe(this.loginInfo$);
 
     }
-
-
-
-
-    runDistribution() {
-      this.distStatus = "STARTED";
-      this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
-      .catch(err => {console.log(err); this.distStatus = "ERROR"; })
-      .then(msg => {
-          console.log("KATANOMH TELEIOSE");
-          if (this.distStatus !== "ERROR")
-            this.distStatus = "FINISHED";
-      });
-    }
-
 
 
 }

@@ -14,10 +14,11 @@ export const SECTORCOURSES_RECEIVED = 'SECTORCOURSES_RECEIVED';
 export const SECTORCOURSES_SELECTED_SAVE = 'SECTORCOURSES_SELECTED_SAVE';
 export const SECTORCOURSES_INIT = 'SECTORCOURSES_INIT';
 
-export const STUDENTDATAFIELDS_RECEIVED = 'STUDENTDATAFIELDS_RECEIVED';
 export const STUDENTDATAFIELDS_SAVE = 'STUDENTDATAFIELDS_SAVE';
+export const STUDENTDATAFIELDS_INIT = 'STUDENTDATAFIELDS_INIT';
 
 export const EPALCLASSES_SAVE = 'EPALCLASSES_SAVE';
+export const EPALCLASSES_INIT = 'EPALCLASSES_INIT';
 
 export const LOGININFO_SAVE = 'LOGININFO_SAVE';
 
@@ -30,6 +31,7 @@ export const LOGININFO_INIT = 'LOGININFO_INIT';
 
 export const CRITERIA_RECEIVED = 'CRITERIA_RECEIVED';
 export const CRITERIA_SAVE = 'CRITERIA_SAVE';
+export const CRITERIA_INIT = 'CRITERIA_INIT';
 
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
@@ -50,3 +52,6 @@ export const VALID_DATE_PATTERN = '([1-9]|0[1-9]|[12][0-9]|3[01])[- /.]([1-9]|0[
 
 export const SCHOOL_ROLE = 'director';
 export const STUDENT_ROLE = 'student';
+export const PDE_ROLE = 'pde';
+export const DIDE_ROLE = 'dide';
+export const MINISTRY_ROLE = 'supervisor';

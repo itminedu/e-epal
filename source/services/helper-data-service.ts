@@ -12,7 +12,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-state';
-
+import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../constants';
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
 
@@ -428,15 +428,15 @@ export class HelperDataService implements OnInit, OnDestroy {
             //            "X-Auth-Token": this.authToken
         });
 
-        if (this.authRole === "supervisor")
+        if (this.authRole === MINISTRY_ROLE)
           this.createMinistryAuthorizationHeader(headers, this.minedu_userName, this.minedu_userPassword);
         else
           this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
-        if (this.authRole === 'director')
+        if (this.authRole === SCHOOL_ROLE || this.authRole === PDE_ROLE || this.authRole === DIDE_ROLE)
           logoutRoute = '/cas/logout';
-        else if (this.authRole === 'supervisor')
+        else if (this.authRole === MINISTRY_ROLE)
           logoutRoute = '/ministry/logout';
 
         return new Promise((resolve, reject) => {

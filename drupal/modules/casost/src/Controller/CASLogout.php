@@ -110,6 +110,7 @@ class CASLogout extends ControllerBase
 
             if (!$user) {
                 $this->logger->warning("user not found");
+
                 $response = new Response();
                 $response->setContent('forbidden');
                 $response->setStatusCode(Response::HTTP_FORBIDDEN);

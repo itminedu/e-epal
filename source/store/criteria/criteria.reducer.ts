@@ -4,7 +4,8 @@ import { Seq } from 'immutable';
 
 import {
   CRITERIA_RECEIVED,
-  CRITERIA_SAVE
+  CRITERIA_SAVE,
+  CRITERIA_INIT
 } from '../../constants';
 
 export function criteriaReducer(state: ICriter = CRITERIA_INITIAL_STATE, action): ICriter {
@@ -29,6 +30,8 @@ export function criteriaReducer(state: ICriter = CRITERIA_INITIAL_STATE, action)
         });
 
         return Seq(criter).map(n => n).toList();
+    case CRITERIA_INIT:
+        return CRITERIA_INITIAL_STATE;
     default: return state;
   }
 };

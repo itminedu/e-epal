@@ -22,7 +22,9 @@ import { API_ENDPOINT } from '../app.settings';
     template: `
   <div>
        <form novalidate [formGroup]="userDataGroup"  #form>
-
+            <div
+              class = "loading" *ngIf="validLogin === -1" >
+            </div>
             <div class="form-group">
                 <label for="minedu_username">Όνομα διαχειριστή</label><input class="form-control" type="text" formControlName="minedu_username">
             </div>
@@ -61,7 +63,7 @@ export default class MinistryHome implements OnInit {
     private mineduUsername: string;
     //private mineduPassword: string;
     //private cuName: string;
-    private validLogin: boolean;
+    private validLogin: number;
     private loginInfo$: Observable<ILoginInfo>;
     private apiEndPoint = API_ENDPOINT;
 
@@ -77,7 +79,9 @@ export default class MinistryHome implements OnInit {
         //this.mineduPassword = '';
         this.authRole = '';
         //this.cuName = '';
-        this.validLogin = true;
+        //this.validLogin = true;
+        this.validLogin = 1;
+
 
         this.userDataGroup = this.fb.group({
           minedu_username: ['minedu01', [Validators.required]],
@@ -104,15 +108,17 @@ export default class MinistryHome implements OnInit {
     }
 
     submitCredentials() {
+        this.validLogin = -1;
         let success = true;
         this._hds.sendMinisrtyCredentials(this.userDataGroup.value['minedu_username'],this.userDataGroup.value['minedu_userpassword'])
-          .catch(err => {console.log(err); success = false; this.validLogin = false; })
+          .catch(err => {console.log(err); success = false; this.validLogin = 0; })
           .then(msg => {
             if (success)  {
               this.authRole = 'supervisor';
               this._hds.setMineduCurrentUser(this.userDataGroup.value['minedu_username'], this.userDataGroup.value['minedu_userpassword'],   this.authRole);
               console.log("MPHKA");
-              this.validLogin = true;
+              //this.validLogin = true;
+              this.validLogin = 1;
               this.userDataGroup.value['cu_name'] = this.userDataGroup.value['minedu_username'];
               this.userDataGroup.value['auth_role'] = 'supervisor';
               this._ata.saveMinEduloginInfo([this.userDataGroup.value]);

@@ -34,7 +34,7 @@ import StudentAuthGuard from './guards/student.auth.guard';
 
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
 
 import HeaderComponent from './components/header/header.component';
 import NavbarComponent from './components/navbar/navbar.component';

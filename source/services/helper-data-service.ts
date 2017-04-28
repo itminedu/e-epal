@@ -664,7 +664,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    makeGeneralReport(username, userpassword) {
+
+    makeReport(username, userpassword, routepath) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -673,22 +674,8 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/general-report/` , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
             .map(response => response.json());
-
-        /*
-        return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {username: username, userpassword: userpassword}, options)
-                .map(response => response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    reject("Error POST in makeDistribution");
-                },
-                () => console.log(""));
-        });
-        */
 
     }
 

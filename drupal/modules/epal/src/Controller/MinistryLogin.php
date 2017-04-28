@@ -46,7 +46,7 @@ class MinistryLogin extends ControllerBase
 
     public function loginGo(Request $request)
     {
-      
+
       try  {
 
         if (!$request->isMethod('POST')) {
@@ -87,9 +87,9 @@ class MinistryLogin extends ControllerBase
             $postData = json_decode($content);
             //return new RedirectResponse("/drupal-8.2.6/eepal/dist/"  . '?auth_token=' . $postData->username .'&auth_role=supervisor', 302, []);
             return $this->respondWithStatus([
-                'auth_token' => $postData->username,
-                'userpassword' => $postData->userpassword,
-                'auth_role' => $currentRoleName,
+                //'auth_token' => $postData->username,
+                //'userpassword' => $postData->userpassword,
+                //'auth_role' => $currentRoleName,
             ], Response::HTTP_OK);
           }
           else {

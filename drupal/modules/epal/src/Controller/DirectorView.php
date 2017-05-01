@@ -402,6 +402,126 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
 
 
 
+    public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
+    {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $perfectureId ));
+                if ($schools)        
+                {
+                    $list = array();
+                    foreach ($schools as $object) {
+                             $list[] = array(
+                                    'id' =>$object -> id(),
+                                    'name' => $object -> name ->value,
+                                    );
+
+                                 $i++;
+                            }
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+
+    }
+
+
+    public function getCoursesPerSchool(Request $request, $schoolid)
+    {
+      $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+               $list= array();
+
+
+
+                $CourseA = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));
+                
+                if ($CourseA)        
+                {
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $schoolid, 'specialization_id' => -1, 'currentclass' => 1 ));
+                    $list = array();
+                    foreach ($CourseA as $object) {
+                             $list[] = array(
+                                   
+                                    'name' => 'Α Λυκείου',
+                                    'id' => sizeof($studentPerSchool),
+                                    );
+
+                                
+                }            }
+
+
+
+            
+                $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                if ($CourseB)
+                {
+                    foreach ($CourseB as $object) {
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $schoolid, 'specialization_id' => 9, 'currentclass' => 2 ));
+                         $list[] = array(
+                            'name' => 'Β Λυκείου  '.$object -> sector_id -> entity-> get('name')->value,
+                            'id' => sizeof($studentPerSchool),
+
+                          );
+                    }
+                }
+              $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                if ($CourseC)
+                {
+                    foreach ($CourseC as $object) {
+                         $list[] = array(
+                            'name' => 'Γ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
+
+                          );
+                    }
+                }
+                if ($CourseA || $CourseB || $CourseC){
+              
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+    }
+
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

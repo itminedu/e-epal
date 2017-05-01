@@ -156,3 +156,22 @@ epal.ministry.report1:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportCompleteness'
   requirements:
       _user_is_logged_in: 'TRUE'
+regionview:
+  path: '/epal/ScoolperPerf/{perfectureId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfetcure'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+coursesperschools:
+  path: '/epal/CoursesperSch/{schoolid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+
+

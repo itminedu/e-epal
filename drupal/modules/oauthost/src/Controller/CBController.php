@@ -67,7 +67,7 @@ class CBController extends ControllerBase
 
         $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('name' => $request->query->get('sid_ost')));
         $this->oauthostSession = reset($oauthostSessions);
-
+$this->logger->warning('$configRowName=gjvjvjgvjhvjhv'.'***sid='.$this->oauthostSession->id());
         if ($this->oauthostSession) {
             $this->requestToken = $this->oauthostSession->request_token->value;
             $this->requestTokenSecret = $this->oauthostSession->request_token_secret->value;
@@ -110,17 +110,20 @@ class CBController extends ControllerBase
 
         if ($epalToken) {
             if ('oauthost_taxisnet_config' === $configRowName) {
+/*                $this->logger->notice('$configRowName='.$configRowName.'***url='.$this->redirect_url);
                 $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false); */
 
-                return new RedirectResponseWithCookieExt($this->redirect_url, 302, array ($cookie, $cookie2));
+                return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
             } else {
+//                $this->logger->notice('***url2='.$this->redirect_url);
                 return new RedirectResponseWithCookieExt($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
             }
 
 
 //            return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
         } else {
+            $this->logger->notice('epalToken false');
             $response = new Response();
             $response->setContent('forbidden');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
@@ -152,6 +155,8 @@ class CBController extends ControllerBase
         if ($epalUser) {
             $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
             if ($user) {
+//                $user->setPassword('harispass');
+//                $user->setUsername('harisp');
                 $user->setPassword($epalToken);
                 $user->setUsername($epalToken);
                 $user->save();
@@ -227,6 +232,7 @@ class CBController extends ControllerBase
         $this->oauthostSession->set('authtoken', $epalToken);
         $this->oauthostSession->save();
 //        $this->oauthostSession->delete();
+
 
         return $epalToken;
     } catch (OAuthException $e) {

@@ -41,6 +41,7 @@ class CurrentUser extends ControllerBase
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
+//        echo("authtoken in controller=" . $authToken);
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);
         if (!$user) {

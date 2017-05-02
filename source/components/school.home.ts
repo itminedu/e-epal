@@ -62,13 +62,13 @@ export default class SchoolHome implements OnInit {
     };
 
     ngOnInit() {
-        this.authToken = this.getCookie('auth_token');
+/*        this.authToken = this.getCookie('auth_token');
         this.authRole = this.getCookie('auth_role');
         if (this.authToken && this.authRole) {
             this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             this.removeCookie('auth_token');
             this.removeCookie('auth_role');
-        }
+        } */
 
         this.loginInfo$ = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
@@ -82,6 +82,19 @@ export default class SchoolHome implements OnInit {
             }
 
             return state.loginInfo;
+        });
+
+
+        // subscribe to router event
+        this.activatedRoute.queryParams.subscribe((params: Params) => {
+            if (params) {
+                this.authToken = params['auth_token'];
+                this.authRole = params['auth_role'];
+            }
+
+            if (this.authToken && this.authRole)
+                this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
+
         });
     }
 

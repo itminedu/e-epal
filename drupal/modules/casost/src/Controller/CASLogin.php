@@ -94,7 +94,7 @@ class CASLogin extends ControllerBase
                 $this->allowed2 = $CASOSTConfig->allowed2->value;
                 $this->allowed2Value = $CASOSTConfig->allowed2value->value;
             }
-            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
+            phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
             phpCAS::setVerbose(true);
 
@@ -199,16 +199,16 @@ class CASLogin extends ControllerBase
                 return $response;
             }
 
-// $this->logger->warning('cn=' . $filterAttribute('cn'));
+// $this->logger->warning('redirecturl=' . $this->redirectUrl);
             $epalToken = $this->authenticatePhase2($request, $CASUser, $internalRole, $filterAttribute('cn'));
             if ($epalToken) {
                 if ('casost_sch_sso_config' === $configRowName) {
-                    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                    $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false);
+                /*    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                    $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false); */
 
-                    return new RedirectResponseWithCookieExt($this->redirectUrl, 302, array ($cookie, $cookie2));
+                    return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
                 } else {
-                    return new RedirectResponseWithCookieExt($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+                    return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
                 }
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
 //                return new RedirectResponse($this->redirectUrl, 302, $headers);

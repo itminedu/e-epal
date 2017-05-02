@@ -63,15 +63,15 @@ export default class Home implements OnInit {
     };
 
     ngOnInit() {
-        this.authToken = this.getCookie('auth_token');
+/*        this.authToken = this.getCookie('auth_token');
         this.authRole = this.getCookie('auth_role');
-//        console.log(this.authToken);
-//        console.log(this.authRole);
+        console.log(this.authToken);
+        console.log(this.authRole);
         if (this.authToken && this.authRole) {
             this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             this.removeCookie('auth_token');
             this.removeCookie('auth_role');
-        }
+        } */
 
         this.loginInfo$ = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
@@ -92,6 +92,8 @@ export default class Home implements OnInit {
             if (params) {
                 this.authToken = params['auth_token'];
                 this.authRole = params['auth_role'];
+//                console.log(this.authToken);
+//                console.log(this.authRole);
             }
 
             if (this.authToken && this.authRole)

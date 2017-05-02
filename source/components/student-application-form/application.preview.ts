@@ -85,12 +85,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
                 </li>
                 </ul>
             </div>
-<!--            <div *ngFor="let selectedAmkaFill$ of selectedAmkaFills$ | async;">
-              <li class="list-group-item">
-                  AMKA μαθητή: {{selectedAmkaFill$.name}}
-              </li>
-          </div>  -->
-
   `
 })
 
@@ -105,7 +99,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     private regionsSub: Subscription;
     private sectorFieldsSub: Subscription;
     private studentDataFieldsSub: Subscription;
-    private epalclassesSub: Subscription;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;
@@ -176,13 +169,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             return state.studentDataFields;
         }).subscribe(this.studentDataFields$);
 
-/*        this.selectedAmkaFills$ = this._ngRedux.select(state => {
-            state.amkafills.reduce(({}, selectedAmkaFill) => {
-                return selectedAmkaFill;
-            }, {});
-            return state.amkafills;
-        }); */
-
         this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) => {
                 if (epalclass.name === "Α' Λυκείου")
@@ -207,23 +193,19 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     }
 
     ngOnDestroy() {
-        this.regionsSub.unsubscribe();
-        this.epalclassesSub.unsubscribe();
-        this.sectorsSub.unsubscribe();
-        this.sectorFieldsSub.unsubscribe();
-        this.studentDataFieldsSub.unsubscribe();
+        if (this.regionsSub)
+            this.regionsSub.unsubscribe();
+        if (this.sectorsSub)
+            this.sectorsSub.unsubscribe();
+        if (this.sectorFieldsSub)
+            this.sectorFieldsSub.unsubscribe();
+        if (this.studentDataFieldsSub)
+            this.studentDataFieldsSub.unsubscribe();
         this.regions$.unsubscribe();
         this.epalclasses$.unsubscribe();
         this.sectors$.unsubscribe();
         this.sectorFields$.unsubscribe();
         this.studentDataFields$.unsubscribe();
-    }
-
-    showValues() {
-/*        console.log(this.epalclasses$);
-        console.log(this.studentDataFields$);
-        console.log(this.regions$);
-        console.log(this.sectors$); */
     }
 
 }

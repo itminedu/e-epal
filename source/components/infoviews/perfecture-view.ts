@@ -50,8 +50,8 @@ import {
     public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
-    private LimitPerCategSub: BehaviorSubject<any>;
-    private LimitPerCateg$: Subscription;
+    private LimitPerCateg$: BehaviorSubject<any>;
+    private LimitPerCategSub: Subscription;
     private CoursesPerPerf$: BehaviorSubject<any>;
     private CoursesPerPerfSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;

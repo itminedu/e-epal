@@ -726,8 +726,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
     getLimitPerCateg(categ, classes){
-
-        let classesNew = classes.toString();
+        console.log(categ,classes,"aaaa");
+       // let classesNew = classes.toString();
 
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -741,7 +741,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/LimitPerCateg/` + categ + classesNew , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/LimitPerCateg/` + categ + classes , options)
             .map(response => response.json());
 }
 

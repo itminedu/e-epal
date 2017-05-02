@@ -538,7 +538,47 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
     }
 
 
+public function getLimitPerCateg(Request $request, $categ, $classId)
+    {
 
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+                $schools = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> $classId, 'category' => $categ ));
+                if ($schools)        
+                {
+                    $list = array();
+                    foreach ($schools as $object) {
+                             $list[] = array(
+                                   'limit_down' => $object -> limit_down ->value,
+                                    );
+
+                                 $i++;
+                            }
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+
+    }
 
 
    private function respondWithStatus($arr, $s) {

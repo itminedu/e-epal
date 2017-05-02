@@ -20,22 +20,28 @@ import {
 @Component({
     selector: 'perfecture-view',
     template: `
-     
-            
+                 
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
                   <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)"  [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id ">
                      <h5> {{SchoolNames$.name}}</h5>
                   </li>
-              </div>
-             </ul>  
+
+                 <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.id,CoursesNames$.categ,CoursesNames$.classes)" [hidden]="SchoolNames$.id !== regionActive" >
+                    <div> {{CoursesNames$.name}} </div>
+                 </div> 
+
+               </div>
+             
+             </ul> 
+             
              <div class="col-md-6">
                 <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" >
                 <i class="fa fa-forward"></i>
                 </button>
             </div>  
 
-
+ 
    `
 })
 
@@ -44,6 +50,10 @@ import {
     public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
+    private LimitPerCategSub: BehaviorSubject<any>;
+    private LimitPerCateg$: Subscription;
+    private CoursesPerPerf$: BehaviorSubject<any>;
+    private CoursesPerPerfSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
     public perfecture = 1;
@@ -55,6 +65,8 @@ import {
       private _hds: HelperDataService,
       ) {
         this.SchoolsPerPerf$ = new BehaviorSubject([{}]);
+        this.LimitPerCateg$ = new BehaviorSubject([{}]);
+        this.CoursesPerPerf$ = new BehaviorSubject([{}]);
         this.StudentsSize$ = new BehaviorSubject({});
         this.formGroup = this.fb.group({
         });
@@ -67,7 +79,7 @@ import {
     ngOnInit() {
 
 
-        this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(147).subscribe(data => {
+        this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(this.perfecture).subscribe(data => {
             this.SchoolsPerPerf$.next(data);
         },
             error => {
@@ -85,7 +97,19 @@ import {
       console.log(ind,"ind");
       if (ind === this.regionActive)
         ind = -1;
+      console.log(this.regionActive,"RA");
       this.regionActive = ind;
+      this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
+            this.CoursesPerPerf$.next(data);
+        },
+            error => {
+                this.CoursesPerPerf$.next([{}]);
+                console.log("Error Getting Courses");
+            },
+            () => console.log("Getting Courses Per Perf"));
+
+
+
     }
 
 
@@ -98,15 +122,23 @@ import {
     }
 
 
-    calccolor(id)
+    calccolor(id, categ, classes)
     {
-      var newid = +id;
-  //  this.StudentsSizeSub = this._hds.getStudentPerSchool(147, 1, 2, 0, 0).subscribe(this.StudentsSize$);            
 
-      if (id == 147)
+      this.LimitPerCategSub = this._hds.getLimitPerCateg(categ, classes).subscribe(data => {
+            this.LimitPerCateg$.next(data);
+        },
+            error => {
+                this.LimitPerCateg$.next([{}]);
+                console.log("Error Getting Limits");
+            },
+            () => console.log("Getting Limits"));
+
+      var newid = +id;
+      if (newid <= 5)
         return true;
-      if (id == 150)
-        return true;
+      else
+        return false;
 
     }
 

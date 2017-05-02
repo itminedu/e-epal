@@ -456,35 +456,42 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
             {
                $list= array();
 
-
-
-                $CourseA = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));
-                
+                $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));               
+                $SchoolCat = reset($SchoolCats);
+                if ($SchoolCat){
+                $categ = $SchoolCat-> metathesis_region -> value;
+                }
+                $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $schoolid ));
+               
                 if ($CourseA)        
                 {
-                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $schoolid, 'specialization_id' => -1, 'currentclass' => 1 ));
+                    
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => -1, 'currentclass' => 1 ));
                     $list = array();
                     foreach ($CourseA as $object) {
                              $list[] = array(
-                                   
+                                    'id' => '1',
                                     'name' => 'Α Λυκείου',
-                                    'id' => sizeof($studentPerSchool),
+                                    'size' => sizeof($studentPerSchool),
+                                    'categ' => $categ,
+                                    'classes' => 1
                                     );
-
                                 
                 }            }
-
-
 
             
                 $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
                 if ($CourseB)
                 {
                     foreach ($CourseB as $object) {
-                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $schoolid, 'specialization_id' => 9, 'currentclass' => 2 ));
+                    $sectorid = $object -> sector_id -> entity -> id();
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2 ));
                          $list[] = array(
+                            'id' => $object -> sector_id -> entity -> id(),
                             'name' => 'Β Λυκείου  '.$object -> sector_id -> entity-> get('name')->value,
-                            'id' => sizeof($studentPerSchool),
+                            'size' => sizeof($studentPerSchool),
+                            'categ' => $categ,
+                            'classes' => 2
 
                           );
                     }
@@ -493,13 +500,21 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 if ($CourseC)
                 {
                     foreach ($CourseC as $object) {
-                         $list[] = array(
-                            'name' => 'Γ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
+                    $specialityid = $object -> specialty_id -> entity -> id() ;
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3 ));
 
+                         $list[] = array(
+                            'id'=> $object -> specialty_id -> entity -> id(),
+                            'name' => 'Γ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
+                            'size' => sizeof($studentPerSchool),
+                            'categ' => $categ,
+                            'classes' => 3
+                            
                           );
                     }
                 }
-                if ($CourseA || $CourseB || $CourseC){
+                if ($CourseA || $CourseB || $CourseC)
+                {
               
                             return $this->respondWithStatus(
                                      $list
@@ -521,6 +536,10 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                         ], Response::HTTP_FORBIDDEN);
             }
     }
+
+
+
+
 
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);

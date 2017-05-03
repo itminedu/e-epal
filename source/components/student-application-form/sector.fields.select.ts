@@ -21,6 +21,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sector-fields-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
      <div class = "loading" *ngIf="(sectorFields$ | async).size === 0">
     </div>
        <form [formGroup]="formGroup">

@@ -20,7 +20,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'epal-class-select',
     template: `
-
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
     <h4> Επιλογή Τάξης </h4>
     <form [formGroup]="formGroup">
            <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση και στη συνέχεια επιλέξτε <i>Συνέχεια</i>.</p>

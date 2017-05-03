@@ -21,10 +21,12 @@ import {AppSettings} from '../../app.settings';
     selector: 'epal-class-select',
     template: `
 
+    <h4> Επιλογή Τάξης </h4>
     <form [formGroup]="formGroup">
+           <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση και στη συνέχεια επιλέξτε <i>Συνέχεια</i>.</p>
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
             <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
-              <label for="name">Παρακαλώ επιλέξτε την τάξη εισαγωγής του μαθητή στην Επαγγελματική Εκπαίδευση</label><br/>
+              <label for="name"></label><br/>
                     <select class="form-control" formControlName="name" (change)="initializestore()">
                         <option value="Α' Λυκείου">Α' Λυκείου</option>
                         <option value="Β' Λυκείου">Β' Λυκείου</option>

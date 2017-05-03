@@ -682,6 +682,51 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
+    getSchoolPerPerfecture(PerfectureId) {
+        console.log(PerfectureId,"a");
+        let PerfectureIdNew = PerfectureId.toString();
+
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
+
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` + PerfectureIdNew , options)
+            .map(response => response.json());
+    }
+
+    getCoursePerPerfecture(PerfectureId){
+        console.log(PerfectureId,"a");
+        let PerfectureIdNew = PerfectureId.toString();
+
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
+
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/CoursesperSch/` + PerfectureIdNew , options)
+            .map(response => response.json());
+}
+
+
 
 
 }

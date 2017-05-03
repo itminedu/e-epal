@@ -96,7 +96,7 @@ class CASLogin extends ControllerBase
             }
             phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
-            phpCAS::setVerbose(true);
+            //phpCAS::setVerbose(true);
 
             phpCAS::client($this->serverVersion,
                 $this->serverHostname,

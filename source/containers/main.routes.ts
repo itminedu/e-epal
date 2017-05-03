@@ -22,12 +22,14 @@ import ApplicationSubmit from '../components/student-application-form/applicatio
 import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 import DirectorView from '../components/director/director-view';
+import PerfectureView from '../components/infoviews/perfecture-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
 import MinisterView from '../components/minister/minister-view';
 import MinisterReports from '../components/minister/minister-reports';
 import InformStudents from '../components/minister/minister-informstudents';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
+import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
@@ -51,6 +53,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/minister-view', component: MinisterView },
   { path: 'ministry/minister-reports', component: MinisterReports },
   { path: 'ministry/minister-informstudents', component: InformStudents },
+  { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
 ];
 
 export const MainDeclarations = [
@@ -76,5 +79,6 @@ export const MainDeclarations = [
   DirectorClassCapacity,
   MinisterView,
   MinisterReports,
-  InformStudents
+  InformStudents,
+  PerfectureView,
 ];

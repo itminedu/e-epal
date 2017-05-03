@@ -31,6 +31,7 @@ import {LoaderService} from './services/Spinner.service';
 import {AuthService} from './services/auth.service';
 import SchoolAuthGuard from './guards/school.auth.guard';
 import StudentAuthGuard from './guards/student.auth.guard';
+import RegionEduAuthGuard from './guards/regionedu.auth.guard';
 
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
@@ -83,7 +84,9 @@ class MyLocalization extends NgLocalization {
     LoaderService,
     AuthService,
     SchoolAuthGuard,
-    StudentAuthGuard
+    StudentAuthGuard,
+    RegionEduAuthGuard
+
   ]
 })
 class AppModule {}

@@ -34,7 +34,7 @@ class CurrentUser extends ControllerBase
             $container->get('entity_type.manager'),
             $container->get('database'),
             $container->get('logger.factory')
-        );
+        ); 
     }
 
     public function getLoginInfo(Request $request)
@@ -52,14 +52,14 @@ class CurrentUser extends ControllerBase
 
         $userRoles = $user->getRoles();
         foreach ($userRoles as $userRole) {
-            if ($userRole === 'epal') {
+            if (($userRole === 'epal') || ($userRole === 'regioneduadmin') || ($userRole === 'eduadmin')) {
                 return $this->respondWithStatus([
                         'name' => $user->mail->value,
                         'title' => $user->init->value,
                     ], Response::HTTP_OK);
             } else if ($userRole === 'applicant') {
                 break;
-            }
+            } 
 
         }
 

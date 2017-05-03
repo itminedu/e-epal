@@ -176,6 +176,20 @@
     background-color: #fd9665;
 }
 
+.changecolor 
+{
+    color: red;
+}
+
+.changelistcolor 
+{
+    color:red!important ;
+}
+
+.aastyle{
+    color:black!important ;   
+}
+
 .roundedNumber{
     width: 2em;
     background-color: coral;

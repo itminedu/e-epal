@@ -76,18 +76,25 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
+    <!--
     <div class="form-group">
         <label for="studentbirthdate">Ημερομηνία γέννησης</label>
         <input class="form-control" type="text" formControlName="studentbirthdate">
     </div>
-
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').pristine ">
         Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
     </div>
-
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').dirty && studentDataGroup.get('studentbirthdate').hasError('pattern')">
         Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
     </div>
+  -->
+  <div class="form-group">
+      <label for="studentbirthdate">Ημερομηνία γέννησης</label>
+      <input class="form-control" type="date" formControlName="studentbirthdate">
+  </div>
+  <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').touched && studentDataGroup.get('studentbirthdate').hasError('required')">
+      Συμπληρώστε την ημερομηνία γέννησης του μαθητή!
+  </div>
 
 
 

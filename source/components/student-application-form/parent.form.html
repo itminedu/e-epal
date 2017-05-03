@@ -116,7 +116,7 @@
     <div class="row" *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
         <div class="col-md-12">
             <button type="button" class="btn-primary btn-sm pull-right" (click)="saveProfileAndContinue()" [disabled]="((userEmailEnabled | async) && !(verificationCodeVerified | async))">
-            Αποθήκευση - Συνέχεια
+            Συνέχεια
             <i class="fa fa-forward"></i>  </button>
         </div>
     </div>

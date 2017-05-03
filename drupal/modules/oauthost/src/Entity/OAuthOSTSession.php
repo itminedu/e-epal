@@ -42,6 +42,7 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
+ *     "authtoken" = "authtoken",
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/oauthost_session/{oauthost_session}",
@@ -145,6 +146,21 @@ class OAuthOSTSession extends ContentEntityBase implements OAuthOSTSessionInterf
   /**
    * {@inheritdoc}
    */
+  public function getAuthtoken() {
+    return $this->get('authtoken')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAuthtoken($authToken) {
+    $this->set('authtoken', $authToken);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -192,6 +208,66 @@ class OAuthOSTSession extends ContentEntityBase implements OAuthOSTSessionInterf
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+
+      $fields['referer'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('OAuthOST referer to redirect to'))
+        ->setDescription(t('The OAuthOST referer to redirect to'))
+        ->setSettings(array(
+          'max_length' => 300,
+          'text_processing' => 0,
+        ))
+        ->setDefaultValue('')
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'string',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'string_textfield',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
+        $fields['configrowname'] = BaseFieldDefinition::create('string')
+          ->setLabel(t('OAuthOST config row name'))
+          ->setDescription(t('The OAuthOST config row name'))
+          ->setSettings(array(
+            'max_length' => 100,
+            'text_processing' => 0,
+          ))
+          ->setDefaultValue('')
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'string',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'string_textfield',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+          $fields['authtoken'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('OAuthOST authtoken'))
+            ->setDescription(t('The OAuthOST authtoken'))
+            ->setSettings(array(
+              'max_length' => 300,
+              'text_processing' => 0,
+            ))
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
 
       $fields['request_token'] = BaseFieldDefinition::create('string')
         ->setLabel(t('Request Token'))

@@ -1,7 +1,11 @@
-export const API_ENDPOINT = 'http://localhost/drupal-8.2.6';
+export const API_ENDPOINT = '';
+export const API_ENDPOINT_PARAMS = '';
 export class AppSettings {
 
    public static get API_ENDPOINT(): string {
-       return 'http://localhost/drupal-8.2.6';
+       return '';
+   }
+   public static get API_ENDPOINT_PARAMS(): string {
+      return '';
    }
 }

@@ -56,7 +56,11 @@ class OAuthLogin extends ControllerBase
 
     public function loginGo(Request $request)
     {
-        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => 'oauthost_taxisnet_config'));
+        $configRowName = 'oauthost_taxisnet_config';
+        $configRowId = $request->query->get('config');
+        if ($configRowId)
+            $configRowName = $configRowName . '_' . $configRowId;
+        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => $configRowName));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
             $this->consumer_key = $ostauthConfig->consumer_key->value;
@@ -85,11 +89,15 @@ class OAuthLogin extends ControllerBase
             $requestToken = $oauth->getRequestToken($this->request_token_url, $this->callback_url . '?sid_ost=' . $uniqid);
                 // store auth token
 
+//            $this->logger->warning($request->headers->get('referer'));
             $oauthostSession = $this->entityTypeManager()->getStorage('oauthost_session')->create(array(
         //    'langcode' => $language_interface->getId(),
               'langcode' => 'el',
               'user_id' => \Drupal::currentUser()->id(),
               'name' => $uniqid,
+              'referer' => $request->headers->get('referer'),
+              'configrowname' => $configRowName,
+              'authtoken' => '---',
               'request_token' => $requestToken['oauth_token'],
               'request_token_secret' => $requestToken['oauth_token_secret'],
               'status' => 1

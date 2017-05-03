@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-require ('RedirectResponseWithCookie.php');
+require ('RedirectResponseWithCookieExt.php');
 
 class CBController extends ControllerBase
 {
@@ -65,7 +65,21 @@ class CBController extends ControllerBase
     public function loginCB(Request $request)
     {
 
-        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => 'oauthost_taxisnet_config'));
+        $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('name' => $request->query->get('sid_ost')));
+        $this->oauthostSession = reset($oauthostSessions);
+$this->logger->warning('$configRowName=gjvjvjgvjhvjhv'.'***sid='.$this->oauthostSession->id());
+        if ($this->oauthostSession) {
+            $this->requestToken = $this->oauthostSession->request_token->value;
+            $this->requestTokenSecret = $this->oauthostSession->request_token_secret->value;
+            $configRowName = $this->oauthostSession->configrowname->value;
+        } else {
+            $response = new Response();
+            $response->setContent('forbidden');
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => $configRowName));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
             $this->consumer_key = $ostauthConfig->consumer_key->value;
@@ -86,18 +100,7 @@ class CBController extends ControllerBase
             return $response;
         }
 
-        $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('name' => $request->query->get('sid_ost')));
-        $this->oauthostSession = reset($oauthostSessions);
-        if ($this->oauthostSession) {
-            $this->requestToken = $this->oauthostSession->request_token->value;
-            $this->requestTokenSecret = $this->oauthostSession->request_token_secret->value;
-        } else {
-            $response = new Response();
-            $response->setContent('forbidden');
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->headers->set('Content-Type', 'application/json');
-            return $response;
-        }
+
 
         $authToken = $request->query->get('oauth_token');
         $authVerifier = $request->query->get('oauth_verifier');
@@ -106,13 +109,21 @@ class CBController extends ControllerBase
         $epalToken = $this->authenticatePhase2($request, $authToken, $authVerifier);
 
         if ($epalToken) {
-            $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-            $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false);
+            if ('oauthost_taxisnet_config' === $configRowName) {
+/*                $this->logger->notice('$configRowName='.$configRowName.'***url='.$this->redirect_url);
+                $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false); */
 
-            return new RedirectResponseWithCookie($this->redirect_url, 302, array ($cookie, $cookie2));
+                return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+            } else {
+//                $this->logger->notice('***url2='.$this->redirect_url);
+                return new RedirectResponseWithCookieExt($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+            }
+
 
 //            return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
         } else {
+            $this->logger->notice('epalToken false');
             $response = new Response();
             $response->setContent('forbidden');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
@@ -144,6 +155,8 @@ class CBController extends ControllerBase
         if ($epalUser) {
             $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
             if ($user) {
+//                $user->setPassword('harispass');
+//                $user->setUsername('harisp');
                 $user->setPassword($epalToken);
                 $user->setUsername($epalToken);
                 $user->save();
@@ -216,7 +229,10 @@ class CBController extends ControllerBase
             }
 
         }
-        $this->oauthostSession->delete();
+        $this->oauthostSession->set('authtoken', $epalToken);
+        $this->oauthostSession->save();
+//        $this->oauthostSession->delete();
+
 
         return $epalToken;
     } catch (OAuthException $e) {

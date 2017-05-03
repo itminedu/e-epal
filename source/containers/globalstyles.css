@@ -178,7 +178,16 @@
 
 .changecolor 
 {
-    background-color: cyan;
+    color: red;
+}
+
+.changelistcolor 
+{
+    color:red!important ;
+}
+
+.aastyle{
+    color:black!important ;   
 }
 
 .roundedNumber{

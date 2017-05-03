@@ -725,28 +725,6 @@ export class HelperDataService implements OnInit, OnDestroy {
 }
 
 
-    getLimitPerCateg(categ, classes){
-        console.log(categ,classes,"aaaa");
-       // let classesNew = classes.toString();
-
-
-        this.loginInfo$.getValue().forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.auth_token;
-            this.authRole = loginInfoToken.auth_role;
-        });
-
-
-        let headers = new Headers({
-            "Content-Type": "application/json",
-        });
-        this.createAuthorizationHeader(headers);
-        let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/LimitPerCateg/` + categ + classes , options)
-            .map(response => response.json());
-}
-
-
-
 
 
 }

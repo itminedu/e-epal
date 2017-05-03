@@ -20,18 +20,18 @@ import {
 @Component({
     selector: 'perfecture-view',
     template: `
+            <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3> 
                  
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
-                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)"  [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id ">
+                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === true" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
                      <h5> {{SchoolNames$.name}}</h5>
                   </li>
+                 <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" [hidden]="SchoolNames$.id !== regionActive" >
+                    <div> {{CoursesNames$.name}}</div> <div class= "aastyle"><strong>Αριθμός Μαθητών:</strong>{{CoursesNames$.size}} </div> 
 
-                 <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.id,CoursesNames$.categ,CoursesNames$.classes)" [hidden]="SchoolNames$.id !== regionActive" >
-                    <div> {{CoursesNames$.name}} </div>
                  </div> 
-
-               </div>
+             </div>
              
              </ul> 
              
@@ -121,25 +121,13 @@ import {
 
     }
 
-
-    calccolor(id, categ, classes)
+    calccolor(size, limit)
     {
 
-      this.LimitPerCategSub = this._hds.getLimitPerCateg(categ, classes).subscribe(data => {
-            this.LimitPerCateg$.next(data);
-        },
-            error => {
-                this.LimitPerCateg$.next([{}]);
-                console.log("Error Getting Limits");
-            },
-            () => console.log("Getting Limits"));
-
-      var newid = +id;
-      if (newid <= 5)
+      if (size < limit)
         return true;
       else
         return false;
-
     }
 
 }

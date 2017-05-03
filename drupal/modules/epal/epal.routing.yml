@@ -172,15 +172,3 @@ coursesperschools:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-limitpercateg:
-  path: '/epal/LimitPerCateg/{categ}/{classId}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getLimitPerCateg'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-
-
-
- 

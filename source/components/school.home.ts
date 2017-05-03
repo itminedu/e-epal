@@ -77,7 +77,7 @@ export default class SchoolHome implements OnInit {
                     if (this.authToken && this.authToken.length > 0)
                         if (this.authRole = 'director')
                             this.router.navigate(['/school/director-view']);
-                        if (this.authRole = 'dide')
+                        if (this.authRole = 'pde')
                             this.router.navigate(['/school/perfecture-view']);    
                     return loginInfoToken;
                 }, {});

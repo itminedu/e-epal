@@ -14,7 +14,7 @@ import {
     FormBuilder,
     FormGroup,
     FormControl,
-    FormArray
+    FormArray 
 } from '@angular/forms';
 import {AppSettings} from '../../app.settings';
 
@@ -24,9 +24,11 @@ import {AppSettings} from '../../app.settings';
     <div class="row">
              <breadcrubs></breadcrubs>
     </div>
+    <h4> Επιλογή Τομέα </h4>
      <div class = "loading" *ngIf="(sectorFields$ | async).size === 0">
     </div>
        <form [formGroup]="formGroup">
+       <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε τον τομέα που θα παρακολουθήσει ο μαθητής στην επαγγελματική εκπαίδευση στη συνέχεια επιλέξτε <i>Συνέχεια</i>.</p>
         <div formArrayName="formArray">
             <ul class="list-group main-view">
             <div *ngFor="let sectorField$ of sectorFields$ | async; let i=index; let isOdd=odd; let isEven=even">

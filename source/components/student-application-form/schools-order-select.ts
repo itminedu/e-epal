@@ -12,6 +12,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'schools-order-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
     <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
     </div>
     <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας

@@ -17,6 +17,9 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 @Component({
     selector: 'submited-preview',
     template: `
+         <div class="row">
+             <breadcrubs></breadcrubs>
+        </div>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
             <table class = "submited">
               <tr>

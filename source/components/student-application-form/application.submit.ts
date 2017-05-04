@@ -25,6 +25,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'application-submit',
     template: `
+        <div class="row">
+             <breadcrubs></breadcrubs>
+        </div>
         <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0"></div>
         <application-preview-select></application-preview-select>
         <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>

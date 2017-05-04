@@ -28,6 +28,10 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'region-schools-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
+
     <div class = "loading" *ngIf="(regions$ | async).size === 0">
     </div>
 <!--     <div class="row equal">

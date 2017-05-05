@@ -14,7 +14,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
-require ('RedirectResponseWithCookie.php');
+require ('RedirectResponseWithCookieExt.php');
 
 class CASLogin extends ControllerBase
 {
@@ -70,8 +70,11 @@ class CASLogin extends ControllerBase
     {
 
         try {
-
-            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => 'casost_sch_sso_config'));
+            $configRowName = 'casost_sch_sso_config';
+            $configRowId = $request->query->get('config');
+            if ($configRowId)
+                $configRowName = $configRowName . '_' . $configRowId;
+            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => $configRowName));
             $CASOSTConfig = reset($CASOSTConfigs);
             if ($CASOSTConfig) {
                 $this->serverVersion = $CASOSTConfig->serverversion->value;
@@ -91,9 +94,9 @@ class CASLogin extends ControllerBase
                 $this->allowed2 = $CASOSTConfig->allowed2->value;
                 $this->allowed2Value = $CASOSTConfig->allowed2value->value;
             }
-            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
+            phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
-            phpCAS::setVerbose(true);
+            //phpCAS::setVerbose(true);
 
             phpCAS::client($this->serverVersion,
                 $this->serverHostname,
@@ -196,13 +199,17 @@ class CASLogin extends ControllerBase
                 return $response;
             }
 
-// $this->logger->warning('cn=' . $filterAttribute('cn'));
+// $this->logger->warning('redirecturl=' . $this->redirectUrl);
             $epalToken = $this->authenticatePhase2($request, $CASUser, $internalRole, $filterAttribute('cn'));
             if ($epalToken) {
-                $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false);
+                if ('casost_sch_sso_config' === $configRowName) {
+                /*    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
+                    $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false); */
 
-                return new RedirectResponseWithCookie($this->redirectUrl, 302, array ($cookie, $cookie2));
+                    return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
+                } else {
+                    return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
+                }
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
 //                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {

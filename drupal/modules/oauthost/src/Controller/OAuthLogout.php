@@ -56,9 +56,24 @@ class OAuthLogout extends ControllerBase
 
     public function logoutGo(Request $request)
     {
+
         $trx = $this->connection->startTransaction();
         try {
-        $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => 'oauthost_taxisnet_config'));
+            $user = null;
+            $username = $request->headers->get('PHP_AUTH_USER');
+            $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('authtoken' => $username));
+            $this->oauthostSession = reset($oauthostSessions);
+
+            if ($this->oauthostSession) {
+                $configRowName = $this->oauthostSession->configrowname->value;
+            } else {
+                $response = new Response();
+                $response->setContent('forbidden');
+                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $response->headers->set('Content-Type', 'application/json');
+                return $response;
+            }
+            $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => $configRowName));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
             $this->consumer_key = $ostauthConfig->consumer_key->value;
@@ -79,8 +94,7 @@ class OAuthLogout extends ControllerBase
             return $response;
         }
 
-        $user = null;
-        $username = $request->headers->get('PHP_AUTH_USER');
+
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $username));
         $epalUser = reset($epalUsers);
         $foundUser = true;
@@ -124,6 +138,7 @@ class OAuthLogout extends ControllerBase
         $response->setContent('logout successful');
         $response->setStatusCode(Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
+        $this->oauthostSession->delete();
         return $response;
 //        return new RedirectResponse($this->redirect_url . '&auth_role=', 302, []);
 

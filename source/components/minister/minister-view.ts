@@ -27,9 +27,6 @@ import { API_ENDPOINT } from '../../app.settings';
     selector: 'minister-view',
     template: `
 
-
-
-
     <!--
     <div *ngIf="(isModalShownMy)" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-sm">
@@ -49,11 +46,6 @@ import { API_ENDPOINT } from '../../app.settings';
       </div>
     </div>
     -->
-
-
-
-
-
 
   <div
     class = "loading" *ngIf=" distStatus === 'STARTED'" >
@@ -79,12 +71,14 @@ import { API_ENDPOINT } from '../../app.settings';
         </div>
       </form>
 
+      <!--
       <button type="button" class="btn-primary btn-md"  (click)="testModal()" >
           Test Modal
       </button>
+      -->
 
     </div>
-    
+
 
    `
 })

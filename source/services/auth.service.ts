@@ -22,6 +22,7 @@ export class AuthService {
             }).subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
                     loginInfo.reduce(({}, loginInfoToken) => {
+                        console.log(loginInfoToken.auth_role,"aaaaaaa");
                         if (loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) {
                             resolve(true);
                         }

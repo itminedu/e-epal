@@ -45,18 +45,22 @@ export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_ST
                         list.set(ind2++, region);
                     });
                 }
-                if (region.epals[i].globalIndex === action.payload.selectedSchools[1].globalIndex) {
+                if (typeof action.payload.selectedSchools[1] !== 'undefined' &&
+                  region.epals[i].globalIndex === action.payload.selectedSchools[1].globalIndex) {
                     region.epals[i].order_id = action.payload.selectedSchools[1].order_id
                     return state.withMutations(function (list) {
                         list.set(ind2++, region);
                     });
                 }
-                if (region.epals[i].globalIndex === action.payload.selectedSchools[2].globalIndex) {
-                    region.epals[i].order_id = action.payload.selectedSchools[2].order_id
-                    return state.withMutations(function (list) {
-                        list.set(ind2++, region);
-                    });
-                }
+                if (typeof action.payload.selectedSchools[2] !== 'undefined' &&
+                    region.epals[i].globalIndex === action.payload.selectedSchools[2].globalIndex) {
+                      region.epals[i].order_id = action.payload.selectedSchools[2].order_id
+                      return state.withMutations(function (list) {
+                          list.set(ind2++, region);
+                      });
+                  }
+                //}
+
 
             }
             ind2++;

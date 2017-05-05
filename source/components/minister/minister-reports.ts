@@ -53,14 +53,14 @@ import { API_ENDPOINT } from '../../app.settings';
         <i class="fa fa-download"></i>
             Εξαγωγή σε csv
         </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram(true)" [hidden]="!validCreator || reportId === 2 ">
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="!validCreator ||  charIsHidden() ">
         <i class="fa fa-bar-chart"></i>
             Διάγραμμα
         </button>
 
     </div>
 
-    <div class="d3-chart" *ngIf = "reportId === 1 && validCreator" #chart>
+    <div class="d3-chart" *ngIf = "!charIsHidden() && validCreator" #chart>
     </div>
 
       <!--<div *ngFor="let generalReports$  of generalReport$ | async; let i=index">-->
@@ -320,8 +320,8 @@ prepareColumnMap(): void {
 }
 
 
-createDiagram(isCreated) {
-  if (isCreated && !this.createGraph)  {
+createDiagram() {
+  if (!this.createGraph)  {
     this.generateGraphData();
     this.createChart();
     this.updateChart();
@@ -350,12 +350,13 @@ generateData() {
       labelsX.push("1η Προτίμηση");
       labelsX.push("2η Προτίμηση");
       labelsX.push("3η Προτίμηση");
+      labelsX.push("Μη τοποθετημένοι");
       //for (let i = 0; i <  this.data.length; i++) {
-      for (let i = 1; i <=  3; i++) {
+      for (let i = 1; i <=  4; i++) {
         this.d3data.push([
           //this.data[i].name,
           labelsX[i-1],
-          this.data[i].numStudents
+          this.data[i].numStudents /   this.data[0].numStudents,
         ]);
       }
     }
@@ -379,10 +380,12 @@ generateData() {
      // define X & Y domains
      let xDomain = this.d3data.map(d => d[0]);
      let yDomain = [0, d3.max(this.d3data, d => d[1])];
+     //let yDomain = [0, 1000];
 
      // create scales
      this.xScale = d3.scaleBand().padding(0.1).domain(xDomain).rangeRound([0, this.width]);
      this.yScale = d3.scaleLinear().domain(yDomain).range([this.height, 0]);
+     //this.yScale = d3.scaleLinear().domain(yDomain).range([1000, 0]);
 
      // bar colors
      this.colors = d3.scaleLinear().domain([0, this.d3data.length]).range(<any[]>['red', 'blue']);
@@ -439,7 +442,10 @@ generateData() {
       .attr('height', d => this.height - this.yScale(d[1]));
   }
 
-
+  charIsHidden() {
+    if (this.reportId === 2 || this.reportId === 3)
+      return true;
+  }
 
 
 }

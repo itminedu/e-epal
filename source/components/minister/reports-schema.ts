@@ -46,6 +46,14 @@ reportAllStatSchema = {
       title: 'Σχολείο',
       filter: false
     },
+    region: {
+      title: 'Περιφερειακή Διεύθυνση',
+      filter: false
+    },
+    admin: {
+      title: 'Διεύθυνση Εκπαίδευσης',
+      filter: false
+    },
     section: {
       title: 'Τάξη/Τομέας/Ειδικότητα',
       filter: false

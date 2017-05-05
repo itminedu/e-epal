@@ -369,13 +369,16 @@ export class HelperDataService implements OnInit, OnDestroy {
         //console.log("MIPOS");
 
         let headers = new Headers({
-            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
+//             "Authorization": "Basic " + btoa(this.authToken + ':' + this.authToken),
+    //        "Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
+//            "Authorization": "Basic " + "aGFyaXNwOmhhcmlzcGFzcw==",
             "Content-Type": "application/json",
+            "Access-Control-Allow-Credentials": "true",
             // "Content-Type": "text/plain",  // try to skip preflight
             //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
             //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
-            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
+        //    "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
             //            "X-oauth-enabled": "true",
             //            "X-Auth-Token": this.authToken
         });
@@ -420,9 +423,9 @@ export class HelperDataService implements OnInit, OnDestroy {
         let headers = new Headers({
             //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             "Content-Type": "application/json",
-            "Accept": "*/*",
-            "Access-Control-Allow-Credentials": "true",
-            "Access-Control-Allow-Origin": "*",
+//            "Accept": "*/*",
+//            "Access-Control-Allow-Credentials": "true",
+//            "Access-Control-Allow-Origin": "*",
             //"X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
             //            "X-oauth-enabled": "true",
             //            "X-Auth-Token": this.authToken
@@ -440,7 +443,7 @@ export class HelperDataService implements OnInit, OnDestroy {
           logoutRoute = '/ministry/logout';
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}`, {}, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)
                 .map(response => response)
                 .subscribe(data => {
                     resolve(data);
@@ -465,7 +468,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         let headers = new Headers({
             "Content-Type": "application/json",
-            "id": ""
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
@@ -702,6 +704,51 @@ export class HelperDataService implements OnInit, OnDestroy {
       return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/send-massive-mail` , options)
           .map(response => response.json());
     }
+
+
+    getSchoolPerPerfecture(PerfectureId) {
+        console.log(PerfectureId,"a");
+        let PerfectureIdNew = PerfectureId.toString();
+
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
+
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` + PerfectureIdNew , options)
+            .map(response => response.json());
+    }
+
+    getCoursePerPerfecture(PerfectureId){
+        console.log(PerfectureId,"a");
+        let PerfectureIdNew = PerfectureId.toString();
+
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        console.log("authToken=" + this.authToken);
+        console.log("authRole=" + this.authRole);
+
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/CoursesperSch/` + PerfectureIdNew , options)
+            .map(response => response.json());
+}
 
 
 

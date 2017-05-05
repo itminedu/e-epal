@@ -25,11 +25,18 @@ import { API_ENDPOINT } from '../../app.settings';
     selector: 'minister-informstudents',
     template: `
 
-    <div class="alert alert-success" *ngIf="successSending == 1">
+    <div
+      class = "loading" *ngIf="successSending == -2" >
+    </div>
+    <div class="alert alert-success" *ngIf="successSending == 1 ">
       Έγινε αποστολή {{numSuccessMails}} e-mails!
     </div>
     <div class="alert alert-warning" *ngIf="successSending == 0">
-      Κάποια e-mail δεν έχουν σταλεί. Έγινε αποστολή {{numSuccessMails}} e-mails!
+      Αποτυχία αποστολής e-mails!
+    </div>
+    <div class="alert alert-warning" *ngIf="numFailMails != 0">
+      Κάποια e-mail δεν έχουν σταλεί.
+      Δεν ήταν δυνατή η αποστολή {{numFailMails}} e-mails!
     </div>
 
     <div class="col-md-8 offset-md-4">
@@ -50,6 +57,7 @@ import { API_ENDPOINT } from '../../app.settings';
     loginInfo$: BehaviorSubject<ILoginInfo>;
     loginInfoSub: Subscription;
     private numSuccessMails:number;
+    private numFailMails:number;
     private successSending:number;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
@@ -91,6 +99,7 @@ import { API_ENDPOINT } from '../../app.settings';
       }).subscribe(this.loginInfo$);
 
       this.numSuccessMails = 0;
+      this.numFailMails = 0;
       this.successSending = -1;
 
     }
@@ -105,14 +114,17 @@ import { API_ENDPOINT } from '../../app.settings';
       });
       */
 
+      this.successSending = -2;
+      this.numSuccessMails = 0;
+      this.numFailMails = 0;
+
       this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
           //this.data = data;
           //this.successSending = 0;
           this.numSuccessMails = data.num_success_mail;
-          console.log("HERE!");
-          console.log(this.numSuccessMails);
-          //console.log(this.data[0].num_success_mail);
-          //console.log(this.data.length);
+          this.numFailMails = data.num_fail_mail;
+          //console.log("HERE!");
+          //console.log(this.numSuccessMails);
       },
         error => {
           console.log("Error");

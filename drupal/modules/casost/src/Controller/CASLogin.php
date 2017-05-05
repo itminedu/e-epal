@@ -208,6 +208,7 @@ class CASLogin extends ControllerBase
 
                     return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
                 } else {
+                    \Drupal::service('page_cache_kill_switch')->trigger();
                     return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
                 }
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");

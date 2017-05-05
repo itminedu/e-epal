@@ -22,10 +22,15 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sectorcourses-fields-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
     <div class = "loading" *ngIf="(sectors$ | async).size === 0">
    </div>
+       <h4> Επιλογή Ειδικότητας</h4>
       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
+        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την ειδικότητα που θα παρακολουθήσει ο μαθητής στην Επαγγελματική Εκπαίδευση με βάση τον τομέα που έχει ολοκληρώσει και στη συνέχεια επιλέξτε <i>Συνέχεια</i>.</p>
             <ul class="list-group">
             <div *ngFor="let sector$ of sectors$ | async; let i=index; let isOdd=odd; let isEven=even">
                 <li class="list-group-item isclickable" (click)="setActiveSector(i)"  [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="sectorActive === i">

@@ -67,7 +67,6 @@ class CBController extends ControllerBase
 
         $oauthostSessions = $this->entityTypeManager->getStorage('oauthost_session')->loadByProperties(array('name' => $request->query->get('sid_ost')));
         $this->oauthostSession = reset($oauthostSessions);
-$this->logger->warning('$configRowName=gjvjvjgvjhvjhv'.'***sid='.$this->oauthostSession->id());
         if ($this->oauthostSession) {
             $this->requestToken = $this->oauthostSession->request_token->value;
             $this->requestTokenSecret = $this->oauthostSession->request_token_secret->value;
@@ -99,25 +98,20 @@ $this->logger->warning('$configRowName=gjvjvjgvjhvjhv'.'***sid='.$this->oauthost
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
-
-
-
         $authToken = $request->query->get('oauth_token');
         $authVerifier = $request->query->get('oauth_verifier');
 //        $this->logger->notice('authToken='.$authToken.'***authVerifier='.$authVerifier);
-
         $epalToken = $this->authenticatePhase2($request, $authToken, $authVerifier);
-
         if ($epalToken) {
             if ('oauthost_taxisnet_config' === $configRowName) {
 /*                $this->logger->notice('$configRowName='.$configRowName.'***url='.$this->redirect_url);
                 $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
                 $cookie2 = new Cookie('auth_role', 'student', 0, '/', null, false, false); */
-
                 return new RedirectResponse($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
             } else {
-//                $this->logger->notice('***url2='.$this->redirect_url);
+                \Drupal::service('page_cache_kill_switch')->trigger();
                 return new RedirectResponseWithCookieExt($this->redirect_url . $epalToken.'&auth_role=student', 302, []);
+
             }
 
 

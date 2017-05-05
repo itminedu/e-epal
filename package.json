@@ -12,6 +12,7 @@
     "typings": "rimraf typings/ && typings install"
   },
   "devDependencies": {
+    "@types/d3": "^4.8.0",
     "@types/node": "^6.0.48",
     "angular2-router-loader": "^0.3.4",
     "angular2-template-loader": "^0.6.0",

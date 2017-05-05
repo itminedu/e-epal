@@ -1,4 +1,5 @@
-<div class="nav-wrapper" >
+<div class="nav-wrapper"  >
+<div class = "content">
 <div class="container">
 <nav class="navbar navbar-toggleable-sm">
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -7,7 +8,7 @@
   <a class="logo navbar-brand" href="#" title="Αρχική">
           <img src="../myschool/assets/images/myschool_logo.png" alt="Αρχική" />
   </a>
-  <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
+   <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
       <div *ngIf="(loginInfo$ | async).size > 0">
     <ul class="navbar-nav">
         <div *ngIf="(loginInfo$ | async).cu_name !== ''">
@@ -61,5 +62,6 @@
   </div>
 
 </nav>
+</div>
    </div>
 </div>

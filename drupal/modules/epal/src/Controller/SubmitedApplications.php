@@ -41,9 +41,9 @@ class SubmitedApplications extends ControllerBase
                  $list = array();
                 foreach ($epalStudents as $object) {
 
-
+                    $indexid = intval($object -> id())-1;
                     $list[] = array(
-                            'id' => $object -> id(),
+                            'id' => $indexid,
                             'name' => $object -> name ->value,
                             'studentsurname' => $object -> studentsurname ->value);
                     $i++;
@@ -92,7 +92,7 @@ class SubmitedApplications extends ControllerBase
                             'name' => $object -> name ->value,
                             'studentsurname' => $object -> studentsurname ->value,
                             'fatherfirstname' => $object -> fatherfirstname ->value,
-                            'fathersurname' =>$object -> fathersurtname ->value,
+                            'fathersurname' =>$object -> fathersurname ->value,
                             'motherfirstname' => $object -> motherfirstname ->value,
                             'mothersurname' =>$object -> mothersurname ->value,
                             'birthdate' =>$object -> birthdate ->value,

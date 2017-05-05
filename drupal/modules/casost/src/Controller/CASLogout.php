@@ -95,9 +95,9 @@ class CASLogout extends ControllerBase
             }
 
             // Enable debugging
-//            phpCAS::setDebug("/home/haris/devel/eepal/drupal/modules/casost/phpcas.log");
+            phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
-   //         phpCAS::setVerbose(true);
+            phpCAS::setVerbose(true);
 
             // Initialize phpCAS
             phpCAS::client($this->serverVersion,
@@ -120,10 +120,11 @@ class CASLogout extends ControllerBase
 
                 return $response;
             }
-//            phpCAS::handleLogoutRequests();
+            phpCAS::handleLogoutRequests();
+
 //            phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
-            session_unset();
-            session_destroy();
+//            session_unset();
+//            session_destroy();
             $user->setPassword(uniqid('pw'));
             $user->save();
             $response = new Response();
@@ -131,7 +132,14 @@ class CASLogout extends ControllerBase
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
 
-            return $response;
+        //    phpCAS::logout(array('url'=>$this->redirectUrl));
+        //    phpCAS::logout();
+        session_unset();
+        session_destroy();
+            $this->logger->warning("hello from logout");
+            \Drupal::service('page_cache_kill_switch')->trigger();
+            return new RedirectResponseWithCookieExt("https://sso-test.sch.gr/logout", 302, []);
+    //        return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
             $response = new Response();

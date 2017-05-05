@@ -9,7 +9,7 @@ oauthost.callback_log_in:
   defaults:
     _controller: '\Drupal\oauthost\Controller\CBController::loginCB'
   requirements:
-    _permission: 'access content'
+    _access: 'TRUE'
 oauthost.log_out_go:
   path: /oauth/logout
   options:

@@ -39,6 +39,32 @@ genReportSchema = {
   }
 };
 
+reportAllStatSchema = {
+  actions: false,
+  columns: {
+    name: {
+      title: 'Σχολείο',
+      filter: false
+    },
+    region: {
+      title: 'Περιφερειακή Διεύθυνση',
+      filter: false
+    },
+    admin: {
+      title: 'Διεύθυνση Εκπαίδευσης',
+      filter: false
+    },
+    section: {
+      title: 'Τάξη/Τομέας/Ειδικότητα',
+      filter: false
+    },
+    num: {
+      title: 'Αριθμός Μαθητών',
+      filter: false
+    }
+  }
+};
+
 
 reportCompletenessSchemaFull = {
   actions: false,
@@ -105,8 +131,7 @@ reportCompletenessSchema = {
   columns: {
     name: {
       title: 'Σχολείο',
-      filter: false,
-      hide: true
+      filter: false
     },
     percTotal: {
       title: 'Πληρότητα Σχολείου',

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, ViewEncapsulation } from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -14,54 +14,34 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 
 import {reportsSchema, TableColumn} from './reports-schema';
 
+import * as d3 from 'd3';
+
+
 //import * as _ from '..';
-
-
-
-/*
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-
-} from '@angular/forms';
-*/
 
 import { API_ENDPOINT } from '../../app.settings';
 
-/*
-class TableColumn {
-  field: string;
-  title: string;
-  type: string;
-  isDisplay: boolean;
-  isExport: boolean;
-  valuePrepareFunction: Function;
-}
-*/
-
 @Component({
     selector: 'minister-reports',
+    encapsulation: ViewEncapsulation.None,
     template: `
 
   <div>
-      <!--<form [formGroup]="formGroup"  #form>-->
-
 
         <div
           class = "loading" *ngIf="!validCreator && reportId" >
         </div>
-
         <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/general-report/')" [hidden]="minedu_userName == ''" >
-            Συγκεντρωτικά Αποτελέσματα Κατανομής
+            Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
         </button>
         <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/report-completeness/')" [hidden]="minedu_userName == ''" >
-            Κατανομή Μαθητών ανά Σχολείο
+            Πληρότητα Σχολείων
+        </button>
+        <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/report-all-stat/')" [hidden]="minedu_userName == ''" >
+            Μαθητές ανά Τάξη/Τομέα/Ειδικότητα
         </button>
 
-          <!--<div *ngFor="let generalReports$  of generalReport$ | async; let i=index">-->
+
         <div *ngIf="validCreator ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
           <div class="smart-table-container" reportScroll>
@@ -69,20 +49,21 @@ class TableColumn {
           </div>
         </div>
 
-
-        <!--
-        <div *ngIf="validCreator  && reportId == 2">
-          <div class="smart-table-container" reportScroll>
-            <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
-          </div>
-        </div>-->
-
-        <button type="submit" class="alert alert-info" (click)="export2Csv()" [hidden]="!validCreator" >
+        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="!validCreator">
+        <i class="fa fa-download"></i>
             Εξαγωγή σε csv
         </button>
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="!validCreator ||  charIsHidden() ">
+        <i class="fa fa-bar-chart"></i>
+            Διάγραμμα
+        </button>
 
-      <!--</form>-->
     </div>
+
+    <div class="d3-chart" *ngIf = "!charIsHidden() && validCreator" #chart>
+    </div>
+
+      <!--<div *ngFor="let generalReports$  of generalReport$ | async; let i=index">-->
 
    `
 })
@@ -98,9 +79,9 @@ class TableColumn {
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
-    //private data: string;
     private data;
     private validCreator: boolean;
+    private createGraph: boolean;
     private reportId: number;
     private source: LocalDataSource;
 
@@ -108,82 +89,19 @@ class TableColumn {
     @Input() settings: any;
     private reportSchema = new  reportsSchema();
 
-    /*
-    genReportSchema = {
-      actions: false,
-      columns: {
-        name: {
-          title: 'Κατηγορία',
-          filter: false
-        },
-        numStudents: {
-          title: 'Αριθμός',
-          filter: false
-        }
-      }
-    };
-
-
-    report1Schema = {
-      actions: false,
-      columns: {
-        schoolName: {
-          title: 'Σχολείο',
-          filter: false
-        },
-        numStudents: {
-          title: 'Αριθμός',
-          filter: false
-        },
-        capacityTotal: {
-          title: 'Χωρ/τα',
-          filter: false
-        },
-        percTotal: {
-          title: 'Πληρότητα',
-          filter: false
-        },
-        numStudentsA: {
-          title: 'Α Τάξη',
-          filter: false
-        },
-        capacityA: {
-          title: 'Χωρ/τα',
-          filter: false
-        },
-        percA: {
-          title: 'Πληρότητα',
-          filter: false
-        },
-        numStudentsB: {
-          title: 'Β Τάξη',
-          filter: false
-        },
-        capacityB: {
-          title: 'Χωρ/τα',
-          filter: false
-        },
-        percB: {
-          title: 'Πληρότητα',
-          filter: false
-        },
-        numStudentsC: {
-          title: 'Γ Τάξη',
-          filter: false
-        },
-        capacityC: {
-          title: 'Χωρ/τα',
-          filter: false
-        },
-        percC: {
-          title: 'Πληρότητα',
-          filter: false
-        },
-      }
-
-
-    };
-    */
+    //d3 test
+    @ViewChild('chart') private chartContainer: ElementRef;
+    //@Input() private d3data: Array<any>;
+    private d3data: Array<any>;
+    private margin: any = { top: 20, bottom: 20, left: 20, right: 20};
+    private chart: any;
+    private width: number;
+    private height: number;
+    private xScale: any;
+    private yScale: any;
+    private colors: any;
+    private xAxis: any;
+    private yAxis: any;
 
 
     constructor(/*private fb: FormBuilder,*/
@@ -200,6 +118,7 @@ class TableColumn {
           this.generalReport$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = false;
+          this.createGraph = false;
           this.reportId = 0;
           //this.source = new LocalDataSource(this.data);
 
@@ -230,26 +149,52 @@ class TableColumn {
           return state.loginInfo;
       }).subscribe(this.loginInfo$);
 
+
+
+
+
+
+      /*
+      setTimeout(() => {
+        this.generateData();
+        // change the data periodically
+        setInterval(() => this.generateData(), 3000);
+      }, 1000);
+      */
+
+      //this.generateData();
+      //this.createChart();
+      //this.updateChart();
+
     }
 
 
 createReport(routePath) {
 
+  this.reportId = 0;
   this.validCreator = false;
+  this.createGraph = false;
+
   if (routePath === "/ministry/general-report/")  {
     this.reportId = 1;
-    //this.settings = this.genReportSchema;
     this.settings = this.reportSchema.genReportSchema;
   }
   else if (routePath === "/ministry/report-completeness/")  {
     this.reportId = 2;
-    //this.settings = this.report1Schema;
-      this.settings = this.reportSchema.reportCompletenessSchema;
+    this.settings = this.reportSchema.reportCompletenessSchema;
+  }
+  else if (routePath === "/ministry/report-all-stat/")  {
+    this.reportId = 3;
+    this.settings = this.reportSchema.reportAllStatSchema;
   }
 
   this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
+      console.log("Let see..");
+      //console.log(this.data);
+      //console.log(this.data[0].name);
+      //console.log(this.data.length);
   },
     error => {
       this.generalReport$.next([{}]);
@@ -262,7 +207,13 @@ createReport(routePath) {
       //this.source.load(this.data);
       //this.settings = _.merge(this.defaultSettings, this.report1Schema);
       //this.settings = this.report1Schema;
+      this.columnMap = new Map<string,TableColumn>();
+      //columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
       this.prepareColumnMap();
+
+      //this.generateData2();
+      //this.createChart();
+      //this.updateChart();
     }
   )
 
@@ -368,20 +319,133 @@ prepareColumnMap(): void {
   }
 }
 
-/*
-private doFilterLocal(): void {
 
-  this.easyqService.getData({
-    table: this.table,
-    filter: '((date >="' + this.from + '") and (date <="' + this.to + '"))',
-    order: 'date desc'
-  }).subscribe((rows) => {
-    this.dataSource.load(rows);
-    this.msgs.push({severity: 'info', summary: '刷新成功', detail: ''});
-  });
+createDiagram() {
+  if (!this.createGraph)  {
+    this.generateGraphData();
+    this.createChart();
+    this.updateChart();
+    this.createGraph = true;
+  }
 }
-*/
 
+/*
+generateData() {
+   this.d3data = [];
+   for (let i = 0; i < (8 + Math.floor(Math.random() * 10)); i++) {
+     this.d3data.push([
+       `Index ${i}`,
+       Math.floor(Math.random() * 100)
+     ]);
+   }
+ }
+ */
+
+ generateGraphData() {
+
+    this.d3data = [];
+
+    if (this.reportId === 1)  {
+      let labelsX = [];
+      labelsX.push("1η Προτίμηση");
+      labelsX.push("2η Προτίμηση");
+      labelsX.push("3η Προτίμηση");
+      labelsX.push("Μη τοποθετημένοι");
+      //for (let i = 0; i <  this.data.length; i++) {
+      for (let i = 1; i <=  4; i++) {
+        this.d3data.push([
+          //this.data[i].name,
+          labelsX[i-1],
+          this.data[i].numStudents /   this.data[0].numStudents,
+        ]);
+      }
+    }
+  }
+
+ createChart() {
+     let element = this.chartContainer.nativeElement;
+     this.width = element.offsetWidth - this.margin.left - this.margin.right;
+     this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
+     let svg = d3.select(element).append('svg')
+       .attr('width', element.offsetWidth)
+       .attr('height', element.offsetHeight);
+
+     // chart plot area
+
+     this.chart = svg.append('g')
+       .attr('class', 'bars')
+       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+
+
+     // define X & Y domains
+     let xDomain = this.d3data.map(d => d[0]);
+     let yDomain = [0, d3.max(this.d3data, d => d[1])];
+     //let yDomain = [0, 1000];
+
+     // create scales
+     this.xScale = d3.scaleBand().padding(0.1).domain(xDomain).rangeRound([0, this.width]);
+     this.yScale = d3.scaleLinear().domain(yDomain).range([this.height, 0]);
+     //this.yScale = d3.scaleLinear().domain(yDomain).range([1000, 0]);
+
+     // bar colors
+     this.colors = d3.scaleLinear().domain([0, this.d3data.length]).range(<any[]>['red', 'blue']);
+
+
+     // x & y axis
+     this.xAxis = svg.append('g')
+       .attr('class', 'axis axis-x')
+       .attr('transform', `translate(${this.margin.left}, ${this.margin.top + this.height})`)
+       .call(d3.axisBottom(this.xScale));
+
+     this.yAxis = svg.append('g')
+       .attr('class', 'axis axis-y')
+       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
+       .call(d3.axisLeft(this.yScale));
+
+   }
+
+   updateChart() {
+    // update scales & axis
+    this.xScale.domain(this.d3data.map(d => d[0]));
+    this.yScale.domain([0, d3.max(this.d3data, d => d[1])]);
+    this.colors.domain([0, this.d3data.length]);
+    this.xAxis.transition().call(d3.axisBottom(this.xScale));
+    this.yAxis.transition().call(d3.axisLeft(this.yScale));
+
+    let update = this.chart.selectAll('.bar')
+      .data(this.d3data);
+
+    // remove exiting bars
+    update.exit().remove();
+
+    // update existing bars
+    this.chart.selectAll('.bar').transition()
+      .attr('x', d => this.xScale(d[0]))
+      .attr('y', d => this.yScale(d[1]))
+      .attr('width', d => this.xScale.bandwidth())
+      .attr('height', d => this.height - this.yScale(d[1]))
+      .style('fill', (d, i) => this.colors(i));
+
+    // add new bars
+    update
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', d => this.xScale(d[0]))
+      .attr('y', d => this.yScale(0))
+      .attr('width', this.xScale.bandwidth())
+      .attr('height', 0)
+      .style('fill', (d, i) => this.colors(i))
+      .transition()
+      .delay((d, i) => i * 10)
+      .attr('y', d => this.yScale(d[1]))
+      .attr('height', d => this.height - this.yScale(d[1]));
+  }
+
+  charIsHidden() {
+    if (this.reportId === 2 || this.reportId === 3)
+      return true;
+  }
 
 
 }

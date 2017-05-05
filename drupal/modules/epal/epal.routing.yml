@@ -7,7 +7,7 @@ epal.user.send_verification_code:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.user.verify_verification_code:
-  path: '/epal/user/verifyvercode' 
+  path: '/epal/user/verifyvercode'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -148,12 +148,28 @@ epal.ministry.general_report:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makegGeneralReport'
   requirements:
       _user_is_logged_in: 'TRUE'
-epal.ministry.report1:
+epal.ministry.report-completeness:
   path: '/ministry/report-completeness'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportCompleteness'
+  requirements:
+      _user_is_logged_in: 'TRUE'
+epal.ministry.report-all-stat:
+  path: '/ministry/report-all-stat'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportAllStat'
+  requirements:
+      _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail:
+  path: '/ministry/send-massive-mail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToStudents'
   requirements:
       _user_is_logged_in: 'TRUE'
 regionview:

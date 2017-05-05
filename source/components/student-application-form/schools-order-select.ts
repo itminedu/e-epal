@@ -14,6 +14,7 @@ import {AppSettings} from '../../app.settings';
     template: `
     <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
     </div>
+
     <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
     πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας επιστρέφοντας στην προηγούμενη οθόνη από το αριστερό βέλος κάτω αριστερά.</p>
     <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length > 1" >Έχετε επιλέξει {{(selectedSchools$ | async).length}} σχολεία.
@@ -63,7 +64,6 @@ import {AppSettings} from '../../app.settings';
                 region.epals.reduce((prevEpal, epal) => {
                     if (epal.selected === true) {
                         selectedSchools.push(epal);
-
                     }
 
                     return epal;
@@ -73,9 +73,11 @@ import {AppSettings} from '../../app.settings';
             }, {});
 
             selectedSchools.sort(this.compareSchools);
-            selectedSchools[0].order_id = 1;
-            selectedSchools[1].order_id = 2;
-            selectedSchools[2].order_id = 3;
+            for (let i=0; i < selectedSchools.length; i++)
+              selectedSchools[i].order_id = i+1;
+            //selectedSchools[0].order_id = 1;
+            //selectedSchools[1].order_id = 2;
+            //selectedSchools[2].order_id = 3;
 
             this.selectedSchools$.next(selectedSchools);
 
@@ -102,16 +104,24 @@ import {AppSettings} from '../../app.settings';
     changeOrder(i) {
         let selectedSchools = Array<IRegionSchool>();
         selectedSchools = this.selectedSchools$.getValue();
+
         if (i === 1) {
-            selectedSchools[0].order_id = 2;
-            selectedSchools[1].order_id = 1;
-            selectedSchools[2].order_id = 3;
+          //selectedSchools[0].order_id = 2;
+          //selectedSchools[1].order_id = 1;
+          //selectedSchools[2].order_id = 3;
+
+          //swap selectedSchools[0].order_id <-> selectedSchools[1].order_id
+          [ selectedSchools[0].order_id, selectedSchools[1].order_id ] = [ selectedSchools[1].order_id, selectedSchools[0].order_id ];
         }
         else if (i === 2) {
-            selectedSchools[0].order_id = 1;
-            selectedSchools[1].order_id = 3;
-            selectedSchools[2].order_id = 2;
+          //selectedSchools[0].order_id = 1;
+          //selectedSchools[1].order_id = 3;
+          //selectedSchools[2].order_id = 2;
+
+          //swap selectedSchools[1].order_id <-> selectedSchools[2].order_id
+          [ selectedSchools[1].order_id, selectedSchools[2].order_id ] = [ selectedSchools[2].order_id, selectedSchools[1].order_id ];
         }
+
         this._cfa.saveRegionSchoolsOrder(selectedSchools);
     }
 

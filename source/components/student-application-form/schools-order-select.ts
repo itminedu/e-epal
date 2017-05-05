@@ -25,9 +25,9 @@ import {AppSettings} from '../../app.settings';
 
             <ul class="list-group main-view" style="margin-top: 50px; margin-bottom: 50px;">
             <div *ngFor="let selectedSchool$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even">
-                <li class="list-group-item"  [class.oddout]="isOdd" [class.evenout]="isEven">
+                <li class="list-group-item "  [class.oddout]="isOdd" [class.evenout]="isEven">
                 <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{selectedSchool$.epal_name}}
-                <i (click)="changeOrder(i)" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 2em;"></i>
+                <i (click)="changeOrder(i)" *ngIf = "i !== 0" class="fa fa-arrow-circle-up isclickable pull-right" style="font-size: 1.5em;"></i>
                 </li>
             </div>
             </ul>
@@ -43,6 +43,7 @@ import {AppSettings} from '../../app.settings';
                   </button>
               </div>
               </div>
+
   `
 
 })

@@ -9,6 +9,7 @@ import { IAppState } from '../../store/store';
 import { Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
+import { ModalDirective } from 'ng2-bootstrap/modal';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
 
 
@@ -26,31 +27,58 @@ import { API_ENDPOINT } from '../../app.settings';
     selector: 'minister-view',
     template: `
 
-    <div
-      class = "loading" *ngIf=" distStatus === 'STARTED'" >
+    <!--
+    <div *ngIf="(isModalShownMy)" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Auto shown modal</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Καλημέρα σας.</p>
+            <p>Αυτό είναι ένα μήνυμα</p>
+            <p>από το ng2-bootstrap/modal</p>
+          </div>
+        </div>
+      </div>
     </div>
+    -->
+
+  <div
+    class = "loading" *ngIf=" distStatus === 'STARTED'" >
+  </div>
+
     <div class="alert alert-info" *ngIf="distStatus === 'STARTED'">
       Παρακαλώ περιμένετε...Η εκτέλεση της κατανομής ενδέχεται να διαρκέσει μερικά λεπτά. Παρακαλώ μην εκτελείται οποιαδήποτε ενέργεια μετακίνησης στον φυλλομετρητή σας, μέχρι να ολοκληρωθεί η κατανομή.
     </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'FINISHED'">
+    <div class="alert alert-success" *ngIf="distStatus === 'FINISHED'">
       Η κατανομή ολοκληρώθηκε με επιτυχία!
     </div>
-    <div class="alert alert-info" *ngIf="distStatus === 'ERROR'">
+    <div class="alert alert-warning" *ngIf="distStatus === 'ERROR'">
       Αποτυχία κατανομής!
     </div>
 
-  <div>
-      <!--
-      <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/epal/distribution" #form>
-      -->
+
+    <div>
       <form [formGroup]="formGroup"  #form>
-        <!--<div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>-->
-        <!--<button type="submit" class="btn-primary btn-md" (click)="form.submit()" >-->
-        <button type="submit" class="btn-primary btn-md"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" >
-            Εκτέλεση Κατανομής Μαθητών
-        </button>
+        <div class="col-md-8 offset-md-4">
+          <button type="submit" class="btn-primary btn-md"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" >
+              Εκτέλεση Κατανομής Μαθητών<span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        </div>
       </form>
+
+      <!--
+      <button type="button" class="btn-primary btn-md"  (click)="testModal()" >
+          Test Modal
+      </button>
+      -->
+
     </div>
+
 
    `
 })
@@ -58,9 +86,12 @@ import { API_ENDPOINT } from '../../app.settings';
 @Injectable() export default class MinisterView implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
-    //private loginInfo$: Observable<ILoginInfo>;
     loginInfo$: BehaviorSubject<ILoginInfo>;
     loginInfoSub: Subscription;
+    @ViewChild('autoShownModal') public autoShownModal: ModalDirective;
+    @ViewChild('bootstrapModal') public bootstrapModal:ModalDirective;
+    public isModalShown: BehaviorSubject<boolean>;
+    public isModalShownMy: boolean;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -79,7 +110,37 @@ import { API_ENDPOINT } from '../../app.settings';
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
+          this.isModalShown = new BehaviorSubject(false);
+
     }
+
+    /*
+    public showModal():void {
+        console.log("about to show modal");
+        this.isModalShown.next(true);
+        this.isModalShownMy = true;
+
+    }
+
+    public hideModal():void {
+        this.autoShownModal.hide();
+    }
+
+    public onHidden():void {
+        this.isModalShown.next(false);
+        this.isModalShownMy = false;
+    }
+    */
+
+    showModal(){
+        this.bootstrapModal.show();
+    }
+
+    closeModal(){
+        this.bootstrapModal.hide();
+    }
+
+
 
     ngOnDestroy() {
 
@@ -109,12 +170,17 @@ import { API_ENDPOINT } from '../../app.settings';
     runDistribution() {
       this.distStatus = "STARTED";
       this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
-      .catch(err => {console.log(err); this.distStatus = "ERROR"; })
+      .catch(err => {console.log(err); this.distStatus = "ERROR";  })
       .then(msg => {
           console.log("KATANOMH TELEIOSE");
+          //this.showModal();
           if (this.distStatus !== "ERROR")
             this.distStatus = "FINISHED";
       });
+    }
+
+    testModal() {
+      this.showModal();
     }
 
 

@@ -94,10 +94,10 @@ import {
 
 
      setActiveRegion(ind) {
-      console.log(ind,"ind");
+    
       if (ind === this.regionActive)
         ind = -1;
-      console.log(this.regionActive,"RA");
+      
       this.regionActive = ind;
       this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
             this.CoursesPerPerf$.next(data);

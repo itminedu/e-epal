@@ -112,7 +112,7 @@ import {AppSettings} from '../../app.settings';
                 this.verificationCodeSent.next(true);
                 this.verificationCodeVerified.next(false);
                 this.disableUserEmail();
-//                this.showModal();
+                //this.showModal();
             })
             .catch(err => {console.log(err)});
     }
@@ -122,7 +122,7 @@ import {AppSettings} from '../../app.settings';
             .then(res => {
                 this.verificationCodeVerified.next((<any>res).verificationCodeVerified);
                 this.formGroup.value.userEmail=(<any>res).userEmail;
-//                this.showModal();
+                //this.showModal();
             })
             .catch(err => {console.log(err)});
     }

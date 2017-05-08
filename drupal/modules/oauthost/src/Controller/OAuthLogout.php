@@ -134,6 +134,9 @@ class OAuthLogout extends ControllerBase
             $response->headers->set('Content-Type', 'application/json');
             return $response;
         }
+        session_unset();
+        session_destroy();
+        \Drupal::service('page_cache_kill_switch')->trigger();
         $response = new Response();
         $response->setContent('logout successful');
         $response->setStatusCode(Response::HTTP_OK);

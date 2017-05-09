@@ -28,12 +28,19 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'region-schools-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
+
     <div class = "loading" *ngIf="(regions$ | async).size === 0">
     </div>
 <!--     <div class="row equal">
       <div class="col-md-12"> -->
+      <h4> Επιλογή Σχολείου</h4>
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
+        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε <strong>τρία </strong> ΕΠΑΛ στα οποία θα ήθελε να φοιτήσει ο μαθητής. Επιλέξτε πρώτα την Περιφερειακή Διεύθυνση που ανήκει το κάθε σχολείο της επιλογής σας, επιλέξτε τα σχολεία και στη συνέχεια επιλέξτε <i>Συνέχεια</i>. 
+        Μπορείτε να επιλέξετε σχολεία που ανήκουν σε περισσότερες απο μια Περιφερειακές Διευθύνσεις. <strong> Προσοχή!</strong> Σε ειδικές περιπτώσεις σχολείων μπορείτε να επιλέξετε και λιγότερα απο τρία σχολεία</p>
             <ul class="list-group main-view">
             <div *ngFor="let region$ of regions$ | async; let i=index; let isOdd=odd; let isEven=even"  >
                 <li class="list-group-item isclickable" (click)="setActiveRegion(i)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === i">

@@ -30,11 +30,13 @@ import InformStudents from '../components/minister/minister-informstudents';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
+import Breadcrubs from '../components/main/breadcrubs';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
   { path: 'school', component: SchoolHome },
   { path: 'ministry', component: MinistryHome },
+  { path: 'breadcrubs', component: Breadcrubs },
   { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard] },
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
 //  { path: 'students-list', component: StudentsList },
@@ -81,4 +83,5 @@ export const MainDeclarations = [
   MinisterReports,
   InformStudents,
   PerfectureView,
+  Breadcrubs
 ];

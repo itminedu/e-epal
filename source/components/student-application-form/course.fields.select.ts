@@ -18,6 +18,9 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'course-fields-select',
     template: `
+    <div class="row">
+             <breadcrubs></breadcrubs>
+    </div>
      <form [formGroup]="formGroup">
         <div formArrayName="formArray">
             <div *ngFor="let courseField$ of courseFields$ | async; let i=index">

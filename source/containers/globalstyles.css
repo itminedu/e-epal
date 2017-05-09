@@ -176,18 +176,18 @@
     background-color: #fd9665;
 }
 
-.changecolor 
+.changecolor
 {
     color: red;
 }
 
-.changelistcolor 
+.changelistcolor
 {
     color:red!important ;
 }
 
 .aastyle{
-    color:black!important ;   
+    color:black!important ;
 }
 
 .roundedNumber{
@@ -222,4 +222,12 @@ overflow-x: scroll;
 
 .d3-chart .axis text {
   fill: #999;
+}
+
+.btn-lg.round {
+	border-radius: 24px;
+}
+
+.btn.sharp {
+  border-radius:0;
 }

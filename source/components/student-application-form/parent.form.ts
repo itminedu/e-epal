@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import { HelperDataService } from '../../services/helper-data-service';
-import { ModalDirective } from 'ng2-bootstrap/modal';
 
 import {
     FormBuilder,
@@ -30,7 +29,6 @@ import {AppSettings} from '../../app.settings';
     private verificationCodeVerified: BehaviorSubject<boolean>;
     private userEmailEnabled: BehaviorSubject<boolean>;
     @ViewChild('userEmail') userEmail: ElementRef;
-    @ViewChild('autoShownModal') public autoShownModal: ModalDirective;
     public isModalShown: BehaviorSubject<boolean>;
 
        constructor(private fb: FormBuilder,
@@ -55,11 +53,11 @@ import {AppSettings} from '../../app.settings';
 
     public showModal():void {
         console.log("about to show modal");
-        this.isModalShown.next(true);
+        (<any>$('#emaiSentNotice')).modal('show');
     }
 
     public hideModal():void {
-        this.autoShownModal.hide();
+        (<any>$('#emaiSentNotice')).modal('hide');
     }
 
     public onHidden():void {
@@ -67,8 +65,11 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnInit() {
+        (<any>$('#emaiSentNotice')).appendTo("body");
+
         this.epalUserDataSub = this.hds.getEpalUserData().subscribe(
             x => {
+
                 this.epalUserData$.next(x);
                 this.formGroup.get('userEmail').setValue(x.userEmail);
                 this.formGroup.get('userName').setValue(x.userName);
@@ -102,6 +103,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnDestroy() {
+        (<any>$('#emaiSentNotice')).remove();
         if (this.epalUserDataSub) this.epalUserDataSub.unsubscribe();
         if (this.userEmailSub) this.epalUserDataSub.unsubscribe();
     }
@@ -112,7 +114,8 @@ import {AppSettings} from '../../app.settings';
                 this.verificationCodeSent.next(true);
                 this.verificationCodeVerified.next(false);
                 this.disableUserEmail();
-                //this.showModal();
+                this.showModal();
+//                (<any>$('#emaiSentNotice')).modal('show');
             })
             .catch(err => {console.log(err)});
     }
@@ -122,7 +125,7 @@ import {AppSettings} from '../../app.settings';
             .then(res => {
                 this.verificationCodeVerified.next((<any>res).verificationCodeVerified);
                 this.formGroup.value.userEmail=(<any>res).userEmail;
-                //this.showModal();
+                this.showModal();
             })
             .catch(err => {console.log(err)});
     }

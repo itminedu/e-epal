@@ -9,9 +9,7 @@ import { IAppState } from '../../store/store';
 import { Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { ModalDirective } from 'ng2-bootstrap/modal';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-
 
 import {
     FormBuilder,
@@ -88,8 +86,6 @@ import { API_ENDPOINT } from '../../app.settings';
     public formGroup: FormGroup;
     loginInfo$: BehaviorSubject<ILoginInfo>;
     loginInfoSub: Subscription;
-    @ViewChild('autoShownModal') public autoShownModal: ModalDirective;
-    @ViewChild('bootstrapModal') public bootstrapModal:ModalDirective;
     public isModalShown: BehaviorSubject<boolean>;
     public isModalShownMy: boolean;
     private apiEndPoint = API_ENDPOINT;
@@ -133,11 +129,11 @@ import { API_ENDPOINT } from '../../app.settings';
     */
 
     showModal(){
-        this.bootstrapModal.show();
+//        this.bootstrapModal.show();
     }
 
     closeModal(){
-        this.bootstrapModal.hide();
+//        this.bootstrapModal.hide();
     }
 
 

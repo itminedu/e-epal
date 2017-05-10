@@ -41,8 +41,6 @@ import HeaderComponent from './components/header/header.component';
 import NavbarComponent from './components/navbar/navbar.component';
 import MainComponent from './components/main/main.component';
 import FooterComponent from './components/footer/footer.component';
-import { ModalModule } from 'ng2-bootstrap/modal';
-import { AlertModule } from 'ng2-bootstrap/alert';
 
 import {enableProdMode} from '@angular/core';
 
@@ -64,8 +62,6 @@ class MyLocalization extends NgLocalization {
     HttpModule,
     Ng2SmartTableModule,
     NgReduxModule,
-    ModalModule.forRoot(),
-    AlertModule.forRoot(),
     CookieModule.forRoot()
   ],
   declarations: [

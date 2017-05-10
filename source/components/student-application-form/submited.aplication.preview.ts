@@ -12,11 +12,13 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import * as html2canvas from "html2canvas"
+
 
 
 @Component({ 
     selector: 'submited-preview',
-    template: `
+    template: ` 
          <div class="row"> 
              <breadcrubs></breadcrubs>
         </div>
@@ -35,13 +37,52 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
 
 
-                 <strong> Όνομα:</strong>    <p id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p>
-                 <strong> Επώνυμο:</strong>    <p style="border:1px solid #eceeef;">    {{StudentDetails$.studentsurname}} </p>
-                 <strong> Όνομα Πατέρα:</strong>  <p style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}}</p>
-                 <strong> Επώνυμο Πατέρα:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.fathersurname}}</p>
-                 <strong> Όνομα Μητέρας:</strong>  <p style="border:1px solid #eceeef;">{{StudentDetails$.motherfirstname}}</p>
-                 <strong> Επώνυμο Μητέρας:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.mothersurname}}</p>
-                 <strong> Ημερομηνία Γέννησης:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.birthdate}}</p>
+                  <table>
+                    <tr><td>
+                      <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                        <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p> 
+                      </div>
+                    </td>
+                    <td>
+                     <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                        <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p> 
+                      </div>
+                    </td></tr>
+                  </table>
+                    <div class="form-group"><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p> </div>
+                    <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{StudentDetails$.studentsurname}} </p></div>
+                    <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
+                    <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
+                    <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
+                    <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>                
+                    <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>                
+
+
+                  <table>
+                          <tr>
+                              <td>
+                                  <div class="form-group">
+                                      <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{StudentDetails$.regionaddress}} </p>
+                                  </div>
+                              </td>
+                              <td>
+                                  <div class="form-group">
+                                      <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{StudentDetails$.regiontk}} </p>
+                                  </div>
+                              </td>
+                              <td>
+                                  <div class="form-group">
+                                      <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{StudentDetails$.regionarea}} </p>
+                                  </div>
+                              </td>
+                          </tr>
+                      </table>
+                <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>                
+                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
+                <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
+
+
+
                  <p><b>Επιλογές ΕΠΑΛ</b> </p>
                  <br>
                </div>
@@ -155,11 +196,12 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
  createPdf()
     {
-        
+       console.log("lalalalalala"); 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
             var doc = new jsPDF('p', 'mm');
+            console.log(img, doc, "lalalalalala");
             doc.addImage(img, 'PNG', 10, 10);
             doc.save('applications.pdf');
         });

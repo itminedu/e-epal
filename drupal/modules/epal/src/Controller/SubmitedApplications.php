@@ -95,7 +95,19 @@ class SubmitedApplications extends ControllerBase
                             'fathersurname' =>$object -> fathersurname ->value,
                             'motherfirstname' => $object -> motherfirstname ->value,
                             'mothersurname' =>$object -> mothersurname ->value,
+                            'guardianfirstname' =>$epalUser -> name ->value,
+                            'guardiansurname' =>$epalUser -> surname ->value,                            
+                            'regionaddress' =>$object -> regionaddress ->value,
+                            'regiontk' =>$object -> regiontk ->value,
+                            'regionarea' =>$object -> regionarea ->value,
+                            'certificatetype' =>$object -> certificatetype ->value,
+                            'telnum' =>$object -> telnum ->value,
+                            'relationtostudent' =>$object -> relationtostudent ->value,
                             'birthdate' =>$object -> birthdate ->value,
+                            
+
+
+
 );
 
                     $i++;

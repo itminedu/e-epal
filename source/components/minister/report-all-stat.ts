@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -10,9 +10,9 @@ import { Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-
 import {reportsSchema, TableColumn} from './reports-schema';
+import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import {csvCreator} from './csv-creator';
 
 import {
     FormBuilder,
@@ -22,23 +22,26 @@ import {
     Validators,
 } from '@angular/forms';
 
-import * as d3 from 'd3';
-
-
-//import * as _ from '..';
+//import * as d3 from 'd3';
+//import * as _ from '..
 
 import { API_ENDPOINT } from '../../app.settings';
 
 @Component({
-    selector: 'minister-reports',
-    encapsulation: ViewEncapsulation.None,
+    selector: 'report-all-stat',
+    //encapsulation: ViewEncapsulation.None,
     template: `
 
   <div>
 
-        <!--
+        <div
+          class = "loading" *ngIf="validCreator == 0" >
+        </div>
+
         <form [formGroup]="formGroup"  #form>
+
           <h5> >Επιλογή Φίλτρων <br><br></h5>
+
           <div class="form-group">
                 <label>Περιφερειακή Διεύθυνση</label>
                 <select #regsel class="form-control" (change)="checkregion(regsel)" formControlName="region">
@@ -48,7 +51,7 @@ import { API_ENDPOINT } from '../../app.settings';
           <div class="form-group">
                 <label *ngIf="showAdminList | async">Διεύθυνση Εκπαίδευσης</label>
                 <select #admsel class="form-control"  *ngIf="showAdminList | async"  (change)="checkadminarea(admsel)" formControlName="adminarea">
-                  <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}} {{AdminAreaSelection$.id}}</option>
+                  <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
                 </select>
           </div>
           <div class="form-group">
@@ -57,72 +60,35 @@ import { API_ENDPOINT } from '../../app.settings';
                   <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
                 </select>
           </div>
-          <button type="submit" class="btn btn-alert"  (click)="createReport(reportId, regsel)" [hidden]="minedu_userName == ''" >
+          <br>
+          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
           </button>
+          <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" >
+              Επιστροφή
+          </button>
+          <br><br>
         </form>
-        -->
 
-
-
-
-
-
-        <h5><br> >Επιλογή Αναφοράς<br><br></h5>
-        <!-- btn-block "btn btn-default  -->
-
-        <div class="col-md-1">
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == ''" >
-          <i class="fa fa-file-text"></i>
-              Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
-          </button>
-          <br><br>
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(2)" [hidden]="minedu_userName == ''" >
-          <i class="fa fa-file-text"></i>
-              Πληρότητα Σχολείων
-          </button>
-          <br><br>
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(3)" [hidden]="minedu_userName == ''" >
-          <i class="fa fa-file-text"></i>
-              Μαθητές ανά Τάξη/Τομέα/Ειδικότητα
-          </button>
-          <br><br>
-        </div>
-
-        <!--
-        <div *ngIf="validCreator ">
+        <div *ngIf="validCreator == 1 ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
           <div class="smart-table-container" reportScroll>
             <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
           </div>
         </div>
 
-        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="!validCreator">
+        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator != 1">
         <i class="fa fa-download"></i>
-            Εξαγωγή σε csv
+            <br>Εξαγωγή σε csv
         </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="!validCreator ||  charIsHidden() ">
-        <i class="fa fa-bar-chart"></i>
-            Διάγραμμα
-        </button>
-        -->
 
     </div>
-
-    <!--
-    <div class="d3-chart" *ngIf = "!charIsHidden() && validCreator" #chart>
-    </div>
-    -->
-
-
-
-      <!--<div *ngFor="let generalReports$  of generalReport$ | async; let i=index">-->
 
    `
 })
 
-@Injectable() export default class MinisterReports implements OnInit, OnDestroy {
+@Injectable() export default class ReportAllStat implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     loginInfo$: BehaviorSubject<ILoginInfo>;
@@ -140,8 +106,8 @@ import { API_ENDPOINT } from '../../app.settings';
     private minedu_userPassword: string;
     private distStatus = "READY";
     private data;
-    private validCreator: boolean;
-    private createGraph: boolean;
+    private validCreator: number;
+    //private createGraph: boolean;
     private reportId: number;
     private source: LocalDataSource;
     private showAdminList: BehaviorSubject<boolean>;
@@ -152,19 +118,11 @@ import { API_ENDPOINT } from '../../app.settings';
     @Input() settings: any;
     private reportSchema = new  reportsSchema();
 
-    //d3 test
-    @ViewChild('chart') private chartContainer: ElementRef;
-    //@Input() private d3data: Array<any>;
-    private d3data: Array<any>;
-    private margin: any = { top: 20, bottom: 20, left: 20, right: 20};
-    private chart: any;
-    private width: number;
-    private height: number;
-    private xScale: any;
-    private yScale: any;
-    private colors: any;
-    private xAxis: any;
-    private yAxis: any;
+    //csvObj:csvCreator ;
+    private csvObj = new csvCreator();
+
+    //private repid: number;
+    private routerSub: any;
 
     constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
@@ -184,33 +142,16 @@ import { API_ENDPOINT } from '../../app.settings';
           this.AdminAreaSelections$ = new BehaviorSubject([{}]);
           this.SchoolSelections$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
-          this.validCreator = false;
-          this.createGraph = false;
-          this.reportId = 0;
+          this.validCreator = -1;
+          //this.createGraph = false;
+          //this.reportId = 0;
           this.showAdminList = new BehaviorSubject(false);
           this.adminAreaSelected = 0;
           this.schSelected = 0;
-          //this.showAdminList = false;
           //this.source = new LocalDataSource(this.data);
 
-    }
 
-    ngOnDestroy() {
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
-      //this.loginInfo$.unsubscribe();
-      if (this.generalReportSub)
-          this.generalReportSub.unsubscribe();
-      //this.generalReport$.unsubscribe();
-      if (this.RegionSelectionsSub)
-          this.RegionSelectionsSub.unsubscribe();
-      if (this.AdminAreaSelectionsSub)
-          this.AdminAreaSelectionsSub.unsubscribe();
-      if (this.SchoolSelectionsSub)
-          this.SchoolSelectionsSub.unsubscribe();
-      if (this.showAdminList)
-          this.showAdminList.unsubscribe();
 
     }
 
@@ -227,125 +168,96 @@ import { API_ENDPOINT } from '../../app.settings';
           return state.loginInfo;
       }).subscribe(this.loginInfo$);
 
+      this.routerSub = this.activatedRoute.params.subscribe(params => {
+       this.reportId = +params['reportId'];
+       console.log("Hello");
+       console.log(this.reportId);
+     });
+
+
       this.showFilters();
 
+      //this.csvObj = new csvCreator();
 
+    }
 
+    ngOnDestroy() {
 
-      /*
-      setTimeout(() => {
-        this.generateData();
-        // change the data periodically
-        setInterval(() => this.generateData(), 3000);
-      }, 1000);
-      */
-
-      //this.generateData();
-      //this.createChart();
-      //this.updateChart();
+      if (this.loginInfoSub)
+        this.loginInfoSub.unsubscribe();
+      if (this.generalReportSub)
+          this.generalReportSub.unsubscribe();
+      if (this.RegionSelectionsSub)
+          this.RegionSelectionsSub.unsubscribe();
+      if (this.AdminAreaSelectionsSub)
+          this.AdminAreaSelectionsSub.unsubscribe();
+      if (this.SchoolSelectionsSub)
+          this.SchoolSelectionsSub.unsubscribe();
+      if (this.showAdminList)
+          this.showAdminList.unsubscribe();
 
     }
 
 
+createReport(regionSel) {
 
-nav_to_reportpath(repId) {
-  this.reportId = repId;
-  if (this.reportId == 1)
-    this.router.navigate(['/ministry/report-general', this.reportId]);
-  if (this.reportId == 2 || this.reportId == 3)
-    this.router.navigate(['/ministry/report-all-stat', this.reportId]);
+  this.validCreator = 0;
 
-}
+  //console.log("Testing1..");
+  //console.log(this.reportId);
 
-
-createReport(routePath, regionSel) {
-
-  //this.reportId = 0;
-  this.validCreator = false;
-  this.createGraph = false;
-
-  /*
-  if (routePath === "/ministry/general-report/")  {
-    this.reportId = 1;
-    this.settings = this.reportSchema.genReportSchema;
-  }
-  else if (routePath === "/ministry/report-completeness/")  {
-    this.reportId = 2;
-    this.settings = this.reportSchema.reportCompletenessSchema;
-  }
-  else if (routePath === "/ministry/report-all-stat/")  {
-    this.reportId = 3;
-    this.settings = this.reportSchema.reportAllStatSchema;
-  }
-  */
   let route;
-  if (routePath === 1)  {
+  if (this.reportId === 1)  {
     route = "/ministry/general-report/";
     this.settings = this.reportSchema.genReportSchema;
   }
-  else if (routePath === 2)  {
+  else if (this.reportId === 2)  {
     route = "/ministry/report-completeness/";
     this.settings = this.reportSchema.reportCompletenessSchema;
   }
-  else if (routePath === 3)  {
+  else if (this.reportId === 3)  {
     route = "/ministry/report-all-stat/";
     this.settings = this.reportSchema.reportAllStatSchema;
   }
-
-
+  //console.log("Testing2..");
+  //console.log(route);
 
  let regSel = 0;
- //let admSel = 0, schSel = 0;
-
  if (regionSel.value != 0)
   regSel = regionSel.value;
-
-//For some reason, template #vars can not work..
- /*
- if (typeof adminSel !== 'undefined') {
-  console.log("YES2");
-  admSel = adminSel.value;
-  console.log("YES3");
-}
-if (typeof schoolSel !== 'undefined')
-  schSel = schoolSel.value;
-*/
-
 
   //this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
   this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
-      console.log("Let see..");
-      //console.log(this.data);
-      //console.log(this.data[0].name);
-      //console.log(this.data.length);
+      //console.log("Let see..");
   },
     error => {
       this.generalReport$.next([{}]);
       console.log("Error Getting generalReport");
     },
     () => {
-      console.log("Getting generalReport");
-      this.validCreator = true;
+      console.log("Success Getting generalReport");
+      this.validCreator = 1;
       this.source = new LocalDataSource(this.data);
-      //this.source.load(this.data);
-      //this.settings = _.merge(this.defaultSettings, this.report1Schema);
-      //this.settings = this.report1Schema;
       this.columnMap = new Map<string,TableColumn>();
-      //columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
-      this.prepareColumnMap();
 
-      //this.generateData2();
-      //this.createChart();
-      //this.updateChart();
+      //pass parametes to csv class object
+      this.csvObj.columnMap = this.columnMap;
+      this.csvObj.source = this.source;
+      this.csvObj.settings = this.settings;
+      //this.prepareColumnMap();
+      this.csvObj.prepareColumnMap();
     }
   )
 
 }
 
-  showFilters() {
-    //this.reportId = 3;
+navigateBack()  {
+  this.router.navigate(['/ministry/minister-reports']);
+}
+
+showFilters() {
 
     this.RegionSelectionsSub = this._hds.getRegions(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
         this.RegionSelections$.next(data);
@@ -356,9 +268,9 @@ if (typeof schoolSel !== 'undefined')
         },
         () => console.log("Success Getting RegionSelectionsSub"));
 
-  }
+}
 
-  checkregion(regionId) {
+checkregion(regionId) {
 
     this.adminAreaSelected = 0;
     this.schSelected = 0;
@@ -424,23 +336,19 @@ if (typeof schoolSel !== 'undefined')
 
 
 
-  onSearch(query: string = '') {
+onSearch(query: string = '') {
 
-    this.source.setFilter([
-      // fields we want to include in the search
-      {
-        field: 'name',
-        search: query
-      }
-    ], false);
+  this.csvObj.onSearch(query);
+}
 
+export2Csv()  {
 
-  // second parameter specifying whether to perform 'AND' or 'OR' search
-  // (meaning all columns should contain search query or at least one)
-  // 'AND' by default, so changing to 'OR' by setting false here
+  this.csvObj.export2Csv();
+
 }
 
 
+/*
 export2Csv(): void {
 
   const columns: TableColumn[] = Array.from(this.columnMap.values());
@@ -493,7 +401,7 @@ export2Csv(): void {
     //Set utf-8 header to let excel recognize its encoding
     let blob = new Blob(["\ufeff", encodedStr], {type: 'text/csv'});
     a.href = window.URL.createObjectURL(blob);
-    a.download = (this.settings.fileName || 'eplaSystemReport') + this.reportId +  '.csv';
+    a.download = (this.settings.fileName || 'epalSystemReport') + "all_stat" +  '.csv';
     a.click();
   });
 }
@@ -522,134 +430,13 @@ prepareColumnMap(): void {
     }
   }
 }
+*/
 
 
-createDiagram() {
-  if (!this.createGraph)  {
-    this.generateGraphData();
-    this.createChart();
-    this.updateChart();
-    this.createGraph = true;
-  }
-}
-
-/*
-generateData() {
-   this.d3data = [];
-   for (let i = 0; i < (8 + Math.floor(Math.random() * 10)); i++) {
-     this.d3data.push([
-       `Index ${i}`,
-       Math.floor(Math.random() * 100)
-     ]);
-   }
- }
- */
-
- generateGraphData() {
-
-    this.d3data = [];
-
-    if (this.reportId === 1)  {
-      let labelsX = [];
-      labelsX.push("1η Προτίμηση");
-      labelsX.push("2η Προτίμηση");
-      labelsX.push("3η Προτίμηση");
-      labelsX.push("Μη τοποθετημένοι");
-      //for (let i = 0; i <  this.data.length; i++) {
-      for (let i = 1; i <=  4; i++) {
-        this.d3data.push([
-          //this.data[i].name,
-          labelsX[i-1],
-          this.data[i].numStudents /   this.data[0].numStudents,
-        ]);
-      }
-    }
-  }
-
- createChart() {
-     let element = this.chartContainer.nativeElement;
-     this.width = element.offsetWidth - this.margin.left - this.margin.right;
-     this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
-     let svg = d3.select(element).append('svg')
-       .attr('width', element.offsetWidth)
-       .attr('height', element.offsetHeight);
-
-     // chart plot area
-
-     this.chart = svg.append('g')
-       .attr('class', 'bars')
-       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
 
-     // define X & Y domains
-     let xDomain = this.d3data.map(d => d[0]);
-     let yDomain = [0, d3.max(this.d3data, d => d[1])];
-     //let yDomain = [0, 1000];
-
-     // create scales
-     this.xScale = d3.scaleBand().padding(0.1).domain(xDomain).rangeRound([0, this.width]);
-     this.yScale = d3.scaleLinear().domain(yDomain).range([this.height, 0]);
-     //this.yScale = d3.scaleLinear().domain(yDomain).range([1000, 0]);
-
-     // bar colors
-     this.colors = d3.scaleLinear().domain([0, this.d3data.length]).range(<any[]>['red', 'blue']);
 
 
-     // x & y axis
-     this.xAxis = svg.append('g')
-       .attr('class', 'axis axis-x')
-       .attr('transform', `translate(${this.margin.left}, ${this.margin.top + this.height})`)
-       .call(d3.axisBottom(this.xScale));
-
-     this.yAxis = svg.append('g')
-       .attr('class', 'axis axis-y')
-       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
-       .call(d3.axisLeft(this.yScale));
-
-   }
-
-   updateChart() {
-    // update scales & axis
-    this.xScale.domain(this.d3data.map(d => d[0]));
-    this.yScale.domain([0, d3.max(this.d3data, d => d[1])]);
-    this.colors.domain([0, this.d3data.length]);
-    this.xAxis.transition().call(d3.axisBottom(this.xScale));
-    this.yAxis.transition().call(d3.axisLeft(this.yScale));
-
-    let update = this.chart.selectAll('.bar')
-      .data(this.d3data);
-
-    // remove exiting bars
-    update.exit().remove();
-
-    // update existing bars
-    this.chart.selectAll('.bar').transition()
-      .attr('x', d => this.xScale(d[0]))
-      .attr('y', d => this.yScale(d[1]))
-      .attr('width', d => this.xScale.bandwidth())
-      .attr('height', d => this.height - this.yScale(d[1]))
-      .style('fill', (d, i) => this.colors(i));
-
-    // add new bars
-    update
-      .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', d => this.xScale(d[0]))
-      .attr('y', d => this.yScale(0))
-      .attr('width', this.xScale.bandwidth())
-      .attr('height', 0)
-      .style('fill', (d, i) => this.colors(i))
-      .transition()
-      .delay((d, i) => i * 10)
-      .attr('y', d => this.yScale(d[1]))
-      .attr('height', d => this.height - this.yScale(d[1]));
-  }
-
-  charIsHidden() {
-    if (this.reportId === 2 || this.reportId === 3)
-      return true;
-  }
 
 
 }

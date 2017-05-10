@@ -27,29 +27,13 @@ import { API_ENDPOINT } from '../../app.settings';
     selector: 'minister-view',
     template: `
 
-    <!--
-    <div *ngIf="(isModalShownMy)" [config]="{ show: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title pull-left">Auto shown modal</h4>
-            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <p>Καλημέρα σας.</p>
-            <p>Αυτό είναι ένα μήνυμα</p>
-            <p>από το ng2-bootstrap/modal</p>
-          </div>
-        </div>
-      </div>
+    <div class="row">
+         <breadcrubs></breadcrubs>
     </div>
-    -->
 
-  <div
-    class = "loading" *ngIf=" distStatus === 'STARTED'" >
-  </div>
+    <div
+      class = "loading" *ngIf=" distStatus === 'STARTED'" >
+    </div>
 
     <div class="alert alert-info" *ngIf="distStatus === 'STARTED'">
       Παρακαλώ περιμένετε...Η εκτέλεση της κατανομής ενδέχεται να διαρκέσει μερικά λεπτά. Παρακαλώ μην εκτελείται οποιαδήποτε ενέργεια μετακίνησης στον φυλλομετρητή σας, μέχρι να ολοκληρωθεί η κατανομή.

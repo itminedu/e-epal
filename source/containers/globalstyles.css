@@ -284,3 +284,10 @@ overflow-x: scroll;
      border-top-left-radius: 5px;
      border-top-right-radius: 5px;
 }
+.btn-lg.round {
+	border-radius: 24px;
+}
+
+.btn.sharp {
+  border-radius:0;
+}

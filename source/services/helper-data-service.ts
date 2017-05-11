@@ -681,7 +681,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -690,7 +690,10 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+        console.log("Testing..");
+        console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel, options)
             .map(response => response.json());
 
     }
@@ -724,14 +727,12 @@ export class HelperDataService implements OnInit, OnDestroy {
         console.log(PerfectureId,"a");
         let PerfectureIdNew = PerfectureId.toString();
 
-
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
         console.log("authToken=" + this.authToken);
         console.log("authRole=" + this.authRole);
-
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -754,7 +755,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         console.log("authToken=" + this.authToken);
         console.log("authRole=" + this.authRole);
 
-
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -762,6 +762,70 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/CoursesperSch/` + PerfectureIdNew , options)
             .map(response => response.json());
+}
+
+getRegions(username, userpassword)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+  //    .map(response => response.json());
+  return this.http.get(`${AppSettings.API_ENDPOINT}/regionfields/list`  , options)
+      .map(response => response.json());
+
+}
+
+getAdminAreas(username, userpassword, regionid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+  //    .map(response => response.json());
+
+  console.log("Test");
+  console.log(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid  , options)
+      .map(response => response.json());
+}
+
+getSchoolsPerRegion(username, userpassword, regionid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test2");
+  console.log(`${AppSettings.API_ENDPOINT}/schoolfields_per_region/list/?region=` + regionid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/schoolfields_per_region/list/?region=` + regionid  , options)
+      .map(response => response.json());
+}
+
+getSchoolsPerAdminArea(username, userpassword, adminid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test3");
+  console.log(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid  , options)
+      .map(response => response.json());
 }
 
 

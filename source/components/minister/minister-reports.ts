@@ -14,6 +14,14 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 
 import {reportsSchema, TableColumn} from './reports-schema';
 
+import {
+    FormBuilder,
+    FormGroup,
+    FormControl,
+    FormArray,
+    Validators,
+} from '@angular/forms';
+
 import * as d3 from 'd3';
 
 
@@ -28,20 +36,61 @@ import { API_ENDPOINT } from '../../app.settings';
 
   <div>
 
-        <div
-          class = "loading" *ngIf="!validCreator && reportId" >
+        <!--
+        <form [formGroup]="formGroup"  #form>
+          <h5> >Επιλογή Φίλτρων <br><br></h5>
+          <div class="form-group">
+                <label>Περιφερειακή Διεύθυνση</label>
+                <select #regsel class="form-control" (change)="checkregion(regsel)" formControlName="region">
+                  <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index"  [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
+                </select>
+          </div>
+          <div class="form-group">
+                <label *ngIf="showAdminList | async">Διεύθυνση Εκπαίδευσης</label>
+                <select #admsel class="form-control"  *ngIf="showAdminList | async"  (change)="checkadminarea(admsel)" formControlName="adminarea">
+                  <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}} {{AdminAreaSelection$.id}}</option>
+                </select>
+          </div>
+          <div class="form-group">
+                <label *ngIf="showAdminList | async">Σχολείο</label>
+                <select #schsel class="form-control"  *ngIf="showAdminList | async"  (change)="checkschool(schsel)" formControlName="schoollist">
+                  <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
+                </select>
+          </div>
+          <button type="submit" class="btn btn-alert"  (click)="createReport(reportId, regsel)" [hidden]="minedu_userName == ''" >
+          <i class="fa fa-file-text"></i>
+              Δημιουργία Αναφοράς
+          </button>
+        </form>
+        -->
+
+
+
+
+
+
+        <h5><br> >Επιλογή Αναφοράς<br><br></h5>
+        <!-- btn-block "btn btn-default  -->
+
+        <div class="col-md-1">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == ''" >
+          <i class="fa fa-file-text"></i>
+              Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
+          </button>
+          <br><br>
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(2)" [hidden]="minedu_userName == ''" >
+          <i class="fa fa-file-text"></i>
+              Πληρότητα Σχολείων
+          </button>
+          <br><br>
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(3)" [hidden]="minedu_userName == ''" >
+          <i class="fa fa-file-text"></i>
+              Μαθητές ανά Τάξη/Τομέα/Ειδικότητα
+          </button>
+          <br><br>
         </div>
-        <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/general-report/')" [hidden]="minedu_userName == ''" >
-            Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
-        </button>
-        <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/report-completeness/')" [hidden]="minedu_userName == ''" >
-            Πληρότητα Σχολείων
-        </button>
-        <button type="submit" class="btn btn-default btn-block"  (click)="createReport('/ministry/report-all-stat/')" [hidden]="minedu_userName == ''" >
-            Μαθητές ανά Τάξη/Τομέα/Ειδικότητα
-        </button>
 
-
+        <!--
         <div *ngIf="validCreator ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
           <div class="smart-table-container" reportScroll>
@@ -57,11 +106,16 @@ import { API_ENDPOINT } from '../../app.settings';
         <i class="fa fa-bar-chart"></i>
             Διάγραμμα
         </button>
+        -->
 
     </div>
 
+    <!--
     <div class="d3-chart" *ngIf = "!charIsHidden() && validCreator" #chart>
     </div>
+    -->
+
+
 
       <!--<div *ngFor="let generalReports$  of generalReport$ | async; let i=index">-->
 
@@ -70,11 +124,17 @@ import { API_ENDPOINT } from '../../app.settings';
 
 @Injectable() export default class MinisterReports implements OnInit, OnDestroy {
 
-    //public formGroup: FormGroup;
+    public formGroup: FormGroup;
     loginInfo$: BehaviorSubject<ILoginInfo>;
     loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
+    private RegionSelections$: BehaviorSubject<any>;
+    private AdminAreaSelections$: BehaviorSubject<any>;
+    private SchoolSelections$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
+    private RegionSelectionsSub: Subscription;
+    private AdminAreaSelectionsSub: Subscription;
+    private SchoolSelectionsSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -84,6 +144,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private createGraph: boolean;
     private reportId: number;
     private source: LocalDataSource;
+    private showAdminList: BehaviorSubject<boolean>;
+    private adminAreaSelected: number;
+    private schSelected: number;
 
     columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
     @Input() settings: any;
@@ -103,23 +166,31 @@ import { API_ENDPOINT } from '../../app.settings';
     private xAxis: any;
     private yAxis: any;
 
-
-    constructor(/*private fb: FormBuilder,*/
+    constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          //this.formGroup = this.fb.group({
-
-          //});
+          this.formGroup = this.fb.group({
+              region: ['', []],
+              adminarea: ['', []],
+              schoollist: ['', []],
+          });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
           this.generalReport$ = new BehaviorSubject([{}]);
+          this.RegionSelections$ = new BehaviorSubject([{}]);
+          this.AdminAreaSelections$ = new BehaviorSubject([{}]);
+          this.SchoolSelections$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = false;
           this.createGraph = false;
           this.reportId = 0;
+          this.showAdminList = new BehaviorSubject(false);
+          this.adminAreaSelected = 0;
+          this.schSelected = 0;
+          //this.showAdminList = false;
           //this.source = new LocalDataSource(this.data);
 
     }
@@ -128,11 +199,18 @@ import { API_ENDPOINT } from '../../app.settings';
 
       if (this.loginInfoSub)
         this.loginInfoSub.unsubscribe();
-      this.loginInfo$.unsubscribe();
-
+      //this.loginInfo$.unsubscribe();
       if (this.generalReportSub)
           this.generalReportSub.unsubscribe();
-      this.generalReport$.unsubscribe();
+      //this.generalReport$.unsubscribe();
+      if (this.RegionSelectionsSub)
+          this.RegionSelectionsSub.unsubscribe();
+      if (this.AdminAreaSelectionsSub)
+          this.AdminAreaSelectionsSub.unsubscribe();
+      if (this.SchoolSelectionsSub)
+          this.SchoolSelectionsSub.unsubscribe();
+      if (this.showAdminList)
+          this.showAdminList.unsubscribe();
 
     }
 
@@ -149,7 +227,7 @@ import { API_ENDPOINT } from '../../app.settings';
           return state.loginInfo;
       }).subscribe(this.loginInfo$);
 
-
+      this.showFilters();
 
 
 
@@ -169,12 +247,24 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
 
-createReport(routePath) {
 
-  this.reportId = 0;
+nav_to_reportpath(repId) {
+  this.reportId = repId;
+  if (this.reportId == 1)
+    this.router.navigate(['/ministry/report-general', this.reportId]);
+  if (this.reportId == 2 || this.reportId == 3)
+    this.router.navigate(['/ministry/report-all-stat', this.reportId]);
+
+}
+
+
+createReport(routePath, regionSel) {
+
+  //this.reportId = 0;
   this.validCreator = false;
   this.createGraph = false;
 
+  /*
   if (routePath === "/ministry/general-report/")  {
     this.reportId = 1;
     this.settings = this.reportSchema.genReportSchema;
@@ -187,8 +277,43 @@ createReport(routePath) {
     this.reportId = 3;
     this.settings = this.reportSchema.reportAllStatSchema;
   }
+  */
+  let route;
+  if (routePath === 1)  {
+    route = "/ministry/general-report/";
+    this.settings = this.reportSchema.genReportSchema;
+  }
+  else if (routePath === 2)  {
+    route = "/ministry/report-completeness/";
+    this.settings = this.reportSchema.reportCompletenessSchema;
+  }
+  else if (routePath === 3)  {
+    route = "/ministry/report-all-stat/";
+    this.settings = this.reportSchema.reportAllStatSchema;
+  }
 
-  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath).subscribe(data => {
+
+
+ let regSel = 0;
+ //let admSel = 0, schSel = 0;
+
+ if (regionSel.value != 0)
+  regSel = regionSel.value;
+
+//For some reason, template #vars can not work..
+ /*
+ if (typeof adminSel !== 'undefined') {
+  console.log("YES2");
+  admSel = adminSel.value;
+  console.log("YES3");
+}
+if (typeof schoolSel !== 'undefined')
+  schSel = schoolSel.value;
+*/
+
+
+  //this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
+  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
       console.log("Let see..");
@@ -218,6 +343,85 @@ createReport(routePath) {
   )
 
 }
+
+  showFilters() {
+    //this.reportId = 3;
+
+    this.RegionSelectionsSub = this._hds.getRegions(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+        this.RegionSelections$.next(data);
+    },
+        error => {
+            this.RegionSelections$.next([{}]);
+            console.log("Error Getting RegionSelections");
+        },
+        () => console.log("Success Getting RegionSelectionsSub"));
+
+  }
+
+  checkregion(regionId) {
+
+    this.adminAreaSelected = 0;
+    this.schSelected = 0;
+
+    this.AdminAreaSelectionsSub = this._hds.getAdminAreas(this.minedu_userName, this.minedu_userPassword, regionId.value).subscribe(data => {
+        this.AdminAreaSelections$.next(data);
+    },
+        error => {
+            this.AdminAreaSelections$.next([{}]);
+            console.log("Error Getting AdminAreaSelections");
+        },
+        () => {
+          console.log("Success Getting AdminAreaSelectionsSub");
+          this.showAdminList.next(true);
+        }
+      );
+
+      this.SchoolSelectionsSub = this._hds.getSchoolsPerRegion(this.minedu_userName, this.minedu_userPassword, regionId.value).subscribe(data => {
+          this.SchoolSelections$.next(data);
+      },
+          error => {
+              this.SchoolSelections$.next([{}]);
+              console.log("Error Getting SchoolSelections");
+          },
+          () => {
+            console.log("Success Getting SchoolSelectionsSub");
+            this.showAdminList.next(true);
+          }
+
+        );
+
+  }
+
+  checkadminarea(adminId) {
+
+    this.schSelected = 0;
+
+    console.log("TI EINAI;")
+    console.log(adminId);
+    console.log(adminId.value);
+
+    this.adminAreaSelected = adminId.value;
+    this.SchoolSelectionsSub = this._hds.getSchoolsPerAdminArea(this.minedu_userName, this.minedu_userPassword, adminId.value).subscribe(data => {
+        this.SchoolSelections$.next(data);
+    },
+        error => {
+            this.SchoolSelections$.next([{}]);
+            console.log("Error Getting SchoolSelections");
+        },
+        () => {
+          console.log("Success Getting SchoolSelectionsSub");
+          this.showAdminList.next(true);
+        }
+
+      );
+  }
+
+  checkschool(schId) {
+
+      this.schSelected = schId.value;
+
+  }
+
 
 
   onSearch(query: string = '') {

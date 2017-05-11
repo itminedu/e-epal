@@ -28,6 +28,57 @@ import { API_ENDPOINT } from '../../app.settings';
     <div
       class = "loading" *ngIf="successSending == -2" >
     </div>
+
+    <div id="mailSuccessNotice" (onHidden)="onHidden('#mailSuccessNotice')" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Κατανομή μαθητών</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#mailSuccessNotice')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Έγινε αποστολή {{numSuccessMails}} e-mails!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mailFailureNotice" (onHidden)="onHidden('#mailFailureNotice')" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Κατανομή μαθητών</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#mailFailureNotice')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Αποτυχία αποστολής e-mails!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mailNonSendingNotice" (onHidden)="onHidden('#mailNonSendingNotice')" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title pull-left">Κατανομή μαθητών</h4>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#mailNonSendingNotice')">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Κάποια e-mail δεν έχουν σταλεί.
+            Δεν ήταν δυνατή η αποστολή {{numFailMails}} e-mails!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--
     <div class="alert alert-success" *ngIf="successSending == 1 ">
       Έγινε αποστολή {{numSuccessMails}} e-mails!
     </div>
@@ -38,12 +89,15 @@ import { API_ENDPOINT } from '../../app.settings';
       Κάποια e-mail δεν έχουν σταλεί.
       Δεν ήταν δυνατή η αποστολή {{numFailMails}} e-mails!
     </div>
+    -->
 
-    <div class="col-md-8 offset-md-4">
-      <button type="submit" class="btn-primary btn-md"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents()" >
+    <br><br>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents()" >
           Μαζική αποστολή e-mail στους μαθητές που δεν τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
+
 
 
 
@@ -78,14 +132,11 @@ import { API_ENDPOINT } from '../../app.settings';
 
     }
 
-    ngOnDestroy() {
-
-      if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
-      this.loginInfo$.unsubscribe();
-
-    }
-
     ngOnInit() {
+
+      (<any>$('#mailSuccessNotice')).appendTo("body");
+      (<any>$('#mailFailureNotice')).appendTo("body");
+      (<any>$('#mailNonSendingNotice')).appendTo("body");
 
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
@@ -101,6 +152,32 @@ import { API_ENDPOINT } from '../../app.settings';
       this.numSuccessMails = 0;
       this.numFailMails = 0;
       this.successSending = -1;
+
+    }
+
+    ngOnDestroy() {
+
+      (<any>$('#mailSuccessNotice')).remove();
+      (<any>$('#mailFailureNotice')).remove();
+      (<any>$('#mailNonSendingNotice')).remove();
+
+      if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
+      this.loginInfo$.unsubscribe();
+
+    }
+
+    public showModal(popupMsgId):void {
+        console.log("about to show modal");
+        //(<any>$('#distributionWaitingNotice')).modal('show');
+        (<any>$(popupMsgId)).modal('show');
+    }
+
+    public hideModal(popupMsgId):void {
+        //(<any>$('#distributionWaitingNotice')).modal('hide');
+        (<any>$(popupMsgId)).modal('hide');
+    }
+
+    public onHidden(popupMsgId):void {
 
     }
 
@@ -129,11 +206,14 @@ import { API_ENDPOINT } from '../../app.settings';
         error => {
           console.log("Error");
           this.successSending = 0;
+          this.showModal("#mailFailureNotice");
         },
         () => {
           console.log("Success");
           this.successSending = 1;
-          //this.validCreator = true;
+          this.showModal("#mailSuccessNotice");
+          if (this.numFailMails != 0)
+            this.showModal("#mailNonSendingNotice");
         }
       )
 

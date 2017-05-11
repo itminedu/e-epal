@@ -26,6 +26,8 @@ import PerfectureView from '../components/infoviews/perfecture-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
 import MinisterView from '../components/minister/minister-view';
 import MinisterReports from '../components/minister/minister-reports';
+import ReportAllStat from '../components/minister/report-all-stat';
+import ReportGeneral from '../components/minister/report-general';
 import InformStudents from '../components/minister/minister-informstudents';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
@@ -54,6 +56,8 @@ export const MainRoutes: Routes = [
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
   { path: 'ministry/minister-view', component: MinisterView },
   { path: 'ministry/minister-reports', component: MinisterReports },
+  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat },
+  { path: 'ministry/report-general/:reportId', component: ReportGeneral },
   { path: 'ministry/minister-informstudents', component: InformStudents },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
 ];
@@ -81,6 +85,8 @@ export const MainDeclarations = [
   DirectorClassCapacity,
   MinisterView,
   MinisterReports,
+  ReportAllStat,
+  ReportGeneral,
   InformStudents,
   PerfectureView,
   Breadcrubs

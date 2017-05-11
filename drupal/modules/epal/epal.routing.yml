@@ -141,7 +141,7 @@ epal.ministry.log_out_go:
   requirements:
       _user_is_logged_in: 'TRUE'
 epal.ministry.general_report:
-  path: '/ministry/general-report'
+  path: '/ministry/general-report/{regionId}/{adminId}/{schId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -149,7 +149,7 @@ epal.ministry.general_report:
   requirements:
       _user_is_logged_in: 'TRUE'
 epal.ministry.report-completeness:
-  path: '/ministry/report-completeness'
+  path: '/ministry/report-completeness/{regionId}/{adminId}/{schId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -157,7 +157,7 @@ epal.ministry.report-completeness:
   requirements:
       _user_is_logged_in: 'TRUE'
 epal.ministry.report-all-stat:
-  path: '/ministry/report-all-stat'
+  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

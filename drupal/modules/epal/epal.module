@@ -43,7 +43,7 @@ function epal_mail($key, &$message, $params) {
     switch ($key) {
       case 'send_verification_code':
         $message['from'] = \Drupal::config('system.site')->get('mail');
-        $message['subject'] = t('Email Confirmation Needed', $options);
+        $message['subject'] = t('Σύστημα υποβολής αιτήσεων εγγραφής σε ΕΠΑΛ: Επιβεβαίωση e-mail', $options);
         $message['body'][] = $params['message'];
         break;
     }

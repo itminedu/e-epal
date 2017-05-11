@@ -1,22 +1,24 @@
-<div class = "loading" *ngIf="(epalUserData$ | async) === {}"></div>
+<div class = "loading" *ngIf="(epalUserData$ | async).userEmail === '' || (showLoader | async) === true"></div>
 
 <div id="emaiSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title pull-left">Αποστολή Κωδικού Επαλήθευσης</h4>
+      <div class="modal-header modal-header-success">
+          <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
         <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
         </button>
       </div>
       <div class="modal-body">
-        <p>Έγινε αποστολή κωδικού επαλήθευσης στη διεύθυνση που δηλώσατε</p>
-        <p><strong>Ελέγξτε το email σας!</strong> Αντιγράψτε τον κωδικό που σας στείλαμε εδώ και επιλέξτε "Αποστολή Κωδικού Επαλήθευσης"</p>
+          <p>{{ modalText | async }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
       </div>
     </div>
   </div>
 </div>
-
+<div style="min-height: 500px; margin-bottom: 30px;">
 <form [formGroup]="formGroup">
 
     <div class="form-group">
@@ -122,3 +124,4 @@
         </div>
     </div>
  </form>
+ </div>

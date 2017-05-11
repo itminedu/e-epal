@@ -56,7 +56,7 @@ class ReportsCreator extends ControllerBase {
     }
 
 
-	public function makegGeneralReport(Request $request) {
+	public function makegGeneralReport(Request $request, $regionId, $adminId, $schId) {
 
 			try  {
 				if (!$request->isMethod('GET')) {
@@ -116,21 +116,7 @@ class ReportsCreator extends ControllerBase {
 																	->condition('eStudent.id', $studentIds, 'NOT IN');
 				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
 
-				/*
-				$list[] = array(
-					 'num_applications' => $numTotal,
-				 	 'numchoice1' => $numData[0],
-					 'numchoice2' => $numData[1],
-					 'numchoice3' => $numData[2],
-					 'num_noallocated' => $numNoAllocated,
-				 );
-				*/
-
 				 $list = array();
-
-				 //$record = new generalReportSchema;
-				 //$record->name = "nikos";
-				 //$record->numStudents = 20;
 
 				 array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numTotal));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση", 'numStudents' => $numData[0]));
@@ -153,7 +139,7 @@ class ReportsCreator extends ControllerBase {
 		}
 
 
-		public function makeReportCompleteness(Request $request) {
+		public function makeReportCompleteness(Request $request, $regionId, $adminId, $schId) {
 
 			//$this->checkAuthorization($request);
 
@@ -191,10 +177,17 @@ class ReportsCreator extends ControllerBase {
 
 				$list = array();
 
-				//βρες όλα τα σχολεία
+				//βρες όλα τα σχολεία που πληρούν τα κριτήρια / φίλτρα
 				$sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
-																	->fields('eSchool', array('id', 'name', 'capacity_class_a'));
+																	->fields('eSchool', array('id', 'name', 'capacity_class_a', 'region_edu_admin_id', 'edu_admin_id'));
+				if ($regionId != 0)
+						$sCon->condition('eSchool.region_edu_admin_id', $regionId, '=');
+				if ($adminId != 0)
+						$sCon->condition('eSchool.edu_admin_id', $adminId, '=');
+					if ($schId != 0)
+						$sCon->condition('eSchool.id', $schId, '=');
 				$epalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+
 				//βρες ανώτατο επιτρεπόμενο όριο μαθητών
 				$sCon = $this->connection->select('epal_class_limits', 'eSchool')
 																	->fields('eSchool', array('name', 'limit_up'))
@@ -245,7 +238,8 @@ class ReportsCreator extends ControllerBase {
 					$percTotal = number_format (array_sum($num) / array_sum($capacity) * 100, 1) . "%";
 
 					//αποστολή αποτελεσμάτων / στατιστικών
-					if ($num[0] !== "0" || $num[1] !== "0" || $num[2] !== "0")
+
+					//if ($num[0] !== "0" || $num[1] !== "0" || $num[2] !== "0")
 
 						/*
 						array_push($list,(object) array(
@@ -282,7 +276,7 @@ class ReportsCreator extends ControllerBase {
 
 
 
-		public function makeReportAllStat(Request $request)	{
+		public function makeReportAllStat(Request $request, $regionId, $adminId, $schId)	{
 
 			try  {
 
@@ -316,12 +310,18 @@ class ReportsCreator extends ControllerBase {
 								], Response::HTTP_FORBIDDEN);
 				}
 
-
 				$list = array();
 
-				//βρες όλα τα σχολεία
+				//βρες όλα τα σχολεία που πληρούν τα κριτήρια / φίλτρα
 				$sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
 																	->fields('eSchool', array('id', 'name', 'capacity_class_a', 'region_edu_admin_id', 'edu_admin_id'));
+																	//->condition('eSchool.region_edu_admin_id', $regionId, '=');
+				if ($regionId != 0)
+					$sCon->condition('eSchool.region_edu_admin_id', $regionId, '=');
+				if ($adminId != 0)
+					$sCon->condition('eSchool.edu_admin_id', $adminId, '=');
+				if ($schId != 0)
+					$sCon->condition('eSchool.id', $schId, '=');
 				$epalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
 				foreach ($epalSchools as $epalSchool)	{		//για κάθε σχολείο
@@ -332,14 +332,14 @@ class ReportsCreator extends ControllerBase {
 					$adminColumn = array();
 					$regionColumn = array();
 
-					//εύρεση ΠΔΕ που ανήκει το σχολείο
+					//εύρεση ονόματος ΠΔΕ που ανήκει το σχολείο
 					$sCon = $this->connection->select('eepal_region_field_data', 'eRegion')
 																		->fields('eRegion', array('id','name'))
 																		->condition('eRegion.id', $epalSchool->region_edu_admin_id, '=');
 					$epalRegions = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 					$epalRegion = reset($epalRegions);
 
-					//εύρεση ΔΙΔΕ που ανήκει το σχολείο
+					//εύρεση ονόματος ΔΙΔΕ που ανήκει το σχολείο
 					$sCon = $this->connection->select('eepal_admin_area_field_data', 'eAdmin')
 																		->fields('eAdmin', array('id','name'))
 																		->condition('eAdmin.id', $epalSchool->edu_admin_id, '=');

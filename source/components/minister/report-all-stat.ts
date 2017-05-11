@@ -40,27 +40,32 @@ import { API_ENDPOINT } from '../../app.settings';
 
         <form [formGroup]="formGroup"  #form>
 
-          <h5> >Επιλογή Φίλτρων <br><br></h5>
+          <!--<h5> >Επιλογή Φίλτρων <br><br></h5>-->
+          <br>
+          <button type="button" class="btn-link" (click)="toggleRegionFilter()" >
+              > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου
+          </button>
 
           <div class="form-group">
-                <label>Περιφερειακή Διεύθυνση</label>
-                <select #regsel class="form-control" (change)="checkregion(regsel)" formControlName="region">
-                  <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index"  [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
+                <label *ngIf = "enableRegionFilter"> Περιφερειακή Διεύθυνση </label>
+                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" formControlName="region">
+                  <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
                 </select>
           </div>
           <div class="form-group">
-                <label *ngIf="showAdminList | async">Διεύθυνση Εκπαίδευσης</label>
-                <select #admsel class="form-control"  *ngIf="showAdminList | async"  (change)="checkadminarea(admsel)" formControlName="adminarea">
+                <label *ngIf="(showAdminList | async) && enableRegionFilter">Διεύθυνση Εκπαίδευσης</label>
+                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" formControlName="adminarea">
                   <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
                 </select>
           </div>
           <div class="form-group">
-                <label *ngIf="showAdminList | async">Σχολείο</label>
-                <select #schsel class="form-control"  *ngIf="showAdminList | async"  (change)="checkschool(schsel)" formControlName="schoollist">
+                <label *ngIf="(showAdminList | async) && enableRegionFilter">Σχολείο</label>
+                <select #schsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkschool(schsel)" formControlName="schoollist">
                   <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
                 </select>
           </div>
           <br>
+
           <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
@@ -111,8 +116,10 @@ import { API_ENDPOINT } from '../../app.settings';
     private reportId: number;
     private source: LocalDataSource;
     private showAdminList: BehaviorSubject<boolean>;
+    private regionSelected: number;
     private adminAreaSelected: number;
     private schSelected: number;
+    private enableRegionFilter: boolean;
 
     columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
     @Input() settings: any;
@@ -146,8 +153,10 @@ import { API_ENDPOINT } from '../../app.settings';
           //this.createGraph = false;
           //this.reportId = 0;
           this.showAdminList = new BehaviorSubject(false);
+          this.regionSelected = 0;
           this.adminAreaSelected = 0;
           this.schSelected = 0;
+          this.enableRegionFilter = true;
           //this.source = new LocalDataSource(this.data);
 
 
@@ -222,12 +231,17 @@ createReport(regionSel) {
   //console.log("Testing2..");
   //console.log(route);
 
- let regSel = 0;
- if (regionSel.value != 0)
-  regSel = regionSel.value;
+ let regSel = 0, admSel = 0, schSel = 0;
+ if (this.enableRegionFilter) {
+   //if (regionSel.value != 0)
+    //regSel = regionSel.value;
+   regSel = this.regionSelected;
+   admSel = this.adminAreaSelected;
+   schSel = this.schSelected;
+ }
 
   //this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
-  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
+  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
       //console.log("Let see..");
@@ -270,8 +284,15 @@ showFilters() {
 
 }
 
+toggleRegionFilter()  {
+
+  this.enableRegionFilter = !this.enableRegionFilter;
+
+}
+
 checkregion(regionId) {
 
+    this.regionSelected = regionId.value;
     this.adminAreaSelected = 0;
     this.schSelected = 0;
 

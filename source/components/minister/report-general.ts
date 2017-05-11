@@ -189,9 +189,9 @@ import { API_ENDPOINT } from '../../app.settings';
       }).subscribe(this.loginInfo$);
 
       this.routerSub = this.activatedRoute.params.subscribe(params => {
-       this.reportId = +params['reportId'];
-       console.log("Hello");
-       console.log(this.reportId);
+      this.reportId = +params['reportId'];
+      console.log("Hello");
+      console.log(this.reportId);
      });
 
       //this.showFilters();
@@ -224,6 +224,7 @@ createReport(regionSel) {
   this.createGraph = false;
   //console.log("Testing1..");
   //console.log(this.reportId);
+
 
   let route;
   if (this.reportId === 1)  {

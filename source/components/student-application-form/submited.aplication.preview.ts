@@ -76,10 +76,17 @@ import * as html2canvas from "html2canvas"
                       <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
                       <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
 
+                    <h5>Κοινωνικά Κριτίρια </h5>
+                    <div *ngFor="let critiriaChoices$  of CritirioChosen$ | async" [hidden]="UserData$.id !== userActive">
+                         {{critiriaChoices$.critirio}}
+                    </div>
 
+                    <h5>Εισοδηματικά Κριτίρια </h5>
+                    <div *ngFor="let incomeChoices$  of incomeChosen$ | async" [hidden]="UserData$.id !== userActive">
+                         {{incomeChoices$.critirio}}
+                     </div>
 
-                     <p><b>Επιλογές ΕΠΑΛ</b> </p>
-                     <br>
+                    <h5>Επιλογές ΕΠΑΛ</h5>
                     <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
                          Σχολείο: {{epalChoices$.epal_id}}
                          Σειρά Προτίμισης:{{epalChoices$.choice_no}}
@@ -105,7 +112,12 @@ import * as html2canvas from "html2canvas"
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
  
+    private incomeChosen$: BehaviorSubject<any>;
+    private incomeChosenSub: Subscription;
+    private CritirioChosen$: BehaviorSubject<any>;
+    private CritirioChosenSub: Subscription;
 
+ 
     public StudentId;
     private userActive = <number>-1;
 
@@ -117,6 +129,8 @@ import * as html2canvas from "html2canvas"
        this.SubmitedApplic$ = new BehaviorSubject([{}]);
        this.SubmitedDetails$ = new BehaviorSubject([{}]);
        this.EpalChosen$ = new BehaviorSubject([{}]);
+       this.CritirioChosen$ = new BehaviorSubject([{}]);
+       this.incomeChosen$ = new BehaviorSubject([{}]);
     }
 
     ngOnDestroy()
@@ -127,6 +141,11 @@ import * as html2canvas from "html2canvas"
             this.SubmitedDetailsSub.unsubscribe();
         if (this.EpalChosenSub)
             this.EpalChosenSub.unsubscribe();
+        if (this.CritirioChosenSub)
+            this.CritirioChosenSub.unsubscribe();
+        if (this.incomeChosenSub)
+            this.incomeChosenSub.unsubscribe();
+
         this.SubmitedDetails$.unsubscribe();
         this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
@@ -144,12 +163,6 @@ import * as html2canvas from "html2canvas"
             },
             () => console.log("Getting Schools"));
         console.log(this.SubmitedApplic$);
-
-
-    
-
-
-
     }
 
    
@@ -157,8 +170,7 @@ import * as html2canvas from "html2canvas"
 
   setActiveUser(ind,i) 
   {
-    ind = +ind;
-    
+      ind = +ind;
       console.log(this.userActive,"RA",ind);
       if (ind === this.userActive){
         ind = -1;
@@ -179,6 +191,21 @@ import * as html2canvas from "html2canvas"
                 console.log("Error Getting Schools");
             },
              () => console.log("Getting Schools"));
+    this.CritirioChosenSub = this._hds.getCritiria(this.userActive+1, 1).subscribe(data => {
+        this.CritirioChosen$.next(data)},
+            error => {
+                this.CritirioChosen$.next([{}]);
+                console.log("Error Getting Schools");
+            },
+             () => console.log("Getting Schools"));
+    this.incomeChosenSub = this._hds.getCritiria(this.userActive+1, 2).subscribe(data => {
+          this.incomeChosen$.next(data)},
+              error => {
+                  this.incomeChosen$.next([{}]);
+                  console.log("Error Getting Schools");
+              },
+               () => console.log("Getting Schools"));
+
 
 
    }

@@ -221,6 +221,14 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
                                     'fathersurname' =>$epalStudent -> fathersurname ->value,
                                     'motherfirstname' => $epalStudent -> motherfirstname ->value,
                                     'mothersurname' =>$epalStudent -> mothersurname ->value,
+                                    'guardianfirstname' =>$epalUser -> name ->value,
+                                    'guardiansurname' =>$epalUser -> surname ->value,                            
+                                    'regionaddress' =>$epalStudent -> regionaddress ->value,
+                                    'regiontk' =>$epalStudent -> regiontk ->value,
+                                    'regionarea' =>$epalStudent -> regionarea ->value,
+                                    'certificatetype' =>$epalStudent -> certificatetype ->value,
+                                    'telnum' =>$epalStudent -> telnum ->value,
+                                    'relationtostudent' =>$epalStudent -> relationtostudent ->value,
                                     'birthdate' =>$epalStudent -> birthdate ->value,
                                     );
                                    }

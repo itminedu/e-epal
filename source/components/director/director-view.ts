@@ -44,21 +44,63 @@ import {
             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption,1)">
                 Αναζήτηση
              </button>
-             <div *ngIf="(retrievedStudent | async)">
-              <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index">
-                <br>
-                <br>
-                 Όνομα:         {{StudentDetails$.name}} <br>
-                 Επώνυμο:       {{StudentDetails$.studentsurname}}<br>
-                 Όνομα Πατέρα:  {{StudentDetails$.fatherfirstname}}<br>
-                 Επώνυμο Πατέρα:{{StudentDetails$.fathersurname}}<br>
-                 Όνομα Μητέρας: {{StudentDetails$.motherfirstname}}<br>
-                 Επώνυμο Μητέρας:{{StudentDetails$.mothersurname}}<br>
-                 Ημερομηνία Γέννησης: {{StudentDetails$.birthdate}}<br>
 
+
+              <ul class="list-group main-view">
+              <div *ngIf="(retrievedStudent | async)">
+
+               <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index; let isOdd=odd; let isEven=even"  >
+                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)" [class.selectedout]="userActive === StudentDetails$.i" >
+                  <h5> {{StudentDetails$.name}}&nbsp;{{StudentDetails$.name}} </h5>
+                </li>
                  <strong>Επιβεβαίωση Εγγραφής: </strong>
                  <input #cb class="pull-right" type="checkbox" name="{{ StudentDetails$.id }}" (change)="updateCheckedOptions(StudentDetails$.id, $event)" >
 
+                  <div [hidden]="userActive !== StudentDetails$.i" >
+                      <table>
+                        <tr><td>
+                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p> 
+                          </div>
+                        </td>
+                        <td>
+                         <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p> 
+                          </div>
+                        </td></tr>
+                      </table>
+                      <div class="form-group"><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p> </div>
+                      <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{StudentDetails$.studentsurname}} </p></div>
+                      <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
+                      <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
+                      <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
+                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>                
+                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>                
+
+
+                      <table>
+                              <tr>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{StudentDetails$.regionaddress}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{StudentDetails$.regiontk}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{StudentDetails$.regionarea}} </p>
+                                      </div>
+                                  </td>
+                             </tr>
+                      </table>
+                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>                
+                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
+                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
+                 </div>
 <!--             </div>  -->
              </div>
 
@@ -107,6 +149,8 @@ import {
     private StudentsSizeSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
+    private SubmitedDetails$: BehaviorSubject<any>;
+    private SubmitedDetailsSub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
@@ -116,7 +160,7 @@ import {
     private limitdown = 0; 
     private limitup=  5;
     private pageno = 1;
-    //private maxpage:Number;
+    private userActive = <number>-1;
 
 
     constructor(private fb: FormBuilder,
@@ -127,6 +171,7 @@ import {
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.StudentInfo$ = new BehaviorSubject([{}]);
         this.StudentsSize$ = new BehaviorSubject({});
+        this.SubmitedDetails$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
@@ -151,6 +196,9 @@ import {
             this.selectionCClass.unsubscribe();
         if (this.retrievedStudent)
             this.retrievedStudent.unsubscribe();
+        if (this.SubmitedDetailsSub)
+            this.SubmitedDetailsSub.unsubscribe();
+        
     }
 
     ngOnInit() {
@@ -321,6 +369,21 @@ import {
        }
 
     }
+
+
+
+  setActiveUser(ind) 
+  {
+      ind = +ind;
+      console.log(this.userActive,"RA",ind);
+      if (ind === this.userActive){
+        ind = -1;
+      }
+      ind--;
+      this.userActive = ind+1 ;
+      
+
+   }
 
 
 }

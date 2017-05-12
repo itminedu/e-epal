@@ -188,3 +188,11 @@ coursesperschools:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
+critirioschosen:
+  path: '/epal/critiriachosen/{studentId}/{type}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
+  requirements:
+    _user_is_logged_in: 'TRUE'

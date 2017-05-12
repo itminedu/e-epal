@@ -183,45 +183,34 @@ import * as html2canvas from "html2canvas"
 
    }
 
- createPdf()
+ createPdf1()
     {
-       console.log("lalalalalala"); 
-
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
-            var doc = new jsPDF('p', 'mm');
+            var doc = new jsPDF();
+            
+            doc.onload = function(){
             console.log(img, doc, "lalalalalala");
-            doc.addImage(img, 'PNG', 10, 10);
+            doc.addImage(img, 'PNG',0, 0, 210, 297);
             doc.save('applications.pdf');
+          }
         });
     }
 
 
-
-
-
-
-
-
-
-createPdf1()
+createPdf()
     {
 
-      var srcpath;
-      var imgageData = new Image();
-      imgageData.id = "pic";
-      var doc = new jsPDF({
-              unit:'px', 
-              format:'a4'
-            });
-       console.log("lalalalalala"); 
-html2canvas(document.getElementById("target")), {
-    onrendered: function (canvas) {
-        srcpath = canvas.toDataURL("image/png");
-        imgageData.src=srcpath;
-        doc.addImage(imgageData , 'PNG',  20, 20,400,150);
+      var doc = new jsPDF();
+        doc.text(20, 20, 'Hello world!');
+        doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
+        doc.addPage();
+        doc.text(20, 20, 'Do you like that?');
+
+        // Save the PDF
+        doc.save('Test.pdf');
     }
     }
 

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 
 @Component({
-    selector: 'breadcrubs',
+    selector: 'breadcrumbs',
     template: `
           <div [hidden]="currentUrl !== '/epal-class-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Τάξης </p></div>
     			<div [hidden]="currentUrl !== '/sector-fields-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Τoμέα</p></div>
@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
   `
 })
 
-@Injectable() export default class Breadcrubs implements OnInit {
+@Injectable() export default class Breadcrumbs implements OnInit {
 public currentUrl: string;
 
 constructor(private _router:Router) {}

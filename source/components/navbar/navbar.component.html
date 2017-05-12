@@ -10,17 +10,6 @@
   </a>
    <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
       <div *ngIf="(loginInfo$ | async).size > 0">
-    <ul class="navbar-nav">
-        <div *ngIf="(loginInfo$ | async).cu_name !== ''">
-                  <b>Όνομα Χρήστη:</b> {{ cuName }}
-
-
-       &nbsp;&nbsp;
-                <button type="button" class="btn-primary btn-sm pull-right" (click)="signOut()">
-               <i class="fa fa-sign-out"></i>
-                </button>
-        </div>
-     </ul>
      <ul class="navbar-nav">
      <div class="row">
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">

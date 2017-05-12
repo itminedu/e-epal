@@ -23,7 +23,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'sectorcourses-fields-select',
     template: `
     <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
     </div>
     <div class = "loading" *ngIf="(sectors$ | async).size === 0">
    </div>

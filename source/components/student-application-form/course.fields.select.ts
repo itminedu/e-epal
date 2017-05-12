@@ -19,7 +19,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'course-fields-select',
     template: `
     <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
     </div>
      <form [formGroup]="formGroup">
         <div formArrayName="formArray">

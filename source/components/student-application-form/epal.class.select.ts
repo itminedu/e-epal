@@ -21,7 +21,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'epal-class-select',
     template: `
     <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
     </div>
     <h4> Επιλογή Τάξης </h4>
     <form [formGroup]="formGroup">

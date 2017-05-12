@@ -26,7 +26,7 @@ import { API_ENDPOINT } from '../../app.settings';
     template: `
 
     <div class="row">
-         <breadcrubs></breadcrubs>
+         <breadcrumbs></breadcrumbs>
     </div>
 
     <div

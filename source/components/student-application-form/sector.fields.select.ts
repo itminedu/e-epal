@@ -14,7 +14,7 @@ import {
     FormBuilder,
     FormGroup,
     FormControl,
-    FormArray 
+    FormArray
 } from '@angular/forms';
 import {AppSettings} from '../../app.settings';
 
@@ -22,7 +22,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'sector-fields-select',
     template: `
     <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
     </div>
     <h4> Επιλογή Τομέα </h4>
      <div class = "loading" *ngIf="(sectorFields$ | async).size === 0">

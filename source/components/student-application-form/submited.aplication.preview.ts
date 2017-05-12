@@ -14,22 +14,22 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
 
-@Component({ 
+@Component({
     selector: 'submited-preview',
     template: `
-         <div class="row"> 
-             <breadcrubs></breadcrubs>
+         <div class="row">
+             <breadcrumbs></breadcrumbs>
         </div>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
-           
+
               <ul class="list-group main-view">
                <div *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd" 
+                 <li class="list-group-item isclickable" [class.oddout]="isOdd"
                  [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
                    </li>
                   <div id = "target">
-               
+
 
 
             <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
@@ -43,17 +43,17 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                  <p><b>Επιλογές ΕΠΑΛ</b> </p>
                  <br>
              </div>
-                
+
                 <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
                      Σχολείο: {{epalChoices$.epal_id}}
                      Σειρά Προτίμισης:{{epalChoices$.choice_no}}
                 </div>
 
             </div>
-            
 
 
-            
+
+
                 </div>
               </ul>
               <br>
@@ -99,7 +99,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         this.SubmitedApplic$.unsubscribe();
 
     }
- 
+
     ngOnInit() {
 
 
@@ -113,19 +113,19 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         console.log(this.SubmitedApplic$);
 
 
-    
+
 
 
 
     }
 
-   
 
 
-  setActiveUser(ind,i) 
+
+  setActiveUser(ind,i)
   {
     ind = +ind;
-    
+
       console.log(this.userActive,"RA",ind);
       if (ind === this.userActive){
         ind = -1;
@@ -152,7 +152,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
  createPdf()
     {
-        
+
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();

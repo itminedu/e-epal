@@ -290,13 +290,17 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
             {
                  $postData = json_decode($content);
                  $arr = $postData->students;
+                 $type = $postData ->type
 
                 foreach ($arr as $value) {
                     $valnew = intval($value);
                  $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => $valnew ));
                     $studentConfirm = reset($studentForConfirm);
                   if ($studentConfirm) {
+                    if ($type == 1)
                          $studentConfirm->set('directorconfirm', true);
+                     if ($type == 1)
+                        $studentConfirm->set('directorconfirm', false);
                          $studentConfirm->save();
                     }
                 }

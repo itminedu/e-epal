@@ -206,30 +206,19 @@ import * as html2canvas from "html2canvas"
               },
                () => console.log("Getting Schools"));
 
-
-
    }
 
  createPdf()
     {
-       console.log("lalalalalala"); 
-
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
             var doc = new jsPDF('p', 'mm');
-            console.log(img, doc, "lalalalalala");
             doc.addImage(img, 'PNG', 10, 10);
             doc.save('applications.pdf');
         });
     }
-
-
-
-
-
-
 
 
 

@@ -41,11 +41,11 @@ import {
               <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
       </div>
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption,1)">
+             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption,1)">
                 Αναζήτηση
              </button>
-
-
+             <br>
+             <br>
               <ul class="list-group main-view">
               <div *ngIf="(retrievedStudent | async)">
 
@@ -53,10 +53,19 @@ import {
                  <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)" [class.selectedout]="userActive === StudentDetails$.i" >
                   <h5> {{StudentDetails$.name}}&nbsp;{{StudentDetails$.name}} </h5>
                 </li>
-                 <strong>Επιβεβαίωση Εγγραφής: </strong>
-                 <input #cb class="pull-right" type="checkbox" name="{{ StudentDetails$.id }}" (change)="updateCheckedOptions(StudentDetails$.id, $event)" >
 
-                  <div [hidden]="userActive !== StudentDetails$.i" >
+                    <div [hidden]="userActive !== StudentDetails$.i" >
+                     <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
+                      <strong><label>Επιβεβαίωση Εγγραφής:</label> </strong>
+                      <select #cb name="{{StudentDetails$.id}}" (change)="updateCheckedOptions(StudentDetails$.id, cb)" >
+                          <option value=1>Ναι</option>
+                          <option value=2>Όχι</option>
+                          <option value=3 selected></option>
+                      </select>
+                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
+                           Επιβεβαίωση Εγγραφής
+                       </button>
+
                       <table>
                         <tr><td>
                           <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
@@ -116,10 +125,7 @@ import {
            <input #maxpage type="text" class="form-control" placeholder=".col-1" formControlName="maxpage">
            </div>   
          </div>
- 
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
-                 Επιβεβαίωση Εγγραφής
-             </button>
+
              <br>
              <nav aria-label="pagination">
               <ul class="pagination justify-content-center">
@@ -161,6 +167,7 @@ import {
     private limitup=  5;
     private pageno = 1;
     private userActive = <number>-1;
+    private type: Number;
 
 
     constructor(private fb: FormBuilder,
@@ -319,27 +326,36 @@ import {
 
     }
 
-    updateCheckedOptions(id, event) {
+    updateCheckedOptions(id, cbvalue) {
 
         let i = this.saved.length;
+        console.log(cbvalue.value,"aaaaa");
 
-
-        if (event.target.checked === false) {
-            var count = this.saved.length;
-            for (var j = 0; j < count; j++) {
-                if (this.saved[j] === id) {
-                    this.saved.splice(j, 1);
-                }
-            }
+        if (cbvalue.value === '1') {
+           this.saved[i] = id;
+           this.type = 1;
+           console.log("ok")
         }
-        else {
+        else if (cbvalue.value === '2') {
             this.saved[i] = id;
+            this.type = 2;
+            //var count = this.saved.length;
+            //for (var j = 0; j < count; j++) {
+            //    if (this.saved[j] === id) {
+            //        this.saved.splice(j, 1);
+            //    }
+            
+           console.log("not confirmed")
         }
-
+        else if (cbvalue.value === '3') {
+           
+        }
     }
 
+
+
     confirmStudent() {
-        this._hds.saveConfirmStudents(this.saved);
+        this._hds.saveConfirmStudents(this.saved, this.type);
     }
 
     checkcclass() {

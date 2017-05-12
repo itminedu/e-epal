@@ -562,7 +562,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    saveConfirmStudents(students) {
+    saveConfirmStudents(students, type) {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -573,7 +573,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);

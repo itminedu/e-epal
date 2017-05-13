@@ -681,7 +681,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -690,11 +690,22 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
 
-        console.log("Testing..");
-        console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
+        //console.log("Testing..");
+        //console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
 
-        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel, options)
-            .map(response => response.json());
+        if (routepath == "/ministry/general-report/") {
+            return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath  , options)
+                .map(response => response.json());
+        }
+        else if (routepath == "/ministry/report-completeness/") {
+          return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel  , options)
+                .map(response => response.json());
+        }
+        else if (routepath == "/ministry/report-all-stat/"){
+            return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel + "/"  +
+                                  clsel + "/"  + secsel + "/"  + coursel , options)
+                .map(response => response.json());
+          }
 
     }
 
@@ -825,6 +836,34 @@ getSchoolsPerAdminArea(username, userpassword, adminid)  {
   console.log("Test3");
   console.log(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid);
   return this.http.get(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid  , options)
+      .map(response => response.json());
+}
+
+getSectors(username, userpassword, classid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test");
+  console.log(`${AppSettings.API_ENDPOINT}/sectorfields/list`);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/sectorfields/list` , options)
+      .map(response => response.json());
+}
+
+getCourses(username, userpassword, sectorid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  return this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list/?sector_id=` + sectorid , options)
       .map(response => response.json());
 }
 

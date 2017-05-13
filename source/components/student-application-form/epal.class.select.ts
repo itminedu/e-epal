@@ -32,7 +32,7 @@ import {AppSettings} from '../../app.settings';
                     <select class="form-control" formControlName="name" (change)="initializestore()">
                         <option value="Α' Λυκείου">Α' Λυκείου</option>
                         <option value="Β' Λυκείου">Β' Λυκείου</option>
-                        <option value="Γ' Λυκείου">Γ' Λυκείου</option>
+                        <option value="Γ' Λυκείου">Γ' Λυκείου / Δ' Λυκείου</option>
                     </select>
 
             </div>

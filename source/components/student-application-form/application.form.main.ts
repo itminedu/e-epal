@@ -138,7 +138,10 @@ import {
         let  mutual_ids = mutual_disabled.split(",");
         for (let i=0; i<mutual_ids.length; i++) {
           this.studentCriteriaGroup.controls['formArray']['controls'][mutual_ids[i]-1].setValue(false);
-        }
+          //console.log("Hi!");
+          //console.log(mutual_ids);
+          console.log(this.studentCriteriaGroup.controls['formArray']['controls']);
+          console.log(this.studentCriteriaGroup.controls['formArray']['controls'][mutual_ids[i]-1]);        }
 
       }
 

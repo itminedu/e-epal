@@ -41,6 +41,10 @@ genReportSchema = {
 
 reportAllStatSchema = {
   actions: false,
+  pager : {
+    display : true,
+    perPage:10
+  },
   columns: {
     name: {
       title: 'Σχολείο',

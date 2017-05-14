@@ -120,7 +120,7 @@ class CASLogout extends ControllerBase
 
                 return $response;
             }
-            phpCAS::handleLogoutRequests();
+//            phpCAS::handleLogoutRequests();
 
 //            phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
 //            session_unset();
@@ -136,10 +136,13 @@ class CASLogout extends ControllerBase
         //    phpCAS::logout();
         session_unset();
         session_destroy();
-            $this->logger->warning("hello from logout");
             \Drupal::service('page_cache_kill_switch')->trigger();
-            return new RedirectResponseWithCookieExt("https://sso-test.sch.gr/logout", 302, []);
-    //        return $response;
+//            phpCAS::logoutWithRedirectServiceAndUrl('https://sso-test.sch.gr/logout','');
+//            header('Location: '.'https://sso-test.sch.gr/login?service=https%3A%2F%2Feduslim2.minedu.gov.gr%2Fdrupal%2Fcas%2Flogin%3Fconfig%3D2');
+//            header('Location: https://sso-test.sch.gr/logout');
+    //        exit(0);
+    //        return new RedirectResponseWithCookieExt("https://sso-test.sch.gr/logout", 302, []);
+            return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
             $response = new Response();

@@ -13,6 +13,8 @@ import { IAppState } from '../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-state';
 import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../constants';
+import { CookieService } from 'ngx-cookie';
+
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
 
@@ -27,8 +29,10 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     constructor(
         private http: Http,
-        private _ngRedux: NgRedux<IAppState>) {
+        private _ngRedux: NgRedux<IAppState>,
+        private _cookieService:CookieService) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+
 
     };
 
@@ -421,14 +425,8 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
 
         let headers = new Headers({
-            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
             "Content-Type": "application/json",
-//            "Accept": "*/*",
-//            "Access-Control-Allow-Credentials": "true",
-//            "Access-Control-Allow-Origin": "*",
-            //"X-CSRF-Token": "EoAZ0APpIbbewK5MNzRrCFkvEeZZoGQsBslWFTrZ8bI",
-            //            "X-oauth-enabled": "true",
-            //            "X-Auth-Token": this.authToken
+
         });
 
         if (this.authRole === MINISTRY_ROLE)
@@ -437,8 +435,23 @@ export class HelperDataService implements OnInit, OnDestroy {
           this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
-        if (this.authRole === SCHOOL_ROLE || this.authRole === PDE_ROLE || this.authRole === DIDE_ROLE)
+        if (this.authRole === SCHOOL_ROLE || this.authRole === PDE_ROLE || this.authRole === DIDE_ROLE) {
           logoutRoute = '/cas/logout';
+
+          return new Promise((resolve, reject) => {
+              this.http.get(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, options)
+                  .map(response => response)
+                  .subscribe(data => {
+                      this._cookieService.removeAll();
+                      resolve(data);
+                  }, // put the data returned from the server in our variable
+                  error => {
+                      console.log("Error Logout"); // in case of failure show this message
+                      reject("Error Logout");
+                  },
+                  () => console.log("Logging out"));//run this code in all cases); */
+          });
+        }
         else if (this.authRole === MINISTRY_ROLE)
           logoutRoute = '/ministry/logout';
 
@@ -446,6 +459,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)
                 .map(response => response)
                 .subscribe(data => {
+                    this._cookieService.removeAll();
                     resolve(data);
                 }, // put the data returned from the server in our variable
                 error => {
@@ -667,7 +681,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -676,7 +690,10 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+        console.log("Testing..");
+        console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel, options)
             .map(response => response.json());
 
     }
@@ -710,14 +727,12 @@ export class HelperDataService implements OnInit, OnDestroy {
         console.log(PerfectureId,"a");
         let PerfectureIdNew = PerfectureId.toString();
 
-
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
         console.log("authToken=" + this.authToken);
         console.log("authRole=" + this.authRole);
-
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -740,7 +755,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         console.log("authToken=" + this.authToken);
         console.log("authRole=" + this.authRole);
 
-
         let headers = new Headers({
             "Content-Type": "application/json",
         });
@@ -748,6 +762,70 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/CoursesperSch/` + PerfectureIdNew , options)
             .map(response => response.json());
+}
+
+getRegions(username, userpassword)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+  //    .map(response => response.json());
+  return this.http.get(`${AppSettings.API_ENDPOINT}/regionfields/list`  , options)
+      .map(response => response.json());
+
+}
+
+getAdminAreas(username, userpassword, regionid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath , options)
+  //    .map(response => response.json());
+
+  console.log("Test");
+  console.log(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid  , options)
+      .map(response => response.json());
+}
+
+getSchoolsPerRegion(username, userpassword, regionid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test2");
+  console.log(`${AppSettings.API_ENDPOINT}/schoolfields_per_region/list/?region=` + regionid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/schoolfields_per_region/list/?region=` + regionid  , options)
+      .map(response => response.json());
+}
+
+getSchoolsPerAdminArea(username, userpassword, adminid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test3");
+  console.log(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/schoolfields_per_admin/list/?adminarea=` + adminid  , options)
+      .map(response => response.json());
 }
 
 

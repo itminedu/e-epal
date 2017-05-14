@@ -72,12 +72,14 @@ class CreateDemoData extends ControllerBase {
 
 			$epaluserid = \Drupal::currentUser()->id();
 
-			for ($i = 1; $i <= 500; $i++) {
+			for ($i = 1; $i <= 1000; $i++) {
 				//srand($this->make_seed());
 
 			  $curclass = rand(1,3);
 				//$curclass = 2;
-				$currentepal = rand(137,165);
+
+				//$currentepal = rand(137,165);
+				$currentepal = rand(5,399);
 
 				$student = array(
 					//'epaluser_id' => $aitisi[0][epaluser_id],
@@ -146,8 +148,8 @@ class CreateDemoData extends ControllerBase {
 
 						$ids  =  $eepalSpecialtiesInEpal_storage->getQuery()
 							->condition('specialty_id', $coursefield_id, "=")
-							->condition('epal_id', 137, ">=")
-							->condition('epal_id', 165, "<=")
+							//->condition('epal_id', 137, ">=")
+							//->condition('epal_id', 165, "<=")
 							->execute();
 						$eepalSpecialtiesInEpal = $eepalSpecialtiesInEpal_storage->loadMultiple($ids);
 
@@ -185,8 +187,8 @@ class CreateDemoData extends ControllerBase {
 
 						$ids  =  $eepalSectorsInEpal_storage->getQuery()
 							->condition('sector_id', $sectorfield_id, "=")
-							->condition('epal_id', 137, ">=")
-							->condition('epal_id', 165, "<=")
+							//->condition('epal_id', 137, ">=")
+							//->condition('epal_id', 165, "<=")
 							->execute();
 						$eepalSectorsInEpal = $eepalSectorsInEpal_storage->loadMultiple($ids);
 
@@ -206,8 +208,10 @@ class CreateDemoData extends ControllerBase {
 
 				else if ($curclass === 1)	{
 					print_r("<br> CLASS A: ");
-					$school_id_start = 137;
-					for ($l=0; $l < 29; $l++)
+					//$school_id_start = 137;
+					$school_id_start = 5;
+					//for ($l=0; $l < 29; $l++)
+					for ($l=0; $l < 395; $l++)
 						array_push($availableSchools, $school_id_start + $l);
 				}
 

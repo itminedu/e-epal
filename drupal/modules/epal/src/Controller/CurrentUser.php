@@ -34,7 +34,7 @@ class CurrentUser extends ControllerBase
             $container->get('entity_type.manager'),
             $container->get('database'),
             $container->get('logger.factory')
-        ); 
+        );
     }
 
     public function getLoginInfo(Request $request)
@@ -59,7 +59,7 @@ class CurrentUser extends ControllerBase
                     ], Response::HTTP_OK);
             } else if ($userRole === 'applicant') {
                 break;
-            } 
+            }
 
         }
 
@@ -174,7 +174,7 @@ class CurrentUser extends ControllerBase
         $module = 'epal';
         $key = 'send_verification_code';
         $to = $email;
-        $params['message'] = 'verification code=' . $vc;
+        $params['message'] = 'Κωδικός επαλήθευσης=' . $vc;
         $langcode = $user->getPreferredLangcode();
         $send = true;
 

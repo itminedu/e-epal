@@ -22,21 +22,20 @@ import {
     Validators,
 } from '@angular/forms';
 
-//import * as d3 from 'd3';
-//import * as _ from '..
 
 import { API_ENDPOINT } from '../../app.settings';
 
 @Component({
     selector: 'report-all-stat',
-    //encapsulation: ViewEncapsulation.None,
     template: `
 
   <div>
 
+        <!--
         <div
           class = "loading" *ngIf="validCreator == 0" >
         </div>
+        -->
 
         <form [formGroup]="formGroup"  #form>
 
@@ -45,27 +44,57 @@ import { API_ENDPOINT } from '../../app.settings';
           <button type="button" class="btn-link" (click)="toggleRegionFilter()" >
               > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου
           </button>
-
-          <div class="form-group">
+          <div  class="col-md-11 offset-md-1">
                 <label *ngIf = "enableRegionFilter"> Περιφερειακή Διεύθυνση </label>
                 <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" formControlName="region">
+                  <option value="0"></option>
                   <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
                 </select>
           </div>
-          <div class="form-group">
+          <div class="col-md-11 offset-md-1">
                 <label *ngIf="(showAdminList | async) && enableRegionFilter">Διεύθυνση Εκπαίδευσης</label>
                 <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" formControlName="adminarea">
+                  <option value="0"></option>
                   <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
                 </select>
           </div>
-          <div class="form-group">
+          <div class="col-md-11 offset-md-1">
                 <label *ngIf="(showAdminList | async) && enableRegionFilter">Σχολείο</label>
                 <select #schsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkschool(schsel)" formControlName="schoollist">
+                  <option value="0"></option>
                   <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
                 </select>
           </div>
-          <br>
 
+          <button type="button" class="btn-link" (click)="toggleCourseFilter()" *ngIf = "reportId == 3" >
+              > Φίλτρο Επιλογής Τομέα / Ειδικότητας
+          </button>
+          <br>
+          <div  class="col-md-11 offset-md-1">
+                <label for="classid" *ngIf = "enableCourseFilter" >Τάξη</label><br/>
+                <select #class_sel  class="form-control" (change)="checkclass(class_sel)" *ngIf = "enableCourseFilter" formControlName="classid" >
+                  <option value="0" ></option>
+                  <option value="1" >Α' Λυκείου</option>
+                  <option value="2" >Β' Λυκείου</option>
+                  <option value="3" >Γ' Λυκείου</option>
+                </select>
+          </div>
+          <div class="col-md-11 offset-md-1">
+                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3) ">Τομέας</label>
+                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3)" (change)="checksector(secsel)" formControlName="sector">
+                  <option value="0"></option>
+                  <option *ngFor="let SectorSelection$  of SectorSelections$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.name}}</option>
+                </select>
+          </div>
+          <div class="col-md-11 offset-md-1">
+                <label *ngIf="(showCourseList | async) && enableCourseFilter && classSelected == 3">Ειδικότητα</label>
+                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && classSelected == 3" (change)="checkcourse(coursel)" formControlName="course">
+                  <option value="0"></option>
+                  <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
+                </select>
+          </div>
+
+          <br>
           <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
@@ -102,24 +131,33 @@ import { API_ENDPOINT } from '../../app.settings';
     private RegionSelections$: BehaviorSubject<any>;
     private AdminAreaSelections$: BehaviorSubject<any>;
     private SchoolSelections$: BehaviorSubject<any>;
+    private SectorSelections$: BehaviorSubject<any>;
+    private CourseSelections$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
     private RegionSelectionsSub: Subscription;
     private AdminAreaSelectionsSub: Subscription;
     private SchoolSelectionsSub: Subscription;
+    private SectorSelectionsSub: Subscription;
+    private CourseSelectionsSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
     private data;
     private validCreator: number;
-    //private createGraph: boolean;
     private reportId: number;
     private source: LocalDataSource;
     private showAdminList: BehaviorSubject<boolean>;
+    private showSectorList: BehaviorSubject<boolean>;
+    private showCourseList: BehaviorSubject<boolean>;
     private regionSelected: number;
     private adminAreaSelected: number;
     private schSelected: number;
+    private classSelected: number;
+    private sectorSelected: number;
+    private courseSelected: number;
     private enableRegionFilter: boolean;
+    private enableCourseFilter: boolean;
 
     columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
     @Input() settings: any;
@@ -141,6 +179,9 @@ import { API_ENDPOINT } from '../../app.settings';
               region: ['', []],
               adminarea: ['', []],
               schoollist: ['', []],
+              classid: ['', []],
+              sector: ['', []],
+              course: ['', []],
           });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -148,19 +189,21 @@ import { API_ENDPOINT } from '../../app.settings';
           this.RegionSelections$ = new BehaviorSubject([{}]);
           this.AdminAreaSelections$ = new BehaviorSubject([{}]);
           this.SchoolSelections$ = new BehaviorSubject([{}]);
+          this.SectorSelections$ = new BehaviorSubject([{}]);
+          this.CourseSelections$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = -1;
-          //this.createGraph = false;
-          //this.reportId = 0;
           this.showAdminList = new BehaviorSubject(false);
+          this.showSectorList = new BehaviorSubject(false);
+          this.showCourseList = new BehaviorSubject(false);
           this.regionSelected = 0;
           this.adminAreaSelected = 0;
           this.schSelected = 0;
-          this.enableRegionFilter = true;
-          //this.source = new LocalDataSource(this.data);
-
-
-
+          this.classSelected = 0;
+          this.sectorSelected = 0;
+          this.courseSelected = 0;
+          this.enableRegionFilter = false;
+          this.enableCourseFilter = false;
 
     }
 
@@ -178,15 +221,13 @@ import { API_ENDPOINT } from '../../app.settings';
       }).subscribe(this.loginInfo$);
 
       this.routerSub = this.activatedRoute.params.subscribe(params => {
-       this.reportId = +params['reportId'];
-       console.log("Hello");
-       console.log(this.reportId);
+      this.reportId = +params['reportId'];
+      //console.log("Hello");
+      //console.log(this.reportId);
      });
 
 
-      this.showFilters();
-
-      //this.csvObj = new csvCreator();
+    this.showFilters();
 
     }
 
@@ -202,8 +243,16 @@ import { API_ENDPOINT } from '../../app.settings';
           this.AdminAreaSelectionsSub.unsubscribe();
       if (this.SchoolSelectionsSub)
           this.SchoolSelectionsSub.unsubscribe();
+      if (this.SectorSelectionsSub)
+          this.SectorSelectionsSub.unsubscribe();
+      if (this.CourseSelectionsSub)
+          this.CourseSelectionsSub.unsubscribe();
       if (this.showAdminList)
           this.showAdminList.unsubscribe();
+      if (this.showSectorList)
+          this.showSectorList.unsubscribe();
+      if (this.showCourseList)
+          this.showCourseList.unsubscribe();
 
     }
 
@@ -211,9 +260,6 @@ import { API_ENDPOINT } from '../../app.settings';
 createReport(regionSel) {
 
   this.validCreator = 0;
-
-  //console.log("Testing1..");
-  //console.log(this.reportId);
 
   let route;
   if (this.reportId === 1)  {
@@ -228,8 +274,6 @@ createReport(regionSel) {
     route = "/ministry/report-all-stat/";
     this.settings = this.reportSchema.reportAllStatSchema;
   }
-  //console.log("Testing2..");
-  //console.log(route);
 
  let regSel = 0, admSel = 0, schSel = 0;
  if (this.enableRegionFilter) {
@@ -240,11 +284,16 @@ createReport(regionSel) {
    schSel = this.schSelected;
  }
 
-  //this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, routePath, regSel, this.adminAreaSelected, this.schSelected).subscribe(data => {
-  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel).subscribe(data => {
+ let clSel = 0, secSel = 0, courSel = 0;
+ if (this.enableCourseFilter) {
+   clSel = this.classSelected;
+   secSel = this.sectorSelected;
+   courSel = this.courseSelected;
+ }
+
+  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
-      //console.log("Let see..");
   },
     error => {
       this.generalReport$.next([{}]);
@@ -290,11 +339,18 @@ toggleRegionFilter()  {
 
 }
 
+toggleCourseFilter()  {
+
+  this.enableCourseFilter = !this.enableCourseFilter;
+}
+
 checkregion(regionId) {
 
     this.regionSelected = regionId.value;
     this.adminAreaSelected = 0;
     this.schSelected = 0;
+
+    //if (regionId.value != 0)  {
 
     this.AdminAreaSelectionsSub = this._hds.getAdminAreas(this.minedu_userName, this.minedu_userPassword, regionId.value).subscribe(data => {
         this.AdminAreaSelections$.next(data);
@@ -322,6 +378,8 @@ checkregion(regionId) {
           }
 
         );
+
+      //} //end if
 
   }
 
@@ -352,6 +410,69 @@ checkregion(regionId) {
   checkschool(schId) {
 
       this.schSelected = schId.value;
+
+  }
+
+  checkclass(classId) {
+
+    this.classSelected = classId.value;
+    this.sectorSelected = 0;
+    this.courseSelected = 0;
+
+    console.log("What?");
+    console.log(this.classSelected);
+
+    if (this.classSelected == 2 || this.classSelected == 3)  {
+      this.SectorSelectionsSub = this._hds.getSectors(this.minedu_userName, this.minedu_userPassword, this.classSelected).subscribe(data => {
+          this.SectorSelections$.next(data);
+      },
+          error => {
+              this.SectorSelections$.next([{}]);
+              console.log("Error Getting SectorSelections");
+          },
+          () => {
+            console.log("Success Getting SectorSelections");
+            this.showSectorList.next(true);
+          }
+        );
+    } //end if
+
+
+  }
+
+  checksector(sectorId) {
+
+    this.courseSelected = 0;
+    //if (typeof courseId != 'undefined') {
+    //  this.courseSelected = courseId.value;
+    //  console.log("My test..");
+    //  console.log(this.courseSelected);
+    //}
+
+    this.sectorSelected = sectorId.value;
+
+    //if (this.classSelected == 3)  {
+      this.CourseSelectionsSub = this._hds.getCourses(this.minedu_userName, this.minedu_userPassword, this.sectorSelected).subscribe(data => {
+          this.CourseSelections$.next(data);
+      },
+          error => {
+              this.CourseSelections$.next([{}]);
+              console.log("Error Getting CourseSelections");
+          },
+          () => {
+            console.log("Success Getting CourseSelections");
+            this.showCourseList.next(true);
+          }
+
+        );
+
+    //} //end if
+
+  }
+
+  checkcourse(courseId) {
+
+      this.courseSelected = courseId.value;
 
   }
 

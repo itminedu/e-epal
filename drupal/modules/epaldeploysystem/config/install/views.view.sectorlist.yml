@@ -5,6 +5,9 @@ dependencies:
     - user.role.administrator
     - user.role.applicant
     - user.role.authenticated
+    - user.role.eduadmin
+    - user.role.ministry
+    - user.role.regioneduadmin
   module:
     - basic_auth
     - epalreadydata
@@ -13,7 +16,7 @@ dependencies:
     - serialization
     - user
 _core:
-  default_config_hash: 5rM-pSfc1ywl4-ufHeAQsKiVGcBMDcz4RLfYmMeVGfo
+  default_config_hash: 2Ow8_rRpftR4qqbwfsr6yc_XMzbRKZjHSEuFzrXvzV8
 id: sectorlist
 label: sectorList
 module: views
@@ -36,6 +39,9 @@ display:
             authenticated: authenticated
             administrator: administrator
             applicant: applicant
+            ministry: ministry
+            eduadmin: eduadmin
+            regioneduadmin: regioneduadmin
       cache:
         type: tag
         options: {  }

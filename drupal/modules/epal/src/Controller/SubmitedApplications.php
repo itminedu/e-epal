@@ -95,8 +95,16 @@ class SubmitedApplications extends ControllerBase
                             'fathersurname' =>$object -> fathersurname ->value,
                             'motherfirstname' => $object -> motherfirstname ->value,
                             'mothersurname' =>$object -> mothersurname ->value,
+                            'guardianfirstname' =>$epalUser -> name ->value,
+                            'guardiansurname' =>$epalUser -> surname ->value,                            
+                            'regionaddress' =>$object -> regionaddress ->value,
+                            'regiontk' =>$object -> regiontk ->value,
+                            'regionarea' =>$object -> regionarea ->value,
+                            'certificatetype' =>$object -> certificatetype ->value,
+                            'telnum' =>$object -> telnum ->value,
+                            'relationtostudent' =>$object -> relationtostudent ->value,
                             'birthdate' =>$object -> birthdate ->value,
-);
+                        );
 
                     $i++;
                 }
@@ -115,7 +123,7 @@ class SubmitedApplications extends ControllerBase
 
         } else {
             return $this->respondWithStatus([
-                    'message' => t("User not found"),
+                    'message' => t("User not found!!!!"),
                 ], Response::HTTP_FORBIDDEN);
         }
 
@@ -164,6 +172,67 @@ public function getEpalChosen(Request $request, $studentId)
         }
 
     }
+
+
+    public function getCritiria(Request $request, $studentId, $type)
+    {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+                $userid = $epalUser -> user_id -> entity -> id();
+                $studentIdNew = intval($studentId) ;
+                $critiriaChosen = $this->entityTypeManager->getStorage('epal_student_moria')->loadByProperties(array( 'user_id'=>$userid,'student_id'=> $studentIdNew));
+                $i = 0;
+
+            if ($critiriaChosen) {
+                 $list = array();
+                foreach ($critiriaChosen as $object) {
+                    $critirio_id = $object -> criterio_id ->entity -> id();
+                    $critiriatype = $this->entityTypeManager->getStorage('epal_criteria')->loadByProperties(array( 'id'=>$critirio_id ));
+                    $typeofcritiria = reset($critiriatype);    
+                    $typecrit = $typeofcritiria -> category -> value;
+                    if ($typecrit == "Κοινωνικό" && $type == 1){
+                        $list[] = array(
+                            'critirio' => $object -> criterio_id ->entity->get('name')->value ,
+                            'critirio_id' => $critirio_id ,
+                            );
+
+                        $i++;
+                    }
+                    if ($typecrit == "Εισοδηματικό" && $type == 2){
+                        $list[] = array(
+                            'critirio' => $object -> criterio_id ->entity->get('name')->value ,
+                            'critirio_id' => $critirio_id ,
+                            );
+
+                        $i++;
+                    }
+
+
+                }
+
+                return $this->respondWithStatus(
+                        $list
+                    , Response::HTTP_OK);
+                }
+             else {
+                       return $this->respondWithStatus([
+                    'message' => t("EPAL chosen not found!!!"),
+                ], Response::HTTP_FORBIDDEN);
+                }
+
+
+
+        } else {
+            return $this->respondWithStatus([
+                    'message' => t("User not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+
+    }
+
 
 
 

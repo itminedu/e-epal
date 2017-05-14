@@ -12,52 +12,91 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import * as html2canvas from "html2canvas"
+
 
 
 @Component({ 
     selector: 'submited-preview',
-    template: `
-         <div class="row"> 
+    template: ` 
+        <div class="row"> 
              <breadcrubs></breadcrubs>
         </div>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
            
               <ul class="list-group main-view">
                <div *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd" 
-                 [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
+                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
-                   </li>
+                 </li>
                   <div id = "target">
-               
+
+                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
+                      <table>
+                        <tr><td>
+                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p> 
+                          </div>
+                        </td>
+                        <td>
+                         <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
+                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p> 
+                          </div>
+                        </td></tr>
+                      </table>
+                      <div class="form-group"><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p> </div>
+                      <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{StudentDetails$.studentsurname}} </p></div>
+                      <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
+                      <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
+                      <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
+                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>                
+                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>                
 
 
-            <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
-                 <strong> Όνομα:</strong>    <p style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p>
-                 <strong> Επώνυμο:</strong>    <p style="border:1px solid #eceeef;">    {{StudentDetails$.studentsurname}} </p>
-                 <strong> Όνομα Πατέρα:</strong>  <p style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}}</p>
-                 <strong> Επώνυμο Πατέρα:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.fathersurname}}</p>
-                 <strong> Όνομα Μητέρας:</strong>  <p style="border:1px solid #eceeef;">{{StudentDetails$.motherfirstname}}</p>
-                 <strong> Επώνυμο Μητέρας:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.mothersurname}}</p>
-                 <strong> Ημερομηνία Γέννησης:</strong> <p style="border:1px solid #eceeef;">{{StudentDetails$.birthdate}}</p>
-                 <p><b>Επιλογές ΕΠΑΛ</b> </p>
-                 <br>
+                      <table>
+                              <tr>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{StudentDetails$.regionaddress}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{StudentDetails$.regiontk}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{StudentDetails$.regionarea}} </p>
+                                      </div>
+                                  </td>
+                             </tr>
+                      </table>
+                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>                
+                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
+                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
+
+                    <h5>Κοινωνικά Κριτίρια </h5>
+                    <div *ngFor="let critiriaChoices$  of CritirioChosen$ | async" [hidden]="UserData$.id !== userActive">
+                         {{critiriaChoices$.critirio}}
+                    </div>
+
+                    <h5>Εισοδηματικά Κριτίρια </h5>
+                    <div *ngFor="let incomeChoices$  of incomeChosen$ | async" [hidden]="UserData$.id !== userActive">
+                         {{incomeChoices$.critirio}}
+                     </div>
+
+                    <h5>Επιλογές ΕΠΑΛ</h5>
+                    <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
+                         Σχολείο: {{epalChoices$.epal_id}}
+                         Σειρά Προτίμισης:{{epalChoices$.choice_no}}
+                    </div>
+                   </div>
+              </div>
              </div>
-                
-                <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
-                     Σχολείο: {{epalChoices$.epal_id}}
-                     Σειρά Προτίμισης:{{epalChoices$.choice_no}}
-                </div>
-
-            </div>
-            
-
-
-            
-                </div>
-              </ul>
-              <br>
-              <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
+            </ul>
+            <br>
+            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
 
    `
 })
@@ -72,18 +111,26 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
+ 
+    private incomeChosen$: BehaviorSubject<any>;
+    private incomeChosenSub: Subscription;
+    private CritirioChosen$: BehaviorSubject<any>;
+    private CritirioChosenSub: Subscription;
 
+ 
     public StudentId;
     private userActive = <number>-1;
 
     constructor(private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
-                private router: Router )
+                private router: Router ,
+              )
     {
        this.SubmitedApplic$ = new BehaviorSubject([{}]);
        this.SubmitedDetails$ = new BehaviorSubject([{}]);
        this.EpalChosen$ = new BehaviorSubject([{}]);
-
+       this.CritirioChosen$ = new BehaviorSubject([{}]);
+       this.incomeChosen$ = new BehaviorSubject([{}]);
     }
 
     ngOnDestroy()
@@ -94,6 +141,11 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             this.SubmitedDetailsSub.unsubscribe();
         if (this.EpalChosenSub)
             this.EpalChosenSub.unsubscribe();
+        if (this.CritirioChosenSub)
+            this.CritirioChosenSub.unsubscribe();
+        if (this.incomeChosenSub)
+            this.incomeChosenSub.unsubscribe();
+
         this.SubmitedDetails$.unsubscribe();
         this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
@@ -111,12 +163,6 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             },
             () => console.log("Getting Schools"));
         console.log(this.SubmitedApplic$);
-
-
-    
-
-
-
     }
 
    
@@ -124,8 +170,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
   setActiveUser(ind,i) 
   {
-    ind = +ind;
-    
+      ind = +ind;
       console.log(this.userActive,"RA",ind);
       if (ind === this.userActive){
         ind = -1;
@@ -146,19 +191,59 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 console.log("Error Getting Schools");
             },
              () => console.log("Getting Schools"));
-
+    this.CritirioChosenSub = this._hds.getCritiria(this.userActive+1, 1).subscribe(data => {
+        this.CritirioChosen$.next(data)},
+            error => {
+                this.CritirioChosen$.next([{}]);
+                console.log("Error Getting Schools");
+            },
+             () => console.log("Getting Schools"));
+    this.incomeChosenSub = this._hds.getCritiria(this.userActive+1, 2).subscribe(data => {
+          this.incomeChosen$.next(data)},
+              error => {
+                  this.incomeChosen$.next([{}]);
+                  console.log("Error Getting Schools");
+              },
+               () => console.log("Getting Schools"));
 
    }
 
- createPdf()
+ createPdf1()
     {
-        
+
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
-            var doc = new jsPDF('p', 'mm');
-            doc.addImage(img, 'PNG', 10, 10);
+            var doc = new jsPDF();
+            
+            doc.onload = function(){
+            console.log(img, doc, "lalalalalala");
+            doc.addImage(img, 'PNG',0, 0, 210, 297);
+
             doc.save('applications.pdf');
+          }
         });
     }
+
+
+
+createPdf()
+
+
+
+    {
+
+      var doc = new jsPDF();
+        doc.text(20, 20, 'Hello world!');
+        doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
+        doc.addPage();
+        doc.text(20, 20, 'Do you like that?');
+
+        // Save the PDF
+        doc.save('Test.pdf');
+    }
+    
+    
+
+
 }

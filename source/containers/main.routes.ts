@@ -22,6 +22,7 @@ import ApplicationSubmit from '../components/student-application-form/applicatio
 import SubmitedPreview from '../components/student-application-form/submited.aplication.preview';
 import SubmitedPerson from '../components/student-application-form/submitedstudent.preview';
 import DirectorView from '../components/director/director-view';
+import DirectorButtons from '../components/director/director.buttons';
 import PerfectureView from '../components/infoviews/perfecture-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
 import MinisterView from '../components/minister/minister-view';
@@ -53,6 +54,7 @@ export const MainRoutes: Routes = [
   { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard] },
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
+  { path: 'school/director-buttons', component: DirectorButtons },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
   { path: 'ministry/minister-view', component: MinisterView },
   { path: 'ministry/minister-reports', component: MinisterReports },
@@ -89,5 +91,6 @@ export const MainDeclarations = [
   ReportGeneral,
   InformStudents,
   PerfectureView,
-  Breadcrubs
+  Breadcrubs,
+  DirectorButtons
 ];

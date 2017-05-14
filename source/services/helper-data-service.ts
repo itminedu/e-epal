@@ -576,7 +576,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    saveConfirmStudents(students) {
+    saveConfirmStudents(students, type) {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -587,7 +587,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -869,5 +869,37 @@ getCourses(username, userpassword, sectorid)  {
 
 
 
+    getCritiria(headerid, type) {
+        let headerIdNew = headerid.toString();
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/critiriachosen/` + headerIdNew + '/' + type, options)
+            .map(response => response.json());
+    }
 
+
+getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
+
+
+        
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findCapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, options)
+            .map(response => response.json());
+
+    }
 }

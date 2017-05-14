@@ -199,10 +199,10 @@ import {AppSettings} from '../../app.settings';
 
     getAppropriateSchools(epalClass) {
 
-        if (epalClass === "Α' Λυκείου")  {
+        if (epalClass === "1")  {
             this._rsa.getRegionSchools(1,"-1", false);
         }
-        else if (epalClass === "Β' Λυκείου") {
+        else if (epalClass === "2") {
             this.sectorFieldsSub = this._ngRedux.select(state => {
                 state.sectorFields.reduce(({}, sectorField) =>{
                     if (sectorField.selected === true) {
@@ -214,7 +214,7 @@ import {AppSettings} from '../../app.settings';
                 return state.sectorFields;
             }).subscribe(this.sectorFields$);
         }
-        else if (epalClass === "Γ' Λυκείου")  {
+        else if (epalClass === "3")  {
             this.sectorsSub = this._ngRedux.select(state => {
                 state.sectors.reduce((prevSector, sector) =>{
                       if (sector.sector_selected === true) {
@@ -235,13 +235,13 @@ import {AppSettings} from '../../app.settings';
 
     navigateBack() {
 //        this.router.navigate(['/epal-class-select']);
-        if (this.classActive === "Α' Λυκείου")  {
+        if (this.classActive === "1")  {
             this.router.navigate(['/epal-class-select']);
         }
-        else if (this.classActive === "Β' Λυκείου") {
+        else if (this.classActive === "2") {
             this.router.navigate(['/sector-fields-select']);
         }
-        else if (this.classActive === "Γ' Λυκείου")  {
+        else if (this.classActive === "3")  {
             this.router.navigate(['/sectorcourses-fields-select']);
         }
     }

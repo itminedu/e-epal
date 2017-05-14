@@ -209,9 +209,13 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
                                 $epalStudent = reset($epalStudents);
                                
                                 if ($epalStudents) {
-
+                                    $studentIdNew = $epalStudent -> id();
+                                    $checkstatus = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array( 'student_id'=> $studentIdNew));
+                                    $checkstudentstatus = reset($checkstatus);
                                    if ($i >= $limitdown && $i < $limitup)
                                    { 
+                                    $newstatus = $checkstudentstatus -> directorconfirm-> getValue();
+                                                                    
                                    $list[] = array(
                                     'i' => $i,
                                     'id' => $epalStudent -> id(),
@@ -221,7 +225,17 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
                                     'fathersurname' =>$epalStudent -> fathersurname ->value,
                                     'motherfirstname' => $epalStudent -> motherfirstname ->value,
                                     'mothersurname' =>$epalStudent -> mothersurname ->value,
+                                    'guardianfirstname' =>$epalUser -> name ->value,
+                                    'guardiansurname' =>$epalUser -> surname ->value,
+                                    'regionaddress' =>$epalStudent -> regionaddress ->value,
+                                    'regiontk' =>$epalStudent -> regiontk ->value,
+                                    'regionarea' =>$epalStudent -> regionarea ->value,
+                                    'certificatetype' =>$epalStudent -> certificatetype ->value,
+                                    'telnum' =>$epalStudent -> telnum ->value,
+                                    'relationtostudent' =>$epalStudent -> relationtostudent ->value,
                                     'birthdate' =>$epalStudent -> birthdate ->value,
+                                    'checkstatus' =>$newstatus[0][value],
+
                                     );
                                    }
                                    $i++;
@@ -282,13 +296,19 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
             {
                  $postData = json_decode($content);
                  $arr = $postData->students;
+                 $type = $postData ->type;
 
                 foreach ($arr as $value) {
                     $valnew = intval($value);
                  $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => $valnew ));
                     $studentConfirm = reset($studentForConfirm);
                   if ($studentConfirm) {
+                    if ($type == 1)
                          $studentConfirm->set('directorconfirm', true);
+                     if ($type == 2)
+                        $studentConfirm->set('directorconfirm', false);
+                    if ($type == 3)
+                        unset($studentConfirm->{directorconfirm});
                          $studentConfirm->save();
                     }
                 }
@@ -317,6 +337,8 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
 
 public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid)
     {
+
+
 
         if (!$request->isMethod('POST')) {
             return $this->respondWithStatus([
@@ -573,6 +595,96 @@ public function returnstatus($id)
     return false;
     
 }
+
+
+
+
+public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid)
+    {
+
+    $tomeasnew = intval($tomeas);
+    $specialitnew = intval($specialitnew) ;
+       $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+         $user = reset($users);
+         if ($user) {
+           $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId));
+             $school = reset($schools);
+             if (!$school) {
+                 $this->logger->warning("no access to this school=" . $user->id());
+                 $response = new Response();
+                 $response->setContent('No access to this school');
+                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                 $response->headers->set('Content-Type', 'application/json');
+                 return $response;
+             }
+                     
+              $list = array();
+
+                if (($tomeasnew == 0) && ($specialitnew == 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
+                 $classcapacity = reset($CapacityPerClass);
+                 
+                
+                  if ($classcapacity) {
+                        
+                       
+                    $list[] = array(
+                        'taxi' => $taxi,
+                       'capacity' => $classcapacity -> capacity_class_a -> value ,
+                        ); 
+                    }
+                }
+
+
+                if (($tomeasnew != 0) && ($specialitnew == 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeasnew ));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                    $list[] = array(
+                        'taxi' => $taxi,
+                        'tomeas' => $tomeasnew,
+                        'special' =>$specialitnew,
+                        'capacity' => $classcapacity -> capacity_class_sector -> value ,
+                        );
+                    }
+                }
+
+
+                if (($tomeasnew != 0) && ($specialitnew != 0))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                    $list[] = array(
+                        'taxi' =>$taxi,
+                        'tomeas' => $tomeasnew,
+                        'special' =>$specialitnew,
+                        'tomeas' =>  $classcapacity ->  specialty_id -> value,
+                        'capacity' => $classcapacity -> capacity_class_specialty -> value ,
+                        );
+                    }
+                }
+
+
+
+
+
+
+                      return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+            
+
+            } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
 
 
    private function respondWithStatus($arr, $s) {

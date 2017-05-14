@@ -30,9 +30,11 @@ import {AppSettings} from '../../app.settings';
             <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
               <label for="name"></label><br/>
                     <select class="form-control" formControlName="name" (change)="initializestore()">
-                        <option value="Α' Λυκείου">Α' Λυκείου</option>
-                        <option value="Β' Λυκείου">Β' Λυκείου</option>
-                        <option value="Γ' Λυκείου">Γ' Λυκείου / Δ' Λυκείου</option>
+
+                        <option value=1>Α’ Λυκείου</option>
+                        <option value=2>Β’ Λυκείου</option>
+                        <option value=3>Γ' Λυκείου / Δ' Λυκείου</option>
+                        
                     </select>
 
             </div>
@@ -91,12 +93,13 @@ import {AppSettings} from '../../app.settings';
         }
         else
         {
+            console.log(this.formGroup.value);
             this._cfa.saveEpalClassesSelected(this.formGroup.value);
-            if (this.formGroup.value.name === "Α' Λυκείου")
+            if (this.formGroup.value.name === "1")
               this.router.navigate(['/region-schools-select']);
-            else if (this.formGroup.value.name === "Β' Λυκείου")
+            else if (this.formGroup.value.name === "2")
                 this.router.navigate(['/sector-fields-select']);
-            else if (this.formGroup.value.name === "Γ' Λυκείου")
+            else if (this.formGroup.value.name === "3")
                 this.router.navigate(['/sectorcourses-fields-select']);
 
         }

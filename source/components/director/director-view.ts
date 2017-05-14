@@ -50,7 +50,9 @@ import {
               <div *ngIf="(retrievedStudent | async)">
 
                <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)" [class.selectedout]="userActive === StudentDetails$.i" >
+                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)"
+                  [class.selectedout]="userActive === StudentDetails$.i" [class.confirmed]="StudentDetails$.checkstatus === '1'"
+                  [class.notconfirmed]="StudentDetails$.checkstatus === '0'" [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')">
                   <h5> {{StudentDetails$.name}}&nbsp;{{StudentDetails$.name}} </h5>
                 </li>
 
@@ -164,7 +166,7 @@ import {
     private currentclass: Number;
     private saved: Array<number> = new Array();
     private limitdown = 0; 
-    private limitup=  5;
+    private limitup=  25;
     private pageno = 1;
     private userActive = <number>-1;
     private type: Number;
@@ -356,6 +358,7 @@ import {
 
     confirmStudent() {
         this._hds.saveConfirmStudents(this.saved, this.type);
+        
     }
 
     checkcclass() {

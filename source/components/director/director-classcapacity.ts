@@ -36,16 +36,30 @@ import {
             </select>
       </div>
       <div class="form-group">
-            <select #spop class="form-control" *ngIf="(selectionCClass | async)"  formControlName="specialit">
+            <select #spop class="form-control" *ngIf="(selectionCClass | async)" (change)="checkcclass(tmop,txoption,spop)"  formControlName="specialit">
               <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
             </select>
       </div>
+      
+
+      <div *ngIf="(retrievedStudent | async) && (modify === false)">
       <strong>Δυναμική σε τμήματα:</strong>
+      <div *ngFor="let classCapac$  of classCapacity$ | async;"  >
+          <div><label for="capc">Τρέχουσα Δυναμική:</label> <p class="form-control" id = "capc" style="border:1px solid #eceeef;"> {{classCapac$.capacity}} </p></div>
+        </div>
+      
+      <p style="margin-top: 20px; line-height: 2em;"> Αν θέλετε να αλλάξετε τη δυναμική σε τμήματα για τη συγκεκριμένή επιλογή συνέχεια επιλέξτε <i>Τροποποίηση</i>.</p>
+              <button type="button" class="btn-primary btn-sm pull-right" (click) ="modifyCapacity()">
+                Τροποποίηση
+               </button>
+       </div>
+      <div *ngIf="(modify === true)">
       <input  type="number" formControlName="capacity" min="1" max="10">
       
             <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
                 Αποθήκευση
              </button>
+       </div>
    `
 })
 
@@ -60,6 +74,10 @@ import {
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId = 147 ;
     private currentclass: Number;
+    private classCapacity$: BehaviorSubject<any>;
+    private classCapacitySub: Subscription;
+    private retrievedStudent: BehaviorSubject<boolean>;
+    private modify = false;
     
 
 
@@ -70,8 +88,10 @@ import {
     {
        this.StudentSelected$ = new BehaviorSubject([{}]);
        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
+       this.classCapacity$ = new BehaviorSubject([{}]);
        this.selectionBClass = new BehaviorSubject(false);
        this.selectionCClass = new BehaviorSubject(false);
+       this.retrievedStudent = new BehaviorSubject(false);
        this.formGroup = this.fb.group({
          tomeas: ['', []],
          taxi: ['', []],
@@ -91,17 +111,21 @@ import {
             this.selectionBClass.unsubscribe();
         if (this.selectionCClass)
             this.selectionCClass.unsubscribe();  
-         
+        if (this.classCapacitySub)
+            this.classCapacitySub.unsubscribe();
+        if (this.retrievedStudent)
+            this.retrievedStudent.unsubscribe();         
     }
  
     ngOnInit() {
-
+        this.retrievedStudent.next(false);
     }
 
 
     verifyclass(txop)
     {
-            
+            this.modify = false;
+            console.log(this.formGroup.value.specialit, "speciality");
             if (txop.value === "1")
             {
                 this.selectionBClass.next(false);
@@ -110,6 +134,15 @@ import {
                   tomeas: '',
                   specialit: '',
                  });
+                         console.log("a class");
+             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi,0,0,this.SchoolId ).subscribe(data => {
+                  this.classCapacity$.next(data);
+                  this.retrievedStudent.next(true); },
+                  error => {
+                      this.classCapacity$.next([{}]);
+                      console.log("Error Getting Capacity");
+                  },
+                  () => console.log("Getting Capacity"));
 
             }
             else if (txop.value === "2")
@@ -136,20 +169,61 @@ import {
               this.selectionCClass.next(true);              
               this.StudentSelected$ = new BehaviorSubject([{}]);
               this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
-            }            
+            } 
+
+                 
+
+                      
     }
 
 
     checkbclass(tmop,txop)
     {
-       
+         this.modify = false;
         var sectorint = +this.formGroup.value.tomeas;
         console.log(sectorint,"tomeas");
+        if (txop.value === "2")
+        {
+          console.log("b class");
+        this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi,sectorint,0,this.SchoolId ).subscribe(data => {
+                  this.classCapacity$.next(data);
+                  this.retrievedStudent.next(true); },
+                  error => {
+                      this.classCapacity$.next([{}]);
+                      console.log("Error Getting Capacity");
+                  },
+                  () => console.log("Getting Capacity"));
+        }
         if (txop.value === "3")
         {
             this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
             this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);        
+            
+
         }
+
+    }
+
+    checkcclass(tmop,txop,spop)
+    {
+       this.modify = false;
+       var sectorint = +this.formGroup.value.tomeas;
+        var specialint = +this.formGroup.value.specialit;
+        
+        if (txop.value === "3")
+        {
+                     console.log("c class");           
+                this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi,sectorint,specialint,this.SchoolId ).subscribe(data => {
+                  this.classCapacity$.next(data);
+                  this.retrievedStudent.next(true); },
+                  error => {
+                      this.classCapacity$.next([{}]);
+                      console.log("Error Getting Capacity");
+                  },
+                  () => console.log("Getting Capacity"));
+
+        }
+
     }
 
 
@@ -163,6 +237,11 @@ saveCapacity()
   console.log(tomeas, specialit);
   this._hds.saveCapacity(this.formGroup.value.taxi,tomeas,specialit, this.formGroup.value.capacity, this.SchoolId );
 
+}
+
+modifyCapacity(){
+
+  this.modify = true;
 }
 
 }

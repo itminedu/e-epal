@@ -190,6 +190,20 @@
     color:black!important ;   
 }
 
+.notchecked {
+    color: black!important;
+}
+
+.confirmed {
+    color: green!important;
+}
+
+.notconfirmed {
+    color: red!important;
+}
+
+
+
 .roundedNumber{
     width: 2em;
     background-color: coral;

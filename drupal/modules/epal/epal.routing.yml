@@ -196,3 +196,11 @@ critirioschosen:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
   requirements:
     _user_is_logged_in: 'TRUE'
+findcapacity:
+  path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}/{schoolid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
+  requirements:
+    _user_is_logged_in: 'TRUE'

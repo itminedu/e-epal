@@ -30,9 +30,11 @@ import {AppSettings} from '../../app.settings';
             <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
               <label for="name"></label><br/>
                     <select class="form-control" formControlName="name" (change)="initializestore()">
+
                         <option value=1>Α’ Λυκείου</option>
                         <option value=2>Β’ Λυκείου</option>
-                        <option value=3>Γ’ Λυκείου</option>
+                        <option value=3>Γ' Λυκείου / Δ' Λυκείου</option>
+                        
                     </select>
 
             </div>

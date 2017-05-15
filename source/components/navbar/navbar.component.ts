@@ -6,16 +6,8 @@ import { BehaviorSubject } from 'rxjs/Rx';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
-import { HelperDataService } from '../../services/helper-data-service';
 import { LoginInfoActions } from '../../actions/logininfo.actions';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../../constants';
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { CriteriaActions } from '../../actions/criteria.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 
 @Component({
   selector: 'reg-navbar',
@@ -29,16 +21,7 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     private loginInfo$: BehaviorSubject<ILoginInfo>;
  	public cuser :any;
 
-    constructor( private _ata: LoginInfoActions,
-                private _hds: HelperDataService,
-                private _csa: SectorCoursesActions,
-                private _sfa: SectorFieldsActions,
-                private _rsa: RegionSchoolsActions,
-                private _eca: EpalClassesActions,
-                private _sdfa: StudentDataFieldsActions,
-                private _cria: CriteriaActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router
+    constructor( private _ngRedux: NgRedux<IAppState>
                 ) {
 
                         this.authToken = '';
@@ -67,35 +50,6 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     ngOnDestroy() {
         this.loginInfo$.unsubscribe();
 
-    }
-
-    signOut() {
-        this._hds.signOut().then(data => {
-            this._ata.initLoginInfo();
-            if (this.authRole === SCHOOL_ROLE) {
-                this.router.navigate(['/school']);
-            }
-            else if (this.authRole === PDE_ROLE) {
-                this.router.navigate(['/school']);
-            }
-            else if (this.authRole === DIDE_ROLE) {
-                this.router.navigate(['/school']);
-            }
-            else if (this.authRole === STUDENT_ROLE) {
-                this._eca.initEpalClasses();
-                this._sfa.initSectorFields();
-                this._rsa.initRegionSchools();
-                this._csa.initSectorCourses();
-                this._sdfa.initStudentDataFields();
-                this._cria.initCriteria();
-                this.router.navigate(['']);
-            }
-            else if (this.authRole === MINISTRY_ROLE) {
-                this.router.navigate(['/ministry']);
-            }
-            this.authToken = '';
-            this.authRole = '';
-        });
     }
 
 }

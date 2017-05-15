@@ -306,3 +306,9 @@ overflow-x: scroll;
 .btn.sharp {
   border-radius:0;
 }
+.username {
+    font-size: 0.8em;
+}
+.signout {
+    font-size: 0.8em;
+}

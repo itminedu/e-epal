@@ -1,5 +1,19 @@
+<div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
 <div class="header-wrapper">
 <header id="navbar" role="banner" class="navbar navbar-default">
 
+    <div *ngIf="(loginInfo$ | async).size > 0">
+   <ul class="navbar-nav">
+       <div *ngIf="(loginInfo$ | async).cu_name !== ''">
+            <div class="row">
+                <div class="offset-md-8 col-md-4 pull-right">
+                    <span class="username">{{ cuName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span class="signout isclickable" (click)="signOut()" style="color:#CC3300;">Αποσύνδεση&nbsp;&nbsp;</span>
+                    <i class="fa fa-sign-out isclickable" (click)="signOut()"></i>
+                </div>
+            </div>
+        </div>
+   </ul>
+</div>
 </header>
 </div>

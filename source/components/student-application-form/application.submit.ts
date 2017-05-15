@@ -26,7 +26,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'application-submit',
     template: `
         <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
         </div>
         <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0"></div>
         <application-preview-select></application-preview-select>

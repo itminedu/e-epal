@@ -148,10 +148,15 @@ import {AppSettings} from '../../app.settings';
     }
 
     saveProfileAndContinue() {
+        this.showLoader.next(true);
         this.hds.saveProfile(this.formGroup.value)
             .then(res => {
+                this.showLoader.next(false);
                 this.router.navigate(['/epal-class-select']);})
-            .catch(err => {console.log(err)});
+            .catch(err => {
+                this.showLoader.next(false);
+                console.log(err)
+            });
     }
 
     enableUserEmail() {

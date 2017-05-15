@@ -13,7 +13,7 @@ import {AppSettings} from '../../app.settings';
     selector: 'schools-order-select',
     template: `
     <div class="row">
-             <breadcrubs></breadcrubs>
+             <breadcrumbs></breadcrumbs>
     </div>
     <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
     </div>

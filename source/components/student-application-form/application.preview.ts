@@ -30,8 +30,14 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
                 <li class="list-group-item active">
                     Τάξη εισαγωγής
                 </li>
-                <li class="list-group-item">
-                    {{epalclass$.name  }}
+                <li class="list-group-item" *ngIf="epalclass$.name === '1'">
+                    Α’ Λυκείου                    
+                </li>
+                <li class="list-group-item" *ngIf="epalclass$.name === '2'">
+                    Β’ Λυκείου                    
+                </li>
+                <li class="list-group-item" *ngIf="epalclass$.name === '3'">
+                    Γ’ Λυκείου                    
                 </li>
 
         </ul>

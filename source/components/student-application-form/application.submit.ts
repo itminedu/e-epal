@@ -72,8 +72,7 @@ import {AppSettings} from '../../app.settings';
                 this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
                 this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
                 this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-
-    };
+            };
 
     ngOnInit() {
       this.loginInfoSub = this._ngRedux.select(state => {

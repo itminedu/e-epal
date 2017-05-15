@@ -576,7 +576,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    saveConfirmStudents(students) {
+    saveConfirmStudents(students, type) {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -587,7 +587,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -681,7 +681,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -690,11 +690,22 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
 
-        console.log("Testing..");
-        console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
+        //console.log("Testing..");
+        //console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
 
-        return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel, options)
-            .map(response => response.json());
+        if (routepath == "/ministry/general-report/") {
+            return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath  , options)
+                .map(response => response.json());
+        }
+        else if (routepath == "/ministry/report-completeness/") {
+          return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel  , options)
+                .map(response => response.json());
+        }
+        else if (routepath == "/ministry/report-all-stat/"){
+            return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel + "/"  +
+                                  clsel + "/"  + secsel + "/"  + coursel , options)
+                .map(response => response.json());
+          }
 
     }
 
@@ -828,7 +839,67 @@ getSchoolsPerAdminArea(username, userpassword, adminid)  {
       .map(response => response.json());
 }
 
+getSectors(username, userpassword, classid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Test");
+  console.log(`${AppSettings.API_ENDPOINT}/sectorfields/list`);
+  return this.http.get(`${AppSettings.API_ENDPOINT}/sectorfields/list` , options)
+      .map(response => response.json());
+}
+
+getCourses(username, userpassword, sectorid)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  return this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list/?sector_id=` + sectorid , options)
+      .map(response => response.json());
+}
 
 
 
+    getCritiria(headerid, type) {
+        let headerIdNew = headerid.toString();
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/critiriachosen/` + headerIdNew + '/' + type, options)
+            .map(response => response.json());
+    }
+
+
+getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
+
+
+        
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findCapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, options)
+            .map(response => response.json());
+
+    }
 }

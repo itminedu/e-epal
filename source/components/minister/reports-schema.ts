@@ -27,6 +27,7 @@ export class reportsSchema  {
 
 genReportSchema = {
   actions: false,
+  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
   columns: {
     name: {
       title: 'Κατηγορία',
@@ -45,6 +46,7 @@ reportAllStatSchema = {
     display : true,
     perPage:10
   },
+  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
   columns: {
     name: {
       title: 'Σχολείο',
@@ -65,6 +67,14 @@ reportAllStatSchema = {
     num: {
       title: 'Αριθμός Μαθητών',
       filter: false
+    },
+    capacity: {
+      title: 'Χωρ/κα',
+      filter: false
+    },
+    percentage: {
+      title: 'Ποσοστό',
+      filter: false
     }
   }
 };
@@ -72,6 +82,7 @@ reportAllStatSchema = {
 
 reportCompletenessSchemaFull = {
   actions: false,
+  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
   columns: {
     name: {
       title: 'Σχολείο',
@@ -132,9 +143,18 @@ reportCompletenessSchemaFull = {
 
 reportCompletenessSchema = {
   actions: false,
+  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
   columns: {
     name: {
       title: 'Σχολείο',
+      filter: false
+    },
+    region: {
+      title: 'ΠΔΕ',
+      filter: false
+    },
+    admin: {
+      title: 'ΔΙΔΕ',
       filter: false
     },
     percTotal: {

@@ -141,7 +141,7 @@ epal.ministry.log_out_go:
   requirements:
       _user_is_logged_in: 'TRUE'
 epal.ministry.general_report:
-  path: '/ministry/general-report/{regionId}/{adminId}/{schId}'
+  path: '/ministry/general-report'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -157,7 +157,7 @@ epal.ministry.report-completeness:
   requirements:
       _user_is_logged_in: 'TRUE'
 epal.ministry.report-all-stat:
-  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}'
+  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -186,5 +186,21 @@ coursesperschools:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+critirioschosen:
+  path: '/epal/critiriachosen/{studentId}/{type}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+findcapacity:
+  path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}/{schoolid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
   requirements:
     _user_is_logged_in: 'TRUE'

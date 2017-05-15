@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer} from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -146,6 +146,7 @@ import {
    `
 })
 
+
 @Injectable() export default class DirectorView implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
@@ -172,10 +173,13 @@ import {
     private type: Number;
 
 
+    @ViewChild('fileInput') fileInput:ElementRef;
+
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
+        private router: Router,
+        private renderer:Renderer) {
         this.StudentSelected$ = new BehaviorSubject([{}]);
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.StudentInfo$ = new BehaviorSubject([{}]);
@@ -329,14 +333,12 @@ import {
     }
 
     updateCheckedOptions(id, cbvalue) {
-
-        let i = this.saved.length;
-        console.log(cbvalue.value,"aaaaa");
+        let i = 0;
 
         if (cbvalue.value === '1') {
            this.saved[i] = id;
            this.type = 1;
-           console.log("ok")
+           
         }
         else if (cbvalue.value === '2') {
             this.saved[i] = id;
@@ -358,6 +360,8 @@ import {
 
     confirmStudent() {
         this._hds.saveConfirmStudents(this.saved, this.type);
+        let event = new MouseEvent('click', {bubbles: true});
+       this.fileInput.nativeElement.dispatchEvent(event);
         
     }
 

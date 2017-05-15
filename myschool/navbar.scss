@@ -27,7 +27,6 @@
 }
 
 .nav-wrapper {
-  z-index: 1;
   position: relative;
   background-color: #fff;
   .navbar {
@@ -40,7 +39,7 @@
     }
   }
   .navbar-collapse {
-   // height: 46px;
+   min-height: 80px;
   .navbar-nav {
     padding-bottom: 0px;
 

@@ -16,17 +16,19 @@ import * as html2canvas from "html2canvas"
 
 
 
-@Component({ 
+@Component({
     selector: 'submited-preview',
-    template: ` 
-        <div class="row"> 
-             <breadcrubs></breadcrubs>
+    template: `
+         <div class="row">
+             <breadcrumbs></breadcrumbs>
         </div>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
-           
+
               <ul class="list-group main-view">
                <div *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
+
+                 <li class="list-group-item isclickable" [class.oddout]="isOdd"
+                 [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
                  </li>
                   <div id = "target">
@@ -35,12 +37,12 @@ import * as html2canvas from "html2canvas"
                       <table>
                         <tr><td>
                           <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p> 
+                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p>
                           </div>
                         </td>
                         <td>
                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p> 
+                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p>
                           </div>
                         </td></tr>
                       </table>
@@ -49,8 +51,8 @@ import * as html2canvas from "html2canvas"
                       <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
                       <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
                       <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
-                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>                
-                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>                
+                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>
+                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>
 
 
                       <table>
@@ -72,9 +74,9 @@ import * as html2canvas from "html2canvas"
                                   </td>
                              </tr>
                       </table>
-                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>                
-                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
-                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
+                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>
+                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
+                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
 
                     <h5>Κοινωνικά Κριτίρια </h5>
                     <div *ngFor="let critiriaChoices$  of CritirioChosen$ | async" [hidden]="UserData$.id !== userActive">
@@ -111,13 +113,13 @@ import * as html2canvas from "html2canvas"
 
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
- 
+
     private incomeChosen$: BehaviorSubject<any>;
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
 
- 
+
     public StudentId;
     private userActive = <number>-1;
 
@@ -151,7 +153,7 @@ import * as html2canvas from "html2canvas"
         this.SubmitedApplic$.unsubscribe();
 
     }
- 
+
     ngOnInit() {
 
 
@@ -163,12 +165,13 @@ import * as html2canvas from "html2canvas"
             },
             () => console.log("Getting Schools"));
         console.log(this.SubmitedApplic$);
+
     }
 
-   
 
 
-  setActiveUser(ind,i) 
+
+  setActiveUser(ind,i)
   {
       ind = +ind;
       console.log(this.userActive,"RA",ind);
@@ -215,7 +218,7 @@ import * as html2canvas from "html2canvas"
         {
             var img = canvas.toDataURL();
             var doc = new jsPDF();
-            
+
             doc.onload = function(){
             console.log(img, doc, "lalalalalala");
             doc.addImage(img, 'PNG',0, 0, 210, 297);
@@ -242,8 +245,5 @@ createPdf()
         // Save the PDF
         doc.save('Test.pdf');
     }
-    
-    
-
 
 }

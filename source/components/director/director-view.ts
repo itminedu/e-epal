@@ -360,6 +360,8 @@ import {
 
     confirmStudent() {
         this._hds.saveConfirmStudents(this.saved, this.type);
+        let event = new MouseEvent('click', {bubbles: true});
+       this.fileInput.nativeElement.dispatchEvent(event);
         
     }
 

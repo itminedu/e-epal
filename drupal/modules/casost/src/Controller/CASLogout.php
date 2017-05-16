@@ -60,8 +60,9 @@ class CASLogout extends ControllerBase
 
     public function logoutGo(Request $request)
     {
+        $configRowName = 'casost_sch_sso_config';
         try {
-            $configRowName = 'casost_sch_sso_config';
+
             $configRowId = $request->query->get('config');
             if ($configRowId) {
                 $configRowName = $configRowName.'_'.$configRowId;
@@ -86,12 +87,7 @@ class CASLogout extends ControllerBase
                 $this->allowed2 = $CASOSTConfig->allowed2->value;
                 $this->allowed2Value = $CASOSTConfig->allowed2value->value;
             } else {
-                $response = new Response();
-                $response->setContent('forbidden. No config');
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json');
-
-                return $response;
+                return $this->redirectForbidden($configRowName, '7001');
             }
 
             // Enable debugging
@@ -111,14 +107,7 @@ class CASLogout extends ControllerBase
             $user = reset($users);
 
             if (!$user) {
-                $this->logger->warning('user not found');
-
-                $response = new Response();
-                $response->setContent('forbidden');
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json');
-
-                return $response;
+                return $this->redirectForbidden($configRowName, '7002');
             }
 //            phpCAS::handleLogoutRequests();
 
@@ -127,6 +116,10 @@ class CASLogout extends ControllerBase
 //            session_destroy();
             $user->setPassword(uniqid('pw'));
             $user->save();
+
+
+
+
             $response = new Response();
             $response->setContent('logout successful');
             $response->setStatusCode(Response::HTTP_OK);
@@ -145,12 +138,18 @@ class CASLogout extends ControllerBase
             return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
-            $response = new Response();
-            $response->setContent('forbidden');
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->headers->set('Content-Type', 'application/json');
+            return $this->redirectForbidden($configRowName, '8000');
+        }
+    }
 
-            return $response;
+    private function redirectForbidden($configRowName, $errorCode) {
+        session_unset();
+        session_destroy();
+        \Drupal::service('page_cache_kill_switch')->trigger();
+        if ('casost_sch_sso_config' === $configRowName) {
+            return new RedirectResponse($this->redirectUrl.'&error_code=' . $errorCode, 302, []);
+        } else {
+            return new RedirectResponseWithCookieExt($this->redirectUrl .'&error_code=' . $errorCode, 302, []);
         }
     }
 }

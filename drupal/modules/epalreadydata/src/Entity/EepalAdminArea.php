@@ -41,6 +41,7 @@ use Drupal\user\UserInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
+ *     "registry_no" = "registry_no",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -82,6 +83,21 @@ class EepalAdminArea extends ContentEntityBase implements EepalAdminAreaInterfac
    */
   public function setName($name) {
     $this->set('name', $name);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRegistry_no() {
+    return $this->get('registry_no')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRegistry_no($registry_no) {
+    $this->set('registry_no', $registry_no);
     return $this;
   }
 
@@ -196,7 +212,28 @@ class EepalAdminArea extends ContentEntityBase implements EepalAdminAreaInterfac
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-	 /* 
+
+      $fields['registry_no'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('Registry No'))
+        ->setDescription(t('The registry no of the Eepal admin area entity.'))
+        ->setSettings(array(
+          'max_length' => 50,
+          'text_processing' => 0,
+        ))
+        ->setDefaultValue('0000000')
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'string',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'string_textfield',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
+	 /*
      $fields['region_to_belong'] = BaseFieldDefinition::create('integer')
         ->setLabel(t('region_to_belong'))
         ->setDescription(t('Περιφερειακή Διεύθυνση στην οποία ανήκει.'))
@@ -241,8 +278,8 @@ class EepalAdminArea extends ContentEntityBase implements EepalAdminAreaInterfac
             ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
-		
-		
+
+
 	$fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal admin area is published.'))

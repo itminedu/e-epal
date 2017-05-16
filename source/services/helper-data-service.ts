@@ -44,6 +44,9 @@ export class HelperDataService implements OnInit, OnDestroy {
                     this.authRole = loginInfoToken.auth_role;
                     //this.minedu_userName = loginInfoToken.minedu_username;
                     //this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    console.log("Auth details..");
+                    console.log(this.authToken);
+                    console.log(this.authRole);
                     return loginInfoToken;
                 }, {});
             }
@@ -888,7 +891,7 @@ getCourses(username, userpassword, sectorid)  {
 getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
 
 
-        
+
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;

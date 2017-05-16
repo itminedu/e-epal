@@ -10,6 +10,7 @@ import { Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { PDE_ROLE, DIDE_ROLE } from '../../constants';
 
 import {
     FormBuilder,
@@ -38,7 +39,7 @@ import { API_ENDPOINT } from '../../app.settings';
           <br><br>
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(2)" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
-              Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη 
+              Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη
           </button>
           <br><br>
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(3)" [hidden]="minedu_userName == ''" >
@@ -87,7 +88,14 @@ import { API_ENDPOINT } from '../../app.settings';
               state.loginInfo.reduce(({}, loginInfoToken) => {
                 this.minedu_userName = loginInfoToken.minedu_username;
                 this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
+                console.log("Role:");
+                console.log(loginInfoToken.auth_role);
+                if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE)  {
+                    console.log("inside..");
+                    this.minedu_userName = loginInfoToken.auth_token;
+                    this.minedu_userPassword = loginInfoToken.auth_token;
+                }
+                return loginInfoToken;
               }, {});
           }
           return state.loginInfo;

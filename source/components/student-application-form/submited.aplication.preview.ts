@@ -13,6 +13,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
+import * as fs from "fs"
 
 
 
@@ -31,7 +32,7 @@ import * as html2canvas from "html2canvas"
                  [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
                  </li>
-                  <div id = "target">
+                  <div #target class = "target "id = "target">
 
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
                       <table>
@@ -123,6 +124,8 @@ import * as html2canvas from "html2canvas"
     public StudentId;
     private userActive = <number>-1;
 
+  @ViewChild('target') element: ElementRef;
+
     constructor(private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
                 private router: Router ,
@@ -211,39 +214,65 @@ import * as html2canvas from "html2canvas"
 
    }
 
- createPdf1()
+ createPdf()
     {
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
+            console.log("i am !");
+
+          if(document.readyState === "complete") {
+                   console.log("mphka");
+                  var img = canvas.toDataURL();
+
+                  var fs = require('fs');
+                  var sys = require('sys');
+
+                var img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0"
+                  + "NAAAAKElEQVQ4jWNgYGD4Twzu6FhFFGYYNXDUwGFpIAk2E4dHDRw1cDgaCAASFOffhEIO"
+                  + "3gAAAABJRU5ErkJggg==";
+
+                  var data = img.replace(/^data:image\/\w+;base64,/, "");
+                  var buf = new Buffer(data, 'base64');
+                  fs.writeFile('image.png', buf);
+
+
+
+                  
+                  var doc = new jsPDF();
+                               
+                  console.log("mphkaneo");
+
+                  doc.addImage(img, 'PNG',0, 0, 1000, 1000);
+                  console.log("mphkaneoneo");
+                  doc.save('applications.pdf');
+ 
+           
+                }
+              });
+     }
+
+
+
+
+createPdf1()
+{
+
+html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
+      onrendered: function(canvas: HTMLCanvasElement) {
+            console.log("lalalal");
             var img = canvas.toDataURL();
             var doc = new jsPDF();
-
-            doc.onload = function(){
-            console.log(img, doc, "lalalalalala");
             doc.addImage(img, 'PNG',0, 0, 210, 297);
 
-            doc.save('applications.pdf');
-          }
-        });
-    }
-
-
-
-createPdf()
-
-
-
-    {
-
-      var doc = new jsPDF();
-        doc.text(20, 20, 'Hello world!');
-        doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
-        doc.addPage();
-        doc.text(20, 20, 'Do you like that?');
-
-        // Save the PDF
-        doc.save('Test.pdf');
-    }
+            doc.save('applications.pdf');       
+      },
+      function(error){
+              console.log("i fail");
+            }
+    });
+  }
 
 }
+ 
+

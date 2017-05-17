@@ -12,6 +12,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
 import {reportsSchema, TableColumn} from './reports-schema';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { PDE_ROLE, DIDE_ROLE } from '../../constants';
 import {csvCreator} from './csv-creator';
 
 import {
@@ -31,11 +32,10 @@ import { API_ENDPOINT } from '../../app.settings';
 
   <div>
 
-        <!--
+
         <div
           class = "loading" *ngIf="validCreator == 0" >
         </div>
-        -->
 
         <form [formGroup]="formGroup"  #form>
 
@@ -45,8 +45,8 @@ import { API_ENDPOINT } from '../../app.settings';
               > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου
           </button>
           <div  class="col-md-11 offset-md-1">
-                <label *ngIf = "enableRegionFilter"> Περιφερειακή Διεύθυνση </label>
-                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" formControlName="region">
+                <label *ngIf = "enableRegionFilter && userLoggedIn == 'supervisor'"> Περιφερειακή Διεύθυνση </label>
+                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn != 'supervisor'" formControlName="region">
                   <option value="0"></option>
                   <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
                 </select>
@@ -133,12 +133,14 @@ import { API_ENDPOINT } from '../../app.settings';
     private SchoolSelections$: BehaviorSubject<any>;
     private SectorSelections$: BehaviorSubject<any>;
     private CourseSelections$: BehaviorSubject<any>;
+    private RegionRetrieve$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
     private RegionSelectionsSub: Subscription;
     private AdminAreaSelectionsSub: Subscription;
     private SchoolSelectionsSub: Subscription;
     private SectorSelectionsSub: Subscription;
     private CourseSelectionsSub: Subscription;
+    private RegionRetrieveSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -158,6 +160,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private courseSelected: number;
     private enableRegionFilter: boolean;
     private enableCourseFilter: boolean;
+    private userLoggedIn: string;
 
     columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
     @Input() settings: any;
@@ -191,6 +194,7 @@ import { API_ENDPOINT } from '../../app.settings';
           this.SchoolSelections$ = new BehaviorSubject([{}]);
           this.SectorSelections$ = new BehaviorSubject([{}]);
           this.CourseSelections$ = new BehaviorSubject([{}]);
+          this.RegionRetrieve$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = -1;
           this.showAdminList = new BehaviorSubject(false);
@@ -214,7 +218,35 @@ import { API_ENDPOINT } from '../../app.settings';
               state.loginInfo.reduce(({}, loginInfoToken) => {
                 this.minedu_userName = loginInfoToken.minedu_username;
                 this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
+
+                this.userLoggedIn = loginInfoToken.auth_role;
+                if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE)  {
+                    console.log("inside..");
+                    this.minedu_userName = loginInfoToken.auth_token;
+                    this.minedu_userPassword = loginInfoToken.auth_token;
+                    if (loginInfoToken.auth_role == PDE_ROLE) {
+
+                      //CALL CONTROLLER THAT RETURNS ID OF PDE
+
+                      this.RegionRetrieveSub = this._hds.getUserRegistryNo(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+                          this.RegionRetrieve$.next(data);
+                          this.data = data;
+                      },
+                          error => {
+                              this.RegionRetrieve$.next([{}]);
+                              console.log("Error Getting getRegionId");
+                          },
+                          () => {
+                            this.regionSelected = this.data['id'];
+                            console.log("Success Getting getRegionId");
+
+                            this.showAdminList.next(true);
+                            this.checkregion(this. regionSelected);
+                          }
+                        );
+                  }
+                }
+                return loginInfoToken;
               }, {});
           }
           return state.loginInfo;
@@ -253,6 +285,8 @@ import { API_ENDPOINT } from '../../app.settings';
           this.showSectorList.unsubscribe();
       if (this.showCourseList)
           this.showCourseList.unsubscribe();
+      if (this.RegionRetrieveSub)
+          this.RegionRetrieveSub.unsubscribe();
 
     }
 
@@ -346,13 +380,14 @@ toggleCourseFilter()  {
 
 checkregion(regionId) {
 
-    this.regionSelected = regionId.value;
+    if (typeof regionId.value != "undefined")
+      this.regionSelected = regionId.value;
     this.adminAreaSelected = 0;
     this.schSelected = 0;
 
     //if (regionId.value != 0)  {
 
-    this.AdminAreaSelectionsSub = this._hds.getAdminAreas(this.minedu_userName, this.minedu_userPassword, regionId.value).subscribe(data => {
+    this.AdminAreaSelectionsSub = this._hds.getAdminAreas(this.minedu_userName, this.minedu_userPassword, this.regionSelected).subscribe(data => {
         this.AdminAreaSelections$.next(data);
     },
         error => {
@@ -365,7 +400,7 @@ checkregion(regionId) {
         }
       );
 
-      this.SchoolSelectionsSub = this._hds.getSchoolsPerRegion(this.minedu_userName, this.minedu_userPassword, regionId.value).subscribe(data => {
+      this.SchoolSelectionsSub = this._hds.getSchoolsPerRegion(this.minedu_userName, this.minedu_userPassword, this.regionSelected).subscribe(data => {
           this.SchoolSelections$.next(data);
       },
           error => {

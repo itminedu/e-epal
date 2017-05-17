@@ -128,7 +128,9 @@ class ApplicationSubmit extends ControllerBase {
 
 			//insert records in entity: 	epal_student_course_field (αφορά μαθητές Γ' Λυκείου)
 			//						or:		epal_student_sector_field (αφορά μαθητές Β' Λυκείου)
-			if ($applicationForm[0][currentclass] === "Γ' Λυκείου")	{
+
+      //if ($applicationForm[0][currentclass] === "Γ' Λυκείου")	{
+      if ($applicationForm[0][currentclass] === "3")	{
 				//$course =  array('name
 				$course = array(
 					//'name' => $aitisi[3][name],
@@ -142,7 +144,8 @@ class ApplicationSubmit extends ControllerBase {
 				$entity_storage_course->save($entity_object);
 			}
 
-			else if ($applicationForm[0][currentclass] === "Β' Λυκείου")	{
+			//else if ($applicationForm[0][currentclass] === "Β' Λυκείου")	{
+      else if ($applicationForm[0][currentclass] === "2")	{
 				$sector = array(
 					//'name' => $applicationForm[3][name],
 					'student_id' => $created_student_id,

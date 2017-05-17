@@ -164,6 +164,14 @@ epal.ministry.report-all-stat:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportAllStat'
   requirements:
       _user_is_logged_in: 'TRUE'
+epal.ministry.retrieve-registry-id:
+  path: '/ministry/retrieve-registry-id'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ReportsCreator::retrieveUserRegistryNo'
+  requirements:
+      _user_is_logged_in: 'TRUE'
 epal.ministry.massive_mail:
   path: '/ministry/send-massive-mail'
   options:

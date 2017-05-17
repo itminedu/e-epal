@@ -133,12 +133,14 @@ import { API_ENDPOINT } from '../../app.settings';
     private SchoolSelections$: BehaviorSubject<any>;
     private SectorSelections$: BehaviorSubject<any>;
     private CourseSelections$: BehaviorSubject<any>;
+    private RegionRetrieve$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
     private RegionSelectionsSub: Subscription;
     private AdminAreaSelectionsSub: Subscription;
     private SchoolSelectionsSub: Subscription;
     private SectorSelectionsSub: Subscription;
     private CourseSelectionsSub: Subscription;
+    private RegionRetrieveSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -192,6 +194,7 @@ import { API_ENDPOINT } from '../../app.settings';
           this.SchoolSelections$ = new BehaviorSubject([{}]);
           this.SectorSelections$ = new BehaviorSubject([{}]);
           this.CourseSelections$ = new BehaviorSubject([{}]);
+          this.RegionRetrieve$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = -1;
           this.showAdminList = new BehaviorSubject(false);
@@ -221,19 +224,26 @@ import { API_ENDPOINT } from '../../app.settings';
                     console.log("inside..");
                     this.minedu_userName = loginInfoToken.auth_token;
                     this.minedu_userPassword = loginInfoToken.auth_token;
-                    /*
-                    if (loginInfoToken.auth_role == PDE_ROLE)
-                      this.userLoggedIn = "pde";
-                    else if (loginInfoToken.auth_role == DIDE_ROLE)
-                      this.userLoggedIn = "dide";
-                    console.log(this.userLoggedIn);
-                    */
+                    if (loginInfoToken.auth_role == PDE_ROLE) {
 
-                  if (loginInfoToken.auth_role == PDE_ROLE) {
-                    //CALL CONTROLLER THAT RETURNS ID OF PDE
-                    this. regionSelected = 1;
-                    this.showAdminList.next(true);
-                    this.checkregion(this. regionSelected);
+                      //CALL CONTROLLER THAT RETURNS ID OF PDE
+
+                      this.RegionRetrieveSub = this._hds.getUserRegistryNo(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+                          this.RegionRetrieve$.next(data);
+                          this.data = data;
+                      },
+                          error => {
+                              this.RegionRetrieve$.next([{}]);
+                              console.log("Error Getting getRegionId");
+                          },
+                          () => {
+                            this.regionSelected = this.data['id'];
+                            console.log("Success Getting getRegionId");
+
+                            this.showAdminList.next(true);
+                            this.checkregion(this. regionSelected);
+                          }
+                        );
                   }
                 }
                 return loginInfoToken;
@@ -275,6 +285,8 @@ import { API_ENDPOINT } from '../../app.settings';
           this.showSectorList.unsubscribe();
       if (this.showCourseList)
           this.showCourseList.unsubscribe();
+      if (this.RegionRetrieveSub)
+          this.RegionRetrieveSub.unsubscribe();
 
     }
 

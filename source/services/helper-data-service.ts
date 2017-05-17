@@ -842,6 +842,23 @@ getSchoolsPerAdminArea(username, userpassword, adminid)  {
       .map(response => response.json());
 }
 
+
+getUserRegistryNo(username, userpassword)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //console.log("Test");
+  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/retrieve-registry-id`  , options)
+      .map(response => response.json());
+}
+
+
+
 getSectors(username, userpassword, classid)  {
 
   let headers = new Headers({

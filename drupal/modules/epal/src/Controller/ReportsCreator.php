@@ -163,7 +163,7 @@ class ReportsCreator extends ControllerBase {
 				$roles = $user->getRoles();
 				$validRole = false;
 				foreach ($roles as $role)
-					if ($role === "ministry") {
+					if ($role === "ministry" || $role === "regioneduadmin" || $role === "eduadmin") {
 						$validRole = true;
 						break;
 					}
@@ -172,6 +172,12 @@ class ReportsCreator extends ControllerBase {
 										'message' => t("User Invalid Role"),
 								], Response::HTTP_FORBIDDEN);
 				}
+				/*
+				if ($role === "regioneduadmin")	{
+					//ΑΝΑΚΤΗΣΗ ID της ΠΔΕ
+					$regionId = 1;
+				}
+				*/
 
 				$list = array();
 
@@ -310,7 +316,7 @@ class ReportsCreator extends ControllerBase {
 				$roles = $user->getRoles();
 				$validRole = false;
 				foreach ($roles as $role)
-					if ($role === "ministry") {
+					if ($role === "ministry" || $role === "regioneduadmin" || $role === "eduadmin") {
 						$validRole = true;
 						break;
 					}
@@ -519,6 +525,57 @@ class ReportsCreator extends ControllerBase {
 		}
 
 
+		public function retrieveUserRegistryNo(Request $request)	{
+
+			try {
+
+				if (!$request->isMethod('GET')) {
+					 return $this->respondWithStatus([
+							"message" => t("Method Not Allowed")
+							 ], Response::HTTP_METHOD_NOT_ALLOWED);
+				}
+
+				//user validation
+				$authToken = $request->headers->get('PHP_AUTH_USER');
+				$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+				$user = reset($users);
+				if (!$user) {
+						return $this->respondWithStatus([
+										'message' => t("User not found"),
+								], Response::HTTP_FORBIDDEN);
+				}
+
+				//user role validation
+				$roles = $user->getRoles();
+				$validRole = false;
+				foreach ($roles as $role)
+					if ( $role === "regioneduadmin") {
+						$validRole = true;
+						break;
+					}
+				if (!$validRole) {
+						return $this->respondWithStatus([
+										'message' => t("User Invalid Role"),
+								], Response::HTTP_FORBIDDEN);
+				}
+
+				return $this->respondWithStatus([
+						'message' => t("retrieve ID successful"),
+						'id' => $user->init->value,
+				], Response::HTTP_OK);
+
+			}
+
+			catch (\Exception $e) {
+				$this->logger->warning($e->getMessage());
+				return $this->respondWithStatus([
+							"message" => t("An unexpected problem occured in retrievePDEId Method")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+			}
+
+
+		}
+
 		public function retrieveUpLimit()	{
 
 			//βρες ανώτατο επιτρεπόμενο όριο μαθητών
@@ -544,6 +601,8 @@ class ReportsCreator extends ControllerBase {
 					$res->setStatusCode($s);
 					return $res;
 			}
+
+
 
 
 

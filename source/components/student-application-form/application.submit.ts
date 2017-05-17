@@ -197,10 +197,15 @@ import {AppSettings} from '../../app.settings';
             criteriaObj[i] =new StudentCriteriaChosen(null, null, this.studentCriteria[i]);
           aitisiObj['2'] = criteriaObj;
 
-          if (aitisiObj[0]['currentclass'] === "Β' Λυκείου" )
+          console.log("Debugging..");
+          console.log(aitisiObj[0]['currentclass']);
+          //if (aitisiObj[0]['currentclass'] === "Β' Λυκείου" )
+          if (aitisiObj[0]['currentclass'] === "2" )
             aitisiObj['3'] =  new StudentSectorChosen(null, this.sectorSelected);
-          else if (aitisiObj[0]['currentclass'] === "Γ' Λυκείου" )
+          //else if (aitisiObj[0]['currentclass'] === "Γ' Λυκείου" )
+          else if (aitisiObj[0]['currentclass'] === "3" ) {
             aitisiObj['3'] =  new StudentCourseChosen(null, this.courseSelected);
+          }
 
           //console.log(aitisiObj);
 

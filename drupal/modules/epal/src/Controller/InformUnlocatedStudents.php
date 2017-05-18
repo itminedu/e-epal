@@ -166,7 +166,10 @@ class InformUnlocatedStudents extends ControllerBase {
 														.t(' δεν ικανοποιήθηκε. Παρακαλώ επικοινωνήστε άμεσα τηλεφωνικά με τη Διεύθυνση Δευτεροβάθμιας Εκπαίδευσης / Τμήμα Επαγγελματικής Εκπαίδευσης,
 																στην οποία ανήκετε, ώστε να διερευνηθεί η δυνατότητα εγγραφής σας σε αντίστοιχο ΕΠΑΛ');	//e-mail body
 																//add new lines with SENDER name  - check it
-				$params['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ');
+				//$params['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ');
+
+				//$this->logger->warning($params['message']);
+
 				//$langcode = $user->getPreferredLangcode();
 				$send = true;
 

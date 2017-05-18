@@ -49,6 +49,11 @@
              <a class="nav-link" [routerLink]="['/ministry/minister-reports']" [routerLinkActive]="['active']"><b>Αναφορές</b></a>
         </li>
       </div>
+      <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" >
+         <li *ngIf="authRole=='dide'" class="nav-item" >
+             <a class="nav-link" [routerLink]="['/ministry/minister-reports']" [routerLinkActive]="['active']" ><b>Αναφορές</b></a>
+        </li>
+      </div>
 
 
       </div>

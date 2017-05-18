@@ -43,7 +43,7 @@ public function getSectorsPerSchool(Request $request, $epalId)
          $user = reset($users);
          if ($user) {
 //             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId, 'id' => intval($epalId)));
+             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => intval($epalId)));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -101,7 +101,7 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
          $user = reset($users);
          if ($user) {
 //             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId, 'id' => intval($epalId)));
+            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => intval($epalId)));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -164,7 +164,7 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
         $user = reset($users);
         if ($user) {
 //            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId, 'id' => intval($epalId)));
+            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => intval($epalId)));
             $school = reset($schools);
             if (!$school) {
                 $this->logger->warning("no access to this school=" . $user->id());
@@ -278,17 +278,7 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
-//             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId));
-             $school = reset($schools);
-             if (!$school) {
-                 $this->logger->warning("no access to this school=" . $user->id());
-                 $response = new Response();
-                 $response->setContent('No access to this school');
-                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                 $response->headers->set('Content-Type', 'application/json');
-                 return $response;
-             }
+//             
 
             $postData = null;
 

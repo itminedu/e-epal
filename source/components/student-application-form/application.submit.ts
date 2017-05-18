@@ -56,7 +56,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         </div>
 
         <application-preview-select></application-preview-select>
-        <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
+        <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right" (click)="submitNow()">Υποβολή</button>
   `
 })
 

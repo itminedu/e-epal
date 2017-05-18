@@ -214,7 +214,7 @@ import * as fs from "fs"
 
    }
 
- createPdf()
+ createPdf1()
     {
 
        html2canvas(document.getElementById("target")).then(function(canvas)
@@ -224,21 +224,6 @@ import * as fs from "fs"
           if(document.readyState === "complete") {
                    console.log("mphka");
                   var img = canvas.toDataURL();
-
-                  var fs = require('fs');
-                  var sys = require('sys');
-
-                var img = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0"
-                  + "NAAAAKElEQVQ4jWNgYGD4Twzu6FhFFGYYNXDUwGFpIAk2E4dHDRw1cDgaCAASFOffhEIO"
-                  + "3gAAAABJRU5ErkJggg==";
-
-                  var data = img.replace(/^data:image\/\w+;base64,/, "");
-                  var buf = new Buffer(data, 'base64');
-                  fs.writeFile('image.png', buf);
-
-
-
-                  
                   var doc = new jsPDF();
                                
                   console.log("mphkaneo");
@@ -255,23 +240,27 @@ import * as fs from "fs"
 
 
 
-createPdf1()
+createPdf()
 {
 
 html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
       onrendered: function(canvas: HTMLCanvasElement) {
-            console.log("lalalal");
-            var img = canvas.toDataURL();
-            var doc = new jsPDF();
-            doc.addImage(img, 'PNG',0, 0, 210, 297);
+        var img = canvas.toDataURL();
+                  var doc = new jsPDF();
+                               
+                  console.log("mphkaneo");
+             setTimeout(function(){
+               
 
-            doc.save('applications.pdf');       
-      },
-      function(error){
-              console.log("i fail");
-            }
-    });
-  }
+                 
+    }, 10000);
+              doc.addImage(img, 'PNG',0, 0, 1000, 1000);
+                  console.log("mphkaneoneo");
+                  doc.save('applications.pdf');
+}
+}); }
+  
+  
 
 }
  

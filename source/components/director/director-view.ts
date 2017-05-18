@@ -152,6 +152,8 @@ import {
     public formGroup: FormGroup;
     private StudentSelected$: BehaviorSubject<any>;
     private StudentSelectedSub: Subscription;
+    private School$: BehaviorSubject<any>;
+    private SchoolSub: Subscription;
     private StudentInfo$: BehaviorSubject<any>;
     private StudentInfoSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
@@ -163,7 +165,7 @@ import {
     private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
-    private SchoolId = 147;
+    private SchoolId ;
     private currentclass: Number;
     private saved: Array<number> = new Array();
     private limitdown = 0; 
@@ -188,6 +190,9 @@ import {
         this.retrievedStudent = new BehaviorSubject(false);
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
+        this.School$ = new BehaviorSubject([{}]);
+
+
         this.formGroup = this.fb.group({
             tomeas: ['', []],
             taxi: ['', []],
@@ -216,7 +221,22 @@ import {
 
     ngOnInit() {
 
-    }
+        this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+                  this.School$.next(x);                 
+                  console.log(x[0].id, "schoolid!");
+                   this.SchoolId = x[0].id;
+                   console.log(this.SchoolId,"schoolid");
+
+                  },
+                  error => {
+                      this.School$.next([{}]);
+                      console.log("Error Getting School");
+                  },
+                  () => console.log("Getting School "));
+                  
+        }        
+
+    
 
 
     verifyclass(txop) {
@@ -360,9 +380,6 @@ import {
 
     confirmStudent() {
         this._hds.saveConfirmStudents(this.saved, this.type);
-        let event = new MouseEvent('click', {bubbles: true});
-       this.fileInput.nativeElement.dispatchEvent(event);
-        
     }
 
     checkcclass() {

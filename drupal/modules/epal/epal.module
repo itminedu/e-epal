@@ -46,5 +46,11 @@ function epal_mail($key, &$message, $params) {
         $message['subject'] = t('Σύστημα υποβολής αιτήσεων εγγραφής σε ΕΠΑΛ: Επιβεβαίωση e-mail', $options);
         $message['body'][] = $params['message'];
         break;
+
+      case 'massive_mail':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ', $options);
+        $message['body'][] = $params['message'];
+        break;
     }
 }

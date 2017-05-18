@@ -10,7 +10,7 @@ import { Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { PDE_ROLE, DIDE_ROLE } from '../../constants';
+import { MINISTRY_ROLE, PDE_ROLE, DIDE_ROLE } from '../../constants';
 
 import {
     FormBuilder,
@@ -32,7 +32,7 @@ import { API_ENDPOINT } from '../../app.settings';
         <h5><br> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide'" >
           <i class="fa fa-file-text"></i>
               Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
           </button>
@@ -63,6 +63,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
+    private userRole: string;
 
     constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
@@ -78,6 +79,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
           this.minedu_userName = '';
+          this.userRole = MINISTRY_ROLE;
 
     }
 
@@ -92,6 +94,7 @@ import { API_ENDPOINT } from '../../app.settings';
                 console.log(loginInfoToken.auth_role);
                 if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE)  {
                     console.log("inside..");
+                    this.userRole = loginInfoToken.auth_role;
                     this.minedu_userName = loginInfoToken.auth_token;
                     this.minedu_userPassword = loginInfoToken.auth_token;
                 }

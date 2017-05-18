@@ -687,6 +687,48 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
     }
 
 
+
+public function getSchoolID(Request $request)
+    {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+         $user = reset($users);
+         if ($user) {
+                    $schid = intval($user ->  init -> value );
+                    $list = array();
+                    $list[] = array(
+                             'id' =>  $schid
+                        );
+
+                     $i++;
+       
+
+                return $this->respondWithStatus(
+                        $list
+                    , Response::HTTP_OK);
+ 
+
+
+            } else {
+
+            return $this->respondWithStatus([
+                    'message' => t("User not found!"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

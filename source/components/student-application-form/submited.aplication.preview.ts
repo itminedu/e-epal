@@ -13,13 +13,11 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
-import * as fs from "fs"
-
-
-
+ 
 @Component({
     selector: 'submited-preview',
     template: `
+    <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
@@ -119,6 +117,7 @@ import * as fs from "fs"
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
+    private showLoader$: BehaviorSubject<boolean>;
 
 
     public StudentId;
@@ -136,6 +135,7 @@ import * as fs from "fs"
        this.EpalChosen$ = new BehaviorSubject([{}]);
        this.CritirioChosen$ = new BehaviorSubject([{}]);
        this.incomeChosen$ = new BehaviorSubject([{}]);
+       this.showLoader$ = new BehaviorSubject(false);
     }
 
     ngOnDestroy()
@@ -159,15 +159,22 @@ import * as fs from "fs"
 
     ngOnInit() {
 
+        this.showLoader$.next(true);
 
-        this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(data => {
-          this.SubmitedApplic$.next(data)},
+        this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
+            data => {
+                this.SubmitedApplic$.next(data);
+                this.showLoader$.next(false);
+            },
             error => {
                 this.SubmitedApplic$.next([{}]);
+                this.showLoader$.next(false);
                 console.log("Error Getting Schools");
             },
-            () => console.log("Getting Schools"));
-        console.log(this.SubmitedApplic$);
+            () => {
+                console.log("Getting Schools")
+                this.showLoader$.next(false);
+            });
 
     }
 
@@ -183,13 +190,20 @@ import * as fs from "fs"
       }
       ind--;
       this.userActive = ind+1 ;
+      this.showLoader$.next(true);
       this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive+1).subscribe(data => {
-        this.SubmitedDetails$.next(data)},
+          this.SubmitedDetails$.next(data);
+          this.showLoader$.next(false);
+    },
             error => {
                 this.SubmitedDetails$.next([{}]);
                 console.log("Error Getting Schools");
+                this.showLoader$.next(false);
             },
-             () => console.log("Getting Schools"));
+             () => {
+                 console.log("Getting Schools");
+                 this.showLoader$.next(false);
+             });
       this.EpalChosenSub = this._hds.getEpalchosen(this.userActive+1).subscribe(data => {
         this.EpalChosen$.next(data)},
             error => {
@@ -219,22 +233,28 @@ import * as fs from "fs"
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
-            console.log("i am !");
 
-          if(document.readyState === "complete") {
-                   console.log("mphka");
-                  var img = canvas.toDataURL();
-                  var doc = new jsPDF();
-                               
-                  console.log("mphkaneo");
 
-                  doc.addImage(img, 'PNG',0, 0, 1000, 1000);
-                  console.log("mphkaneoneo");
-                  doc.save('applications.pdf');
+          var img=new Image();
+          img.src=canvas.toDataURL();
+          img.onload=function(){
+            console.log(img,"img");
+            var doc = new jsPDF();
+            console.log(img, doc, "ok");
+            doc.addImage(img, 'PNG',0, 0, 210, 297);
+            console.log(img, doc, "ok2");
+            doc.save('applications.pdf');
  
-           
-                }
-              });
+          }
+
+
+
+
+
+          },
+          function(error){
+              console.log("i fail");
+            });
      }
 
 

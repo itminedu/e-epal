@@ -50,95 +50,44 @@ reportAllStatSchema = {
   columns: {
     name: {
       title: 'Σχολείο',
+      width: '18%',
       filter: false
     },
     region: {
       title: 'Περιφερειακή Διεύθυνση',
+      width: '15%',
       filter: false
     },
     admin: {
       title: 'Διεύθυνση Εκπαίδευσης',
+      width: '15%',
       filter: false
     },
     section: {
       title: 'Τάξη/Τομέας/Ειδικότητα',
+      width: '18%',
       filter: false
     },
     num: {
       title: 'Αριθμός Μαθητών',
+      width: '8%',
       filter: false
     },
     capacity: {
       title: 'Χωρ/κα',
+      width: '8%',
       filter: false
     },
     percentage: {
-      title: 'Ποσοστό',
+      title: 'Ποσοστό (%)',
+      width: '8%',
       filter: false
     }
   }
 };
 
 
-reportCompletenessSchemaFull = {
-  actions: false,
-  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
-  columns: {
-    name: {
-      title: 'Σχολείο',
-      filter: false,
-      hide: true
-    },
-    numStudents: {
-      title: 'Αριθμός',
-      filter: false
-    },
-    capacityTotal: {
-      title: 'Χωρ/τα',
-      filter: false
-    },
-    percTotal: {
-      title: 'Πληρότητα',
-      filter: false
-    },
-    numStudentsA: {
-      title: 'Α Τάξη',
-      filter: false
-    },
-    capacityA: {
-      title: 'Χωρ/τα',
-      filter: false
-    },
-    percA: {
-      title: 'Πληρότητα',
-      filter: false
-    },
-    numStudentsB: {
-      title: 'Β Τάξη',
-      filter: false
-    },
-    capacityB: {
-      title: 'Χωρ/τα',
-      filter: false
-    },
-    percB: {
-      title: 'Πληρότητα',
-      filter: false
-    },
-    numStudentsC: {
-      title: 'Γ Τάξη',
-      filter: false
-    },
-    capacityC: {
-      title: 'Χωρ/τα',
-      filter: false
-    },
-    percC: {
-      title: 'Πληρότητα',
-      filter: false
-    }
-  }
-};
+
 
 
 reportCompletenessSchema = {
@@ -147,30 +96,37 @@ reportCompletenessSchema = {
   columns: {
     name: {
       title: 'Σχολείο',
+      width: '17%',
       filter: false
     },
     region: {
       title: 'ΠΔΕ',
+      width: '13%',
       filter: false
     },
     admin: {
       title: 'ΔΙΔΕ',
+      width: '13%',
       filter: false
     },
     percTotal: {
       title: 'Πληρότητα Σχολείου',
+      width: '11%',
       filter: false
     },
     percA: {
-      title: 'Πληρότητα Α\' τάξης',
+      title: 'Πληρότητα Α\' τάξης (%)',
+      width: '11%',
       filter: false
     },
     percB: {
-      title: 'Πληρότητα Β\' τάξης',
+      title: 'Πληρότητα Β\' τάξης (%)',
+      width: '11%',
       filter: false
     },
     percC: {
-      title: 'Πληρότητα Γ\' τάξης',
+      title: 'Πληρότητα Γ\' τάξης (%)',
+      width: '11%',
       filter: false
     }
   }

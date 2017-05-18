@@ -108,7 +108,8 @@ class Distribution extends ControllerBase {
 		try {
 
 			//initialize/empty epal_student_class if there are already data in it!
-			$this->connection->delete('epal_student_class')->execute();
+			//$this->connection->delete('epal_student_class')->execute();
+			$this->initializeResults();
 
 			//$limitUp_class = $this->retrieveCapacityLimitUp("Α");
 			$limitUp_class = $this->retrieveCapacityLimitUp("1");
@@ -509,9 +510,27 @@ class Distribution extends ControllerBase {
 				return $res;
 		}
 
+		private function initializeResults() {
+
+			//initialize/empty epal_student_class if there are already data in it!
+			try  {
+				$this->connection->delete('epal_student_class')->execute();
+			}
+			catch (\Exception $e) {
+				$this->logger->warning($e->getMessage());
+				return $this->respondWithStatus([
+							"message" => t("An unexpected problem occured during initializeResults Method of Distribution")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+			}
 
 
 
+		}
+
+
+
+
+/*
 		public function makegGeneralReport(Request $request) {
 
 			try  {
@@ -574,15 +593,7 @@ class Distribution extends ControllerBase {
 																	->condition('eStudent.id', $studentIds, 'NOT IN');
 				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
 
-				/*
-				$list[] = array(
-					 'num_applications' => $numTotal,
-				 	 'numchoice1' => $numData[0],
-					 'numchoice2' => $numData[1],
-					 'numchoice3' => $numData[2],
-					 'num_noallocated' => $numNoAllocated,
-				 );
-				*/
+
 
 
 
@@ -616,73 +627,11 @@ class Distribution extends ControllerBase {
 			}
 
 		}
-
-
-
-		/*
-		public function makeReport1(Request $request) {
-
-			try  {
-				if (!$request->isMethod('GET')) {
-					 return $this->respondWithStatus([
-							"message" => t("Method Not Allowed")
-							 ], Response::HTTP_METHOD_NOT_ALLOWED);
-				}
-
-				//user validation
-				$authToken = $request->headers->get('PHP_AUTH_USER');
-				$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-				$user = reset($users);
-				if (!$user) {
-						return $this->respondWithStatus([
-										'message' => t("User not found"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				//user role validation
-				$roles = $user->getRoles();
-				$validRole = false;
-				foreach ($roles as $role)
-					if ($role === "ministry") {
-						$validRole = true;
-						break;
-					}
-				if (!$validRole) {
-						return $this->respondWithStatus([
-										'message' => t("User Invalid Role"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				$list = array();
-
-				$sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
-																	->fields('eSchool', array('id', 'name'));
-				$epalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-				//$schoolIds = array();
-				foreach ($epalSchools as $epalSchool)	{
-					//array_push($schoolIds, $schoolId->id);
-					$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																		->fields('eStudent', array('id', 'epal_id'))
-																		->condition('eStudent.epal_id', $epalSchool->id , '=');
-					$num = $sCon->countQuery()->execute()->fetchField();
-					if ($num !== "0")
-						array_push($list,(object) array('schoolName' => $epalSchool->name, 'numStudents' => $num));
-				}
-
-				 return $this->respondWithStatus(
-								 $list
-						 , Response::HTTP_OK);
-			}	 //end try
-
-			catch (\Exception $e) {
-				$this->logger->warning($e->getMessage());
-				return $this->respondWithStatus([
-							"message" => t("An unexpected problem occured in makeReport1 Method")
-						], Response::HTTP_INTERNAL_SERVER_ERROR);
-			}
-
-		}
 		*/
+
+
+
+
 
 
 

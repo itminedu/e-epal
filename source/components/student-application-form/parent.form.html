@@ -1,6 +1,6 @@
 <div class = "loading" *ngIf="(epalUserData$ | async).userEmail === '' || (showLoader | async) === true"></div>
 
-<div id="emaiSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+<div id="emailSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header modal-header-success">
@@ -118,9 +118,9 @@
 
     <div class="row" *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
         <div class="col-md-12">
-            <button type="button" class="btn-primary btn-sm pull-right" (click)="saveProfileAndContinue()" [disabled]="((userEmailEnabled | async) && !(verificationCodeVerified | async))">
-            Συνέχεια
-            <i class="fa fa-forward"></i>  </button>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="saveProfileAndContinue()" [disabled]="((userEmailEnabled | async) && !(verificationCodeVerified | async))" >
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
+            </button>
         </div>
     </div>
  </form>

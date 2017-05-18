@@ -69,8 +69,9 @@ class CASLogin extends ControllerBase
     public function loginGo(Request $request)
     {
 
+        $configRowName = 'casost_sch_sso_config';
         try {
-            $configRowName = 'casost_sch_sso_config';
+
             $configRowId = $request->query->get('config');
             if ($configRowId)
                 $configRowName = $configRowName . '_' . $configRowId;
@@ -120,11 +121,7 @@ class CASLogin extends ControllerBase
             }
             phpCAS::handleLogoutRequests();
             if (!phpCAS::forceAuthentication()) {
-                $response = new Response();
-                $response->setContent('forbidden. cannot force authentication');
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
+                return $this->redirectForbidden($configRowName, '5001');
             }
             $attributes = phpCAS::getAttributes();
 /*            foreach ($attributes as $attr_key => $attr_value) {
@@ -178,60 +175,85 @@ class CASLogin extends ControllerBase
                 return $attributes[$attribute];
             };
 
-            $exposedRole = 'director';
-            $internalRole = 'epal';
-            $CASTitle = preg_replace('/\s+/', '', $filterAttribute('title'));
-            if ($CASTitle === 'ΠΕΡΙΦΕΡΕΙΑΚΗΔΙΕΥΘΥΝΣΗΕΚΠΑΙΔΕΥΣΗΣ-ΠΔΕ') {
-                $exposedRole = 'pde';
-                $internalRole = 'regioneduadmin';
-            } else if ($CASTitle === 'ΔΙΕΥΘΥΝΣΗΔΕ-ΔIΔΕ') {
-                $exposedRole = 'dide';
-                $internalRole = 'eduadmin';
-            } else if ($CASTitle === 'ΕΠΑΛ') {
-                $exposedRole = 'director';
-                $internalRole = 'epal';
-            } else {
-                $response = new Response();
-                $this->logger->warning(t('Access is allowed only to official school accounts or administration'));
-                $response->setContent(t('Access is allowed only to official school accounts or administration'));
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json;charset=UTF-8');
-                return $response;
+            $umdobject = $filterAttribute("umdobject");
+            $physicaldeliveryofficename = $filterAttribute("physicaldeliveryofficename");
+
+
+/****** the following is for production ***************************/
+
+        /*    if (!$umdobject || $umdobject !== "Account") {
+                return $this->redirectForbidden($configRowName, '5002');
+            }
+            if (!$physicaldeliveryofficename || preg_replace('/\s+/', '', $physicaldeliveryofficename) !== 'ΕΠΙΣΗΜΟΣΛΟΓΑΡΙΑΣΜΟΣ') {
+                return $this->redirectForbidden($configRowName, '5003');
+            } */
+
+            phpCAS::trace($umdobject);
+            phpCAS::trace($physicaldeliveryofficename);
+            $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
+            $gsnunitcode = substr($gsnunitcodedn, strpos($gsnunitcodedn, ";") + 1);
+            phpCAS::trace($gsnunitcode);
+            $userAssigned = $this->assignRoleToUser($gsnunitcode);
+            if (sizeof($userAssigned) === 0) {
+                return $this->redirectForbidden($configRowName, '5004');
             }
 
 // $this->logger->warning('redirecturl=' . $this->redirectUrl);
-            $epalToken = $this->authenticatePhase2($request, $CASUser, $internalRole, $filterAttribute('cn'));
+            $epalToken = $this->authenticatePhase2($request, $CASUser, $userAssigned, $filterAttribute('cn'));
             if ($epalToken) {
                 if ('casost_sch_sso_config' === $configRowName) {
                 /*    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
                     $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false); */
 
-                    return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
+                    return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $userAssigned["exposedRole"], 302, []);
                 } else {
                     \Drupal::service('page_cache_kill_switch')->trigger();
-                    return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $exposedRole, 302, []);
+                    return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $userAssigned["exposedRole"], 302, []);
                 }
 //                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
 //                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {
-                $response = new Response();
-                $response->setContent('No proper authentication');
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json');
-                return $response;
+                return $this->redirectForbidden($configRowName, '5005');
             }
 
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
-            $response = new Response();
-            $response->setContent('Unexpected Problem');
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->headers->set('Content-Type', 'application/json');
-            return $response;
+            return $this->redirectForbidden($configRowName, '6000');
         }
     }
 
-    public function authenticatePhase2($request, $CASUser, $internalRole, $cn)
+    private function assignRoleToUser($registry_no) {
+        $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $registry_no));
+        $school = reset($schools);
+        if ($school) {
+            return array("id" => $school->id(), "exposedRole" => "director", "internalRole" => "epal");
+        }
+        $eduAdmins = $this->entityTypeManager->getStorage('eepal_admin_area')->loadByProperties(array('registry_no' => $registry_no));
+        $eduAdmin = reset($eduAdmins);
+        if ($eduAdmin) {
+            return array("id" => $eduAdmin->id(), "exposedRole" => "dide", "internalRole" => "eduadmin");
+        }
+        $regionAdmins = $this->entityTypeManager->getStorage('eepal_region')->loadByProperties(array('registry_no' => $registry_no));
+        $regionAdmin = reset($regionAdmins);
+        if ($regionAdmin) {
+            return array("id" => $regionAdmin->id(), "exposedRole" => "pde", "internalRole" => "regioneduadmin");
+        }
+        return array();
+
+    }
+
+    private function redirectForbidden($configRowName, $errorCode) {
+        session_unset();
+        session_destroy();
+        \Drupal::service('page_cache_kill_switch')->trigger();
+        if ('casost_sch_sso_config' === $configRowName) {
+            return new RedirectResponse($this->redirectUrl.'&error_code=' . $errorCode, 302, []);
+        } else {
+            return new RedirectResponseWithCookieExt($this->redirectUrl .'&error_code=' . $errorCode, 302, []);
+        }
+    }
+
+    private function authenticatePhase2($request, $CASUser, $userAssigned, $cn)
     {
     $trx = $this->connection->startTransaction();
     try {
@@ -260,7 +282,8 @@ class CASLogin extends ControllerBase
             $user->setEmail($CASUser);
             $user->setUsername($epalToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
             $user->activate();
-            $user->set('init', $cn);
+//            $user->set('init', $cn);
+            $user->set('init', $userAssigned["id"]);
 
             //Set Language
             $language_interface = \Drupal::languageManager()->getCurrentLanguage();
@@ -269,7 +292,7 @@ class CASLogin extends ControllerBase
             $user->set('preferred_admin_langcode', $language_interface->getId());
 
             //Adding default user role
-            $user->addRole($internalRole);
+            $user->addRole($userAssigned["internalRole"]);
             $user->save();
         }
 

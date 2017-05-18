@@ -53,15 +53,15 @@ import {AppSettings} from '../../app.settings';
             </ul>
         </div>
 
-        <div class="row" style="margin-top: 20px;" *ngIf="(sectors$ | async).size > 0">
+        <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(sectors$ | async).size > 0">
         <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-left" (click)="router.navigate(['/epal-class-select']);" >
           <i class="fa fa-backward"></i>
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToSchools()" [disabled]="idx === -1">
-            <i class="fa fa-forward"></i>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToSchools()" (click)="navigateToSchools()" [disabled]="idx === -1" >
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
         </div>

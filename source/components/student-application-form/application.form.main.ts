@@ -66,7 +66,7 @@ import {
             regionarea: ['ΠΑΤΡΑ', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             certificatetype: ['Απολυτήριο Λυκείου', this.checkChoice],
             relationtostudent: ['Μαθητής', this.checkChoice],
-            telnum:  ['2610789789', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
+            telnum:  ['6978333235', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
         });
 
         this.applicantDataGroup = this.fb.group({

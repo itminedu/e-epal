@@ -44,6 +44,9 @@ export class HelperDataService implements OnInit, OnDestroy {
                     this.authRole = loginInfoToken.auth_role;
                     //this.minedu_userName = loginInfoToken.minedu_username;
                     //this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    console.log("Auth details..");
+                    console.log(this.authToken);
+                    console.log(this.authRole);
                     return loginInfoToken;
                 }, {});
             }
@@ -839,6 +842,23 @@ getSchoolsPerAdminArea(username, userpassword, adminid)  {
       .map(response => response.json());
 }
 
+
+getUserRegistryNo(username, userpassword)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  //console.log("Test");
+  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/retrieve-registry-id`  , options)
+      .map(response => response.json());
+}
+
+
+
 getSectors(username, userpassword, classid)  {
 
   let headers = new Headers({
@@ -888,7 +908,7 @@ getCourses(username, userpassword, sectorid)  {
 getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
 
 
-        
+
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -902,4 +922,31 @@ getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
             .map(response => response.json());
 
     }
+
+getSchoolId() {
+
+
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/getschool/`, options)
+            .map(response => response.json());
+
+    }
+
+
+
+
+
+
+
+
+
 }

@@ -80,7 +80,7 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
               </div>
         </ul>
 
-        <div *ngIf="currentUrl === '/submited-preview'">
+        <div *ngIf="currentUrl === '/application-submit'">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
               <ul class="list-group left-side-view" style="margin-bottom: 20px;">
               <li class="list-group-item active">
@@ -119,7 +119,7 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
 
                       <ul class="list-group left-side-view" style="margin-bottom: 20px;">
                       <li class="list-group-item active">
-                                  <div *ngIf="currentUrl === '/submited-preview'">
+                                  <div *ngIf="currentUrl === '/application-submit'">
                                          Κοινωνικά/Εισοδηματικά Κριτήρια
                                   </div>
                       </li>
@@ -127,7 +127,7 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
               </div>
 
             </div>
-            <div *ngIf="currentUrl === '/submited-preview'">
+            <div *ngIf="currentUrl === '/application-submit'">
                   <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
                   <div *ngIf="criteriaField$.selected === true">
                         {{criteriaField$.name}}
@@ -172,6 +172,7 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
 
     ngOnInit() {
         this.currentUrl = this.router.url;
+        console.log(this.currentUrl,"url");
         this.sectorsSub = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) => {
                 sector.courses.reduce((prevCourse, course) => {

@@ -108,4 +108,6 @@ module.exports = {
     contentBase: './dist',
     publicPath: '/'
   }
+
+  
 }

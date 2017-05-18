@@ -228,11 +228,12 @@ import * as html2canvas from "html2canvas"
 
    }
 
- createPdf()
+ createPdf1()
     {
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
+
 
           var img=new Image();
           img.src=canvas.toDataURL();
@@ -249,6 +250,7 @@ import * as html2canvas from "html2canvas"
 
 
 
+
           },
           function(error){
               console.log("i fail");
@@ -258,23 +260,27 @@ import * as html2canvas from "html2canvas"
 
 
 
-createPdf1()
+createPdf()
 {
 
 html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
       onrendered: function(canvas: HTMLCanvasElement) {
-            console.log("lalalal");
-            var img = canvas.toDataURL();
-            var doc = new jsPDF();
-            doc.addImage(img, 'PNG',0, 0, 210, 297);
+        var img = canvas.toDataURL();
+                  var doc = new jsPDF();
+                               
+                  console.log("mphkaneo");
+             setTimeout(function(){
+               
 
-            doc.save('applications.pdf');       
-      },
-      function(error){
-              console.log("i fail");
-            }
-    });
-  }
+                 
+    }, 10000);
+              doc.addImage(img, 'PNG',0, 0, 1000, 1000);
+                  console.log("mphkaneoneo");
+                  doc.save('applications.pdf');
+}
+}); }
+  
+  
 
 }
  

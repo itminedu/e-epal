@@ -34,10 +34,10 @@ import {AppSettings} from '../../app.settings';
             </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="margin-bottom: 20px;">
         <div class="col-md-12 col-md-offset-5">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="saveSelected()">
-            <i class="fa fa-forward"></i>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="saveSelected()">
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
         </div>

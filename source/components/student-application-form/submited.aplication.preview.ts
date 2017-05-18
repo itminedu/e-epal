@@ -19,6 +19,7 @@ import * as html2canvas from "html2canvas"
 @Component({
     selector: 'submited-preview',
     template: `
+    <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
@@ -118,6 +119,7 @@ import * as html2canvas from "html2canvas"
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
+    private showLoader$: BehaviorSubject<boolean>;
 
 
     public StudentId;
@@ -133,6 +135,7 @@ import * as html2canvas from "html2canvas"
        this.EpalChosen$ = new BehaviorSubject([{}]);
        this.CritirioChosen$ = new BehaviorSubject([{}]);
        this.incomeChosen$ = new BehaviorSubject([{}]);
+       this.showLoader$ = new BehaviorSubject(false);
     }
 
     ngOnDestroy()
@@ -156,15 +159,22 @@ import * as html2canvas from "html2canvas"
 
     ngOnInit() {
 
+        this.showLoader$.next(true);
 
-        this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(data => {
-          this.SubmitedApplic$.next(data)},
+        this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
+            data => {
+                this.SubmitedApplic$.next(data);
+                this.showLoader$.next(false);
+            },
             error => {
                 this.SubmitedApplic$.next([{}]);
+                this.showLoader$.next(false);
                 console.log("Error Getting Schools");
             },
-            () => console.log("Getting Schools"));
-        console.log(this.SubmitedApplic$);
+            () => {
+                console.log("Getting Schools")
+                this.showLoader$.next(false);
+            });
 
     }
 
@@ -180,13 +190,20 @@ import * as html2canvas from "html2canvas"
       }
       ind--;
       this.userActive = ind+1 ;
+      this.showLoader$.next(true);
       this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive+1).subscribe(data => {
-        this.SubmitedDetails$.next(data)},
+          this.SubmitedDetails$.next(data);
+          this.showLoader$.next(false);
+    },
             error => {
                 this.SubmitedDetails$.next([{}]);
                 console.log("Error Getting Schools");
+                this.showLoader$.next(false);
             },
-             () => console.log("Getting Schools"));
+             () => {
+                 console.log("Getting Schools");
+                 this.showLoader$.next(false);
+             });
       this.EpalChosenSub = this._hds.getEpalchosen(this.userActive+1).subscribe(data => {
         this.EpalChosen$.next(data)},
             error => {

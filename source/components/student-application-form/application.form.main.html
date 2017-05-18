@@ -170,13 +170,13 @@
     </div>
 
     <div class="form-group">
-        <label for="telnum">Τηλέφωνο επικοινωνίας</label><input class="form-control" type="text" formControlName="telnum">
+        <label for="telnum">Κινητό Τηλέφωνο</label><input class="form-control" type="text" formControlName="telnum">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('telnum').touched && studentDataGroup.get('telnum').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('telnum').dirty && studentDataGroup.get('telnum').hasError('pattern')">
-        Επιτρέπονται μόνο ψηφία σε αυτό το πεδίο!
+        Επιτρέπονται μόνο ψηφία σε αυτό το πεδίο και πρέπει να αντιστοιχούν σε κινητό τηλέφωνο!
     </div>
 
 
@@ -254,15 +254,15 @@
 
     </form>
 
-    <div class="row" style="margin-top: 20px;" *ngIf="(criteria$ | async).size > 0">
+    <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(criteria$ | async).size > 0">
         <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                 <i class="fa fa-backward"></i>
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid " >
-                <i class="fa fa-forward"></i>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid ">
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
 

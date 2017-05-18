@@ -7,19 +7,16 @@ import { IAppState } from '../../store/store';
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
-import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
 
 @Component({
     selector: 'application-preview-select',
@@ -31,13 +28,13 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
                     Τάξη εισαγωγής
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '1'">
-                    Α’ Λυκείου                    
+                    Α’ Λυκείου
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '2'">
-                    Β’ Λυκείου                    
+                    Β’ Λυκείου
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '3'">
-                    Γ’ Λυκείου                    
+                    Γ’ Λυκείου
                 </li>
 
         </ul>
@@ -78,19 +75,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
               </div>
         </ul>
 
-              <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
-              <ul class="list-group left-side-view" style="margin-bottom: 20px;">
-              <li class="list-group-item active">
-                  Στοιχεία μαθητή
-              </li>
-                <li class="list-group-item">
-                    {{studentDataField$.name  }}
-                </li>
-                <li class="list-group-item">
-                    {{studentDataField$.studentsurname  }}
-                </li>
-                </ul>
-            </div>
   `
 })
 
@@ -99,12 +83,10 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     private regions$: BehaviorSubject<IRegions>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
-    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private sectorsSub: Subscription;
     private regionsSub: Subscription;
     private sectorFieldsSub: Subscription;
-    private studentDataFieldsSub: Subscription;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;
@@ -119,7 +101,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
         this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
-        this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
     };
 
     ngOnInit() {
@@ -168,13 +149,6 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             return state.sectorFields;
         }).subscribe(this.sectorFields$);
 
-        this.studentDataFieldsSub = this._ngRedux.select(state => {
-            state.studentDataFields.reduce(({}, studentDataField) => {
-                return studentDataField;
-            }, {});
-            return state.studentDataFields;
-        }).subscribe(this.studentDataFields$);
-
         this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) => {
                 if (epalclass.name === "Α' Λυκείου")
@@ -205,13 +179,10 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             this.sectorsSub.unsubscribe();
         if (this.sectorFieldsSub)
             this.sectorFieldsSub.unsubscribe();
-        if (this.studentDataFieldsSub)
-            this.studentDataFieldsSub.unsubscribe();
         this.regions$.unsubscribe();
         this.epalclasses$.unsubscribe();
         this.sectors$.unsubscribe();
         this.sectorFields$.unsubscribe();
-        this.studentDataFields$.unsubscribe();
     }
 
 }

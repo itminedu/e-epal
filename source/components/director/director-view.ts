@@ -229,7 +229,7 @@ import {
                   this.School$.next(x);                 
                   console.log(x[0].id, "schoolid!");
                    this.SchoolId = x[0].id;
-                   console.log(this.SchoolId,"schoolid");
+                   
 
                   },
                   error => {
@@ -240,10 +240,9 @@ import {
                   
         }        
 
-    
-
 
     verifyclass(txop) {
+      console.log(this.SchoolId,"schoolida");
         this.pageno = 1;
         this.retrievedStudent.next(false);
         if (txop.value === "1") {
@@ -295,6 +294,7 @@ import {
 
 
     checkbclass(tmop, txop) {
+      console.log(this.SchoolId,"schoolidn");
         this.pageno = 1;
         this.retrievedStudent.next(false);
         var sectorint = +this.formGroup.value.tomeas;
@@ -341,8 +341,6 @@ import {
 
         }
 
-        //            this.StudentInfo$ = new BehaviorSubject([{}]);
-        //            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);
         this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
             this.StudentInfo$.next(data);
             this.retrievedStudent.next(true);

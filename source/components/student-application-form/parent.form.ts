@@ -58,11 +58,11 @@ import {AppSettings} from '../../app.settings';
 
     public showModal():void {
         console.log("about to show modal");
-        (<any>$('#emaiSentNotice')).modal('show');
+        (<any>$('#emailSentNotice')).modal('show');
     }
 
     public hideModal():void {
-        (<any>$('#emaiSentNotice')).modal('hide');
+        (<any>$('#emailSentNotice')).modal('hide');
     }
 
     public onHidden():void {
@@ -70,7 +70,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnInit() {
-        (<any>$('#emaiSentNotice')).appendTo("body");
+        (<any>$('#emailSentNotice')).appendTo("body");
 
         this.epalUserDataSub = this.hds.getEpalUserData().subscribe(x => {
             this.epalUserData$.next(x);
@@ -106,7 +106,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnDestroy() {
-        (<any>$('#emaiSentNotice')).remove();
+        (<any>$('#emailSentNotice')).remove();
         if (this.epalUserDataSub) this.epalUserDataSub.unsubscribe();
         if (this.userEmailSub) this.epalUserDataSub.unsubscribe();
         this.epalUserData$.unsubscribe();

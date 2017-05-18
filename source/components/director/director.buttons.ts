@@ -1,48 +1,25 @@
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import {OnInit, Component} from '@angular/core';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { NgRedux, select } from 'ng2-redux';
-import { Observable } from 'rxjs/Rx';
-import { IAppState } from '../../store/store';
-import { HelperDataService } from '../../services/helper-data-service';
-import { CookieService } from 'ngx-cookie';
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from '@angular/forms';
+import {Router} from '@angular/router';
+import {OnInit, Component, Injectable} from '@angular/core';
 
-import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../../app.settings';
 @Component({
     selector: 'director-buttons',
     template: `
-   <div>
-           <form>
-               <div class="col-md-8 offset-md-4">
-                <button type="submit" class="btn-primary btn-lg" (click)="navigatedirector()">
-                Επιλεχθέντες Μαθητές<span class="glyphicon glyphicon-menu-right"></span>
+           <div class="row" style="margin-top: 130px; margin-bottom: 200px;">
+               <div class="col-md-3 offset-md-3">
+                <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px;" (click)="navigatedirector()">
+                Αιτηθέντες<br />Μαθητές
                 </button>
-               <br>
-               <br>
-                 <button type="submit" class="btn-primary btn-lg"  (click)="navigatecapacity()">
-                Δυναμική Τμημάτων<span class="glyphicon glyphicon-menu-right"></span>
+                </div>
+                <div class="col-md-6">
+                 <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px;" (click)="navigatecapacity()">
+                Δυναμική<br />Τμημάτων
                 </button>
                </div>
-               <br>
-               <br>
-               <br>
-               <br>
-               <br>
-          
-               
-           </form>
-   </div>
+            </div>
   `
 })
 
-export default class DirectorButtom implements OnInit {
+@Injectable() export default class DirectorButtons implements OnInit {
 
     constructor(
         private router: Router,
@@ -54,7 +31,6 @@ export default class DirectorButtom implements OnInit {
 
     }
 
-
     navigatedirector(){
         this.router.navigate(['/school/director-view']);
 
@@ -63,7 +39,5 @@ export default class DirectorButtom implements OnInit {
     navigatecapacity(){
         this.router.navigate(['/school/director-classcapacity']);
     }
-
-
 
 }

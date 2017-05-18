@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
-import { Injectable } from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Injectable} from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
 import {Observable} from "rxjs/Observable";
@@ -20,28 +19,28 @@ import {
 @Component({
     selector: 'perfecture-view',
     template: `
-            <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3> 
-                 
+            <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3>
+
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
                   <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === true" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
                      <h5> {{SchoolNames$.name}}</h5>
                   </li>
                  <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" [hidden]="SchoolNames$.id !== regionActive" >
-                    <div> {{CoursesNames$.name}}</div> <div class= "aastyle"><strong>Αριθμός Μαθητών:</strong>{{CoursesNames$.size}} </div> 
+                    <div> {{CoursesNames$.name}}</div> <div class= "aastyle"><strong>Αριθμός Μαθητών:</strong>{{CoursesNames$.size}} </div>
 
-                 </div> 
+                 </div>
              </div>
-             
-             </ul> 
-             
+
+             </ul>
+
              <div class="col-md-6">
                 <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" >
                 <i class="fa fa-forward"></i>
                 </button>
-            </div>  
+            </div>
 
- 
+
    `
 })
 
@@ -58,7 +57,7 @@ import {
     private StudentsSizeSub: Subscription;
     public perfecture = 1;
     private regionActive = <number>-1;
-    
+
 
     constructor(private fb: FormBuilder,
       private router: Router,
@@ -94,10 +93,10 @@ import {
 
 
      setActiveRegion(ind) {
-    
+
       if (ind === this.regionActive)
         ind = -1;
-      
+
       this.regionActive = ind;
       this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
             this.CoursesPerPerf$.next(data);
@@ -115,9 +114,9 @@ import {
 
     navigateToApplication()
     {
-     
+
      var id: string= String(this.regionActive);
-     this.router.navigate(['', {ids:id}]); 
+     this.router.navigate(['', {ids:id}]);
 
     }
 

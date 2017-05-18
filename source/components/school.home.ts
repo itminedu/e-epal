@@ -1,9 +1,10 @@
 import {Router, ActivatedRoute, Params} from '@angular/router';
-import {OnInit, Component} from '@angular/core';
+import {OnInit, OnDestroy, Component} from '@angular/core';
 import { LoginInfoActions } from '../actions/logininfo.actions';
 import { ILoginInfo } from '../store/logininfo/logininfo.types';
+import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-state';
 import { NgRedux, select } from 'ng2-redux';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { IAppState } from '../store/store';
 import { HelperDataService } from '../services/helper-data-service';
 import { CookieService } from 'ngx-cookie';
@@ -36,13 +37,14 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
   `
 })
 
-export default class SchoolHome implements OnInit {
+export default class SchoolHome implements OnInit, OnDestroy {
     public formGroup: FormGroup;
     private authToken: string;
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
-    private loginInfo$: Observable<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
 
@@ -57,8 +59,15 @@ export default class SchoolHome implements OnInit {
         this.authToken = '';
         this.authRole = '';
         this.name = '';
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.formGroup = this.fb.group({
         });
+    };
+
+    ngOnDestroy() {
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        this.loginInfo$.unsubscribe();
     };
 
     ngOnInit() {
@@ -70,23 +79,24 @@ export default class SchoolHome implements OnInit {
             this.removeCookie('auth_role');
         } */
 
-        this.loginInfo$ = this._ngRedux.select(state => {
+        this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0)
-                        if (this.authRole = 'director')
-                            console.log("ok");
+                    if (this.authToken && this.authToken.length > 0) {
+                        if (this.authRole === 'director') {
                             this.router.navigate(['/school/director-buttons']);
-                        if (this.authRole = 'pde')
-                            this.router.navigate(['/school/perfecture-view']);    
+                        }
+                        else if (this.authRole === 'pde')
+                            this.router.navigate(['/school/perfecture-view']);
+                    }
                     return loginInfoToken;
                 }, {});
             }
 
             return state.loginInfo;
-        });
+        }).subscribe(this.loginInfo$);
 
 
         // subscribe to router event

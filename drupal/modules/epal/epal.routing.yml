@@ -70,12 +70,6 @@ epal.application_submit:
     _controller: '\Drupal\epal\Controller\ApplicationSubmit::appSubmit'
   requirements:
     _user_is_logged_in: 'TRUE'
-epal.demo_data:
-  path: '/epal/demodata'
-  defaults:
-    _controller: '\Drupal\epal\Controller\CreateDemoData::createData'
-  requirements:
-      _access: 'TRUE'
 epal.allocation:
   path: '/epal/distribution'
   options:

@@ -20,8 +20,9 @@ import {
 @Component({
     selector: 'director-view',
     template: `
+    <div style="min-height: 500px;">
   <form [formGroup]="formGroup">
-       
+
 
       <label for="taxi">Τάξη</label><br/>
       <div class="form-group">
@@ -71,12 +72,12 @@ import {
                       <table>
                         <tr><td>
                           <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p> 
+                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p>
                           </div>
                         </td>
                         <td>
                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p> 
+                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p>
                           </div>
                         </td></tr>
                       </table>
@@ -85,8 +86,8 @@ import {
                       <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
                       <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
                       <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
-                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>                
-                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>                
+                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>
+                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>
 
 
                       <table>
@@ -108,12 +109,14 @@ import {
                                   </td>
                              </tr>
                       </table>
-                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>                
-                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>                
-                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>                 
+                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>
+                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
+                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
                  </div>
 <!--             </div>  -->
              </div>
+             </div>
+             </ul>
 
           <br>
           <br>
@@ -121,11 +124,11 @@ import {
           Βρίσκεστε στη σελίδα:
           <div class="col-1">
            <input #pageno type="text" class="form-control" placeholder=".col-1" formControlName="pageno">
-          </div> 
-           απο  
+          </div>
+           απο
            <div class="col-1">
            <input #maxpage type="text" class="form-control" placeholder=".col-1" formControlName="maxpage">
-           </div>   
+           </div>
          </div>
 
              <br>
@@ -138,10 +141,11 @@ import {
                   <button class="page-link" (click) ="nextpage(txoption,maxpage) ">Επόμενη</button>
                 </li>
               </ul>
-              
+
             </nav>
-     
-       
+            </form>
+            </div>
+
 
    `
 })
@@ -166,20 +170,20 @@ import {
     private SchoolId = 147;
     private currentclass: Number;
     private saved: Array<number> = new Array();
-    private limitdown = 0; 
-    private limitup=  25;
+    private limitdown = 0;
+    private limitup = 25;
     private pageno = 1;
     private userActive = <number>-1;
     private type: Number;
 
 
-    @ViewChild('fileInput') fileInput:ElementRef;
+    @ViewChild('fileInput') fileInput: ElementRef;
 
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        private renderer:Renderer) {
+        private renderer: Renderer) {
         this.StudentSelected$ = new BehaviorSubject([{}]);
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.StudentInfo$ = new BehaviorSubject([{}]);
@@ -192,8 +196,8 @@ import {
             tomeas: ['', []],
             taxi: ['', []],
             specialit: ['', []],
-            maxpage:[{value: '', disabled: true}, []],
-            pageno:[{value: '', disabled: true}, []],
+            maxpage: [{ value: '', disabled: true }, []],
+            pageno: [{ value: '', disabled: true }, []],
         });
 
     }
@@ -211,7 +215,7 @@ import {
             this.retrievedStudent.unsubscribe();
         if (this.SubmitedDetailsSub)
             this.SubmitedDetailsSub.unsubscribe();
-        
+
     }
 
     ngOnInit() {
@@ -303,21 +307,20 @@ import {
             this.currentclass = 3;
         }
 
-         this.formGroup.get('pageno').setValue(this.pageno); 
-         if (this.pageno == 1){
-            console.log(this.SchoolId, sectorint, this.currentclass,"test");            
+        this.formGroup.get('pageno').setValue(this.pageno);
+        if (this.pageno == 1) {
+            console.log(this.SchoolId, sectorint, this.currentclass, "test");
             this.StudentsSizeSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, 0, 0).subscribe(x => {
                 this.StudentsSize$.next(x);
-                tot_pages = x.id /5;
-                if (x.id%5 >0)
-                {
-                    tot_pages = (x.id - (x.id%5))/5 +1;
-                }  
-                this.formGroup.get('maxpage').setValue(tot_pages); 
-                });
+                tot_pages = x.id / 5;
+                if (x.id % 5 > 0) {
+                    tot_pages = (x.id - (x.id % 5)) / 5 + 1;
+                }
+                this.formGroup.get('maxpage').setValue(tot_pages);
+            });
 
-        }            
-     
+        }
+
         //            this.StudentInfo$ = new BehaviorSubject([{}]);
         //            this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass).subscribe(this.StudentInfo$);
         this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
@@ -336,9 +339,9 @@ import {
         let i = 0;
 
         if (cbvalue.value === '1') {
-           this.saved[i] = id;
-           this.type = 1;
-           
+            this.saved[i] = id;
+            this.type = 1;
+
         }
         else if (cbvalue.value === '2') {
             this.saved[i] = id;
@@ -348,11 +351,11 @@ import {
             //    if (this.saved[j] === id) {
             //        this.saved.splice(j, 1);
             //    }
-            
-           console.log("not confirmed")
+
+            console.log("not confirmed")
         }
         else if (cbvalue.value === '3') {
-           
+
         }
     }
 
@@ -360,9 +363,9 @@ import {
 
     confirmStudent() {
         this._hds.saveConfirmStudents(this.saved, this.type);
-        let event = new MouseEvent('click', {bubbles: true});
-       this.fileInput.nativeElement.dispatchEvent(event);
-        
+        let event = new MouseEvent('click', { bubbles: true });
+        this.fileInput.nativeElement.dispatchEvent(event);
+
     }
 
     checkcclass() {
@@ -370,43 +373,40 @@ import {
         this.retrievedStudent.next(false);
     }
 
-    nextpage(txop, maxpage){
-     console.log(maxpage.value);   
-     if (this.pageno < maxpage.value)
-      {
-           this.pageno = this.pageno+1;
-           this.limitdown = (this.pageno-1) * 5 ;
-           this.limitup = this.pageno * 5;
-           this.findstudent(txop, this.pageno)
-       }
+    nextpage(txop, maxpage) {
+        console.log(maxpage.value);
+        if (this.pageno < maxpage.value) {
+            this.pageno = this.pageno + 1;
+            this.limitdown = (this.pageno - 1) * 5;
+            this.limitup = this.pageno * 5;
+            this.findstudent(txop, this.pageno)
+        }
     }
 
-    prevpage(txop){
-       console.log(this.pageno,"pageno");
-       if (this.pageno > 1)
-       {
-           this.pageno = this.pageno-1;
-           this.limitdown = (this.pageno-1) * 5 ;
-           this.limitup = this.pageno * 5;
-           this.findstudent(txop, this.pageno)
-       }
+    prevpage(txop) {
+        console.log(this.pageno, "pageno");
+        if (this.pageno > 1) {
+            this.pageno = this.pageno - 1;
+            this.limitdown = (this.pageno - 1) * 5;
+            this.limitup = this.pageno * 5;
+            this.findstudent(txop, this.pageno)
+        }
 
     }
 
 
 
-  setActiveUser(ind) 
-  {
-      ind = +ind;
-      console.log(this.userActive,"RA",ind);
-      if (ind === this.userActive){
-        ind = -1;
-      }
-      ind--;
-      this.userActive = ind+1 ;
-      
+    setActiveUser(ind) {
+        ind = +ind;
+        console.log(this.userActive, "RA", ind);
+        if (ind === this.userActive) {
+            ind = -1;
+        }
+        ind--;
+        this.userActive = ind + 1;
 
-   }
+
+    }
 
 
 }

@@ -11,22 +11,29 @@ import { ICriter } from '../../store/criteria/criteria.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
 import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
 import { Student, StudentEpalChosen, StudentCourseChosen, StudentSectorChosen, StudentCriteriaChosen } from '../students/student';
 import {AppSettings} from '../../app.settings';
+import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
+import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { EpalClassesActions } from '../../actions/epalclass.actions';
+import { SectorFieldsActions } from '../../actions/sectorfields.actions';
+import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
+import { CriteriaActions } from '../../actions/criteria.actions';
+import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
+import { HelperDataService } from '../../services/helper-data-service';
 
 @Component({
     selector: 'application-submit',
     template: `
     <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
-    <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-success">
@@ -39,7 +46,7 @@ import {AppSettings} from '../../app.settings';
               <p>{{ modalText | async }}</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideModal()">Κλείσιμο</button>
           </div>
         </div>
       </div>
@@ -84,7 +91,15 @@ import {AppSettings} from '../../app.settings';
     private showLoader: BehaviorSubject<boolean>;
     public currentUrl: string;
 
-    constructor(private _ngRedux: NgRedux<IAppState>,
+    constructor(
+                private _hds: HelperDataService,
+                private _csa: SectorCoursesActions,
+                private _sfa: SectorFieldsActions,
+                private _rsa: RegionSchoolsActions,
+                private _eca: EpalClassesActions,
+                private _sdfa: StudentDataFieldsActions,
+                private _cria: CriteriaActions,
+                private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
                 private http: Http
             ) {
@@ -265,17 +280,30 @@ import {AppSettings} from '../../app.settings';
       .map((res: Response) => res.json())
       .subscribe(
       success => {
+          (<any>$('.loading')).remove();
+          this.showLoader.next(false);
           this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
-          this.modalText.next("Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εξαγωγή σε PDF'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας");
+          this.modalText.next("Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Αίτησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας");
+          this._eca.initEpalClasses();
+          this._sfa.initSectorFields();
+          this._rsa.initRegionSchools();
+          this._csa.initSectorCourses();
+          this._sdfa.initStudentDataFields();
+          this._cria.initCriteria();
+          console.log("success post");
           this.showModal();
-          console.log("success post"); },
+           },
       error => {
+          (<any>$('.loading')).remove();
+          this.showLoader.next(false);
           this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
           this.modalText.next("Η υποβολή της αίτησής σας απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης");
+          this.showLoader.next(false);
           this.showModal();
           console.log("Error HTTP POST Service")},
       () => {
           console.log("write this message anyway");
+          (<any>$('.loading')).remove();
           this.showLoader.next(false);
       },
 
@@ -288,11 +316,16 @@ import {AppSettings} from '../../app.settings';
   }
 
   public hideModal():void {
+      console.log("going to post-submit from hide()");
       (<any>$('#studentFormSentNotice')).modal('hide');
+      //(<any>$('.modal-backdrop')).remove();
+      this.router.navigate(['/post-submit']);
   }
 
   public onHidden():void {
       this.isModalShown.next(false);
+      console.log("going to post-submit");
+      this.router.navigate(['/post-submit']);
   }
 
 }

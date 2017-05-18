@@ -66,15 +66,15 @@ import {AppSettings} from '../../app.settings';
             </div>
             </ul>
         </div>
-        <div class="row" style="margin-top: 20px;" *ngIf="(regions$ | async).size > 0">
+        <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(regions$ | async).size > 0">
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()" >
+            <button type="button" class="btn-primary btn-lg pull-left isclickable" (click)="navigateBack()" >
           <i class="fa fa-backward"></i>
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "(selectionLimitOptional | async) === false && (numSelected | async) < (selectionLimit | async)"  >
-          <i class="fa fa-forward"></i>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToApplication()" [disabled] = "(selectionLimitOptional | async) === false && (numSelected | async) < (selectionLimit | async)">
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
         </div>

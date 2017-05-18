@@ -7,18 +7,17 @@ import { IAppState } from '../../store/store';
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
-import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
+import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
 import { ICriteria, ICriter } from '../../store/criteria/criteria.types';
 import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
@@ -34,13 +33,13 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
                     Τάξη εισαγωγής
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '1'">
-                    Α’ Λυκείου                    
+                    Α’ Λυκείου
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '2'">
-                    Β’ Λυκείου                    
+                    Β’ Λυκείου
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '3'">
-                    Γ’ Λυκείου                    
+                    Γ’ Λυκείου
                 </li>
 
         </ul>
@@ -80,6 +79,7 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
                 </li>
               </div>
         </ul>
+
         <div *ngIf="currentUrl === '/submited-preview'">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
               <ul class="list-group left-side-view" style="margin-bottom: 20px;">
@@ -124,13 +124,13 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
                                   </div>
                       </li>
                       </ul>
-              </div>        
-             
+              </div>
+
             </div>
             <div *ngIf="currentUrl === '/submited-preview'">
                   <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
                   <div *ngIf="criteriaField$.selected === true">
-                        {{criteriaField$.name}}  
+                        {{criteriaField$.name}}
                   </div>
                   </div>
              </div>
@@ -262,13 +262,10 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
             this.sectorsSub.unsubscribe();
         if (this.sectorFieldsSub)
             this.sectorFieldsSub.unsubscribe();
-        if (this.studentDataFieldsSub)
-            this.studentDataFieldsSub.unsubscribe();
         this.regions$.unsubscribe();
         this.epalclasses$.unsubscribe();
         this.sectors$.unsubscribe();
         this.sectorFields$.unsubscribe();
-        this.studentDataFields$.unsubscribe();
     }
 
 }

@@ -53,7 +53,7 @@ import {AppSettings} from '../../app.settings';
                             <div class="col-md-2 col-md-offset-1">
                                 <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
                                 (change)="saveSelected(cb.checked,i,j)"
-                                [hidden] = "numSelected === 3 && cb.checked === false"
+                                [hidden] = "(numSelected | async) === 3 && cb.checked === false"
                                 >
                              </div>
                             <div class="col-md-8  col-md-offset-1 isclickable">
@@ -73,7 +73,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "selectionLimitOptional === false && numSelected < selectionLimit "  >
+            <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" [disabled] = "(selectionLimitOptional | async) === false && (numSelected | async) < (selectionLimit | async)"  >
           <i class="fa fa-forward"></i>
             </button>
         </div>
@@ -97,10 +97,12 @@ import {AppSettings} from '../../app.settings';
     private regionActive = <number>-1;
     private regionActiveId = <number>-1;
     private courseActive = <number>-1;
-    private numSelected = <number>0;
-    private selectionLimit = <number>3;
+    private numSelected: BehaviorSubject<number>;
+    private selectionLimit: BehaviorSubject<number>;
+    private selectionLimitOptional: BehaviorSubject<boolean>;
+    // private selectionLimit = <number>3;
     private regionSizeLimit = <number>3;
-    private selectionLimitOptional = <boolean>false;
+    // private selectionLimitOptional = <boolean>false;
     //private schoolArray: Array<boolean> = new Array();
 
     constructor(private fb: FormBuilder,
@@ -118,6 +120,10 @@ import {AppSettings} from '../../app.settings';
             formArray: this.rss
 
         });
+
+        this.numSelected = new BehaviorSubject(0);
+        this.selectionLimit = new BehaviorSubject(3);
+        this.selectionLimitOptional = new BehaviorSubject(false);
 
     };
 
@@ -165,7 +171,7 @@ import {AppSettings} from '../../app.settings';
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0;
             let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
-            this.selectionLimitOptional = false;
+            this.selectionLimitOptional.next(false);
 
             state.regions.reduce((prevRegion, region) =>{
                 numreg++;
@@ -174,21 +180,22 @@ import {AppSettings} from '../../app.settings';
                     if (epal.selected === true) {
                       numsel++;
                       if ( epal.epal_special_case === "1") {
-                        this.selectionLimitOptional = true;
+                        this.selectionLimitOptional.next(true);
                       }
                       this.regionActiveId = Number(region.region_id);
                       this.regionActive = numreg - 1;
                     }
                     if (Number(region.region_id) ===  this.regionActiveId)  {
                       if (region.epals.length < this.regionSizeLimit)
-                        this.selectionLimitOptional = true;
+                        this.selectionLimitOptional.next(true);
                     }
                     return epal;
                 }, {});
 
                 return region;
             }, {});
-            this.numSelected = numsel;
+            this.numSelected.next(numsel);
+            console.log("numselected=" + this.numSelected.getValue());
             return state.regions;
         }).subscribe(this.regions$);
     }

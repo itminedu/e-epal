@@ -25,10 +25,29 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'application-submit',
     template: `
+    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
+    <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-success">
+              <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>{{ modalText | async }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
         <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
-        <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0"></div>
+
         <application-preview-select></application-preview-select>
         <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-center" (click)="submitNow()">Υποβολή</button>
   `
@@ -59,6 +78,10 @@ import {AppSettings} from '../../app.settings';
     private sectorFieldsSub: Subscription;
     private epalclassesSub: Subscription;
     private loginInfoSub: Subscription;
+    private modalTitle: BehaviorSubject<string>;
+    private modalText: BehaviorSubject<string>;
+    public isModalShown: BehaviorSubject<boolean>;
+    private showLoader: BehaviorSubject<boolean>;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
@@ -72,9 +95,15 @@ import {AppSettings} from '../../app.settings';
                 this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
                 this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
                 this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+
+                this.modalTitle =  new BehaviorSubject("");
+                this.modalText =  new BehaviorSubject("");
+                this.isModalShown = new BehaviorSubject(false);
+                this.showLoader = new BehaviorSubject(false);
             };
 
     ngOnInit() {
+        (<any>$('#studentFormSentNotice')).appendTo("body");
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -161,6 +190,7 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnDestroy() {
+        (<any>$('#studentFormSentNotice')).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
         if (this.criteriaSub) this.criteriaSub.unsubscribe();
         if (this.regionsSub) this.regionsSub.unsubscribe();
@@ -197,8 +227,6 @@ import {AppSettings} from '../../app.settings';
             criteriaObj[i] =new StudentCriteriaChosen(null, null, this.studentCriteria[i]);
           aitisiObj['2'] = criteriaObj;
 
-          console.log("Debugging..");
-          console.log(aitisiObj[0]['currentclass']);
           //if (aitisiObj[0]['currentclass'] === "Β' Λυκείου" )
           if (aitisiObj[0]['currentclass'] === "2" )
             aitisiObj['3'] =  new StudentSectorChosen(null, this.sectorSelected);
@@ -207,36 +235,12 @@ import {AppSettings} from '../../app.settings';
             aitisiObj['3'] =  new StudentCourseChosen(null, this.courseSelected);
           }
 
-          //console.log(aitisiObj);
-
           this.submitRecord(aitisiObj);
-  }
-
-  submitRecord_ver1(entityName, record)  {
-      let headers = new Headers({
-         "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
-        "Accept": "*/*",
-        "Access-Control-Allow-Credentials": "true",
-        "Content-Type": "application/json",
-        // "Content-Type": "text/plain",  // try to skip preflight
-        "X-CSRF-Token": "Me9oRh6jrAOAJ2rsnu_3lOLxqA_WMoJLeJ7dhe4HTBA"
-      });
-
-      let options = new RequestOptions({ headers: headers, withCredentials: true });
-      let connectionString = `${AppSettings.API_ENDPOINT}/entity/` + entityName;
-      //this.http.post(`${AppSettings.API_ENDPOINT}/entity/epal_student`, this.student, options)
-      this.http.post(connectionString, record, options)
-        // Call map on the response observable to get the parsed people object
-        .map((res: Response) => res.json())
-        .subscribe(success => {alert("Επιτυχής αποστολή στοιχείων στο entity: " + entityName); console.log("success post")}, // put the data returned from the server in our variable
-        error => {alert("Αποτυχία αποστολής στοιχείων στο entity: " + entityName); console.log("Error HTTP POST Service")}, // in case of failure show this message
-        () => console.log("write this message anyway"));//run this code in all cases);
   }
 
 
   submitRecord(record) {
     let auth_str = this.authToken + ":" + this.authToken;
-    //let authTokenPost = "nkatsaounos" + ":" + "...";
     let authTokenPost = this.authToken + ":" + this.authToken;
 
     let headers = new Headers({
@@ -244,43 +248,43 @@ import {AppSettings} from '../../app.settings';
        "Accept": "*/*",
        "Access-Control-Allow-Credentials": "true",
        "Content-Type": "application/json",
-      // "X-CSRF-Token": "Pz3psGTGpc-EGNLm3tgzCpqEMg3HW0fCKf8xOnQLAsc"
     });
-
-    //let headers = new Headers({
-    //   "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
-    //  "Accept": "*/*",
-    //  "Access-Control-Allow-Credentials": "true",
-    //  "Content-Type": "application/json",
-    //  "X-CSRF-Token": "Pz3psGTGpc-EGNLm3tgzCpqEMg3HW0fCKf8xOnQLAsc"
-    //});
-
 
     let options = new RequestOptions({ headers: headers,  method: "post", withCredentials: true });
     let connectionString = `${AppSettings.API_ENDPOINT}/epal/appsubmit`;
-
+    this.showLoader.next(true);
     this.http.post(connectionString, record, options)
-      // Call map on the response observable to get the parsed people object
       .map((res: Response) => res.json())
       .subscribe(
-      success => {alert("Επιτυχές post στο route υποβολής " ); console.log("success post"); }, // put the data returned from the server in our variable
-      error => {alert("Αποτυχές post στο route υποβολής " ); console.log("Error HTTP POST Service")}, // in case of failure show this message
-      () => console.log("write this message anyway"),
+      success => {
+          this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
+          this.modalText.next("Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εξαγωγή σε PDF'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας");
+          this.showModal();
+          console.log("success post"); },
+      error => {
+          this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
+          this.modalText.next("Η υποβολή της αίτησής σας απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης");
+          this.showModal();
+          console.log("Error HTTP POST Service")},
+      () => {
+          console.log("write this message anyway");
+          this.showLoader.next(false);
+      },
 
-      );//run this code in all cases);
-
-  //});
+      );
 
   }
 
+  public showModal():void {
+      (<any>$('#studentFormSentNotice')).modal('show');
+  }
+
+  public hideModal():void {
+      (<any>$('#studentFormSentNotice')).modal('hide');
+  }
+
+  public onHidden():void {
+      this.isModalShown.next(false);
+  }
+
 }
-
-
-//Get Data - sync methods
-/*
-const { studentDataFields } = this._ngRedux.getState();
-const { epalclasses } = this._ngRedux.getState();
-const { regions } = this._ngRedux.getState();
-const { amkafills } = this._ngRedux.getState();
-const { sectors } = this._ngRedux.getState();
-*/

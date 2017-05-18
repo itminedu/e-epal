@@ -82,6 +82,7 @@ import {AppSettings} from '../../app.settings';
     private modalText: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
+    public currentUrl: string;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
@@ -102,7 +103,14 @@ import {AppSettings} from '../../app.settings';
                 this.showLoader = new BehaviorSubject(false);
             };
 
+
+
+
     ngOnInit() {
+
+     
+
+
         (<any>$('#studentFormSentNotice')).appendTo("body");
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {

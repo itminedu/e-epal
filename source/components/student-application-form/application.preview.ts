@@ -20,6 +20,9 @@ import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.i
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
+import { ICriteria, ICriter } from '../../store/criteria/criteria.types';
+import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
+
 
 @Component({
     selector: 'application-preview-select',
@@ -77,20 +80,61 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
                 </li>
               </div>
         </ul>
-
+        <div *ngIf="currentUrl === '/submited-preview'">
               <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
               <ul class="list-group left-side-view" style="margin-bottom: 20px;">
               <li class="list-group-item active">
                   Στοιχεία μαθητή
               </li>
-                <li class="list-group-item">
-                    {{studentDataField$.name  }}
-                </li>
-                <li class="list-group-item">
-                    {{studentDataField$.studentsurname  }}
-                </li>
-                </ul>
+              </ul>
+              <div><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
+              <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
+              <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
+              <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{studentDataField$.fathersurname}} </p></div>
+              <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
+              <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{studentDataField$.mothersurname}} </p></div>
+              <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
+                      <table>
+                              <tr>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{studentDataField$.regionaddress}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{studentDataField$.regiontk}} </p>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div class="form-group">
+                                          <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{studentDataField$.regionarea}} </p>
+                                      </div>
+                                  </td>
+                             </tr>
+                      </table>
+                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
+                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
+                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
+
+                      <ul class="list-group left-side-view" style="margin-bottom: 20px;">
+                      <li class="list-group-item active">
+                                  <div *ngIf="currentUrl === '/submited-preview'">
+                                         Κοινωνικά/Εισοδηματικά Κριτήρια
+                                  </div>
+                      </li>
+                      </ul>
+              </div>        
+             
             </div>
+            <div *ngIf="currentUrl === '/submited-preview'">
+                  <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
+                  <div *ngIf="criteriaField$.selected === true">
+                        {{criteriaField$.name}}  
+                  </div>
+                  </div>
+             </div>
+
   `
 })
 
@@ -99,16 +143,19 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
     private regions$: BehaviorSubject<IRegions>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
+    private criteriaFields$: BehaviorSubject<ICriter>;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private sectorsSub: Subscription;
     private regionsSub: Subscription;
     private sectorFieldsSub: Subscription;
+    private criteriaFieldsSub: Subscription;
     private studentDataFieldsSub: Subscription;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;
     private classSelected = 0;
+    public currentUrl: string;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
         private router: Router
@@ -119,10 +166,12 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
 
         this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
+        this.criteriaFields$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
     };
 
     ngOnInit() {
+        this.currentUrl = this.router.url;
         this.sectorsSub = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) => {
                 sector.courses.reduce((prevCourse, course) => {
@@ -174,6 +223,14 @@ import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields
             }, {});
             return state.studentDataFields;
         }).subscribe(this.studentDataFields$);
+
+
+        this.criteriaFieldsSub = this._ngRedux.select(state => {
+            state.criter.reduce(({}, criteriaField) => {
+                return criteriaField;
+            }, {});
+            return state.criter;
+        }).subscribe(this.criteriaFields$);
 
         this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) => {

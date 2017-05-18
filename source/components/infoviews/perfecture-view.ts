@@ -55,8 +55,11 @@ import {
     private CoursesPerPerfSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
-    public perfecture = 1;
+    public perfecture ;
     private regionActive = <number>-1;
+    private School$: BehaviorSubject<any>;
+    private SchoolSub: Subscription;
+
 
 
     constructor(private fb: FormBuilder,
@@ -67,6 +70,7 @@ import {
         this.LimitPerCateg$ = new BehaviorSubject([{}]);
         this.CoursesPerPerf$ = new BehaviorSubject([{}]);
         this.StudentsSize$ = new BehaviorSubject({});
+        this.School$ = new BehaviorSubject([{}]);
         this.formGroup = this.fb.group({
         });
 
@@ -76,6 +80,19 @@ import {
       }
 
     ngOnInit() {
+
+      this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+                  this.School$.next(x);                 
+                  console.log(x[0].id, "perfectureID");
+                   this.perfecture = x[0].id;
+                   
+
+                  },
+                  error => {
+                      this.School$.next([{}]);
+                      console.log("Error Getting School");
+                  },
+                  () => console.log("Getting School "));
 
 
         this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(this.perfecture).subscribe(data => {

@@ -89,6 +89,7 @@ import { HelperDataService } from '../../services/helper-data-service';
     private modalText: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
+    public currentUrl: string;
 
     constructor(
                 private _hds: HelperDataService,
@@ -117,7 +118,14 @@ import { HelperDataService } from '../../services/helper-data-service';
                 this.showLoader = new BehaviorSubject(false);
             };
 
+
+
+
     ngOnInit() {
+
+     
+
+
         (<any>$('#studentFormSentNotice')).appendTo("body");
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {

@@ -206,3 +206,12 @@ findcapacity:
     _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
   requirements:
     _user_is_logged_in: 'TRUE'
+findschoolid:
+  path: '/epal/getschool'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+

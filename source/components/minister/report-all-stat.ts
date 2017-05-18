@@ -52,8 +52,8 @@ import { API_ENDPOINT } from '../../app.settings';
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showAdminList | async) && enableRegionFilter">Διεύθυνση Εκπαίδευσης</label>
-                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" formControlName="adminarea">
+                <label *ngIf="(showAdminList | async) && enableRegionFilter && userLoggedIn != 'dide'">Διεύθυνση Εκπαίδευσης</label>
+                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" [hidden] = "userLoggedIn == 'dide'" formControlName="adminarea">
                   <option value="0"></option>
                   <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
                 </select>
@@ -222,9 +222,10 @@ import { API_ENDPOINT } from '../../app.settings';
                 this.userLoggedIn = loginInfoToken.auth_role;
                 if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE)  {
                     console.log("inside..");
+                    let regId = -1;
                     this.minedu_userName = loginInfoToken.auth_token;
                     this.minedu_userPassword = loginInfoToken.auth_token;
-                    if (loginInfoToken.auth_role == PDE_ROLE) {
+                    if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE) {
 
                       //CALL CONTROLLER THAT RETURNS ID OF PDE
 
@@ -234,14 +235,25 @@ import { API_ENDPOINT } from '../../app.settings';
                       },
                           error => {
                               this.RegionRetrieve$.next([{}]);
-                              console.log("Error Getting getRegionId");
+                              console.log("Error Getting getUserRegistryNo");
                           },
                           () => {
-                            this.regionSelected = this.data['id'];
-                            console.log("Success Getting getRegionId");
+                            regId = this.data['id'];
+                            console.log("Success Getting getUserRegistryNo");
 
-                            this.showAdminList.next(true);
-                            this.checkregion(this. regionSelected);
+                            if (loginInfoToken.auth_role == PDE_ROLE) {
+                              this.regionSelected = regId;
+                              this.showAdminList.next(true);
+                              this.checkregion(this. regionSelected);
+                            }
+                            else if (loginInfoToken.auth_role == DIDE_ROLE) {
+                              this.adminAreaSelected = regId;
+                              this.showAdminList.next(false);
+                              this.checkadminarea(this.adminAreaSelected);
+                              //console.log("Test");
+                              //console.log(this.adminAreaSelected);
+                            }
+
                           }
                         );
                   }
@@ -328,6 +340,18 @@ createReport(regionSel) {
   this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
+
+      //console.log("Debugging..");
+      //whehever you find column "num" cast it to number value in order to be ordered properly
+      for (let i=0;i<this.data.length;i++)  {
+        this.data[i].num = Number(data[i].num);
+        this.data[i].percentage = Number(data[i].percentage);
+
+        this.data[i].percTotal = Number(data[i].percTotal);
+        this.data[i].percA = Number(data[i].percA);
+        this.data[i].percB = Number(data[i].percB);
+        this.data[i].percC = Number(data[i].percC);
+      }
   },
     error => {
       this.generalReport$.next([{}]);
@@ -424,10 +448,10 @@ checkregion(regionId) {
 
     console.log("TI EINAI;")
     console.log(adminId);
-    console.log(adminId.value);
 
-    this.adminAreaSelected = adminId.value;
-    this.SchoolSelectionsSub = this._hds.getSchoolsPerAdminArea(this.minedu_userName, this.minedu_userPassword, adminId.value).subscribe(data => {
+    if (typeof adminId.value != "undefined")
+      this.adminAreaSelected = adminId.value;
+    this.SchoolSelectionsSub = this._hds.getSchoolsPerAdminArea(this.minedu_userName, this.minedu_userPassword, this.adminAreaSelected).subscribe(data => {
         this.SchoolSelections$.next(data);
     },
         error => {

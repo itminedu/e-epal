@@ -13,9 +13,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
-
-
-
+ 
 @Component({
     selector: 'submited-preview',
     template: `
@@ -32,7 +30,7 @@ import * as html2canvas from "html2canvas"
                  [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
                  </li>
-                  <div id = "target">
+                  <div #target class = "target "id = "target">
 
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
                       <table>
@@ -124,6 +122,8 @@ import * as html2canvas from "html2canvas"
 
     public StudentId;
     private userActive = <number>-1;
+
+  @ViewChild('target') element: ElementRef;
 
     constructor(private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
@@ -228,39 +228,54 @@ import * as html2canvas from "html2canvas"
 
    }
 
- createPdf1()
+ createPdf()
     {
 
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
+
+          var img=new Image();
+          img.src=canvas.toDataURL();
+          img.onload=function(){
+            console.log(img,"img");
+            var doc = new jsPDF();
+            console.log(img, doc, "ok");
+            doc.addImage(img, 'PNG',0, 0, 210, 297);
+            console.log(img, doc, "ok2");
+            doc.save('applications.pdf');
+ 
+          }
+
+
+
+
+          },
+          function(error){
+              console.log("i fail");
+            });
+     }
+
+
+
+
+createPdf1()
+{
+
+html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
+      onrendered: function(canvas: HTMLCanvasElement) {
+            console.log("lalalal");
             var img = canvas.toDataURL();
             var doc = new jsPDF();
-
-            doc.onload = function(){
-            console.log(img, doc, "lalalalalala");
             doc.addImage(img, 'PNG',0, 0, 210, 297);
 
-            doc.save('applications.pdf');
-          }
-        });
-    }
-
-
-
-createPdf()
-
-
-
-    {
-
-      var doc = new jsPDF();
-        doc.text(20, 20, 'Hello world!');
-        doc.text(20, 30, 'This is client-side Javascript, pumping out a PDF.');
-        doc.addPage();
-        doc.text(20, 20, 'Do you like that?');
-
-        // Save the PDF
-        doc.save('Test.pdf');
-    }
+            doc.save('applications.pdf');       
+      },
+      function(error){
+              console.log("i fail");
+            }
+    });
+  }
 
 }
+ 
+

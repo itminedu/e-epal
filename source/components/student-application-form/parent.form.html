@@ -1,4 +1,4 @@
-<div class = "loading" *ngIf="(epalUserData$ | async).userEmail === '' || (showLoader | async) === true"></div>
+<div class = "loading" *ngIf="(showLoader | async) === true"></div>
 
 <div id="emailSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">

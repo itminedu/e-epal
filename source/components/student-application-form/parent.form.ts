@@ -71,8 +71,9 @@ import {AppSettings} from '../../app.settings';
 
     ngOnInit() {
         (<any>$('#emailSentNotice')).appendTo("body");
-
+        this.showLoader.next(true);
         this.epalUserDataSub = this.hds.getEpalUserData().subscribe(x => {
+            this.showLoader.next(false);
             this.epalUserData$.next(x);
             this.formGroup.get('userEmail').setValue(x.userEmail);
             this.formGroup.get('userName').setValue(x.userName);

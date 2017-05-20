@@ -244,6 +244,9 @@ import { API_ENDPOINT } from '../../app.settings';
                             if (loginInfoToken.auth_role == PDE_ROLE) {
                               this.regionSelected = regId;
                               this.showAdminList.next(true);
+
+                              console.log("Nikos1..");
+                              console.log(this.regionSelected);
                               this.checkregion(this. regionSelected);
                             }
                             else if (loginInfoToken.auth_role == DIDE_ROLE) {
@@ -336,6 +339,14 @@ createReport(regionSel) {
    secSel = this.sectorSelected;
    courSel = this.courseSelected;
  }
+
+ if (this.userLoggedIn == PDE_ROLE) {
+    regSel = this.regionSelected;
+    console.log("Nikos2..");
+    console.log(regSel);
+  }
+ else if (this.userLoggedIn == DIDE_ROLE)
+    admSel = this.adminAreaSelected;
 
   this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel).subscribe(data => {
       this.generalReport$.next(data);

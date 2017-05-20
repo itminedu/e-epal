@@ -82,19 +82,33 @@ import {
     ngOnInit() {
 
       this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
-                  this.School$.next(x);                 
+                  this.School$.next(x);
                   console.log(x[0].id, "perfectureID");
                    this.perfecture = x[0].id;
-                   
+
 
                   },
                   error => {
                       this.School$.next([{}]);
                       console.log("Error Getting School");
                   },
-                  () => console.log("Getting School "));
+                  () => {
+                          console.log("Getting School ");
+
+                          this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(this.perfecture).subscribe(data => {
+                              this.SchoolsPerPerf$.next(data);
+                          },
+                              error => {
+                                  this.SchoolsPerPerf$.next([{}]);
+                                  console.log("Error Getting Schools");
+                              },
+                              () => console.log("Getting Schools"));
+                }
+
+                );
 
 
+        /*
         this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(this.perfecture).subscribe(data => {
             this.SchoolsPerPerf$.next(data);
         },
@@ -103,6 +117,7 @@ import {
                 console.log("Error Getting Schools");
             },
             () => console.log("Getting Schools"));
+        */
 
 
 

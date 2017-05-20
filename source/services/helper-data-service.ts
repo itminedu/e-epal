@@ -246,13 +246,23 @@ export class HelperDataService implements OnInit, OnDestroy {
         return new Promise((resolve, reject) => {
             let getConnectionString = null;
 
-            //if (courseActive === -1)
+            console.log("Class:");
+            console.log(classActive);
+
+            console.log("Course:");
+            console.log(courseActive);
+
             if (classActive === 1)
                 getConnectionString = `${AppSettings.API_ENDPOINT}/regions/list`;
             else if (classActive === 2)
                 getConnectionString = `${AppSettings.API_ENDPOINT}/sectorsperschool/list?sector_id=${courseActive}`;
             else if (classActive === 3)
                 getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
+            else if (classActive === 4)
+                getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool_night/list?course_id=${courseActive}`;
+
+            console.log("Path:");
+            console.log(getConnectionString);
 
             this.http.get(getConnectionString, options)
                 .map(response => response.json())
@@ -260,7 +270,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                     resolve(this.transformRegionSchoolsSchema(data));
                 }, // put the data returned from the server in our variable
                 error => {
-                    console.log("Error HTTP GET Service"); // in case of failure show this message
+                    console.log("Error HTTP GET Service in getRegionsWithSchools method"); // in case of failure show this message
                     reject("Error HTTP GET Service");
                 },
                 () => console.log("region schools service"));//run this code in all cases); */
@@ -686,15 +696,15 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
 
+        console.log("Service..Nikos..");
+        console.log(regionsel);
+
         let headers = new Headers({
             "Content-Type": "application/json",
         });
 
         this.createMinistryAuthorizationHeader(headers, username, userpassword );
         let options = new RequestOptions({ headers: headers });
-
-        //console.log("Testing..");
-        //console.log(`${AppSettings.API_ENDPOINT}` + routepath + regionsel);
 
         if (routepath == "/ministry/general-report/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath  , options)
@@ -739,7 +749,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     getSchoolPerPerfecture(PerfectureId) {
         console.log(PerfectureId,"a");
-        let PerfectureIdNew = PerfectureId.toString();
+        //let PerfectureIdNew = PerfectureId.toString();
+        let PerfectureIdNew = PerfectureId;
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;

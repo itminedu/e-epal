@@ -128,6 +128,11 @@ reportCompletenessSchema = {
       title: 'Πληρότητα Γ\' τάξης (%)',
       width: '11%',
       filter: false
+    },
+    percD: {
+      title: 'Πληρότητα Δ\' τάξης (%)',
+      width: '11%',
+      filter: false
     }
   }
 };

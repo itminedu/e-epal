@@ -54,13 +54,11 @@ import {
                 Τροποποίηση
                </button>
        </div>
-      <div *ngIf="(modify === true)">
-      <input  type="number" formControlName="capacity" min="1" max="10">
+       <input  type="number" formControlName="capacity" min="1" max="10">
 
             <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
                 Αποθήκευση
              </button>
-       </div>
        </form>
        </div>
    `
@@ -75,7 +73,9 @@ import {
     private StudentSelectedSpecialSub: Subscription;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
-    private SchoolId = 147;
+    private School$: BehaviorSubject<any>;
+    private SchoolSub: Subscription;
+    private SchoolId;
     private currentclass: Number;
     private classCapacity$: BehaviorSubject<any>;
     private classCapacitySub: Subscription;
@@ -94,11 +94,13 @@ import {
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
         this.retrievedStudent = new BehaviorSubject(false);
+        this.School$ = new BehaviorSubject([{}]);
         this.formGroup = this.fb.group({
             tomeas: ['', []],
             taxi: ['', []],
             specialit: ['', []],
             capacity: ['', []],
+            capc: ['', []],
         });
 
     }
@@ -120,6 +122,20 @@ import {
 
     ngOnInit() {
         this.retrievedStudent.next(false);
+
+            this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+                  this.School$.next(x);                 
+                  console.log(x[0].id, "schoolid!");
+                   this.SchoolId = x[0].id;
+                   
+
+                  },
+                  error => {
+                      this.School$.next([{}]);
+                      console.log("Error Getting School");
+                  },
+                  () => console.log("Getting School "));
+
     }
 
 
@@ -147,6 +163,7 @@ import {
         }
         else if (txop.value === "2") {
             this.formGroup.patchValue({
+                tomeas: '',
                 specialit: '',
             });
             this.selectionBClass.next(true);
@@ -206,9 +223,13 @@ import {
 
         if (txop.value === "3") {
             console.log("c class");
+            console.log(sectorint, specialint, "cclass")
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, specialint, this.SchoolId).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
+                
+               // this.formGroup.get('capc').setValue(this.formGroup.value.capacity);
+                console.log(this.formGroup.value.capacity,"capc");
             },
                 error => {
                     this.classCapacity$.next([{}]);

@@ -15,7 +15,7 @@ class DirectorView extends ControllerBase
 {
     protected $entityTypeManager;
     protected $logger;
-    protected $testSchoolId='0640050';
+  //  protected $testSchoolId='0640050';
 
     public function __construct(EntityTypeManagerInterface $entityTypeManager,
         LoggerChannelFactoryInterface $loggerChannel)
@@ -341,7 +341,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
          $user = reset($users);
          if ($user) {
 //             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId));
+             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -357,7 +357,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
             {
                  $postData = json_decode($content);
                  $cap = $postData->capacity;
-                if (($tomeas == 0) || ($specialit == 0))
+                if (($tomeas == 0) && ($specialit == 0))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
                  $classcapacity = reset($CapacityPerClass);
@@ -368,7 +368,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 }
 
 
-                if (($tomeas != 0) || ($specialit == 0))
+                if (($tomeas != 0) && ($specialit == 0))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeas ));
                  $classcapacity = reset($CapacityPerClass);
@@ -379,7 +379,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 }
 
 
-                if (($tomeas != 0) || ($specialit != 0))
+                if (($tomeas != 0) && ($specialit != 0))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
                  $classcapacity = reset($CapacityPerClass);
@@ -593,13 +593,13 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
     {
 
     $tomeasnew = intval($tomeas);
-    $specialitnew = intval($specialitnew) ;
+    $specialitnew = intval($specialit) ;
        $authToken = $request->headers->get('PHP_AUTH_USER');
 
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
-           $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $this->testSchoolId));
+           $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -624,6 +624,8 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                     $list[] = array(
                         'taxi' => $taxi,
                        'capacity' => $classcapacity -> capacity_class_a -> value ,
+                       'test' => "lalalala",
+                       'school' => $schoolid
                         ); 
                     }
                 }
@@ -639,6 +641,7 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                         'tomeas' => $tomeasnew,
                         'special' =>$specialitnew,
                         'capacity' => $classcapacity -> capacity_class_sector -> value ,
+                        'sector' =>$tomeasnew."lala".$specialitnew
                         );
                     }
                 }
@@ -655,6 +658,7 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                         'special' =>$specialitnew,
                         'tomeas' =>  $classcapacity ->  specialty_id -> value,
                         'capacity' => $classcapacity -> capacity_class_specialty -> value ,
+                        'specialty' =>"fromspeciality"
                         );
                     }
                 }

@@ -907,7 +907,7 @@ getCourses(username, userpassword, sectorid)  {
 
 getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
 
-
+        console.log(tomeas,specialit,"news")
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;

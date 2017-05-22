@@ -130,7 +130,7 @@ class ApplicationSubmit extends ControllerBase {
 			//						or:		epal_student_sector_field (αφορά μαθητές Β' Λυκείου)
 
       //if ($applicationForm[0][currentclass] === "Γ' Λυκείου")	{
-      if ($applicationForm[0][currentclass] === "3")	{
+      if ($applicationForm[0][currentclass] === "3" || $applicationForm[0][currentclass] === "4" )	{
 				//$course =  array('name
 				$course = array(
 					//'name' => $aitisi[3][name],

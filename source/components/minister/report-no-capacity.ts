@@ -27,7 +27,7 @@ import {
 import { API_ENDPOINT } from '../../app.settings';
 
 @Component({
-    selector: 'report-general',
+    selector: 'report-no-capacity',
     template: `
 
   <div>
@@ -36,11 +36,19 @@ import { API_ENDPOINT } from '../../app.settings';
         </div>
 
         <form [formGroup]="formGroup"  #form>
-
           <h5> >Επιλογή Φίλτρων <br><br></h5>
-          <h6> Δεν υπάρχουν διαθέσιμα φίλτρα <br><br><br></h6>
+          <div class="row">
+            <div class="col-md-1 ">
+              <input type="checkbox" formControlName="capacityEnabled"
+              (click)="toggleCapacityFilter()" >
+            </div>
+            <div class="col-md-9">
+              <label for="capacityEnabled"><i>Εμφάνιση ΚΑΙ των σχολείων που έχουν καθορίσει χωρητικότητα</i></label>
+            </div>
+          </div>
+          <br><br>
 
-          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
+          <button type="submit" class="btn btn-alert"  (click)="createReport()" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
           </button>
@@ -61,21 +69,13 @@ import { API_ENDPOINT } from '../../app.settings';
         <i class="fa fa-download"></i>
             <br>Εξαγωγή σε csv
         </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator != 1 ">
-        <i class="fa fa-bar-chart"></i>
-            Διάγραμμα
-        </button>
-
-        <div class="d3-chart" *ngIf = "validCreator == 1" #chart>
-        </div>
-        <br><br><br><br><br>
 
     </div>
 
    `
 })
 
-@Injectable() export default class ReportGeneral implements OnInit, OnDestroy {
+@Injectable() export default class ReportNoCapacity implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     loginInfo$: BehaviorSubject<ILoginInfo>;
@@ -88,9 +88,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private distStatus = "READY";
     private data;
     private validCreator: number;
-    private createGraph: boolean;
     private reportId: number;
     private routerSub: any;
+    private enableCapacityFilter: boolean;
 
     private source: LocalDataSource;
     columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
@@ -110,16 +110,14 @@ import { API_ENDPOINT } from '../../app.settings';
         private router: Router) {
 
           this.formGroup = this.fb.group({
-              region: ['', []],
-              adminarea: ['', []],
-              schoollist: ['', []],
+            capacityEnabled: ['', []],
           });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
           this.generalReport$ = new BehaviorSubject([{}]);
           this.minedu_userName = '';
           this.validCreator = -1;
-          this.createGraph = false;
+          this.enableCapacityFilter = false;
 
     }
 
@@ -153,38 +151,34 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
 
-createReport(regionSel) {
+createReport() {
+
+  console.log("capacityFilter:");
+  console.log(this.enableCapacityFilter);
 
   this.validCreator = 0;
-  this.createGraph = false;
 
   let route;
-  if (this.reportId === 1)  {
-    route = "/ministry/general-report/";
-    this.settings = this.reportSchema.genReportSchema;
+  if (this.reportId === 4)  {
+    route = "/ministry/report-no-capacity/";
+    this.settings = this.reportSchema.reportNoCapacity;
   }
-  else if (this.reportId === 2)  {
-    route = "/ministry/report-completeness/";
-    this.settings = this.reportSchema.reportCompletenessSchema;
-  }
-  else if (this.reportId === 3)  {
-    route = "/ministry/report-all-stat/";
-    this.settings = this.reportSchema.reportAllStatSchema;
+  else  {
+    console.log("Route argument is not equal to report_id=4!")
+    return;
   }
 
- let regSel = 0;
-
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0,0).subscribe(data => {
+ this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, this.enableCapacityFilter, 0, 0, 0, 0,0).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
   },
     error => {
       this.generalReport$.next([{}]);
       this.validCreator = -1;
-      console.log("Error Getting generalReport");
+      console.log("Error Getting ReportNoCapacity");
     },
     () => {
-      console.log("Success Getting generalReport");
+      console.log("Success Getting ReportNoCapacity");
       this.validCreator = 1;
       this.source = new LocalDataSource(this.data);
       this.columnMap = new Map<string,TableColumn>();
@@ -196,6 +190,12 @@ createReport(regionSel) {
       this.csvObj.prepareColumnMap();
     }
   )
+
+}
+
+toggleCapacityFilter()  {
+
+  this.enableCapacityFilter = !this.enableCapacityFilter;
 
 }
 
@@ -215,46 +215,6 @@ export2Csv()  {
   this.csvObj.export2Csv();
 
 }
-
-
-createDiagram() {
-  if (!this.createGraph)  {
-    this.generateGraphData();
-    this.chartObj.d3data = this.d3data;
-    this.chartObj.chartContainer = this.chartContainer;
-    this.chartObj.createChart();
-    this.chartObj.updateChart();
-    this.createGraph = true;
-  }
-}
-
-generateGraphData() {
-
-   this.d3data = [];
-
-   if (this.reportId === 1)  {
-     let labelsX = [];
-     labelsX.push("1η Προτίμηση");
-     labelsX.push("2η Προτίμηση");
-     labelsX.push("3η Προτίμηση");
-     labelsX.push("Μη τοποθετημένοι");
-     for (let i = 1; i <=  4; i++) {
-       this.d3data.push([
-         labelsX[i-1],
-         this.data[i].numStudents /   this.data[0].numStudents,
-       ]);
-     }
-   }
- }
-
-
-
-
-
-
-
-
-
 
 
 }

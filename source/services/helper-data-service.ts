@@ -696,8 +696,8 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
 
-        console.log("Service..Nikos..");
-        console.log(regionsel);
+        //console.log("Service..Nikos..");
+        //console.log(regionsel);
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -719,6 +719,13 @@ export class HelperDataService implements OnInit, OnDestroy {
                                   clsel + "/"  + secsel + "/"  + coursel , options)
                 .map(response => response.json());
           }
+          else if (routepath == "/ministry/report-no-capacity/"){
+              let capacityFilter = 0;
+              if (regionsel)
+                capacityFilter = 1;
+              return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + capacityFilter, options)
+                  .map(response => response.json());
+            }
 
     }
 

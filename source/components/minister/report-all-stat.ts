@@ -77,18 +77,21 @@ import { API_ENDPOINT } from '../../app.settings';
                   <option value="1" >Α' Λυκείου</option>
                   <option value="2" >Β' Λυκείου</option>
                   <option value="3" >Γ' Λυκείου</option>
+                  <option value="4" >Δ' Λυκείου</option>
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3) ">Τομέας</label>
-                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3)" (change)="checksector(secsel)" formControlName="sector">
+                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3 || classSelected == 4) ">Τομέας</label>
+                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3 || classSelected == 4)"
+                      (change)="checksector(secsel)" formControlName="sector">
                   <option value="0"></option>
                   <option *ngFor="let SectorSelection$  of SectorSelections$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.name}}</option>
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showCourseList | async) && enableCourseFilter && classSelected == 3">Ειδικότητα</label>
-                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && classSelected == 3" (change)="checkcourse(coursel)" formControlName="course">
+                <label *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected == 3 || classSelected == 4)">Ειδικότητα</label>
+                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected == 3 || classSelected == 4)"
+                      (change)="checkcourse(coursel)" formControlName="course">
                   <option value="0"></option>
                   <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
                 </select>
@@ -492,7 +495,7 @@ checkregion(regionId) {
     console.log("What?");
     console.log(this.classSelected);
 
-    if (this.classSelected == 2 || this.classSelected == 3)  {
+    if (this.classSelected == 2 || this.classSelected == 3 || this.classSelected == 4)  {
       this.SectorSelectionsSub = this._hds.getSectors(this.minedu_userName, this.minedu_userPassword, this.classSelected).subscribe(data => {
           this.SectorSelections$.next(data);
       },
@@ -513,16 +516,9 @@ checkregion(regionId) {
   checksector(sectorId) {
 
     this.courseSelected = 0;
-    //if (typeof courseId != 'undefined') {
-    //  this.courseSelected = courseId.value;
-    //  console.log("My test..");
-    //  console.log(this.courseSelected);
-    //}
-
     this.sectorSelected = sectorId.value;
 
-    //if (this.classSelected == 3)  {
-      this.CourseSelectionsSub = this._hds.getCourses(this.minedu_userName, this.minedu_userPassword, this.sectorSelected).subscribe(data => {
+    this.CourseSelectionsSub = this._hds.getCourses(this.minedu_userName, this.minedu_userPassword, this.sectorSelected).subscribe(data => {
           this.CourseSelections$.next(data);
       },
           error => {
@@ -534,9 +530,8 @@ checkregion(regionId) {
             this.showCourseList.next(true);
           }
 
-        );
+      );
 
-    //} //end if
 
   }
 

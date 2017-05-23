@@ -188,6 +188,8 @@ class Distribution extends ControllerBase {
 						$eepalSpecialtiesInEpal = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 						foreach ($eepalSpecialtiesInEpal as $eepalSpecialInEp)	{
 							$this->checkCapacityAndArrange($eepalSchool->id, "3", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty);
+							//Δ' Λυκείου
+							$this->checkCapacityAndArrange($eepalSchool->id, "4", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty);
 						}
 
 					} //end for each school/department
@@ -262,7 +264,8 @@ class Distribution extends ControllerBase {
 						$epalSectorChosen = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 						$epalSecChos = reset($epalSectorChosen);
 					}
-					elseif ($epalStudent->currentclass === "3")	{
+					//Δ'Λυκείου - Γ' Λυκείου
+					elseif ($epalStudent->currentclass === "3" || $epalStudent->currentclass === "4")	{
 						$clCon = $this->connection->select('epal_student_course_field', 'courses')
 							->fields('courses', array('student_id', 'coursefield_id'))
 							->condition('courses.student_id', $epalStudent->id , '=');
@@ -272,7 +275,8 @@ class Distribution extends ControllerBase {
 
 					if ($epalStudent->currentclass === "2")
 						$specialization_id = $epalSecChos->sectorfield_id;
-					elseif ($epalStudent->currentclass === "3")
+					//Δ'Λυκείου - Γ' Λυκείου
+					elseif ($epalStudent->currentclass === "3" || $epalStudent->currentclass === "4")
 						$specialization_id = $epalCourChos->coursefield_id;
 					else
 						$specialization_id = -1;
@@ -526,112 +530,6 @@ class Distribution extends ControllerBase {
 
 
 		}
-
-
-
-
-/*
-		public function makegGeneralReport(Request $request) {
-
-			try  {
-				if (!$request->isMethod('GET')) {
-					 return $this->respondWithStatus([
-							"message" => t("Method Not Allowed")
-							 ], Response::HTTP_METHOD_NOT_ALLOWED);
-				}
-
-				//user validation
-				//Note:  $authToken =  $postData->username
-				$authToken = $request->headers->get('PHP_AUTH_USER');
-				$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-				$user = reset($users);
-				if (!$user) {
-						return $this->respondWithStatus([
-										'message' => t("User not found"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				//user role validation
-				//$user = \Drupal\user\Entity\User::load($user->id());
-				$roles = $user->getRoles();
-				$validRole = false;
-				foreach ($roles as $role)
-					if ($role === "ministry") {
-						$validRole = true;
-						break;
-					}
-				if (!$validRole) {
-						return $this->respondWithStatus([
-										'message' => t("User Invalid Role"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				//υπολογισμός αριθμού αιτήσεων
-				$sCon = $this->connection->select('epal_student', 'eStudent')
-																	->fields('eStudent', array('id'));
-				$numTotal = $sCon->countQuery()->execute()->fetchField();
-
-				//υπολογισμός αριθμού αιτήσεων που ικανοποιήθηκαν στην i προτίμηση
-				$numData = array();
-				for ($i=0; $i < 3; $i++)	{
-					$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																		->fields('eStudent', array('id', 'distribution_id'))
-																		->condition('eStudent.distribution_id', $i+1, '=');
-					array_push($numData, $sCon->countQuery()->execute()->fetchField());
-				}
-
-				// υπολογισμός αριθμού αιτήσεων που ΔΕΝ ικανοποιήθηκαν
-				//Σημείωση: υπολογισμός με queries στη βάση
-				$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																	->fields('eStudent', array('id'));
-				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-				$studentIds = array();
-				foreach ($epalStudents as $epalStudent)
-					array_push($studentIds, $epalStudent->id);
-				$sCon = $this->connection->select('epal_student', 'eStudent')
-																	->fields('eStudent', array('id'))
-																	->condition('eStudent.id', $studentIds, 'NOT IN');
-				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
-
-
-
-
-
-				 $list = array();
-
-				 //$record = new generalReportSchema;
-				 //$record->name = "nikos";
-				 //$record->numStudents = 20;
-
-				 array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numTotal));
-				 // $record = (object) array('name' => "Αριθμός Αιτήσεων:", 'numStudents' => $numTotal);
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση", 'numStudents' => $numData[0]));
-				 //$record = (object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση:", 'numStudents' => $numData[0]);
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση", 'numStudents' => $numData[1]));
-				 //$record = (object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση:", 'numStudents' => $numData[1]);
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση", 'numStudents' => $numData[2]));
-				 //$record = (object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση:", 'numStudents' => $numData[2]);
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση", 'numStudents' => $numNoAllocated));
-				 //$record = (object) array('name' => "Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση:", 'numStudents' => $numNoAllocated);
-
-				 return $this->respondWithStatus(
-								 $list
-						 , Response::HTTP_OK);
-			}	 //end try
-
-			catch (\Exception $e) {
-				$this->logger->warning($e->getMessage());
-				return $this->respondWithStatus([
-							"message" => t("An unexpected problem occured during DELETE proccess in makeSelectionOfStudents Method of Distribution")
-						], Response::HTTP_INTERNAL_SERVER_ERROR);
-			}
-
-		}
-		*/
-
-
-
-
 
 
 

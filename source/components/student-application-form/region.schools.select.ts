@@ -73,7 +73,9 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToApplication()" [disabled] = "(selectionLimitOptional | async) === false && (numSelected | async) < (selectionLimit | async)">
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToApplication()"
+              [disabled] = " ( (selectionLimitOptional  | async) === false && (classNight  | async) === false  && (numSelected | async) < (selectionLimit | async) )
+                                || ( (numSelected | async) === 0)">
                 <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -100,10 +102,9 @@ import {AppSettings} from '../../app.settings';
     private numSelected: BehaviorSubject<number>;
     private selectionLimit: BehaviorSubject<number>;
     private selectionLimitOptional: BehaviorSubject<boolean>;
-    // private selectionLimit = <number>3;
     private regionSizeLimit = <number>3;
-    // private selectionLimitOptional = <boolean>false;
-    //private schoolArray: Array<boolean> = new Array();
+    private classNight: BehaviorSubject<boolean>;
+
 
     constructor(private fb: FormBuilder,
                 private _rsa: RegionSchoolsActions,
@@ -124,6 +125,7 @@ import {AppSettings} from '../../app.settings';
         this.numSelected = new BehaviorSubject(0);
         this.selectionLimit = new BehaviorSubject(3);
         this.selectionLimitOptional = new BehaviorSubject(false);
+        this.classNight = new BehaviorSubject(false);
 
     };
 
@@ -158,6 +160,13 @@ import {AppSettings} from '../../app.settings';
           if (state.epalclasses.size > 0) {
               state.epalclasses.reduce(({}, epalclass, i) => {
                   this.setClassActive(epalclass.name);
+                  console.log("My class:");
+                  console.log(epalclass.name);
+                  if (epalclass.name === "4") {
+                    //this.selectionLimitOptional.next(true);
+                    this.classNight.next(true);
+                    console.log("Mphka!");
+                  }
                   this.getAppropriateSchools(epalclass.name);
                   return epalclass;
               }, {});
@@ -221,14 +230,15 @@ import {AppSettings} from '../../app.settings';
                 return state.sectorFields;
             }).subscribe(this.sectorFields$);
         }
-        else if (epalClass === "3")  {
+        else if (epalClass === "3" || epalClass === "4")  {
             this.sectorsSub = this._ngRedux.select(state => {
                 state.sectors.reduce((prevSector, sector) =>{
                       if (sector.sector_selected === true) {
                           sector.courses.reduce((prevCourse, course) =>{
                               if (course.selected === true) {
                                   this.courseActive = parseInt(course.course_id);
-                                  this._rsa.getRegionSchools(3,this.courseActive, false);
+                                  //this._rsa.getRegionSchools(3,this.courseActive, false);
+                                  this._rsa.getRegionSchools(Number(epalClass),this.courseActive, false);
                               }
                               return course;
                           }, {});
@@ -248,7 +258,7 @@ import {AppSettings} from '../../app.settings';
         else if (this.classActive === "2") {
             this.router.navigate(['/sector-fields-select']);
         }
-        else if (this.classActive === "3")  {
+        else if (this.classActive === "3" || this.classActive === "4")  {
             this.router.navigate(['/sectorcourses-fields-select']);
         }
     }

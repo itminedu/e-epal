@@ -33,7 +33,8 @@ import {AppSettings} from '../../app.settings';
 
                         <option value=1>Α’ Λυκείου</option>
                         <option value=2>Β’ Λυκείου</option>
-                        <option value=3>Γ' Λυκείου / Δ' Λυκείου</option>
+                        <option value=3>Γ' Λυκείου</option>
+                        <option value=4>Δ' Λυκείου</option>
 
                     </select>
 
@@ -99,7 +100,7 @@ import {AppSettings} from '../../app.settings';
               this.router.navigate(['/region-schools-select']);
             else if (this.formGroup.value.name === "2")
                 this.router.navigate(['/sector-fields-select']);
-            else if (this.formGroup.value.name === "3")
+            else if (this.formGroup.value.name === "3" || this.formGroup.value.name === "4")
                 this.router.navigate(['/sectorcourses-fields-select']);
 
         }

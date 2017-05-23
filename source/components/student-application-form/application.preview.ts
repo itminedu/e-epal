@@ -41,6 +41,9 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
                 <li class="list-group-item" *ngIf="epalclass$.name === '3'">
                     Γ’ Λυκείου
                 </li>
+                <li class="list-group-item" *ngIf="epalclass$.name === '4'">
+                    Δ’ Λυκείου
+                </li>
 
         </ul>
         </div>
@@ -67,8 +70,6 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
         </div>
             </ul>
         </div>
-
-
 
         <ul *ngIf="(regions$ | async).size > 0" class="list-group left-side-view" style="margin-bottom: 20px;">
 
@@ -241,6 +242,8 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
                     this.classSelected = 2;
                 else if (epalclass.name === "Γ' Λυκείου")
                     this.classSelected = 3;
+                else if (epalclass.name === "Δ' Λυκείου")
+                    this.classSelected = 4;
                 return epalclass;
             }, {});
             return state.epalclasses;

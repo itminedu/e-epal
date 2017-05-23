@@ -158,6 +158,14 @@ epal.ministry.report-all-stat:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportAllStat'
   requirements:
       _user_is_logged_in: 'TRUE'
+epal.ministry.report-no-capacity:
+  path: '/ministry/report-no-capacity/{capacityEnabled}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportNoCapacity'
+  requirements:
+      _user_is_logged_in: 'TRUE'
 epal.ministry.retrieve-registry-id:
   path: '/ministry/retrieve-registry-id'
   options:
@@ -214,4 +222,3 @@ findschoolid:
     _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
   requirements:
     _user_is_logged_in: 'TRUE'
-

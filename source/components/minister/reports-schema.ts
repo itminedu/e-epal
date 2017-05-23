@@ -89,6 +89,44 @@ reportAllStatSchema = {
 
 
 
+reportNoCapacity = {
+  actions: false,
+  pager : {
+    display : true,
+    perPage:10
+  },
+  noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
+  columns: {
+    name: {
+      title: 'Σχολείο',
+      width: '22%',
+      filter: false
+    },
+    region: {
+      title: 'Περιφερειακή Διεύθυνση',
+      width: '20%',
+      filter: false
+    },
+    admin: {
+      title: 'Διεύθυνση Εκπαίδευσης',
+      width: '20%',
+      filter: false
+    },
+    section: {
+      title: 'Τάξη/Τομέας/Ειδικότητα',
+      width: '22%',
+      filter: false
+    },
+    capacity: {
+      title: 'Χωρητικότητα',
+      width: '15%',
+      filter: false
+    }
+  }
+};
+
+
+
 
 reportCompletenessSchema = {
   actions: false,
@@ -96,37 +134,42 @@ reportCompletenessSchema = {
   columns: {
     name: {
       title: 'Σχολείο',
-      width: '17%',
+      width: '15%',
       filter: false
     },
     region: {
       title: 'ΠΔΕ',
-      width: '13%',
+      width: '10%',
       filter: false
     },
     admin: {
       title: 'ΔΙΔΕ',
-      width: '13%',
+      width: '10%',
       filter: false
     },
     percTotal: {
-      title: 'Πληρότητα Σχολείου',
-      width: '11%',
+      title: '% Σχολείου',
+      width: '10%',
       filter: false
     },
     percA: {
-      title: 'Πληρότητα Α\' τάξης (%)',
-      width: '11%',
+      title: '% Α\' τάξης',
+      width: '10%',
       filter: false
     },
     percB: {
-      title: 'Πληρότητα Β\' τάξης (%)',
-      width: '11%',
+      title: '% Β\' τάξης',
+      width: '10%',
       filter: false
     },
     percC: {
-      title: 'Πληρότητα Γ\' τάξης (%)',
-      width: '11%',
+      title: '% Γ\' τάξης',
+      width: '10%',
+      filter: false
+    },
+    percD: {
+      title: '% Δ\' τάξης',
+      width: '10%',
       filter: false
     }
   }

@@ -963,6 +963,25 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
 
+    $fields['agreement'] = BaseFieldDefinition::create('boolean')
+        ->setLabel(t('Συμφωνία όρων συστήματος'))
+        ->setDescription(t('Συμφωνία όρων συστήματος.'))
+        ->setSettings(array(
+          'text_processing' => 0,
+        ))
+        ->setRequired(false)
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
    $fields['status'] = BaseFieldDefinition::create('boolean')
 		  ->setLabel(t('Publishing status'))
 		  ->setDescription(t('A boolean indicating whether the EPAL Student is published.'))

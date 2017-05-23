@@ -123,7 +123,7 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     ngOnInit() {
 
-     
+
 
 
         (<any>$('#studentFormSentNotice')).appendTo("body");
@@ -254,7 +254,7 @@ import { HelperDataService } from '../../services/helper-data-service';
           if (aitisiObj[0]['currentclass'] === "2" )
             aitisiObj['3'] =  new StudentSectorChosen(null, this.sectorSelected);
           //else if (aitisiObj[0]['currentclass'] === "Γ' Λυκείου" )
-          else if (aitisiObj[0]['currentclass'] === "3" ) {
+          else if (aitisiObj[0]['currentclass'] === "3" || aitisiObj[0]['currentclass'] === "4" ) {
             aitisiObj['3'] =  new StudentCourseChosen(null, this.courseSelected);
           }
 

@@ -120,7 +120,7 @@ import { API_ENDPOINT } from '../../app.settings';
         <i class="fa fa-download"></i>
             <br>Εξαγωγή σε csv
         </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator != 1 || schSelected == 0 || reportId != 2 ">
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator != 1 || schSelected == 0 || (reportId != 2 ) ">
         <i class="fa fa-bar-chart"></i>
             Διάγραμμα
         </button>
@@ -617,6 +617,35 @@ generateGraphData() {
      ]);
 
    }
+
+   /*
+   else if (this.reportId === 3) {
+
+     let labelsX = [];
+     labelsX.push("1η Προτίμηση");
+     labelsX.push("2η Προτίμηση");
+     labelsX.push("3η Προτίμηση");
+     labelsX.push("Μη τοποθετημένοι");
+     console.log("Length:");
+     console.log(this.data.length);
+     for (let i = 0; i < this.data.length   ; i++) {
+       this.d3data.push([
+         //labelsX[i-1],
+         this.data[i].section,
+         this.data[i].percentage,
+       ]);
+    // }
+
+
+   }
+
+
+  }
+  */
+
+
+
+
  }
 
 

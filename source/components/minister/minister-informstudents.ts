@@ -23,7 +23,7 @@ import { API_ENDPOINT } from '../../app.settings';
     <div id="emaiSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header {{modalHeader}}" >
+          <div class="modal-header {{modalHeader | async}}" >
               <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
@@ -54,8 +54,8 @@ import { API_ENDPOINT } from '../../app.settings';
     loginInfo$: BehaviorSubject<ILoginInfo>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
-    //public isModalShown: BehaviorSubject<boolean>;
-    public modalHeader: string;
+    private modalHeader: BehaviorSubject<string>;
+    //public modalHeader: string;
     loginInfoSub: Subscription;
     private numSuccessMails:number;
     private numFailMails:number;
@@ -74,6 +74,7 @@ import { API_ENDPOINT } from '../../app.settings';
           //this.isModalShown = new BehaviorSubject(false);
           this.modalTitle =  new BehaviorSubject("");
           this.modalText =  new BehaviorSubject("");
+          this.modalHeader =  new BehaviorSubject("");
 
     }
 
@@ -140,18 +141,21 @@ import { API_ENDPOINT } from '../../app.settings';
 
           this.modalTitle.next("Κατανομή Μαθητών");
           this.modalText.next("Αποτυχία αποστολής e-mails!");
-          this.modalHeader = "modal-header-warning";
+          //this.modalHeader = "modal-header-warning";
+          this.modalHeader.next("modal-header-warning");
           this.showModal();
         },
         () => {
           console.log("Success");
           this.successSending = 1;
 
-          this.modalHeader = "modal-header-success";
+          //this.modalHeader = "modal-header-success";
+          this.modalHeader.next("modal-header-success");
           this.modalTitle.next("Κατανομή Μαθητών");
           let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
           if (this.numFailMails != 0) {
-            this.modalHeader = "modal-header-warning";
+            //this.modalHeader = "modal-header-warning";
+            this.modalHeader.next("modal-header-warning");
             txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
           }
           this.modalText.next(txtModal);

@@ -617,19 +617,11 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, { capacity }, options)
-                .map(response => response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    console.log("Error Saving Capacity");
-                    reject("Error Saving Capacity");
-                },
-                () => console.log("Saving Capacity"));
-        });
+        return this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, { capacity }, options)
+            .map(response => response.json());
+        
 
+     
     }
 
     sendMinisrtyCredentials(username, userpassword) {

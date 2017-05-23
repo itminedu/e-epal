@@ -43,17 +43,8 @@ import {
       </div>
 
 
-      <div *ngIf="(retrievedStudent | async) && (modify === false)">
-      <strong>Δυναμική σε τμήματα:</strong>
-      <div *ngFor="let classCapac$  of classCapacity$ | async;"  >
-          <div><label for="capc">Τρέχουσα Δυναμική:</label> <p class="form-control" id = "capc" style="border:1px solid #eceeef;"> {{classCapac$.capacity}} </p></div>
-        </div>
 
-      <p style="margin-top: 20px; line-height: 2em;"> Αν θέλετε να αλλάξετε τη δυναμική σε τμήματα για τη συγκεκριμένή επιλογή συνέχεια επιλέξτε <i>Τροποποίηση</i>.</p>
-              <button type="button" class="btn-primary btn-sm pull-right" (click) ="modifyCapacity()">
-                Τροποποίηση
-               </button>
-       </div>
+      <p style="margin-top: 20px; line-height: 2em;"> Αλλάξτε παρακαλώ τον αριθμό των τμημάτων που μπορείτε να δημιουργήσετε στο σχολείο σας και πατήστε  <i>Αποθήκευση</i>.</p>
        <input  type="number" formControlName="capacity" min="1" max="10">
 
             <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
@@ -61,6 +52,28 @@ import {
              </button>
        </form>
        </div>
+
+    <div id="capacitysaved" (onHidden)="onHidden('#capacitysaved')" 
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-success">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Αποθήκευση Δυναμικής</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#capacitysaved')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Η επιλογή σας έχει αποθηκευτεί.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
    `
 })
 
@@ -71,6 +84,7 @@ import {
     private StudentSelectedSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
+    private saveCapacitySub: Subscription;
     private selectionBClass: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private School$: BehaviorSubject<any>;
@@ -80,7 +94,7 @@ import {
     private classCapacity$: BehaviorSubject<any>;
     private classCapacitySub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
-    private modify = false;
+    
 
 
 
@@ -100,8 +114,25 @@ import {
             taxi: ['', []],
             specialit: ['', []],
             capacity: ['', []],
-            capc: ['', []],
-        });
+            });
+
+    }
+
+
+
+
+    public showModal(popupMsgId):void {
+        console.log("about to show modal");
+        //(<any>$('#distributionWaitingNotice')).modal('show');
+        (<any>$(popupMsgId)).modal('show');
+    }
+
+    public hideModal(popupMsgId):void {
+        //(<any>$('#distributionWaitingNotice')).modal('hide');
+        (<any>$(popupMsgId)).modal('hide');
+    }
+
+    public onHidden(popupMsgId):void {
 
     }
 
@@ -121,6 +152,7 @@ import {
     }
 
     ngOnInit() {
+        (<any>$('#capacitysaved')).appendTo("body");
         this.retrievedStudent.next(false);
 
             this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
@@ -140,7 +172,6 @@ import {
 
 
     verifyclass(txop) {
-        this.modify = false;
         console.log(this.formGroup.value.specialit, "speciality");
         if (txop.value === "1") {
             this.selectionBClass.next(false);
@@ -148,11 +179,16 @@ import {
             this.formGroup.patchValue({
                 tomeas: '',
                 specialit: '',
+                capacity: '',
             });
             console.log("a class");
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, 0, 0, this.SchoolId).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
+                this.formGroup.patchValue({
+                capacity : data[0].capacity,
+            });
+            
             },
                 error => {
                     this.classCapacity$.next([{}]);
@@ -165,6 +201,7 @@ import {
             this.formGroup.patchValue({
                 tomeas: '',
                 specialit: '',
+                capacity: '',
             });
             this.selectionBClass.next(true);
             this.selectionCClass.next(false);
@@ -172,6 +209,12 @@ import {
             this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
         }
         else if (txop.value === "3") {
+            this.formGroup.patchValue({
+                tomeas: '',
+                specialit: '',
+                capacity: '',
+            });
+
             var sectorint = +this.formGroup.value.tomeas;
             console.log(sectorint, "test");
             if (this.formGroup.value.tomeas != '') {
@@ -192,7 +235,7 @@ import {
 
 
     checkbclass(tmop, txop) {
-        this.modify = false;
+        
         var sectorint = +this.formGroup.value.tomeas;
         console.log(sectorint, "tomeas");
         if (txop.value === "2") {
@@ -200,6 +243,9 @@ import {
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, 0, this.SchoolId).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
+                this.formGroup.patchValue({
+                capacity : data[0].capacity,
+            });
             },
                 error => {
                     this.classCapacity$.next([{}]);
@@ -217,7 +263,7 @@ import {
     }
 
     checkcclass(tmop, txop, spop) {
-        this.modify = false;
+        
         var sectorint = +this.formGroup.value.tomeas;
         var specialint = +this.formGroup.value.specialit;
 
@@ -228,8 +274,9 @@ import {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
                 
-               // this.formGroup.get('capc').setValue(this.formGroup.value.capacity);
-                console.log(this.formGroup.value.capacity,"capc");
+               this.formGroup.patchValue({
+                capacity : data[0].capacity,
+            });
             },
                 error => {
                     this.classCapacity$.next([{}]);
@@ -248,14 +295,18 @@ import {
 
         var tomeas = +this.formGroup.value.tomeas;
         var specialit = +this.formGroup.value.specialit;
-        console.log(tomeas, specialit);
-        this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity, this.SchoolId);
+        
+         this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity, this.SchoolId).subscribe(data => {
+                
+                 },
+                error => {
+                    
+                    console.log("Error Saving Capacity");
+                },
+                () => console.log("Saved Capacity"));
+                 this.showModal("#capacitysaved");
 
     }
 
-    modifyCapacity() {
-
-        this.modify = true;
-    }
 
 }

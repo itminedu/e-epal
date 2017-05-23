@@ -43,3 +43,8 @@ entity.epal_class_limits.add_form:
   title: 'Add Epal class limits'
   appears_on:
     - entity.epal_class_limits.collection
+entity.epal_config.add_form:
+  route_name: entity.epal_config.add_form
+  title: 'Add Epal config'
+  appears_on:
+    - entity.epal_config.collection

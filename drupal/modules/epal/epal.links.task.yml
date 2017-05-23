@@ -196,3 +196,24 @@ entity.epal_class_limits.delete_form:
   title: Delete
   weight: 10
 
+# Epal config routing definition
+epal_config.settings_tab:
+  route_name: epal_config.settings
+  title: 'Settings'
+  base_route: epal_config.settings
+entity.epal_config.canonical:
+  route_name: entity.epal_config.canonical
+  base_route: entity.epal_config.canonical
+  title: 'View'
+
+entity.epal_config.edit_form:
+  route_name: entity.epal_config.edit_form
+  base_route: entity.epal_config.canonical
+  title: Edit
+
+entity.epal_config.delete_form:
+  route_name:  entity.epal_config.delete_form
+  base_route:  entity.epal_config.canonical
+  title: Delete
+  weight: 10
+

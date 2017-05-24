@@ -83,6 +83,12 @@ class ApplicationSubmit extends ControllerBase {
 				'certificatetype' => $applicationForm[0][certificatetype],
 				//'lastam' => $applicationForm[0][lastam],
 				'currentclass' => $applicationForm[0][currentclass],
+                'guardian_name' => $applicationForm[0][cu_name],
+                'guardian_surnname' => $applicationForm[0][cu_surname],
+                'guardian_fathername' => $applicationForm[0][cu_fathername],
+                'guardian_mothername' => $applicationForm[0][cu_mothername],
+                'agreement' => $applicationForm[0][disclaimer_checked],
+
 				//'currentepal' => $applicationForm[0][currentepal],
 				//'currentsector' => $applicationForm[0][currentsector],
         'points' => $applicationForm[0][points],

@@ -134,7 +134,6 @@ import {AppSettings} from '../../app.settings';
 
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
-    //private modalHeader: string;
     private modalHeader: BehaviorSubject<string>;
 
 
@@ -197,7 +196,6 @@ import {AppSettings} from '../../app.settings';
     }
 
     public showModal():void {
-        console.log("about to show modal");
         (<any>$('#choiceSentNotice')).modal('show');
     }
 
@@ -214,12 +212,9 @@ import {AppSettings} from '../../app.settings';
           if (state.epalclasses.size > 0) {
               state.epalclasses.reduce(({}, epalclass, i) => {
                   this.setClassActive(epalclass.name);
-                  console.log("My class:");
-                  console.log(epalclass.name);
                   if (epalclass.name === "4") {
                     //this.selectionLimitOptional.next(true);
                     this.classNight.next(true);
-                    console.log("Mphka!");
                   }
                   this.getAppropriateSchools(epalclass.name);
                   return epalclass;
@@ -258,7 +253,6 @@ import {AppSettings} from '../../app.settings';
                 return region;
             }, {});
             this.numSelected.next(numsel);
-            console.log("numselected=" + this.numSelected.getValue());
             return state.regions;
         }).subscribe(this.regions$);
     }
@@ -332,7 +326,6 @@ import {AppSettings} from '../../app.settings';
           //                || ( (numSelected | async) === 0)"
         if ( (this.selectionLimitOptional.value === false && this.classNight.value === false && this.numSelected.value < this.selectionLimit.value )
               || (this.numSelected.value === 0) )    {
-          console.log("check Behaviours..");
 
           //this.modalHeader = "modal-header-success";
           this.modalHeader.next("modal-header-success");

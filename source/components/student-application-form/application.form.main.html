@@ -1,30 +1,56 @@
 <div class="row">
              <breadcrumbs></breadcrumbs>
 </div>
-<div class = "loading" *ngIf="(criteria$ | async).size === 0"></div>
+<div class = "loading" *ngIf="(criteria$ | async).size === 0 || (loginInfo$ | async).size === 0"></div>
+
+<div id="applicationFormNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header {{modalHeader | async}}" >
+          <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p>{{ modalText | async }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <h4> Προσωπικά Στοιχεία Μαθητή </h4>
   <form novalidate  [formGroup]="studentDataGroup" #form>
-    <form [formGroup]="applicantDataGroup">
       <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ συμπληρώστε τα στοιχεία του μαθητή και στη συνέχεια επιλέξτε <i>Συνέχεια</i>. <strong>Προσοχη!</strong> Παρακαλώ να συμπληρώσετε τα στοιχεία ακριβώς όπως είναι στον τελευταίο τίτλο κτήσης απολυτηρίου/ πτυχίου του μαθητή.</p>
 
-      <p style="margin-top: 20px; line-height: 2em;"> <strong> Η ακρίβεια των στοιχείων που υποβάλλονται με αυτή τη δήλωση μπορεί να ελεγχθεί με βάση το αρχείο άλλων υπηρεσιών (άρθρο 8 παρ. 4 Ν. 1599/1986)</strong></p>
+      <p style="margin-top: 20px; line-height: 2em;"> <b> Η ακρίβεια των στοιχείων που υποβάλλονται με αυτή τη δήλωση μπορεί να ελεγχθεί με βάση το αρχείο άλλων υπηρεσιών (άρθρο 8 παρ. 4 Ν. 1599/1986)</b></p>
 
-      <table>
-        <tr><td>
-          <div class="form-group">
-            <label for="guardianfirstname">Όνομα κηδεμόνα</label><input class="form-control" type="text" formControlName="guardianfirstname" disabled = "true">
+      <p style="margin-top: 20px; line-height: 2em;"> <b> Όλα τα πεδία που συνοδεύονται από (*) είναι απαραίτητο να συμπληρωθούν</b></p>
+
+
+      <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" style = "margin-bottom: 20px;" >
+          <div class="row evenin" style="margin: 0px 5px 0px 5px;">
+              <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου κηδεμόνα</div>
           </div>
-        </td>
-        <td>
-          <div class="form-group">
-            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><input class="form-control" type="text" formControlName="guardiansurname" disabled = "true">
+          <div class="row oddin" style="margin: 0px 5px 0px 5px;">
+              <div class="col-md-3" style="font-size: 0.8em;">Όνομα</div>
+              <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_name }}</div>
+              <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο</div>
+              <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_surname }}</div>
           </div>
-        </td></tr>
-      </table>
-    </form>
+          <div class="row oddin" style="margin: 0px 5px 0px 5px;">
+              <div class="col-md-3" style="font-size: 0.8em;">Όνομα πατέρα</div>
+              <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_fathername }}</div>
+              <div class="col-md-3" style="font-size: 0.8em;">Όνομα μητέρας</div>
+              <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_mothername }}</div>
+          </div>
+      </div>
 
     <div class="form-group">
-        <label for="name">Όνομα μαθητή</label><input class="form-control" type="text" formControlName="name">
+        <label for="name">Όνομα μαθητή(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="name">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('name').touched && studentDataGroup.get('name').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -34,7 +60,7 @@
     </div>
 
     <div class="form-group">
-        <label for="studentsurname">Επώνυμο μαθητή</label><input class="form-control" type="text" formControlName="studentsurname">
+        <label for="studentsurname">Επώνυμο μαθητή(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="studentsurname">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentsurname').touched && studentDataGroup.get('studentsurname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -44,7 +70,7 @@
     </div>
 
     <div class="form-group">
-        <label for="fatherfirstname">Όνομα πατέρα</label><input class="form-control" type="text" formControlName="fatherfirstname">
+        <label for="fatherfirstname">Όνομα πατέρα(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="fatherfirstname">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('fatherfirstname').touched && studentDataGroup.get('fatherfirstname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -54,7 +80,7 @@
     </div>
 
     <div class="form-group">
-        <label for="fathersurname">Επώνυμο πατέρα</label><input class="form-control" type="text" formControlName="fathersurname">
+        <label for="fathersurname">Επώνυμο πατέρα(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="fathersurname">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('fathersurname').touched && studentDataGroup.get('fathersurname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -64,7 +90,7 @@
     </div>
 
     <div class="form-group">
-        <label for="motherfirstname">Όνομα μητέρας</label><input class="form-control" type="text" formControlName="motherfirstname">
+        <label for="motherfirstname">Όνομα μητέρας(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="motherfirstname">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('motherfirstname').touched && studentDataGroup.get('motherfirstname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -74,7 +100,7 @@
     </div>
 
     <div class="form-group">
-        <label for="mothersurname">Γένος μητέρας</label><input class="form-control" type="text" formControlName="mothersurname">
+        <label for="mothersurname">Γένος μητέρας(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="mothersurname">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('mothersurname').touched && studentDataGroup.get('mothersurname').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -83,35 +109,21 @@
         Δεν επιτρέπονται ψηφία ή άλλοι μη έγκυροι χαρακτήρες σε αυτό το πεδίο!
     </div>
 
-    <!--
-    <div class="form-group">
-        <label for="studentbirthdate">Ημερομηνία γέννησης</label>
-        <input class="form-control" type="text" formControlName="studentbirthdate">
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').pristine ">
-        Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
-    </div>
-    <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').dirty && studentDataGroup.get('studentbirthdate').hasError('pattern')">
-        Η ημερομηνία γέννησης πρέπει να είναι της μορφής ΗΗ/ΜΜ/ΕΕΕΕ
-    </div>
-  -->
   <div class="form-group">
-      <label for="studentbirthdate">Ημερομηνία γέννησης</label>
-      <input class="form-control" type="date" formControlName="studentbirthdate">
+      <label for="studentbirthdate">Ημερομηνία γέννησης - Δεν πληκτρολογείτε. Επιλέξτε το εικονίδιο δεξιά!(<span style="color: #ff0000;">*</span>)</label>
+      <my-date-picker name="studentbirthdate" [options]="myDatePickerOptions"
+                    formControlName="studentbirthdate" locale="el"></my-date-picker>
   </div>
   <div class="alert alert-danger" *ngIf="studentDataGroup.get('studentbirthdate').touched && studentDataGroup.get('studentbirthdate').hasError('required')">
       Συμπληρώστε την ημερομηνία γέννησης του μαθητή!
   </div>
 
 
-
-
-
     <table>
         <tr>
             <td>
                 <div class="form-group">
-                    <label for="regionaddress">Διεύθυνση κατοικίας</label><input class="form-control" type="text" formControlName="regionaddress">
+                    <label for="regionaddress">Διεύθυνση κατοικίας(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="regionaddress">
                 </div>
                 <div class="alert alert-danger" *ngIf="studentDataGroup.get('regionaddress').touched && studentDataGroup.get('regionaddress').hasError('required')">
                     Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -122,7 +134,7 @@
             </td>
             <td>
                 <div class="form-group">
-                    <label for="regiontk">TK </label><input class="form-control" type="text" formControlName="regiontk">
+                    <label for="regiontk">TK(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="regiontk">
                 </div>
                 <div class="alert alert-danger" *ngIf="studentDataGroup.get('regiontk').touched && studentDataGroup.get('regiontk').hasError('required')">
                     Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -133,7 +145,7 @@
             </td>
             <td>
                 <div class="form-group">
-                    <label for="regionarea">Πόλη/Περιοχή</label><input class="form-control" type="text" formControlName="regionarea">
+                    <label for="regionarea">Πόλη/Περιοχή(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="regionarea">
                 </div>
                 <div class="alert alert-danger" *ngIf="studentDataGroup.get('regionarea').touched && studentDataGroup.get('regionarea').hasError('required')">
                     Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -146,9 +158,9 @@
     </table>
 
     <div class="form-group">
-        <label for="certificatetype">Τύπος απολυτηρίου</label><br/>
+        <label for="certificatetype">Τύπος απολυτηρίου(<span style="color: #ff0000;">*</span>)</label><br/>
         <select class="form-control" formControlName="certificatetype">
-        <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
+        <option value="">Παρακαλώ επιλέξτε...</option>
         <option value="Απολυτήριο Γυμνασίου">Απολυτήριο Γυμνασίου</option>
         <option value="Απολυτήριο Λυκείου">Απολυτήριο Λυκείου</option>
     </select>
@@ -158,9 +170,9 @@
     </div>
 
     <div class="form-group">
-        <label for="relationtostudent">Η αίτηση γίνεται από:</label><br/>
+        <label for="relationtostudent">Η αίτηση γίνεται από:(<span style="color: #ff0000;">*</span>)</label><br/>
         <select class="form-control" formControlName="relationtostudent">
-        <option value="noincomecriterio">Παρακαλώ επιλέξτε..</option>
+        <option value="">Παρακαλώ επιλέξτε...</option>
         <option value="Γονέας/Κηδεμόνας">Γονέας/Κηδεμόνας</option>
         <option value="Μαθητής">Μαθητής</option>
     </select>
@@ -170,7 +182,7 @@
     </div>
 
     <div class="form-group">
-        <label for="telnum">Κινητό Τηλέφωνο</label><input class="form-control" type="text" formControlName="telnum">
+        <label for="telnum">Κινητό Τηλέφωνο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="telnum">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('telnum').touched && studentDataGroup.get('telnum').hasError('required')">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -181,36 +193,6 @@
 
 
     <form novalidate [formGroup]="studentCriteriaGroup">
-      <!--
-        <fieldset class="group">
-      -->
-
-        <!-- TEST for defining income in combolist in a redux-dynamic way-->
-        <!--
-        <select #cblsttest class="form-control" (change)="checkstatus(cblsttest)" formControlName="incometest">
-        <option *ngFor="let criterIncome$ of criteriaIncome$   | async; let i=index">
-           <div *ngIf="criter$.name === 'Εισόδημα' && criter$.name !== 'Απόσταση'">
-             {{criterIncome$.name}}> </div>  </option>
-        </select>
-      -->
-
-
-      <!--
-        <div class="form-group">
-            <label for="income">Το κατά κεφαλήν εισόδημα στο προηγούμενο φορολογικό έτος είναι:</label><br/>
-              <select #cblst class="form-control" (change)="checkstatus(cblst)" formControlName="income">
-              <option value="noincomecriterio" [selected] = "selectionIncomeId === 0" >Παρακαλώ επιλέξτε..</option>
-              <option value="<= 3000 Ευρώ" [selected] = "selectionIncomeId === 8" >μικρότερο ή ίσο των 3000 Ευρώ</option>
-              <option value="<= 6000 Ευρώ" [selected] = "selectionIncomeId === 9" >μικρότερο ή ίσο των 6000 Ευρώ</option>
-              <option value="<= 9000 Ευρώ" [selected] = "selectionIncomeId === 10" >μικρότερο ή ίσο των 9000 Ευρώ</option>
-              <option value="> 9000 Ευρώ" [selected] = "selectionIncomeId === 11" >μεγαλύτερο των 9000 Ευρώ</option>
-            </select>
-
-            <div class="alert alert-danger" *ngIf=" studentCriteriaGroup.get('income').hasError('status')">
-                  Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
-            </div>
-        </div>
-      -->
 
         <div formArrayName="formArray">
 
@@ -247,9 +229,6 @@
       <div class="row">
       </div>
 
-      <!--
-      </fieldset>
-    -->
     </div>
 
     </form>
@@ -261,7 +240,7 @@
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitSelected()" [disabled]="studentDataGroup.invalid || studentCriteriaGroup.invalid ">
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitSelected()">
                 <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -269,3 +248,5 @@
     </div>
 
   </form>
+
+  <!-- <pre>{{studentDataGroup.value | json}}</pre> -->

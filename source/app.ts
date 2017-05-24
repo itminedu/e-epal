@@ -6,6 +6,7 @@ import { NgModule } from '@angular/core';
 import { NgReduxModule, DevToolsExtension, NgRedux } from 'ng2-redux';
 import {BrowserModule} from '@angular/platform-browser';
 import { CookieModule } from 'ngx-cookie';
+import { MyDatePickerModule } from 'mydatepicker';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -55,6 +56,7 @@ class MyLocalization extends NgLocalization {
 @NgModule({
   imports:      [
     BrowserModule,
+    MyDatePickerModule,
     FormsModule,
     RouterModule,
     ReactiveFormsModule,

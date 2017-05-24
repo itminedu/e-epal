@@ -90,6 +90,11 @@ import { HelperDataService } from '../../services/helper-data-service';
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
     public currentUrl: string;
+    private cu_name: string;
+    private cu_surname: string;
+    private cu_fathername: string;
+    private cu_mothername: string;
+    private disclaimer_checked: number;
 
     constructor(
                 private _hds: HelperDataService,
@@ -123,14 +128,18 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     ngOnInit() {
 
-
-
-
         (<any>$('#studentFormSentNotice')).appendTo("body");
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
                   this.authToken = loginInfoToken.auth_token;
+
+                  this.cu_name = loginInfoToken.cu_name;
+                  this.cu_surname = loginInfoToken.cu_surname;
+                  this.cu_fathername = loginInfoToken.cu_fathername;
+                  this.cu_mothername = loginInfoToken.cu_mothername;
+                  this.disclaimer_checked = loginInfoToken.disclaimer_checked;
+
                   return loginInfoToken;
               }, {});
           }
@@ -232,11 +241,17 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     submitNow() {
           //αποστολή στοιχείων μαθητή στο entity: epal_student
-          let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+          // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+          let aitisiObj: Array<any> = [];
           let epalObj: Array<StudentEpalChosen> = [];
           let criteriaObj: Array<StudentCriteriaChosen> = [];
 
           aitisiObj[0] = this.student;
+          aitisiObj[0].cu_name = this.cu_name;
+          aitisiObj[0].cu_surname = this.cu_surname;
+          aitisiObj[0].cu_fathername = this.cu_fathername;
+          aitisiObj[0].cu_mothername = this.cu_mothername;
+          aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
           //console.log(aitisiObj[0]['studentbirthdate']);
           aitisiObj[0]['currentclass'] = this.classSelected;
           //aitisiObj[0]['studentamka'] = ...;
@@ -263,7 +278,6 @@ import { HelperDataService } from '../../services/helper-data-service';
 
 
   submitRecord(record) {
-    let auth_str = this.authToken + ":" + this.authToken;
     let authTokenPost = this.authToken + ":" + this.authToken;
 
     let headers = new Headers({

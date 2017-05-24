@@ -63,10 +63,10 @@ class CurrentUser extends ControllerBase
             if (($userRole === 'epal') || ($userRole === 'regioneduadmin') || ($userRole === 'eduadmin')) {
                 return $this->respondWithStatus([
                         'cu_name' => $user->mail->value,
-                        'cu_surname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
-                        'cu_fathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
-                        'cu_mothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
-                        'cu_email' => mb_substr($user->mail->value,0,4,'UTF-8') !== "####" ? $user->mail->value : '',
+                        'cu_surname' => '',
+                        'cu_fathername' => '',
+                        'cu_mothername' => '',
+                        'cu_email' => '',
                         'minedu_username' => '',
                         'minedu_userpassword' => '',
                         'lock_capacity' => $epalConfig->lock_school_capacity->value,

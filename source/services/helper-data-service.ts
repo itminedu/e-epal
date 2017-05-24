@@ -283,15 +283,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.authRole = loginInfoToken.auth_role;
         });
         let headers = new Headers({
-            //"Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
-            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
             "Content-Type": "application/json",
-            // "Content-Type": "text/plain",  // try to skip preflight
-            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
-            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
-            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
-            //            "X-oauth-enabled": "true",
-            //            "X-Auth-Token": this.authToken
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
@@ -383,21 +375,9 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.authToken = oauthtoken;
         this.authRole = oauthrole;
 
-        //console.log("MIPOS");
-
         let headers = new Headers({
-//             "Authorization": "Basic " + btoa(this.authToken + ':' + this.authToken),
-    //        "Authorization": "Basic cmVzdHVzZXI6czNjckV0MFAwdWwwJA==", // encoded user:pass
-            // "Authorization": "Basic bmthdHNhb3Vub3M6emVtcmFpbWU=",
-//            "Authorization": "Basic " + "aGFyaXNwOmhhcmlzcGFzcw==",
             "Content-Type": "application/json",
             "Access-Control-Allow-Credentials": "true",
-            // "Content-Type": "text/plain",  // try to skip preflight
-            //"X-CSRF-Token": "hVtACDJjFRSyE4bgGJENHbXY0B9yNhF71Fw-cYHSDNY"
-            //"X-CSRF-Token": "fj1QtF_Z_p6kE19EdCnN08zoSjVfcT4Up-ciW6I0IG8"
-        //    "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
-            //            "X-oauth-enabled": "true",
-            //            "X-Auth-Token": this.authToken
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
@@ -425,7 +405,21 @@ export class HelperDataService implements OnInit, OnDestroy {
     transformUserSchema(userlogin: any, oauthtoken: string, oauthrole: string) {
         let rsa = Array<ILoginInfoToken>();
 
-        rsa.push(<ILoginInfoToken>{ 'auth_token': oauthtoken, 'auth_role': oauthrole, 'cu_name': userlogin.name });
+        rsa.push(<ILoginInfoToken>{
+            'auth_token': oauthtoken,
+            'auth_role': oauthrole,
+            'cu_name': userlogin.cu_name,
+            'cu_surname': userlogin.cu_surname,
+            'cu_fathername': userlogin.cu_fathername,
+            'cu_mothername': userlogin.cu_mothername,
+            'cu_email': userlogin.cu_email,
+            'minedu_username': userlogin.minedu_username,
+            'minedu_userpassword': userlogin.minedu_userpassword,
+            'lock_capacity': parseInt(userlogin.lock_capacity),
+            'lock_students': parseInt(userlogin.lock_students),
+            'lock_application': parseInt(userlogin.lock_application),
+            'disclaimer_checked': parseInt(userlogin.disclaimer_checked)
+        });
         return rsa;
 
     }
@@ -450,20 +444,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         let logoutRoute = '/oauth/logout';
         if (this.authRole === SCHOOL_ROLE || this.authRole === PDE_ROLE || this.authRole === DIDE_ROLE) {
           logoutRoute = '/cas/logout';
-
-          return new Promise((resolve, reject) => {
-              this.http.get(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, options)
-                  .map(response => response)
-                  .subscribe(data => {
-                      this._cookieService.removeAll();
-                      resolve(data);
-                  }, // put the data returned from the server in our variable
-                  error => {
-                      console.log("Error Logout"); // in case of failure show this message
-                      reject("Error Logout");
-                  },
-                  () => console.log("Logging out"));//run this code in all cases); */
-          });
         }
         else if (this.authRole === MINISTRY_ROLE)
           logoutRoute = '/ministry/logout';

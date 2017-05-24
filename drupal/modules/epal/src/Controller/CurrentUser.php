@@ -50,12 +50,30 @@ class CurrentUser extends ControllerBase
                 ], Response::HTTP_FORBIDDEN);
         }
 
+        $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+        $epalConfig = reset($epalConfigs);
+        if (!$epalConfig) {
+            return $this->respondWithStatus([
+                    'message' => t("Configuration not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+
         $userRoles = $user->getRoles();
         foreach ($userRoles as $userRole) {
             if (($userRole === 'epal') || ($userRole === 'regioneduadmin') || ($userRole === 'eduadmin')) {
                 return $this->respondWithStatus([
-                        'name' => $user->mail->value,
-                        'title' => $user->init->value,
+                        'cu_name' => $user->mail->value,
+                        'cu_surname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
+                        'cu_fathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
+                        'cu_mothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+                        'cu_email' => mb_substr($user->mail->value,0,4,'UTF-8') !== "####" ? $user->mail->value : '',
+                        'minedu_username' => '',
+                        'minedu_userpassword' => '',
+                        'lock_capacity' => $epalConfig->lock_school_capacity->value,
+                        'lock_students' => $epalConfig->lock_school_students_view->value,
+                        'lock_application' => $epalConfig->lock_application->value,
+                        'disclaimer_checked' => "0",
+                        'title' => $user->init->value
                     ], Response::HTTP_OK);
             } else if ($userRole === 'applicant') {
                 break;
@@ -66,8 +84,24 @@ class CurrentUser extends ControllerBase
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
+            $userName = $epalUser->name->value;
+            $userSurname = $epalUser->surname->value;
+            $userFathername = $epalUser->fathername->value;
+            $userMothername = $epalUser->mothername->value;
+            $userEmail = $user->mail->value;
             return $this->respondWithStatus([
-                    'name' => $epalUser->name->value,
+                    'cu_name' => mb_substr($epalUser->name->value,0,4,'UTF-8') !== "####" ? $epalUser->name->value : '',
+                    'cu_surname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
+                    'cu_fathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
+                    'cu_mothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+                    'cu_email' => mb_substr($user->mail->value,0,4,'UTF-8') !== "####" ? $user->mail->value : '',
+                    'minedu_username' => '',
+                    'minedu_userpassword' => '',
+                    'lock_capacity' => $epalConfig->lock_school_capacity->value,
+                    'lock_students' => $epalConfig->lock_school_students_view->value,
+                    'lock_application' => $epalConfig->lock_application->value,
+                    'disclaimer_checked' => "0",
+                    'verificationCodeVerified' => $epalUser->verificationcodeverified->value,
                 ], Response::HTTP_OK);
         } else {
             return $this->respondWithStatus([

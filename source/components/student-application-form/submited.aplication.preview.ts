@@ -273,7 +273,7 @@ html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
                
 
                  
-    }, 10000);
+    }, 100000);
               doc.addImage(img, 'PNG',0, 0, 1000, 1000);
                   console.log("mphkaneoneo");
                   doc.save('applications.pdf');

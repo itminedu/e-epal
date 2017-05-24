@@ -535,8 +535,8 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    getSectorPerSchool(SchoolId) {
-        let SchoolIdNew = SchoolId.toString();
+    getSectorPerSchool() {
+        
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -546,12 +546,13 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperSchool/` + SchoolIdNew, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperSchool/` , options)
             .map(response => response.json());
     }
 
-    getSpecialityPerSchool(SchoolId, SectorId) {
-        let SchoolIdNew = SchoolId.toString();
+
+    getSpecialityPerSchool( SectorId) {
+       
         let SectorIdNew = SectorId.toString();
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -562,14 +563,14 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperSchool/` + SchoolIdNew + '/' + SectorIdNew, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperSchool/` + SectorIdNew, options)
             .map(response => response.json());
     }
 
 
 
-    getStudentPerSchool(SchoolId, SelectId, classId, limitdown, limitup) {
-        let SchoolIdNew = SchoolId.toString();
+    getStudentPerSchool( SelectId, classId, limitdown, limitup) {
+        
         let SelectIdNew = SelectId.toString();
 
 
@@ -583,7 +584,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SchoolIdNew + '/' + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
             .map(response => response.json());
     }
 
@@ -616,7 +617,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    saveCapacity(taxi, tomeas, specialit, capacity, schoolid) {
+    saveCapacity(taxi, tomeas, specialit, capacity) {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -627,7 +628,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, { capacity }, options)
+        return this.http.post(`${AppSettings.API_ENDPOINT}/epal/savecapacity/` + taxi + '/' + tomeas + '/' + specialit, { capacity }, options)
             .map(response => response.json());
         
 
@@ -746,10 +747,10 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    getSchoolPerPerfecture(PerfectureId) {
-        console.log(PerfectureId,"a");
+    getSchoolPerPerfecture() {
+        
         //let PerfectureIdNew = PerfectureId.toString();
-        let PerfectureIdNew = PerfectureId;
+        
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -763,7 +764,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` + PerfectureIdNew , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` , options)
             .map(response => response.json());
     }
 
@@ -915,7 +916,7 @@ getCourses(username, userpassword, sectorid)  {
     }
 
 
-getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
+getCapacityPerSchool(taxi, tomeas, specialit) {
 
         console.log(tomeas,specialit,"news")
 
@@ -928,7 +929,7 @@ getCapacityPerSchool(taxi, tomeas, specialit, schoolid) {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findCapacity/` + taxi + '/' + tomeas + '/' + specialit + '/' + schoolid, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findCapacity/` + taxi + '/' + tomeas + '/' + specialit, options)
             .map(response => response.json());
 
     }
@@ -951,6 +952,21 @@ getSchoolId() {
 
     }
 
+gettypeofschool(){
+
+    this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/gettypeofschool/`, options)
+            .map(response => response.json());
+
+}
 
 
 

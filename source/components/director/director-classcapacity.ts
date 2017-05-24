@@ -28,7 +28,10 @@ import {
               <option value="1" >Α' Λυκείου</option>
               <option value="2" >Β' Λυκείου</option>
               <option value="3" >Γ' Λυκείου</option>
+              <option *ngIf="(selectiontype | async)" value="4" >Δ' Λυκείου</option>
             </select>
+
+           
       </div>
       <div class="form-group">
 
@@ -86,6 +89,7 @@ import {
     private StudentSelectedSpecialSub: Subscription;
     private saveCapacitySub: Subscription;
     private selectionBClass: BehaviorSubject<boolean>;
+    private selectiontype: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;
@@ -106,6 +110,7 @@ import {
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.classCapacity$ = new BehaviorSubject([{}]);
         this.selectionBClass = new BehaviorSubject(false);
+        this.selectiontype = new BehaviorSubject(true);
         this.selectionCClass = new BehaviorSubject(false);
         this.retrievedStudent = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
@@ -117,9 +122,6 @@ import {
             });
 
     }
-
-
-
 
     public showModal(popupMsgId):void {
         console.log("about to show modal");
@@ -155,11 +157,13 @@ import {
         (<any>$('#capacitysaved')).appendTo("body");
         this.retrievedStudent.next(false);
 
-            this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+            this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);                 
-                  console.log(x[0].id, "schoolid!");
-                   this.SchoolId = x[0].id;
-                   
+                  console.log(x[0].type, "schoolid!");
+                   this.SchoolId = x[0].type;
+                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
+                       this.selectiontype.next(false);
+                   }
 
                   },
                   error => {
@@ -182,7 +186,7 @@ import {
                 capacity: '',
             });
             console.log("a class");
-            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, 0, 0, this.SchoolId).subscribe(data => {
+            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, 0, 0).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
                 this.formGroup.patchValue({
@@ -206,9 +210,9 @@ import {
             this.selectionBClass.next(true);
             this.selectionCClass.next(false);
             this.StudentSelected$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
+            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(this.StudentSelected$);
         }
-        else if (txop.value === "3") {
+        else if (txop.value === "3" || txop.value === "4" ) {
             this.formGroup.patchValue({
                 tomeas: '',
                 specialit: '',
@@ -220,12 +224,12 @@ import {
             if (this.formGroup.value.tomeas != '') {
                 var sectorint = +this.formGroup.value.tomeas;
                 this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-                this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);
+                this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool( sectorint).subscribe(this.StudentSelectedSpecial$);
             }
             this.selectionBClass.next(true);
             this.selectionCClass.next(true);
             this.StudentSelected$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(this.StudentSelected$);
+            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(this.StudentSelected$);
         }
 
 
@@ -235,12 +239,13 @@ import {
 
 
     checkbclass(tmop, txop) {
+
         
         var sectorint = +this.formGroup.value.tomeas;
-        console.log(sectorint, "tomeas");
+        console.log(tmop, txop, "tomeas!!!!");
         if (txop.value === "2") {
             console.log("b class");
-            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, 0, this.SchoolId).subscribe(data => {
+            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, 0).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
                 this.formGroup.patchValue({
@@ -253,9 +258,9 @@ import {
                 },
                 () => console.log("Getting Capacity"));
         }
-        if (txop.value === "3") {
+        if (txop.value === "3" || txop.value === "4") {
             this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(this.StudentSelectedSpecial$);
+            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(this.StudentSelectedSpecial$);
 
 
         }
@@ -267,10 +272,10 @@ import {
         var sectorint = +this.formGroup.value.tomeas;
         var specialint = +this.formGroup.value.specialit;
 
-        if (txop.value === "3") {
+        if (txop.value === "3" || txop.value === "4") {
             console.log("c class");
             console.log(sectorint, specialint, "cclass")
-            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, specialint, this.SchoolId).subscribe(data => {
+            this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, specialint).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
                 
@@ -296,15 +301,18 @@ import {
         var tomeas = +this.formGroup.value.tomeas;
         var specialit = +this.formGroup.value.specialit;
         
-         this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity, this.SchoolId).subscribe(data => {
+         this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity).subscribe(data => {
                 
                  },
                 error => {
                     
                     console.log("Error Saving Capacity");
                 },
-                () => console.log("Saved Capacity"));
+                () =>{
+                 console.log("Saved Capacity");
                  this.showModal("#capacitysaved");
+                 });
+                 
 
     }
 

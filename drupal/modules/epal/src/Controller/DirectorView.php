@@ -34,7 +34,7 @@ class DirectorView extends ControllerBase
 
 
 
-public function getSectorsPerSchool(Request $request, $epalId)
+public function getSectorsPerSchool(Request $request)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -42,8 +42,10 @@ public function getSectorsPerSchool(Request $request, $epalId)
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
-//             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => intval($epalId)));
+                $epalId = $user ->  init -> value;
+
+             $schools = $this->entityTypeManager->getStorage('eepal_school')->
+             loadByProperties(array('id' => $epalId));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -56,8 +58,8 @@ public function getSectorsPerSchool(Request $request, $epalId)
 
 
                 $userid = $user -> id();
-                $epalIdNew = intval($epalId);
-                $sectorPerSchool = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id'=> $epalIdNew));
+                //$epalIdNew = intval($epalId);
+                $sectorPerSchool = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id'=> $epalId));
                 $i = 0;
 
             if ($sectorPerSchool) {
@@ -92,7 +94,7 @@ public function getSectorsPerSchool(Request $request, $epalId)
 
     }
 
-public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
+public function getSpecialPerSchool(Request $request , $sectorId)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -100,8 +102,9 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
-//             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => intval($epalId)));
+            $epalId = $user ->  init -> value;
+
+            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => $epalId));
              $school = reset($schools);
              if (!$school) {
                  $this->logger->warning("no access to this school=" . $user->id());
@@ -112,8 +115,8 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
                  return $response;
              }
                 $userid = $user -> id();
-                $epalIdNew = intval($epalId);
-                $specialityPerSchool = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id'=> $epalIdNew));
+                //$epalIdNew = intval($epalId);
+                $specialityPerSchool = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id'=> $epalId));
                 $i = 0;
 
             if ($specialityPerSchool) {
@@ -155,7 +158,7 @@ public function getSpecialPerSchool(Request $request, $epalId , $sectorId)
     }
 
 
-public function getStudentPerSchool(Request $request, $epalId , $selectId, $classId, $limitdown, $limitup)
+public function getStudentPerSchool(Request $request , $selectId, $classId, $limitdown, $limitup)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -163,8 +166,8 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);
         if ($user) {
-//            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
-            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => intval($epalId)));
+            $epalId = $user ->  init -> value;
+            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => $epalId));
             $school = reset($schools);
             if (!$school) {
                 $this->logger->warning("no access to this school=" . $user->id());
@@ -176,17 +179,17 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
             }
 
                 $userid = $user -> id();
-                $epalIdNew = intval($epalId);
+                //$epalIdNew = intval($epalId);
                 $selectIdNew = intval($selectId);
                 if ($classId == 1)
                 {
                  $selectIdNew = -1;
-                 $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalIdNew, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
+                 $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
 
                 }
                 else
                 {
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalIdNew, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id'=> $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId ));
                 }
                 $i = 0;
 
@@ -325,7 +328,7 @@ public function getStudentPerSchool(Request $request, $epalId , $selectId, $clas
 
 
 
-public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid)
+public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
     {
 
 
@@ -340,7 +343,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
-//             $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $user->mail->value, 'id' => intval($epalId)));
+             $schoolid = $user ->  init -> value;
              $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid));
              $school = reset($schools);
              if (!$school) {
@@ -379,7 +382,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 }
 
 
-                if (($tomeas != 0) && ($specialit != 0))
+                if (($tomeas != 0) && ($specialit != 0) && ($taxi == 3))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
                  $classcapacity = reset($CapacityPerClass);
@@ -390,7 +393,15 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 }
 
 
-
+                if (($tomeas != 0) && ($specialit != 0) && ($taxi == 4))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                         $classcapacity->set('capacity_class_specialty_d', $cap);
+                         $classcapacity->save();
+                    }
+                }
 
 
 
@@ -414,7 +425,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
 
 
 
-    public function getSchoolsPerPerfetcure(Request $request, $perfectureId)
+    public function getSchoolsPerPerfetcure(Request $request)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -423,6 +434,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
         $user = reset($users);
         if ($user)
             {
+                $perfectureId = $user ->  init -> value;
                 $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $perfectureId ));
                 if ($schools)        
                 {
@@ -472,6 +484,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
         $user = reset($users);
         if ($user)
             {
+
                $list= array();
 
                 $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));               
@@ -588,8 +601,7 @@ public function returnstatus($id)
 
 
 
-
-public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid)
+public function findCapacity(Request $request,$taxi,$tomeas,$specialit)
     {
 
     $tomeasnew = intval($tomeas);
@@ -599,6 +611,7 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
          $user = reset($users);
          if ($user) {
+            $schoolid = $user ->  init -> value;
            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid));
              $school = reset($schools);
              if (!$school) {
@@ -624,9 +637,7 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                     $list[] = array(
                         'taxi' => $taxi,
                        'capacity' => $classcapacity -> capacity_class_a -> value ,
-                       'test' => "lalalala",
-                       'school' => $schoolid
-                        ); 
+                       ); 
                     }
                 }
 
@@ -647,7 +658,7 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                 }
 
 
-                if (($tomeasnew != 0) && ($specialitnew != 0))
+                if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 3))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
                  $classcapacity = reset($CapacityPerClass);
@@ -663,6 +674,21 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit,$schoolid
                     }
                 }
 
+                if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 4))
+                {
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
+                 $classcapacity = reset($CapacityPerClass);
+                  if ($classcapacity) {
+                    $list[] = array(
+                        'taxi' =>$taxi,
+                        'tomeas' => $tomeasnew,
+                        'special' =>$specialitnew,
+                        'tomeas' =>  $classcapacity ->  specialty_id -> value,
+                        'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
+                        'specialty' =>"fromspecialityd"
+                        );
+                    }
+                }
 
 
 
@@ -716,11 +742,46 @@ public function getSchoolID(Request $request)
 
 
 
+public function gettypeofschool(Request $request)
+    {
 
+        $authToken = $request->headers->get('PHP_AUTH_USER');
 
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+         $user = reset($users);
+         if ($user) {
+                $schid = intval($user ->  init -> value );
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->
+                 loadByProperties(array('id' => $schid));
+                 $school = reset($schools);
+                if (!$school) {
+                     $this->logger->warning("no access to this school=" . $user->id());
+                     $response = new Response();
+                     $response->setContent('No access to this school');
+                     $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                     $response->headers->set('Content-Type', 'application/json');
+                     return $response;
+                 }
+                 else
+                 {
+                        $list = array();
+                        $list[] = array(
+                            'type' =>  $school ->  operation_shift  -> value,    
+                            );
+                        return $this->respondWithStatus(
+                            $list
+                        , Response::HTTP_OK);
+     
+                }
 
+            } else {
 
+            return $this->respondWithStatus([
+                    'message' => t("User not found!"),
+                ], Response::HTTP_FORBIDDEN);
+        }
 
+    }
 
 
    private function respondWithStatus($arr, $s) {

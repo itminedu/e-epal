@@ -29,7 +29,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
   <div>
 
-        <h5><br> >Επιλογή Αναφοράς<br><br></h5>
+        <h5> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide'" >

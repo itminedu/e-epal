@@ -868,6 +868,32 @@ getUserRegistryNo(username, userpassword)  {
       .map(response => response.json());
 }
 
+retrieveAdminSettings(username, userpassword)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/retrieve-settings`  , options)
+      .map(response => response.json());
+}
+
+storeAdminSettings(username, userpassword, capac, dirview, applogin)  {
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+
+  this.createMinistryAuthorizationHeader(headers, username, userpassword );
+  let options = new RequestOptions({ headers: headers });
+
+  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/store-settings/` + Number(capac) + "/" + Number(dirview) + "/" + Number(applogin)  , options)
+      .map(response => response.json());
+}
+
 
 
 getSectors(username, userpassword, classid)  {

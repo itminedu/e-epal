@@ -30,7 +30,7 @@ import {
               <option value="1" >Α' Λυκείου</option>
               <option value="2" >Β' Λυκείου</option>
               <option value="3" >Γ' Λυκείου</option>
-              <option value="4" >Δ' Λυκείου</option>
+              <option *ngIf="(selectiontype | async)" value="4" >Δ' Λυκείου</option>
             </select>
       </div>
       <div class="form-group">
@@ -121,6 +121,7 @@ import {
 
           <br>
           <br>
+          <div *ngIf="(retrievedStudent | async)">
          <div class="form-group" class="row">
           Βρίσκεστε στη σελίδα:
           <div class="col-1">
@@ -144,6 +145,7 @@ import {
               </ul>
 
             </nav>
+            </div>
             </form>
             </div>
 
@@ -169,6 +171,7 @@ import {
     private SubmitedDetailsSub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
+    private selectiontype: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId ;
     private currentclass: Number;
@@ -196,6 +199,7 @@ import {
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
+        this.selectiontype = new BehaviorSubject(true);
 
 
         this.formGroup = this.fb.group({
@@ -226,11 +230,14 @@ import {
 
     ngOnInit() {
 
-        this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+
+    this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);                 
-                  console.log(x[0].id, "schoolid!");
-                   this.SchoolId = x[0].id;
-                   
+                  console.log(x[0].type, "schoolid!");
+                   this.SchoolId = x[0].type;
+                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
+                       this.selectiontype.next(false);
+                   }
 
                   },
                   error => {
@@ -238,6 +245,7 @@ import {
                       console.log("Error Getting School");
                   },
                   () => console.log("Getting School "));
+
                   
         }        
 
@@ -315,7 +323,7 @@ import {
 
     findstudent(txop, pageno) {
 
-        var tot_pages: Number;
+        var tot_pages: number;
         var sectorint = +this.formGroup.value.tomeas;
         if (txop.value === "1") {
             this.currentclass = 1;
@@ -339,6 +347,11 @@ import {
                 if (x.id % 5 > 0) {
                     tot_pages = (x.id - (x.id % 5)) / 5 + 1;
                 }
+                console.log(tot_pages,"totpages")
+                if (isNaN(tot_pages)){
+                  this.retrievedStudent.next(false);
+                  tot_pages = 0;
+                }
                 this.formGroup.get('maxpage').setValue(tot_pages);
             });
 
@@ -346,7 +359,15 @@ import {
 
         this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
             this.StudentInfo$.next(data);
-            this.retrievedStudent.next(true);
+            if (tot_pages === 0){
+                  console.log("tot.pages", this.formGroup.value.maxpage);
+                  this.retrievedStudent.next(false);
+                }
+             else
+              {
+                console.log("tot.pages", this.formGroup.value.maxpage, "max", tot_pages);
+                this.retrievedStudent.next(true);
+              }
         },
             error => {
                 this.StudentInfo$.next([{}]);
@@ -379,8 +400,8 @@ import {
 
     confirmStudent(txop) {
         this._hds.saveConfirmStudents(this.saved, this.type);
-        this.findstudent(txop, this.pageno)
-        console.log(txop, this.pageno, "aaaaaaa");
+        this.findstudent(txop, this.pageno);
+       
     }
 
     checkcclass() {

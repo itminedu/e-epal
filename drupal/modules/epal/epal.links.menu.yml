@@ -124,3 +124,16 @@ epal_class_limits.admin.structure.settings:
   description: 'Configure Epal class limits entities'
   route_name: epal_class_limits.settings
   parent: system.admin_structure
+# Epal config menu items definition
+entity.epal_config.collection:
+  title: 'Epal config list'
+  route_name: entity.epal_config.collection
+  description: 'List Epal config entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_config.admin.structure.settings:
+  title: Epal config settings
+  description: 'Configure Epal config entities'
+  route_name: epal_config.settings
+  parent: system.admin_structure

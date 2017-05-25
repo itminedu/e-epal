@@ -14,6 +14,7 @@ import {reportsSchema, TableColumn} from './reports-schema';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
 import { PDE_ROLE, DIDE_ROLE } from '../../constants';
 import {csvCreator} from './csv-creator';
+import {chartCreator} from './chart-creator';
 
 import {
     FormBuilder,
@@ -119,6 +120,14 @@ import { API_ENDPOINT } from '../../app.settings';
         <i class="fa fa-download"></i>
             <br>Εξαγωγή σε csv
         </button>
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator != 1 || schSelected == 0 || (reportId != 2 ) ">
+        <i class="fa fa-bar-chart"></i>
+            Διάγραμμα
+        </button>
+
+        <div class="d3-chart" *ngIf = "validCreator == 1" #chart>
+        </div>
+        <br><br><br><br><br>
 
     </div>
 
@@ -172,6 +181,12 @@ import { API_ENDPOINT } from '../../app.settings';
     //csvObj:csvCreator ;
     private csvObj = new csvCreator();
 
+    private createGraph: boolean;
+    //d3 creator
+    private chartObj = new chartCreator();
+    @ViewChild('chart') public chartContainer: ElementRef;
+    private d3data: Array<any>;
+
     //private repid: number;
     private routerSub: any;
 
@@ -211,6 +226,7 @@ import { API_ENDPOINT } from '../../app.settings';
           this.courseSelected = 0;
           this.enableRegionFilter = false;
           this.enableCourseFilter = false;
+          this.createGraph = false;
 
     }
 
@@ -312,6 +328,7 @@ import { API_ENDPOINT } from '../../app.settings';
 createReport(regionSel) {
 
   this.validCreator = 0;
+  this.createGraph = false;
 
   let route;
   if (this.reportId === 1)  {
@@ -543,103 +560,93 @@ checkregion(regionId) {
 
 
 
-onSearch(query: string = '') {
+  onSearch(query: string = '') {
 
-  this.csvObj.onSearch(query);
-}
+    this.csvObj.onSearch(query);
+  }
 
-export2Csv()  {
+  export2Csv()  {
 
-  this.csvObj.export2Csv();
+    this.csvObj.export2Csv();
 
-}
-
-
-/*
-export2Csv(): void {
-
-  const columns: TableColumn[] = Array.from(this.columnMap.values());
-
-  let encodedStr = columns.reduce((acct, current: TableColumn) => {
-
-    if (current.isExport != false) {
-      return acct += '"' + current.title + '",';
-    }
-    else {
-      return acct;
-    }
-  }, '');
-  encodedStr = encodedStr.slice(0, -1);
-  encodedStr += '\r\n';
-
-  let fields: string[] = columns.reduce((acct, column: TableColumn) => {
-
-    if (column.isExport != false) {
-      acct.push(column.field);
-    }
-    return acct;
-  }, []);
-
-  this.source.getAll().then((rows) => {
-
-    rows.forEach((row) => {
-      fields.forEach((field) => {
-        if (row.hasOwnProperty(field)) {
-          let value = row[field];
-
-          if (!value) {
-            value = "";
-          }
-          let valuePrepare = this.columnMap.get(field).valuePrepareFunction;
-          if (valuePrepare) {
-            value = valuePrepare.call(null, value, row);
-          }
-          encodedStr += '"' + value + '",'
-        }
-      });
-      encodedStr = encodedStr.slice(0, -1);
-      encodedStr += '\r\n';
-    });
-
-    let a = document.createElement("a");
-    a.setAttribute('style', 'display:none;');
-    document.body.appendChild(a);
-
-    //Set utf-8 header to let excel recognize its encoding
-    let blob = new Blob(["\ufeff", encodedStr], {type: 'text/csv'});
-    a.href = window.URL.createObjectURL(blob);
-    a.download = (this.settings.fileName || 'epalSystemReport') + "all_stat" +  '.csv';
-    a.click();
-  });
-}
+  }
 
 
-prepareColumnMap(): void {
-
-  for (const key in this.settings.columns) {
-
-    if (!this.settings.columns.hasOwnProperty(key)) {
-      continue;
-    }
-
-    const title: string = this.settings.columns[key]['title'];
-    let column: TableColumn = new TableColumn();
-    column.type = this.settings.columns[key]['type'];
-    column.title = this.settings.columns[key]['title'];
-    column.field = key;
-    column.isDisplay = this.settings.columns[key]['isDisplay'];
-    column.isExport = this.settings.columns[key]['isExport'];
-    column.valuePrepareFunction = this.settings.columns[key]['valuePrepareFunction'];
-    this.columnMap.set(column.field, column);
-
-    if (this.settings.columns[key].isDisplay == false) {
-      delete this.settings.columns[key];
-    }
+createDiagram() {
+  if (!this.createGraph)  {
+    this.generateGraphData();
+    this.chartObj.d3data = this.d3data;
+    this.chartObj.chartContainer = this.chartContainer;
+    this.chartObj.createChart();
+    this.chartObj.updateChart();
+    this.createGraph = true;
   }
 }
-*/
+
+generateGraphData() {
+
+   this.d3data = [];
+
+   if (this.reportId === 2)  {
+     let labelsX = [];
+     labelsX.push("Σχολείο");
+     labelsX.push("Α\' τάξη");
+     labelsX.push("Β\' τάξη");
+     labelsX.push("Γ\' τάξη");
+     labelsX.push("Δ\' τάξη");
+
+     this.d3data.push([
+       labelsX[0],
+       this.data[0].percTotal,
+     ]);
+     this.d3data.push([
+       labelsX[1],
+       this.data[0].percA,
+     ]);
+     this.d3data.push([
+       labelsX[2],
+       this.data[0].percB,
+     ]);
+     this.d3data.push([
+       labelsX[3],
+       this.data[0].percC,
+     ]);
+     this.d3data.push([
+       labelsX[4],
+       this.data[0].percD,
+     ]);
+
+   }
+
+   /*
+   else if (this.reportId === 3) {
+
+     let labelsX = [];
+     labelsX.push("1η Προτίμηση");
+     labelsX.push("2η Προτίμηση");
+     labelsX.push("3η Προτίμηση");
+     labelsX.push("Μη τοποθετημένοι");
+     console.log("Length:");
+     console.log(this.data.length);
+     for (let i = 0; i < this.data.length   ; i++) {
+       this.d3data.push([
+         //labelsX[i-1],
+         this.data[i].section,
+         this.data[i].percentage,
+       ]);
+    // }
 
 
+   }
+
+
+  }
+  */
+
+
+
+
+ }
 
 
 

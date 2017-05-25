@@ -1,4 +1,4 @@
-import { LOGININFO_SAVE, LOGININFO_RECEIVED } from '../constants';
+import { LOGININFO_SAVE, PROFILE_SAVE, LOGININFO_RECEIVED } from '../constants';
 import { LOGININFO_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
@@ -30,6 +30,15 @@ export class LoginInfoActions {
       loginInfos
     }
   });
+};
+
+saveProfile = (profile) => {
+  return this._ngRedux.dispatch({
+   type: PROFILE_SAVE,
+   payload: {
+     profile
+   }
+ });
 };
 
 

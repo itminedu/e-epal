@@ -196,3 +196,22 @@ view published epal class limits entities:
 
 view unpublished epal class limits entities:
   title: 'View unpublished Epal class limits entities'
+add epal config entities:
+  title: 'Create new Epal config entities'
+
+administer epal config entities:
+  title: 'Administer Epal config entities'
+  description: 'Allow to access the administration form to configure Epal config entities.'
+  restrict access: true
+
+delete epal config entities:
+  title: 'Delete Epal config entities'
+
+edit epal config entities:
+  title: 'Edit Epal config entities'
+
+view published epal config entities:
+  title: 'View published Epal config entities'
+
+view unpublished epal config entities:
+  title: 'View unpublished Epal config entities'

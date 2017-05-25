@@ -102,6 +102,29 @@ class Distribution extends ControllerBase {
 						], Response::HTTP_FORBIDDEN);
 		}
 
+		 //check where distribution can be done now ($capacityDisabled / $directorViewDisabled settings)
+		$capacityDisabled = false;
+		$directorViewDisabled = false;
+		$config_storage = $this->entityTypeManager->getStorage('epal_config');
+		$epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+		$epalConfig = reset($epalConfigs);
+		if (!$epalConfig) {
+			 return $this->respondWithStatus([
+							 'message' => t("EpalConfig Enity not found"),
+					 ], Response::HTTP_FORBIDDEN);
+		}
+		else {
+			 $capacityDisabled = $epalConfig->lock_school_capacity->getString();
+			 $directorViewDisabled = $epalConfig->lock_school_students_view->getString();
+		}
+		if ($capacityDisabled === "0" or $directorViewDisabled === "0")  {
+			 return $this->respondWithStatus([
+							 'message' => t("capacityDisabled and / or directorViewDisabled settings are false"),
+					 ], Response::HTTP_FORBIDDEN);
+		}
+
+
+
 
 		$transaction = $this->connection->startTransaction();
 

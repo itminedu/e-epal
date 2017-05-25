@@ -31,6 +31,7 @@ export interface IStudentDataField {
   relationtostudent: string;
   currentclass: string;
   points: number;
+  telnum: string;
 }
 
 export type IStudentDataFields = List<IStudentDataField>;

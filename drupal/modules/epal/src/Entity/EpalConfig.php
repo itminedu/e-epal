@@ -206,7 +206,7 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
           ->setSettings(array(
             'text_processing' => 0,
           ))
-          ->setRequired(TRUE)
+          ->setRequired(FALSE)
           ->setDefaultValue(FALSE)
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -226,7 +226,7 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
           ->setSettings(array(
             'text_processing' => 0,
           ))
-          ->setRequired(TRUE)
+          ->setRequired(FALSE)
           ->setDefaultValue(FALSE)
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -246,7 +246,7 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
           ->setSettings(array(
             'text_processing' => 0,
           ))
-          ->setRequired(TRUE)
+          ->setRequired(FALSE)
           ->setDefaultValue(FALSE)
           ->setDisplayOptions('view', array(
             'label' => 'above',

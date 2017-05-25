@@ -55,8 +55,92 @@ import { HelperDataService } from '../../services/helper-data-service';
              <breadcrumbs></breadcrumbs>
         </div>
 
-        <application-preview-select></application-preview-select>
-        <button type="button button-lg pull-right" *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right" (click)="submitNow()">Υποβολή</button>
+<!--        <application-preview-select></application-preview-select>   -->
+
+        <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" style = "margin-bottom: 20px;" >
+            <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
+            </div>
+            <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                <div class="col-md-3" style="font-size: 0.8em;">Όνομα</div>
+                <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_name }}</div>
+                <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο</div>
+                <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_surname }}</div>
+            </div>
+            <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                <div class="col-md-3" style="font-size: 0.8em;">Όνομα πατέρα</div>
+                <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_fathername }}</div>
+                <div class="col-md-3" style="font-size: 0.8em;">Όνομα μητέρας</div>
+                <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_mothername }}</div>
+            </div>
+        </div>
+
+        <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
+
+        <ul class="list-group left-side-view" style="margin-bottom: 20px;">
+        <li class="list-group-item active">
+            Στοιχεία μαθητή
+        </li>
+        </ul>
+        <div><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
+        <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
+        <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
+        <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{studentDataField$.fathersurname}} </p></div>
+        <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
+        <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{studentDataField$.mothersurname}} </p></div>
+        <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
+                <table>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{studentDataField$.regionaddress}} </p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{studentDataField$.regiontk}} </p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{studentDataField$.regionarea}} </p>
+                                </div>
+                            </td>
+                       </tr>
+                </table>
+                <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
+                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
+                <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
+
+                <ul class="list-group left-side-view" style="margin-bottom: 20px;">
+                <li class="list-group-item active">
+                            <div *ngIf="currentUrl === '/application-submit'">
+                                   Κοινωνικά/Εισοδηματικά Κριτήρια
+                            </div>
+                </li>
+                </ul>
+        </div>
+
+            <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
+            <div *ngIf="criteriaField$.selected === true">
+                  {{criteriaField$.name}}
+            </div>
+            </div>
+
+            <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(criteria$ | async).size > 0">
+                <div class="col-md-6">
+                    <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
+                        <i class="fa fa-backward"></i>
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
+                        <span style="font-size: 0.9em; font-weight: bold;">Υποβολή&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
+                    </button>
+                </div>
+
+            </div>
+
   `
 })
 
@@ -90,6 +174,11 @@ import { HelperDataService } from '../../services/helper-data-service';
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
     public currentUrl: string;
+    private cu_name: string;
+    private cu_surname: string;
+    private cu_fathername: string;
+    private cu_mothername: string;
+    private disclaimer_checked: number;
 
     constructor(
                 private _hds: HelperDataService,
@@ -123,14 +212,18 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     ngOnInit() {
 
-
-
-
         (<any>$('#studentFormSentNotice')).appendTo("body");
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
                   this.authToken = loginInfoToken.auth_token;
+
+                  this.cu_name = loginInfoToken.cu_name;
+                  this.cu_surname = loginInfoToken.cu_surname;
+                  this.cu_fathername = loginInfoToken.cu_fathername;
+                  this.cu_mothername = loginInfoToken.cu_mothername;
+                  this.disclaimer_checked = loginInfoToken.disclaimer_checked;
+
                   return loginInfoToken;
               }, {});
           }
@@ -232,11 +325,17 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     submitNow() {
           //αποστολή στοιχείων μαθητή στο entity: epal_student
-          let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+          // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+          let aitisiObj: Array<any> = [];
           let epalObj: Array<StudentEpalChosen> = [];
           let criteriaObj: Array<StudentCriteriaChosen> = [];
 
           aitisiObj[0] = this.student;
+          aitisiObj[0].cu_name = this.cu_name;
+          aitisiObj[0].cu_surname = this.cu_surname;
+          aitisiObj[0].cu_fathername = this.cu_fathername;
+          aitisiObj[0].cu_mothername = this.cu_mothername;
+          aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
           //console.log(aitisiObj[0]['studentbirthdate']);
           aitisiObj[0]['currentclass'] = this.classSelected;
           //aitisiObj[0]['studentamka'] = ...;
@@ -263,7 +362,6 @@ import { HelperDataService } from '../../services/helper-data-service';
 
 
   submitRecord(record) {
-    let auth_str = this.authToken + ":" + this.authToken;
     let authTokenPost = this.authToken + ":" + this.authToken;
 
     let headers = new Headers({
@@ -326,6 +424,10 @@ import { HelperDataService } from '../../services/helper-data-service';
       this.isModalShown.next(false);
       console.log("going to post-submit");
       this.router.navigate(['/post-submit']);
+  }
+
+  navigateBack() {
+      this.router.navigate(['/student-application-form-main']);
   }
 
 }

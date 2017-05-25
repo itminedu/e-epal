@@ -6,6 +6,7 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-state';
+import { MINISTRY_ROLE } from '../constants';
 
 @Injectable()
 export class AuthService {
@@ -22,8 +23,9 @@ export class AuthService {
             }).subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
                     loginInfo.reduce(({}, loginInfoToken) => {
-                        console.log(loginInfoToken.auth_role,"aaaaaaa");
-                        if (loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) {
+                        if ((loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) ||
+                        (loginInfoToken.minedu_username && loginInfoToken.minedu_username.length > 0 && loginInfoToken.auth_role === MINISTRY_ROLE && role === MINISTRY_ROLE)
+                    ) {
                             resolve(true);
                         }
                         else {

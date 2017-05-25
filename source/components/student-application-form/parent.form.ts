@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs/Rx';
 import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import { HelperDataService } from '../../services/helper-data-service';
+import { LoginInfoActions } from '../../actions/logininfo.actions'
 
 import {
     FormBuilder,
@@ -37,6 +38,7 @@ import {AppSettings} from '../../app.settings';
        constructor(private fb: FormBuilder,
                 private router: Router,
                 private hds: HelperDataService,
+                private _prfa: LoginInfoActions,
                 private rd: Renderer) {
             this.verificationCodeSent = new BehaviorSubject(false);
             this.verificationCodeVerified = new BehaviorSubject(false);
@@ -152,6 +154,7 @@ import {AppSettings} from '../../app.settings';
         this.showLoader.next(true);
         this.hds.saveProfile(this.formGroup.value)
             .then(res => {
+                this._prfa.saveProfile(this.formGroup.value);
                 this.showLoader.next(false);
                 this.router.navigate(['/epal-class-select']);})
             .catch(err => {

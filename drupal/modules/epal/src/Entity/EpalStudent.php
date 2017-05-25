@@ -505,7 +505,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ->setLabel(t('Ημερομηνία γέννησης μαθητή'))
         ->setDescription(t('Δώσε την Ημερομηνία γέννησης μαθητή.'))
         ->setSetting('datetime_type', 'date')
-        ->setRequired(false)
+        ->setRequired(true)
         ->setDisplayOptions('view', array(
           'label' => 'above',
           'type' => 'string',
@@ -543,7 +543,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
-		  ->setRequired(false)
+		  ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -564,7 +564,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
-		  ->setRequired(false)
+		  ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -585,7 +585,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
-		  ->setRequired(false)
+		  ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -606,7 +606,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
-		  ->setRequired(false)
+		  ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -627,6 +627,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 20,
             'text_processing' => 0,
           ))
+          ->setRequired(false)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -647,6 +648,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 100,
             'text_processing' => 0,
           ))
+          ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -667,7 +669,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 10,
             'text_processing' => 0,
           ))
-          ->setDefaultValue('')
+          ->setRequired(true)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'string',
@@ -687,26 +689,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 100,
             'text_processing' => 0,
           ))
-          ->setDefaultValue('')
-          ->setDisplayOptions('view', array(
-            'label' => 'above',
-            'type' => 'string',
-            'weight' => -4,
-          ))
-          ->setDisplayOptions('form', array(
-            'type' => 'string_textfield',
-            'weight' => -4,
-          ))
-          ->setDisplayConfigurable('form', TRUE)
-          ->setDisplayConfigurable('view', TRUE);
-
-	  $fields['regionarea'] = BaseFieldDefinition::create('string')
-          ->setLabel(t('Πόλη-Κοινότητα'))
-          ->setDescription(t('Δώσε την πόλη ή κοινότητα που διαμένεις.'))
-          ->setSettings(array(
-            'max_length' => 100,
-            'text_processing' => 0,
-          ))
+          ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -727,6 +710,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
+          ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -747,6 +731,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 10,
             'text_processing' => 0,
           ))
+          ->setRequired(false)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -912,6 +897,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
+          ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -932,6 +918,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
             'max_length' => 50,
             'text_processing' => 0,
           ))
+          ->setRequired(true)
           ->setDefaultValue('')
           ->setDisplayOptions('view', array(
             'label' => 'above',
@@ -969,7 +956,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ->setSettings(array(
           'text_processing' => 0,
         ))
-        ->setRequired(false)
+        ->setRequired(true)
         ->setDisplayOptions('view', array(
           'label' => 'above',
           'type' => 'boolean',
@@ -981,6 +968,90 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface {
         ))
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
+
+        $fields['guardian_name'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Όνομα κηδεμόνα'))
+            ->setDescription(t('Δώσε το όνομα κηδεμόνα.'))
+            ->setSettings(array(
+              'max_length' => 50,
+              'text_processing' => 0,
+            ))
+      	  ->setRequired(true)
+            ->setDefaultValue('')
+            ->setDisplayOptions('view', array(
+              'label' => 'above',
+              'type' => 'string',
+              'weight' => -4,
+            ))
+            ->setDisplayOptions('form', array(
+              'type' => 'string_textfield',
+              'weight' => -4,
+            ))
+            ->setDisplayConfigurable('form', TRUE)
+            ->setDisplayConfigurable('view', TRUE);
+
+            $fields['guardian_surname'] = BaseFieldDefinition::create('string')
+                ->setLabel(t('Επώνυμο κηδεμόνα'))
+                ->setDescription(t('Δώσε το επώνυμο κηδεμόνα.'))
+                ->setSettings(array(
+                  'max_length' => 50,
+                  'text_processing' => 0,
+                ))
+              ->setRequired(true)
+                ->setDefaultValue('')
+                ->setDisplayOptions('view', array(
+                  'label' => 'above',
+                  'type' => 'string',
+                  'weight' => -4,
+                ))
+                ->setDisplayOptions('form', array(
+                  'type' => 'string_textfield',
+                  'weight' => -4,
+                ))
+                ->setDisplayConfigurable('form', TRUE)
+                ->setDisplayConfigurable('view', TRUE);
+
+                $fields['guardian_fathername'] = BaseFieldDefinition::create('string')
+                    ->setLabel(t('Όνομα πατέρα κηδεμόνα'))
+                    ->setDescription(t('Δώσε το όνομα πατέρα του κηδεμόνα.'))
+                    ->setSettings(array(
+                      'max_length' => 50,
+                      'text_processing' => 0,
+                    ))
+                  ->setRequired(true)
+                    ->setDefaultValue('')
+                    ->setDisplayOptions('view', array(
+                      'label' => 'above',
+                      'type' => 'string',
+                      'weight' => -4,
+                    ))
+                    ->setDisplayOptions('form', array(
+                      'type' => 'string_textfield',
+                      'weight' => -4,
+                    ))
+                    ->setDisplayConfigurable('form', TRUE)
+                    ->setDisplayConfigurable('view', TRUE);
+
+                    $fields['guardian_mothername'] = BaseFieldDefinition::create('string')
+                        ->setLabel(t('Όνομα μητέρας κηδεμόνα'))
+                        ->setDescription(t('Δώσε το όνομα μητέρας του κηδεμόνα.'))
+                        ->setSettings(array(
+                          'max_length' => 50,
+                          'text_processing' => 0,
+                        ))
+                      ->setRequired(true)
+                        ->setDefaultValue('')
+                        ->setDisplayOptions('view', array(
+                          'label' => 'above',
+                          'type' => 'string',
+                          'weight' => -4,
+                        ))
+                        ->setDisplayOptions('form', array(
+                          'type' => 'string_textfield',
+                          'weight' => -4,
+                        ))
+                        ->setDisplayConfigurable('form', TRUE)
+                        ->setDisplayConfigurable('view', TRUE);
 
    $fields['status'] = BaseFieldDefinition::create('boolean')
 		  ->setLabel(t('Publishing status'))

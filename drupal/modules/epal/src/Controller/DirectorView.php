@@ -199,7 +199,9 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                  if  ($limitdown==$limitup && $limitup == 0)
                      {
                             $list=array(
-                                   'id' => sizeof($studentPerSchool)  
+                                   'id' => sizeof($studentPerSchool),
+                                   'up' => $limitup,  
+                                   'down' => $limitdown
                                 ); 
                      }
 

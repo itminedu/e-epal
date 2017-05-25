@@ -62,9 +62,9 @@ import {
                      <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
                       <strong><label>Επιβεβαίωση Εγγραφής:</label> </strong>
                       <select #cb name="{{StudentDetails$.id}}" (change)="updateCheckedOptions(StudentDetails$.id, cb)" >
-                          <option value=1>Ναι</option>
-                          <option value=2>Όχι</option>
-                          <option value=3 selected></option>
+                          <option value=1 [selected]="StudentDetails$.checkstatus === '1' ">Ναι</option>
+                          <option value=2 [selected]="StudentDetails$.checkstatus === '0' ">Όχι</option>
+                          <option value=3 [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'"></option>
                       </select>
                       <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(txoption)">
                            Επιβεβαίωση Εγγραφής
@@ -164,6 +164,8 @@ import {
     private StudentInfo$: BehaviorSubject<any>;
     private StudentInfoSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
+    private SavedStudentsSub: Subscription;
+    private SavedStudents$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
     private StudentSelectedSpecial$: BehaviorSubject<any>;
     private StudentSelectedSpecialSub: Subscription;
@@ -194,6 +196,7 @@ import {
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.StudentInfo$ = new BehaviorSubject([{}]);
         this.StudentsSize$ = new BehaviorSubject({});
+        this.SavedStudents$ = new BehaviorSubject({});
         this.SubmitedDetails$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.selectionBClass = new BehaviorSubject(false);
@@ -251,6 +254,8 @@ import {
 
 
     verifyclass(txop) {
+      this.limitdown = 0;
+      this.limitup = 5;
       console.log(this.SchoolId,"schoolida");
         this.pageno = 1;
         this.retrievedStudent.next(false);
@@ -356,7 +361,7 @@ import {
             });
 
         }
-
+        console.log(this.limitdown, this.limitup,"mits");
         this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
             this.StudentInfo$.next(data);
             if (tot_pages === 0){
@@ -399,8 +404,21 @@ import {
 
 
     confirmStudent(txop) {
-        this._hds.saveConfirmStudents(this.saved, this.type);
-        this.findstudent(txop, this.pageno);
+
+      this.SavedStudentsSub = this._hds.saveConfirmStudents(this.saved, this.type).subscribe(data => {
+            this.SavedStudents$.next(data);
+        
+        },
+            error => {
+                this.SavedStudents$.next([{}]);
+                console.log("Error saving Students");
+            },
+            () => {
+              console.log("saved Students");
+            this.findstudent(txop, this.pageno);
+          });
+       
+        
        
     }
 

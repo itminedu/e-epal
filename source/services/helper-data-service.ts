@@ -729,27 +729,19 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    informUnlocatedStudents(username, userpassword) {
+    informUnlocatedStudents(username, userpassword, unallocated) {
 
       let headers = new Headers({
           "Content-Type": "application/json",
       });
       this.createMinistryAuthorizationHeader(headers, username, userpassword );
       let options = new RequestOptions({ headers: headers });
-      /*
-      return new Promise((resolve, reject) => {
-          this.http.post(`${AppSettings.API_ENDPOINT}/ministry/send-massive-mail`, {username: username, userpassword: userpassword}, options)
-              .map(response => response.json())
-              .subscribe(data => {
-                  resolve(data);
-              },
-              error => {
-                  reject("Error POST in informUnlocatedStudents");
-              },
-              () => console.log(""));
-      });
-      */
-      return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/send-massive-mail` , options)
+      let route="";
+      if (unallocated == true)
+        route = "ministry/send-unallocated-massive-mail";
+      else
+        route = "ministry/send-located-massive-mail";
+      return this.http.get(`${AppSettings.API_ENDPOINT}/` + route , options)
           .map(response => response.json());
     }
 

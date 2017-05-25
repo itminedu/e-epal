@@ -117,8 +117,9 @@ import {
                     this.studentDataGroup.controls['regiontk'].setValue(studentDataField.regiontk);
                     this.studentDataGroup.controls['regionarea'].setValue(studentDataField.regionarea);
                     this.studentDataGroup.controls['certificatetype'].setValue(studentDataField.certificatetype);
+                    this.studentDataGroup.controls['relationtostudent'].setValue(studentDataField.relationtostudent);
                     this.studentDataGroup.controls['telnum'].setValue(studentDataField.telnum);
-                    this.studentDataGroup.setValue({studentbirthdate: this.populateDate(studentDataField.studentbirthdate)});
+                    this.studentDataGroup.controls['studentbirthdate'].setValue(this.populateDate(studentDataField.studentbirthdate));
                     return studentDataField;
                 }, {});
             }
@@ -192,13 +193,19 @@ import {
     }
 
     populateDate(d) {
-        return {
-            date: {
-                year: d ? parseInt(d.substr(0,4)) : 0,
-                month: d ? parseInt(d.substr(6,8)) : 0,
-                day: d ? parseInt(d.substr(8,10)) : 0
-            }
-        };
+        if (d && d.length > 0) {
+            return {
+                date: {
+                    year: d ? parseInt(d.substr(0,4)) : 0,
+                    month: d ? parseInt(d.substr(6,8)) : 0,
+                    day: d ? parseInt(d.substr(8,10)) : 0
+                }
+            };
+        } else {
+            return {
+                date: null
+            };
+        }
     }
 
     setDate() {

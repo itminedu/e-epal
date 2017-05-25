@@ -214,12 +214,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         return new Promise((resolve, reject) => {
             let getConnectionString = null;
 
-            console.log("Class:");
-            console.log(classActive);
-
-            console.log("Course:");
-            console.log(courseActive);
-
             if (classActive === 1)
                 getConnectionString = `${AppSettings.API_ENDPOINT}/regions/list`;
             else if (classActive === 2)
@@ -228,9 +222,6 @@ export class HelperDataService implements OnInit, OnDestroy {
                 getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool/list?course_id=${courseActive}`;
             else if (classActive === 4)
                 getConnectionString = `${AppSettings.API_ENDPOINT}/coursesperschool_night/list?course_id=${courseActive}`;
-
-            console.log("Path:");
-            console.log(getConnectionString);
 
             this.http.get(getConnectionString, options)
                 .map(response => response.json())
@@ -353,6 +344,11 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser`, options)
                 .map(response => response.json())
                 .subscribe(data => {
+                    window.onbeforeunload = function (e) {
+                        var confirmationMessage = "\o/";
+                        e.returnValue = confirmationMessage;
+                        return confirmationMessage;
+                    };
                     resolve(this.transformUserSchema(data, oauthtoken, oauthrole));
                 }, // put the data returned from the server in our variable
                 error => {
@@ -421,6 +417,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 .map(response => response)
                 .subscribe(data => {
                     this._cookieService.removeAll();
+                    window.onbeforeunload = function () {console.log("unloading")};
                     resolve(data);
                 }, // put the data returned from the server in our variable
                 error => {
@@ -724,8 +721,6 @@ getAdminAreas(username, userpassword, regionid)  {
   this.createMinistryAuthorizationHeader(headers, username, userpassword );
   let options = new RequestOptions({ headers: headers });
 
-  console.log("Test");
-  console.log(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid);
   return this.http.get(`${AppSettings.API_ENDPOINT}/adminfields/list/?region=` + regionid  , options)
       .map(response => response.json());
 }
@@ -766,8 +761,7 @@ getUserRegistryNo(username, userpassword)  {
   this.createMinistryAuthorizationHeader(headers, username, userpassword );
   let options = new RequestOptions({ headers: headers });
 
-  //console.log("Test");
-  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/retrieve-registry-id`  , options)
+    return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/retrieve-registry-id`  , options)
       .map(response => response.json());
 }
 
@@ -818,8 +812,6 @@ getCourses(username, userpassword, sectorid)  {
 
 
 getCapacityPerSchool(taxi, tomeas, specialit) {
-
-        console.log(tomeas,specialit,"news")
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;

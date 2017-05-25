@@ -32,6 +32,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
                 </button>
             </div>
             </div>
+
      </form>
   </div>
   `

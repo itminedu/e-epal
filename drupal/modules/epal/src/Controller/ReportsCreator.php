@@ -514,7 +514,7 @@ class ReportsCreator extends ControllerBase {
 				array_push($numClasses, $numClassCour);
 				array_push($numClasses, $numClassCour_D);
 
-				if ($sectorId === "0" && $courseId === 0)	{
+				if ($sectorId === "0" && $courseId === "0")	{
 
 					$clidstart = 1;
 					$clidend = 4;

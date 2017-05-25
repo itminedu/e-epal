@@ -32,6 +32,7 @@ import ReportAllStat from '../components/minister/report-all-stat';
 import ReportGeneral from '../components/minister/report-general';
 import ReportNoCapacity from '../components/minister/report-no-capacity';
 import InformStudents from '../components/minister/minister-informstudents';
+import MinisterSettings from '../components/minister/minister-settings';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
@@ -65,6 +66,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/report-general/:reportId', component: ReportGeneral },
   { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity },
   { path: 'ministry/minister-informstudents', component: InformStudents },
+  { path: 'ministry/minister-settings', component: MinisterSettings },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
 ];
 
@@ -96,6 +98,7 @@ export const MainDeclarations = [
   ReportGeneral,
   ReportNoCapacity,
   InformStudents,
+  MinisterSettings,
   PerfectureView,
   Breadcrumbs,
   DirectorButtons

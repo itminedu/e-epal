@@ -182,6 +182,22 @@ epal.ministry.massive_mail:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToStudents'
   requirements:
       _user_is_logged_in: 'TRUE'
+epal.ministry.retrievesettings:
+  path: '/ministry/retrieve-settings'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\MinisterSettings::retrieveSettings'
+  requirements:
+      _user_is_logged_in: 'TRUE'
+epal.ministry.storesettings:
+  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\MinisterSettings::storeSettings'
+  requirements:
+      _user_is_logged_in: 'TRUE'
 regionview:
   path: '/epal/ScoolperPerf/{perfectureId}'
   options:

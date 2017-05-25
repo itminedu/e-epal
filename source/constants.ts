@@ -21,6 +21,7 @@ export const EPALCLASSES_SAVE = 'EPALCLASSES_SAVE';
 export const EPALCLASSES_INIT = 'EPALCLASSES_INIT';
 
 export const LOGININFO_SAVE = 'LOGININFO_SAVE';
+export const PROFILE_SAVE = 'PROFILE_SAVE';
 
 export const LOGININFO_RECEIVED = 'LOGININFO_RECEIVED';
 
@@ -34,7 +35,7 @@ export const CRITERIA_SAVE = 'CRITERIA_SAVE';
 export const CRITERIA_INIT = 'CRITERIA_INIT';
 
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
-export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
+export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΙΎΌΏα-ωάέήίΐύόώ ]*$';
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 export const VALID_DIGITS_PATTERN = '69[0-9]*$';

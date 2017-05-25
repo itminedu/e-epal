@@ -173,7 +173,6 @@ import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-st
 
     ngOnInit() {
         this.currentUrl = this.router.url;
-        console.log(this.currentUrl,"url");
         this.sectorsSub = this._ngRedux.select(state => {
             state.sectors.reduce((prevSector, sector) => {
                 sector.courses.reduce((prevCourse, course) => {

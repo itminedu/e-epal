@@ -116,8 +116,7 @@ export default class MinistryHome implements OnInit {
             if (success)  {
               this.authRole = 'supervisor';
               this._hds.setMineduCurrentUser(this.userDataGroup.value['minedu_username'], this.userDataGroup.value['minedu_userpassword'],   this.authRole);
-              console.log("MPHKA");
-              //this.validLogin = true;
+
               this.validLogin = 1;
               this.userDataGroup.value['cu_name'] = this.userDataGroup.value['minedu_username'];
               this.userDataGroup.value['auth_role'] = 'supervisor';

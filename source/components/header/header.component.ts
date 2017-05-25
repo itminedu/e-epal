@@ -28,6 +28,9 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     public cuser :any;
     private showLoader$: BehaviorSubject<boolean>;
+    private modalTitle: BehaviorSubject<string>;
+    private modalText: BehaviorSubject<string>;
+    private modalHeader: BehaviorSubject<string>;
 
     constructor( private _ata: LoginInfoActions,
                 private _hds: HelperDataService,
@@ -46,10 +49,14 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                         this.cuName = '';
                         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
                         this.showLoader$ = new BehaviorSubject(false);
+                        this.modalTitle =  new BehaviorSubject("");
+                        this.modalText =  new BehaviorSubject("");
+                        this.modalHeader =  new BehaviorSubject("");
 
         };
 
     ngOnInit() {
+        (<any>$('#headerNotice')).appendTo("body");
         this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -66,6 +73,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        (<any>$('#headerNotice')).remove();
         this.loginInfo$.unsubscribe();
 
     }
@@ -102,6 +110,14 @@ export default class HeaderComponent implements OnInit, OnDestroy {
             this.showLoader$.next(false);
             console.log(err)
         });
+    }
+
+    public showModal():void {
+        (<any>$('#headerNotice')).modal('show');
+    }
+
+    public hideModal():void {
+        (<any>$('#headerNotice')).modal('hide');
     }
 
 }

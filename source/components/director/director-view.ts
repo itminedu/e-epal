@@ -30,6 +30,7 @@ import {
               <option value="1" >Α' Λυκείου</option>
               <option value="2" >Β' Λυκείου</option>
               <option value="3" >Γ' Λυκείου</option>
+              <option *ngIf="(selectiontype | async)" value="4" >Δ' Λυκείου</option>
             </select>
       </div>
       <div class="form-group">
@@ -65,7 +66,7 @@ import {
                           <option value=2>Όχι</option>
                           <option value=3 selected></option>
                       </select>
-                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent()">
+                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(txoption)">
                            Επιβεβαίωση Εγγραφής
                        </button>
 
@@ -120,6 +121,7 @@ import {
 
           <br>
           <br>
+          <div *ngIf="(retrievedStudent | async)">
          <div class="form-group" class="row">
           Βρίσκεστε στη σελίδα:
           <div class="col-1">
@@ -143,6 +145,7 @@ import {
               </ul>
 
             </nav>
+            </div>
             </form>
             </div>
 
@@ -168,12 +171,13 @@ import {
     private SubmitedDetailsSub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
     private selectionBClass: BehaviorSubject<boolean>;
+    private selectiontype: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
     private SchoolId ;
     private currentclass: Number;
     private saved: Array<number> = new Array();
     private limitdown = 0;
-    private limitup = 25;
+    private limitup = 5;
     private pageno = 1;
     private userActive = <number>-1;
     private type: Number;
@@ -195,6 +199,7 @@ import {
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
+        this.selectiontype = new BehaviorSubject(true);
 
 
         this.formGroup = this.fb.group({
@@ -225,11 +230,14 @@ import {
 
     ngOnInit() {
 
-        this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
+
+    this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);                 
-                  console.log(x[0].id, "schoolid!");
-                   this.SchoolId = x[0].id;
-                   
+                  console.log(x[0].type, "schoolid!");
+                   this.SchoolId = x[0].type;
+                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
+                       this.selectiontype.next(false);
+                   }
 
                   },
                   error => {
@@ -237,6 +245,7 @@ import {
                       console.log("Error Getting School");
                   },
                   () => console.log("Getting School "));
+
                   
         }        
 
@@ -251,7 +260,7 @@ import {
 
         }
         else if (txop.value === "2") {
-            this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(data => {
+            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(data => {
                 this.selectionBClass.next(true);
                 this.selectionCClass.next(false);
                 this.StudentSelected$.next(data);
@@ -263,13 +272,12 @@ import {
                 },
                 () => console.log("Getting StudentSelectedSpecial"));
         }
-        else if (txop.value === "3") {
+        else if (txop.value === "3" || txop.value === "4") {
             var sectorint = +this.formGroup.value.tomeas;
-            console.log(sectorint, "test");
-            if (this.formGroup.value.tomeas != '') {
+           if (this.formGroup.value.tomeas != '') {
                 var sectorint = +this.formGroup.value.tomeas;
 
-                this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(data => {
+                this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(data => {
                     this.StudentSelectedSpecial$.next(data);
                 },
                     error => {
@@ -279,7 +287,7 @@ import {
                     () => console.log("Getting StudentSelectedSpecial"));
             }
 
-            this.StudentSelectedSub = this._hds.getSectorPerSchool(this.SchoolId).subscribe(data => {
+            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(data => {
                 this.StudentSelected$.next(data);
                 this.selectionBClass.next(true);
                 this.selectionCClass.next(true);
@@ -299,9 +307,9 @@ import {
         this.retrievedStudent.next(false);
         var sectorint = +this.formGroup.value.tomeas;
         console.log(sectorint, "tomeas");
-        if (txop.value === "3") {
+        if (txop.value === "3" || txop.value === "4") {
             //            this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(this.SchoolId, sectorint).subscribe(data => {
+            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(data => {
                 this.StudentSelectedSpecial$.next(data);
 
             },
@@ -315,7 +323,7 @@ import {
 
     findstudent(txop, pageno) {
 
-        var tot_pages: Number;
+        var tot_pages: number;
         var sectorint = +this.formGroup.value.tomeas;
         if (txop.value === "1") {
             this.currentclass = 1;
@@ -327,23 +335,39 @@ import {
             this.currentclass = 3;
         }
 
+        else if (txop.value === "4") {
+            this.currentclass = 4;
+        }
         this.formGroup.get('pageno').setValue(this.pageno);
         if (this.pageno == 1) {
-            console.log(this.SchoolId, sectorint, this.currentclass, "test");
-            this.StudentsSizeSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, 0, 0).subscribe(x => {
+            console.log(this.SchoolId, sectorint, this.currentclass, "testaaaaaa");
+            this.StudentsSizeSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, 0, 0).subscribe(x => {
                 this.StudentsSize$.next(x);
                 tot_pages = x.id / 5;
                 if (x.id % 5 > 0) {
                     tot_pages = (x.id - (x.id % 5)) / 5 + 1;
+                }
+                console.log(tot_pages,"totpages")
+                if (isNaN(tot_pages)){
+                  this.retrievedStudent.next(false);
+                  tot_pages = 0;
                 }
                 this.formGroup.get('maxpage').setValue(tot_pages);
             });
 
         }
 
-        this.StudentInfoSub = this._hds.getStudentPerSchool(this.SchoolId, sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
+        this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
             this.StudentInfo$.next(data);
-            this.retrievedStudent.next(true);
+            if (tot_pages === 0){
+                  console.log("tot.pages", this.formGroup.value.maxpage);
+                  this.retrievedStudent.next(false);
+                }
+             else
+              {
+                console.log("tot.pages", this.formGroup.value.maxpage, "max", tot_pages);
+                this.retrievedStudent.next(true);
+              }
         },
             error => {
                 this.StudentInfo$.next([{}]);
@@ -364,12 +388,7 @@ import {
         else if (cbvalue.value === '2') {
             this.saved[i] = id;
             this.type = 2;
-            //var count = this.saved.length;
-            //for (var j = 0; j < count; j++) {
-            //    if (this.saved[j] === id) {
-            //        this.saved.splice(j, 1);
-            //    }
-
+            
             console.log("not confirmed")
         }
         else if (cbvalue.value === '3') {
@@ -379,8 +398,10 @@ import {
 
 
 
-    confirmStudent() {
+    confirmStudent(txop) {
         this._hds.saveConfirmStudents(this.saved, this.type);
+        this.findstudent(txop, this.pageno);
+       
     }
 
     checkcclass() {

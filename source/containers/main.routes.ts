@@ -36,13 +36,17 @@ import MinisterSettings from '../components/minister/minister-settings';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
+import MinistryAuthGuard from '../guards/ministry.auth.guard';
 import Breadcrumbs from '../components/main/breadcrumbs';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
+  { path: 'logout', component: Home },
   { path: 'school', component: SchoolHome },
+  { path: 'school/logout', component: SchoolHome },
   { path: 'ministry', component: MinistryHome },
-  { path: 'breadcrumbs', component: Breadcrumbs },
+  { path: 'ministry/logout', component: MinistryHome },
+//  { path: 'breadcrumbs', component: Breadcrumbs },
   { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard] },
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
 //  { path: 'students-list', component: StudentsList },
@@ -58,15 +62,15 @@ export const MainRoutes: Routes = [
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
   { path: 'post-submit', component: AfterSubmit, canActivate: [StudentAuthGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
-  { path: 'school/director-buttons', component: DirectorButtons },
+  { path: 'school/director-buttons', component: DirectorButtons, canActivate: [SchoolAuthGuard]  },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
-  { path: 'ministry/minister-view', component: MinisterView },
-  { path: 'ministry/minister-reports', component: MinisterReports },
-  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat },
-  { path: 'ministry/report-general/:reportId', component: ReportGeneral },
-  { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity },
-  { path: 'ministry/minister-informstudents', component: InformStudents },
-  { path: 'ministry/minister-settings', component: MinisterSettings },
+  { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-general/:reportId', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/minister-informstudents', component: InformStudents, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/minister-settings', component: MinisterSettings, canActivate: [MinistryAuthGuard] },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
 ];
 

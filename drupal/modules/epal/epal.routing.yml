@@ -79,7 +79,7 @@ epal.allocation:
   requirements:
     _user_is_logged_in: 'TRUE'
 sectorperschool:
-  path: '/epal/sectorperSchool/{epalId}'
+  path: '/epal/sectorperSchool'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -87,7 +87,7 @@ sectorperschool:
   requirements:
     _user_is_logged_in: 'TRUE'
 specialityperschool:
-  path: '/epal/specialityperSchool/{epalId}/{sectorId}'
+  path: '/epal/specialityperSchool/{sectorId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -103,7 +103,7 @@ confirmstudents:
   requirements:
     _user_is_logged_in: 'TRUE'
 studentperschool:
-  path: '/epal/studentperSchool/{epalId}/{selectId}/{classId}/{limitdown}/{limitup}'
+  path: '/epal/studentperSchool/{selectId}/{classId}/{limitdown}/{limitup}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -111,7 +111,7 @@ studentperschool:
   requirements:
     _user_is_logged_in: 'TRUE'
 savecapacity:
-  path: '/epal/savecapacity/{taxi}/{tomeas}/{specialit}/{schoolid}'
+  path: '/epal/savecapacity/{taxi}/{tomeas}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -223,7 +223,7 @@ critirioschosen:
   requirements:
     _user_is_logged_in: 'TRUE'
 findcapacity:
-  path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}/{schoolid}'
+  path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -238,3 +238,13 @@ findschoolid:
     _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
   requirements:
     _user_is_logged_in: 'TRUE'
+gettypeofschool:
+  path: '/epal/gettypeofschool'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+    

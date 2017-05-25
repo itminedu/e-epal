@@ -83,13 +83,22 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         this._hds.signOut().then(data => {
             this._ata.initLoginInfo();
             if (this.authRole === SCHOOL_ROLE) {
-                this.router.navigate(['/school']);
+                // this.router.navigate(['/school']);
+                this.authToken = '';
+                this.authRole = '';
+                window.location.assign((<any> data).next);
             }
             else if (this.authRole === PDE_ROLE) {
-                this.router.navigate(['/school']);
+                // this.router.navigate(['/school']);
+                this.authToken = '';
+                this.authRole = '';
+                window.location.assign((<any> data).next);
             }
             else if (this.authRole === DIDE_ROLE) {
-                this.router.navigate(['/school']);
+                // this.router.navigate(['/school']);
+                this.authToken = '';
+                this.authRole = '';
+                window.location.assign((<any> data).next);
             }
             else if (this.authRole === STUDENT_ROLE) {
                 this._eca.initEpalClasses();

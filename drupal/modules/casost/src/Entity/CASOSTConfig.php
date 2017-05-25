@@ -60,124 +60,124 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
   /**
    * {@inheritdoc}
    */
-  public static function preCreate(EntityStorageInterface $storage_controller, array &$values)
-  {
-      parent::preCreate($storage_controller, $values);
-      $values += array(
-      'user_id' => \Drupal::currentUser()->id(),
-    );
-  }
+    public static function preCreate(EntityStorageInterface $storage_controller, array &$values)
+    {
+        parent::preCreate($storage_controller, $values);
+        $values += array(
+        'user_id' => \Drupal::currentUser()->id(),
+        );
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getName()
-  {
-      return $this->get('name')->value;
-  }
+    public function getName()
+    {
+        return $this->get('name')->value;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name)
-  {
-      $this->set('name', $name);
+    public function setName($name)
+    {
+        $this->set('name', $name);
 
-      return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCreatedTime()
-  {
-      return $this->get('created')->value;
-  }
+        return $this;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function setCreatedTime($timestamp)
-  {
-      $this->set('created', $timestamp);
-
-      return $this;
-  }
+    public function getCreatedTime()
+    {
+        return $this->get('created')->value;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwner()
-  {
-      return $this->get('user_id')->entity;
-  }
+    public function setCreatedTime($timestamp)
+    {
+        $this->set('created', $timestamp);
+
+        return $this;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId()
-  {
-      return $this->get('user_id')->target_id;
-  }
+    public function getOwner()
+    {
+        return $this->get('user_id')->entity;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid)
-  {
-      $this->set('user_id', $uid);
-
-      return $this;
-  }
+    public function getOwnerId()
+    {
+        return $this->get('user_id')->target_id;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account)
-  {
-      $this->set('user_id', $account->id());
+    public function setOwnerId($uid)
+    {
+        $this->set('user_id', $uid);
 
-      return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isPublished()
-  {
-      return (bool) $this->getEntityKey('status');
-  }
+        return $this;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public function setPublished($published)
-  {
-      $this->set('status', $published ? true : false);
+    public function setOwner(UserInterface $account)
+    {
+        $this->set('user_id', $account->id());
 
-      return $this;
-  }
+        return $this;
+    }
 
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type)
-  {
-      $fields = parent::baseFieldDefinitions($entity_type);
+    public function isPublished()
+    {
+        return (bool) $this->getEntityKey('status');
+    }
 
-      $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the CASOST Config entity.'))
-      ->setRevisionable(true)
-      ->setSetting('target_type', 'user')
-      ->setSetting('handler', 'default')
-      ->setTranslatable(true)
-      ->setDisplayOptions('view', array(
+  /**
+   * {@inheritdoc}
+   */
+    public function setPublished($published)
+    {
+        $this->set('status', $published ? true : false);
+
+        return $this;
+    }
+
+  /**
+   * {@inheritdoc}
+   */
+    public static function baseFieldDefinitions(EntityTypeInterface $entity_type)
+    {
+        $fields = parent::baseFieldDefinitions($entity_type);
+
+        $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
+        ->setLabel(t('Authored by'))
+        ->setDescription(t('The user ID of author of the CASOST Config entity.'))
+        ->setRevisionable(true)
+        ->setSetting('target_type', 'user')
+        ->setSetting('handler', 'default')
+        ->setTranslatable(true)
+        ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'author',
         'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
+        ))
+        ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
         'weight' => 5,
         'settings' => array(
@@ -186,31 +186,31 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', true)
-      ->setDisplayConfigurable('view', true);
+        ))
+        ->setDisplayConfigurable('form', true)
+        ->setDisplayConfigurable('view', true);
 
-      $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the CASOST Config entity.'))
-      ->setSettings(array(
+        $fields['name'] = BaseFieldDefinition::create('string')
+        ->setLabel(t('Name'))
+        ->setDescription(t('The name of the CASOST Config entity.'))
+        ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
-      ))
-      ->setDefaultValue('casost_sch_sso_config')
-      ->setDisplayOptions('view', array(
+        ))
+        ->setDefaultValue('casost_sch_sso_config')
+        ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
+        'weight' => -100,
+        ))
+        ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', true)
-      ->setDisplayConfigurable('view', true);
+        'weight' => -100,
+        ))
+        ->setDisplayConfigurable('form', true)
+        ->setDisplayConfigurable('view', true);
 
-  $fields['serverversion'] = BaseFieldDefinition::create('string')
+        $fields['serverversion'] = BaseFieldDefinition::create('string')
             ->setLabel(t('Server Version'))
             ->setDescription(t('The Server Version'))
             ->setSettings(array(
@@ -230,7 +230,7 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
             ->setDisplayConfigurable('form', true)
             ->setDisplayConfigurable('view', true);
 
-      $fields['serverhostname'] = BaseFieldDefinition::create('string')
+        $fields['serverhostname'] = BaseFieldDefinition::create('string')
             ->setLabel(t('Server Hostname'))
             ->setDescription(t('The Server Hostname'))
             ->setSettings(array(
@@ -250,7 +250,7 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
             ->setDisplayConfigurable('form', true)
             ->setDisplayConfigurable('view', true);
 
-      $fields['serverport'] = BaseFieldDefinition::create('integer')
+        $fields['serverport'] = BaseFieldDefinition::create('integer')
              ->setLabel(t('User Authorization Url'))
              ->setDescription(t('The User Authorization Url'))
              ->setSettings(array(
@@ -270,7 +270,7 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
              ->setDisplayConfigurable('form', true)
              ->setDisplayConfigurable('view', true);
 
-       $fields['serveruri'] = BaseFieldDefinition::create('string')
+         $fields['serveruri'] = BaseFieldDefinition::create('string')
                     ->setLabel(t('Server Uri'))
                     ->setDescription(t('The Server Uri'))
                     ->setSettings(array(
@@ -313,7 +313,39 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
         $fields['changesessionid'] = BaseFieldDefinition::create('boolean')
             ->setLabel(t('Change Session Id'))
             ->setDescription(t('A boolean indicating whether we change session id.'))
-            ->setDefaultValue(false);
+            ->setDefaultValue(true)
+            ->setDisplayOptions('view', array(
+                    'label' => 'above',
+                    'type' => 'string',
+                    'weight' => -5,
+                ))
+            ->setDisplayOptions('form', array(
+                    'type' => 'boolean_checkbox',
+                    'settings' => array('display_label' => true),
+                    'weight' => -5,
+                ))
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayConfigurable('view', true);
+
+        $fields['logoutredirecturl'] = BaseFieldDefinition::create('string')
+            ->setLabel(t('Logout Redirect Url'))
+            ->setDescription(t('Logout Redirect Url used by the client application after drupal logout.'))
+            ->setSettings(array(
+                    'max_length' => 500,
+                    'text_processing' => 0,
+                ))
+            ->setDefaultValue('https://sso-test.sch.gr/logout?service=https%3A%2F%2Fe-epal.minedu.gov.gr%2F%23%2Fschool')
+            ->setDisplayOptions('view', array(
+                    'label' => 'above',
+                    'type' => 'string',
+                    'weight' => -5,
+                ))
+            ->setDisplayOptions('form', array(
+                    'type' => 'string_textfield',
+                    'weight' => -5,
+                ))
+            ->setDisplayConfigurable('form', true)
+            ->setDisplayConfigurable('view', true);
 
         $fields['casservercacert'] = BaseFieldDefinition::create('string')
             ->setLabel(t('CAS Server CaCert'))
@@ -471,19 +503,19 @@ class CASOSTConfig extends ContentEntityBase implements CASOSTConfigInterface
             ->setDisplayConfigurable('view', true);
 
 
-      $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the OAuthOST Config is published.'))
-      ->setDefaultValue(true);
+        $fields['status'] = BaseFieldDefinition::create('boolean')
+        ->setLabel(t('Publishing status'))
+        ->setDescription(t('A boolean indicating whether the OAuthOST Config is published.'))
+        ->setDefaultValue(true);
 
-      $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'))
-      ->setDescription(t('The time that the entity was created.'));
+        $fields['created'] = BaseFieldDefinition::create('created')
+        ->setLabel(t('Created'))
+        ->setDescription(t('The time that the entity was created.'));
 
-      $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the entity was last edited.'));
+        $fields['changed'] = BaseFieldDefinition::create('changed')
+        ->setLabel(t('Changed'))
+        ->setDescription(t('The time that the entity was last edited.'));
 
-      return $fields;
-  }
+        return $fields;
+    }
 }

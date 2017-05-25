@@ -93,7 +93,7 @@ class CASLogout extends ControllerBase
             // Enable debugging
             phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
-            phpCAS::setVerbose(true);
+           // phpCAS::setVerbose(true);
 
             // Initialize phpCAS
             phpCAS::client($this->serverVersion,

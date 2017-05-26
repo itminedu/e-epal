@@ -1,0 +1,10 @@
+entity.casost_config.add_form:
+  route_name: entity.casost_config.add_form
+  title: 'Add CASOST Config'
+  appears_on:
+    - entity.casost_config.collection
+entity.casost_session.add_form:
+  route_name: entity.casost_session.add_form
+  title: 'Add CASOST Session'
+  appears_on:
+    - entity.casost_session.collection

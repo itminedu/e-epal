@@ -1,0 +1,127 @@
+<div class = "loading" *ngIf="(showLoader | async) === true"></div>
+
+<div id="emailSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header-success">
+          <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+          <span aria-hidden="true"><i class="fa fa-times"></i></span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <p>{{ modalText | async }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="min-height: 500px; margin-bottom: 30px;">
+<form [formGroup]="formGroup">
+
+    <div class="form-group">
+        <label for="userEmail">Email Επικοινωνίας</label><input #userEmail class="form-control" type="text" formControlName="userEmail">
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('required')">
+        Το πεδίο δεν μπορεί να αφεθεί κενό!
+    </div>
+    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('pattern')">
+        Πληκτρολογήστε ένα σωστό συντακτικά email!
+    </div>
+
+    <div class="row" *ngIf="(userEmailEnabled | async) && formGroup.get('userEmail').valid" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="sendVerificationCode()">
+            Λήψη Κωδικού Επαλήθευσης
+            </button>
+        </div>
+    </div>
+
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-md-12">
+            <div *ngIf="(userEmailEnabled | async) && (epalUserData$ | async).userEmail !==  ''">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="resetUserEmail();">
+            Ακύρωση Αλλαγής Email
+            </button>
+            </div>
+            <div *ngIf="!(userEmailEnabled | async)" style="margin-left: 10px;" >
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="enableUserEmail();">
+            Αλλαγή Email
+            </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group" *ngIf="(verificationCodeSent | async) && !(verificationCodeVerified | async)">
+        <div  class="alert alert-success">
+            <strong>Ελέγξτε το email σας!</strong> Αντιγράψτε τον κωδικό που σας στείλαμε εδώ και επιλέξτε "Αποστολή Κωδικού Επαλήθευσης"
+        </div>
+        <label for="verificationCode">Κωδικός επαλήθευσης</label><input class="form-control" type="text" formControlName="verificationCode">
+    </div>
+    <div class="row" *ngIf="(verificationCodeSent | async) && !(verificationCodeVerified | async)">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-sm pull-right" (click)="verifyVerificationCode()">
+            Αποστολή Κωδικού Επαλήθευσης
+            </button>
+        </div>
+    </div>
+    <div  class="alert alert-success" *ngIf="(verificationCodeSent | async) && (verificationCodeVerified | async)">
+        <strong>Επιτυχία!</strong> Το email σας επαληθεύθηκε και είναι αυτό με το οποίο θα επικοινωνούμε μαζί σας στο εξής
+    </div>
+
+
+    <div class="form-group"  *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
+        <label for="userName">Όνομα</label><input class="form-control" type="text" formControlName="userName">
+        <div class="alert alert-danger" *ngIf="formGroup.get('userName').touched && formGroup.get('userName').hasError('required') ">
+            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        </div>
+        <div class="alert alert-danger" *ngIf="formGroup.get('userName').hasError('pattern')">
+            Πληκτρολογήστε το όνομά σας!
+        </div>
+    </div>
+
+
+    <div class="form-group"  *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
+        <label for="userSurname">Επώνυμο</label><input class="form-control" type="text" formControlName="userSurname">
+        <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').touched && formGroup.get('userSurname').hasError('required') ">
+            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        </div>
+        <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').hasError('pattern')">
+            Πληκτρολογήστε το επώνυμό σας!
+        </div>
+    </div>
+
+
+    <div class="form-group"  *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
+        <label for="userFathername">Πατρώνυμο</label><input class="form-control" type="text" formControlName="userFathername">
+        <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').touched && formGroup.get('userFathername').hasError('required') ">
+            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        </div>
+        <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').hasError('pattern')">
+            Πληκτρολογήστε το όνομα του πατέρα σας!
+        </div>
+    </div>
+
+    <div class="form-group"  *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
+        <label for="userMothername">Μητρώνυμο</label><input class="form-control" type="text" formControlName="userMothername">
+        <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').touched && formGroup.get('userMothername').hasError('required') ">
+            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        </div>
+        <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').hasError('pattern')">
+            Πληκτρολογήστε το όνομα της μητέρας σας!
+        </div>
+    </div>
+
+
+    <div class="row" *ngIf="!(userEmailEnabled | async) && (verificationCodeVerified | async)">
+        <div class="col-md-12">
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="saveProfileAndContinue()" [disabled]="((userEmailEnabled | async) && !(verificationCodeVerified | async))" >
+                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
+            </button>
+        </div>
+    </div>
+ </form>
+ </div>

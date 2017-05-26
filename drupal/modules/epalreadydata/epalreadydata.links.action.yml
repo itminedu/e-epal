@@ -1,0 +1,40 @@
+entity.eepal_admin_area.add_form:
+  route_name: entity.eepal_admin_area.add_form
+  title: 'Add Eepal admin area'
+  appears_on:
+    - entity.eepal_admin_area.collection
+entity.eepal_specialty.add_form:
+  route_name: entity.eepal_specialty.add_form
+  title: 'Add Eepal specialty'
+  appears_on:
+    - entity.eepal_specialty.collection
+entity.eepal_prefecture.add_form:
+  route_name: entity.eepal_prefecture.add_form
+  title: 'Add Eepal prefecture'
+  appears_on:
+    - entity.eepal_prefecture.collection
+entity.eepal_region.add_form:
+  route_name: entity.eepal_region.add_form
+  title: 'Add Eepal region'
+  appears_on:
+    - entity.eepal_region.collection
+entity.eepal_school.add_form:
+  route_name: entity.eepal_school.add_form
+  title: 'Add Eepal school'
+  appears_on:
+    - entity.eepal_school.collection
+entity.eepal_specialties_in_epal.add_form:
+  route_name: entity.eepal_specialties_in_epal.add_form
+  title: 'Add Eepal specialties in epal'
+  appears_on:
+    - entity.eepal_specialties_in_epal.collection
+entity.eepal_sectors.add_form:
+  route_name: entity.eepal_sectors.add_form
+  title: 'Add Eepal sectors'
+  appears_on:
+    - entity.eepal_sectors.collection
+entity.eepal_sectors_in_epal.add_form:
+  route_name: entity.eepal_sectors_in_epal.add_form
+  title: 'Add Eepal sectors in epal'
+  appears_on:
+    - entity.eepal_sectors_in_epal.collection

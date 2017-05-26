@@ -1,0 +1,22 @@
+{#
+/**
+ * @file eepal_prefecture.html.twig
+ * Default theme implementation to present Eepal prefecture data.
+ *
+ * This template is used when viewing Eepal prefecture pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_eepal_prefecture()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes.addClass('eepal_prefecture') }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</div>

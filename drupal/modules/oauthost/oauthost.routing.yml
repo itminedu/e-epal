@@ -1,0 +1,20 @@
+oauthost.log_in_go:
+  path: /oauth/login
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\OAuthLogin::loginGo'
+  requirements:
+    _access: 'TRUE'
+oauthost.callback_log_in:
+  path: /oauth/cb
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\CBController::loginCB'
+  requirements:
+    _access: 'TRUE'
+oauthost.log_out_go:
+  path: /oauth/logout
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\oauthost\Controller\OAuthLogout::logoutGo'
+  requirements:
+    _user_is_logged_in: 'TRUE'

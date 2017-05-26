@@ -1,0 +1,139 @@
+
+# EPAL Student menu items definition
+entity.epal_student.collection:
+  title: 'EPAL Student list'
+  route_name: entity.epal_student.collection
+  description: 'List EPAL Student entities'
+  parent: system.admin_epal
+  weight: 100
+
+epal_student.admin.structure.settings:
+  title: EPAL Student settings
+  description: 'Configure EPAL Student entities'
+  route_name: epal_student.settings
+  parent: system.admin_structure
+
+# EPAL Student Class menu items definition
+entity.epal_student_class.collection:
+  title: 'EPAL Student Class list'
+  route_name: entity.epal_student_class.collection
+  description: 'List EPAL Student Class entities'
+  parent: system.admin_epal
+  weight: 100
+
+epal_student_class.admin.structure.settings:
+  title: EPAL Student Class settings
+  description: 'Configure EPAL Student Class entities'
+  route_name: epal_student_class.settings
+  parent: system.admin_structure
+
+# Epal student epal chosen menu items definition
+entity.epal_student_epal_chosen.collection:
+  title: 'Epal student epal chosen list'
+  route_name: entity.epal_student_epal_chosen.collection
+  description: 'List Epal student epal chosen entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_epal_chosen.admin.structure.settings:
+  title: Epal student epal chosen settings
+  description: 'Configure Epal student epal chosen entities'
+  route_name: epal_student_epal_chosen.settings
+  parent: system.admin_structure
+
+# Epal student course field menu items definition
+entity.epal_student_course_field.collection:
+  title: 'Epal student course field list'
+  route_name: entity.epal_student_course_field.collection
+  description: 'List Epal student course field entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_course_field.admin.structure.settings:
+  title: Epal student course field settings
+  description: 'Configure Epal student course field entities'
+  route_name: epal_student_course_field.settings
+  parent: system.admin_structure
+
+# Epal users menu items definition
+entity.epal_users.collection:
+  title: 'Epal users list'
+  route_name: entity.epal_users.collection
+  description: 'List Epal users entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_users.admin.structure.settings:
+  title: Epal users settings
+  description: 'Configure Epal users entities'
+  route_name: epal_users.settings
+  parent: system.admin_structure
+
+# Epal student sector field menu items definition
+entity.epal_student_sector_field.collection:
+  title: 'Epal student sector field list'
+  route_name: entity.epal_student_sector_field.collection
+  description: 'List Epal student sector field entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_sector_field.admin.structure.settings:
+  title: Epal student sector field settings
+  description: 'Configure Epal student sector field entities'
+  route_name: epal_student_sector_field.settings
+  parent: system.admin_structure
+
+# Epal criteria menu items definition
+entity.epal_criteria.collection:
+  title: 'Epal criteria list'
+  route_name: entity.epal_criteria.collection
+  description: 'List Epal criteria entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_criteria.admin.structure.settings:
+  title: Epal criteria settings
+  description: 'Configure Epal criteria entities'
+  route_name: epal_criteria.settings
+  parent: system.admin_structure
+
+# Epal student moria menu items definition
+entity.epal_student_moria.collection:
+  title: 'Epal student moria list'
+  route_name: entity.epal_student_moria.collection
+  description: 'List Epal student moria entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_student_moria.admin.structure.settings:
+  title: Epal student moria settings
+  description: 'Configure Epal student moria entities'
+  route_name: epal_student_moria.settings
+  parent: system.admin_structure
+
+# Epal class limits menu items definition
+entity.epal_class_limits.collection:
+  title: 'Epal class limits list'
+  route_name: entity.epal_class_limits.collection
+  description: 'List Epal class limits entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_class_limits.admin.structure.settings:
+  title: Epal class limits settings
+  description: 'Configure Epal class limits entities'
+  route_name: epal_class_limits.settings
+  parent: system.admin_structure
+# Epal config menu items definition
+entity.epal_config.collection:
+  title: 'Epal config list'
+  route_name: entity.epal_config.collection
+  description: 'List Epal config entities'
+  parent: system.admin_structure
+  weight: 100
+
+epal_config.admin.structure.settings:
+  title: Epal config settings
+  description: 'Configure Epal config entities'
+  route_name: epal_config.settings
+  parent: system.admin_structure

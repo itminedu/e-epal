@@ -1,0 +1,44 @@
+# OAuthOST Config routing definition
+oauthost_config.settings_tab:
+  route_name: oauthost_config.settings
+  title: 'Settings'
+  base_route: oauthost_config.settings
+
+entity.oauthost_config.canonical:
+  route_name: entity.oauthost_config.canonical
+  base_route: entity.oauthost_config.canonical
+  title: 'View'
+
+entity.oauthost_config.edit_form:
+  route_name: entity.oauthost_config.edit_form
+  base_route: entity.oauthost_config.canonical
+  title: 'Edit'
+
+entity.oauthost_config.delete_form:
+  route_name:  entity.oauthost_config.delete_form
+  base_route:  entity.oauthost_config.canonical
+  title: Delete
+  weight: 10
+
+# OAuthOST Session routing definition
+oauthost_session.settings_tab:
+  route_name: oauthost_session.settings
+  title: 'Settings'
+  base_route: oauthost_session.settings
+
+entity.oauthost_session.canonical:
+  route_name: entity.oauthost_session.canonical
+  base_route: entity.oauthost_session.canonical
+  title: 'View'
+
+entity.oauthost_session.edit_form:
+  route_name: entity.oauthost_session.edit_form
+  base_route: entity.oauthost_session.canonical
+  title: 'Edit'
+
+entity.oauthost_session.delete_form:
+  route_name:  entity.oauthost_session.delete_form
+  base_route:  entity.oauthost_session.canonical
+  title: Delete
+  weight: 10
+

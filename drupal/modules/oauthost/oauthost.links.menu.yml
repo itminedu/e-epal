@@ -1,0 +1,28 @@
+
+# OAuthOST Config menu items definition
+entity.oauthost_config.collection:
+  title: 'OAuthOST Config list'
+  route_name: entity.oauthost_config.collection
+  description: 'List OAuthOST Config entities'
+  parent: system.admin_structure
+  weight: 100
+
+oauthost_config.admin.structure.settings:
+  title: OAuthOST Config settings
+  description: 'Configure OAuthOST Config entities'
+  route_name: oauthost_config.settings
+  parent: system.admin_structure
+
+# OAuthOST Session menu items definition
+entity.oauthost_session.collection:
+  title: 'OAuthOST Session list'
+  route_name: entity.oauthost_session.collection
+  description: 'List OAuthOST Session entities'
+  parent: system.admin_structure
+  weight: 100
+
+oauthost_session.admin.structure.settings:
+  title: OAuthOST Session settings
+  description: 'Configure OAuthOST Session entities'
+  route_name: oauthost_session.settings
+  parent: system.admin_structure

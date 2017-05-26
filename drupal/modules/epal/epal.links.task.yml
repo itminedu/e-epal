@@ -1,0 +1,219 @@
+# EPAL Student routing definition
+epal_student.settings_tab:
+  route_name: epal_student.settings
+  title: 'Settings'
+  base_route: epal_student.settings
+
+entity.epal_student.canonical:
+  route_name: entity.epal_student.canonical
+  base_route: entity.epal_student.canonical
+  title: 'View'
+
+entity.epal_student.edit_form:
+  route_name: entity.epal_student.edit_form
+  base_route: entity.epal_student.canonical
+  title: 'Edit'
+
+entity.epal_student.delete_form:
+  route_name:  entity.epal_student.delete_form
+  base_route:  entity.epal_student.canonical
+  title: Delete
+  weight: 10
+
+# EPAL Student Class routing definition
+epal_student_class.settings_tab:
+  route_name: epal_student_class.settings
+  title: 'Settings'
+  base_route: epal_student_class.settings
+
+entity.epal_student_class.canonical:
+  route_name: entity.epal_student_class.canonical
+  base_route: entity.epal_student_class.canonical
+  title: 'View'
+
+entity.epal_student_class.edit_form:
+  route_name: entity.epal_student_class.edit_form
+  base_route: entity.epal_student_class.canonical
+  title: 'Edit'
+
+entity.epal_student_class.delete_form:
+  route_name:  entity.epal_student_class.delete_form
+  base_route:  entity.epal_student_class.canonical
+  title: Delete
+  weight: 10
+
+# Epal student epal chosen routing definition
+epal_student_epal_chosen.settings_tab:
+  route_name: epal_student_epal_chosen.settings
+  title: 'Settings'
+  base_route: epal_student_epal_chosen.settings
+
+entity.epal_student_epal_chosen.canonical:
+  route_name: entity.epal_student_epal_chosen.canonical
+  base_route: entity.epal_student_epal_chosen.canonical
+  title: 'View'
+
+entity.epal_student_epal_chosen.edit_form:
+  route_name: entity.epal_student_epal_chosen.edit_form
+  base_route: entity.epal_student_epal_chosen.canonical
+  title: 'Edit'
+
+entity.epal_student_epal_chosen.delete_form:
+  route_name:  entity.epal_student_epal_chosen.delete_form
+  base_route:  entity.epal_student_epal_chosen.canonical
+  title: Delete
+  weight: 10
+
+# Epal student course field routing definition
+epal_student_course_field.settings_tab:
+  route_name: epal_student_course_field.settings
+  title: 'Settings'
+  base_route: epal_student_course_field.settings
+
+entity.epal_student_course_field.canonical:
+  route_name: entity.epal_student_course_field.canonical
+  base_route: entity.epal_student_course_field.canonical
+  title: 'View'
+
+entity.epal_student_course_field.edit_form:
+  route_name: entity.epal_student_course_field.edit_form
+  base_route: entity.epal_student_course_field.canonical
+  title: 'Edit'
+
+entity.epal_student_course_field.delete_form:
+  route_name:  entity.epal_student_course_field.delete_form
+  base_route:  entity.epal_student_course_field.canonical
+  title: Delete
+  weight: 10
+
+# Epal users routing definition
+epal_users.settings_tab:
+  route_name: epal_users.settings
+  title: 'Settings'
+  base_route: epal_users.settings
+
+entity.epal_users.canonical:
+  route_name: entity.epal_users.canonical
+  base_route: entity.epal_users.canonical
+  title: 'View'
+
+entity.epal_users.edit_form:
+  route_name: entity.epal_users.edit_form
+  base_route: entity.epal_users.canonical
+  title: 'Edit'
+
+entity.epal_users.delete_form:
+  route_name:  entity.epal_users.delete_form
+  base_route:  entity.epal_users.canonical
+  title: Delete
+  weight: 10
+
+# Epal student sector field routing definition
+epal_student_sector_field.settings_tab:
+  route_name: epal_student_sector_field.settings
+  title: 'Settings'
+  base_route: epal_student_sector_field.settings
+
+entity.epal_student_sector_field.canonical:
+  route_name: entity.epal_student_sector_field.canonical
+  base_route: entity.epal_student_sector_field.canonical
+  title: 'View'
+
+entity.epal_student_sector_field.edit_form:
+  route_name: entity.epal_student_sector_field.edit_form
+  base_route: entity.epal_student_sector_field.canonical
+  title: 'Edit'
+
+entity.epal_student_sector_field.delete_form:
+  route_name:  entity.epal_student_sector_field.delete_form
+  base_route:  entity.epal_student_sector_field.canonical
+  title: Delete
+  weight: 10
+
+# Epal criteria routing definition
+epal_criteria.settings_tab:
+  route_name: epal_criteria.settings
+  title: 'Settings'
+  base_route: epal_criteria.settings
+
+entity.epal_criteria.canonical:
+  route_name: entity.epal_criteria.canonical
+  base_route: entity.epal_criteria.canonical
+  title: 'View'
+
+entity.epal_criteria.edit_form:
+  route_name: entity.epal_criteria.edit_form
+  base_route: entity.epal_criteria.canonical
+  title: 'Edit'
+
+entity.epal_criteria.delete_form:
+  route_name:  entity.epal_criteria.delete_form
+  base_route:  entity.epal_criteria.canonical
+  title: Delete
+  weight: 10
+
+# Epal student moria routing definition
+epal_student_moria.settings_tab:
+  route_name: epal_student_moria.settings
+  title: 'Settings'
+  base_route: epal_student_moria.settings
+
+entity.epal_student_moria.canonical:
+  route_name: entity.epal_student_moria.canonical
+  base_route: entity.epal_student_moria.canonical
+  title: 'View'
+
+entity.epal_student_moria.edit_form:
+  route_name: entity.epal_student_moria.edit_form
+  base_route: entity.epal_student_moria.canonical
+  title: 'Edit'
+
+entity.epal_student_moria.delete_form:
+  route_name:  entity.epal_student_moria.delete_form
+  base_route:  entity.epal_student_moria.canonical
+  title: Delete
+  weight: 10
+
+# Epal class limits routing definition
+epal_class_limits.settings_tab:
+  route_name: epal_class_limits.settings
+  title: 'Settings'
+  base_route: epal_class_limits.settings
+
+entity.epal_class_limits.canonical:
+  route_name: entity.epal_class_limits.canonical
+  base_route: entity.epal_class_limits.canonical
+  title: 'View'
+
+entity.epal_class_limits.edit_form:
+  route_name: entity.epal_class_limits.edit_form
+  base_route: entity.epal_class_limits.canonical
+  title: 'Edit'
+
+entity.epal_class_limits.delete_form:
+  route_name:  entity.epal_class_limits.delete_form
+  base_route:  entity.epal_class_limits.canonical
+  title: Delete
+  weight: 10
+
+# Epal config routing definition
+epal_config.settings_tab:
+  route_name: epal_config.settings
+  title: 'Settings'
+  base_route: epal_config.settings
+entity.epal_config.canonical:
+  route_name: entity.epal_config.canonical
+  base_route: entity.epal_config.canonical
+  title: 'View'
+
+entity.epal_config.edit_form:
+  route_name: entity.epal_config.edit_form
+  base_route: entity.epal_config.canonical
+  title: Edit
+
+entity.epal_config.delete_form:
+  route_name:  entity.epal_config.delete_form
+  base_route:  entity.epal_config.canonical
+  title: Delete
+  weight: 10
+

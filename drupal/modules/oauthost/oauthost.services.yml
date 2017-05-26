@@ -1,0 +1,4 @@
+services:
+  logger.channel.oauth:
+    parent: 'logger.channel_base'
+    arguments: ['epal']

@@ -1,0 +1,55 @@
+﻿<?php
+
+/**
+ * @file
+ * Contains epal.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function epal_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the epal module.
+    case 'help.page.epal':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('EPAL Registration') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function epal_theme() {
+  return [
+    'epal' => [
+      'template' => 'epal',
+      'render element' => 'children',
+    ],
+  ];
+}
+
+function epal_mail($key, &$message, $params) {
+    $options = array(
+      'langcode' => $message['langcode'],
+    );
+
+    switch ($key) {
+      case 'send_verification_code':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Σύστημα υποβολής αιτήσεων εγγραφής σε ΕΠΑΛ: Επιβεβαίωση e-mail', $options);
+        $message['body'][] = $params['message'];
+        break;
+      case 'massive_mail':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ', $options);
+        $message['body'][] = $params['message'];
+        break;
+    }
+}

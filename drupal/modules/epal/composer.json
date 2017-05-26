@@ -1,0 +1,14 @@
+{
+  "name": "drupal/epal",
+  "type": "drupal-module",
+  "description": "EPAL Registration",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/epal",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/epal",
+    "source": "http://cgit.drupalcode.org/epal"
+  },
+  "require": { }
+}

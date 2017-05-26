@@ -1,0 +1,176 @@
+# Eepal admin area routing definition
+eepal_admin_area.settings_tab:
+  route_name: eepal_admin_area.settings
+  title: 'Settings'
+  base_route: eepal_admin_area.settings
+
+entity.eepal_admin_area.canonical:
+  route_name: entity.eepal_admin_area.canonical
+  base_route: entity.eepal_admin_area.canonical
+  title: 'View'
+
+entity.eepal_admin_area.edit_form:
+  route_name: entity.eepal_admin_area.edit_form
+  base_route: entity.eepal_admin_area.canonical
+  title: 'Edit'
+
+entity.eepal_admin_area.delete_form:
+  route_name:  entity.eepal_admin_area.delete_form
+  base_route:  entity.eepal_admin_area.canonical
+  title: Delete
+  weight: 10
+
+# Eepal specialty routing definition
+eepal_specialty.settings_tab:
+  route_name: eepal_specialty.settings
+  title: 'Settings'
+  base_route: eepal_specialty.settings
+
+entity.eepal_specialty.canonical:
+  route_name: entity.eepal_specialty.canonical
+  base_route: entity.eepal_specialty.canonical
+  title: 'View'
+
+entity.eepal_specialty.edit_form:
+  route_name: entity.eepal_specialty.edit_form
+  base_route: entity.eepal_specialty.canonical
+  title: 'Edit'
+
+entity.eepal_specialty.delete_form:
+  route_name:  entity.eepal_specialty.delete_form
+  base_route:  entity.eepal_specialty.canonical
+  title: Delete
+  weight: 10
+
+# Eepal prefecture routing definition
+eepal_prefecture.settings_tab:
+  route_name: eepal_prefecture.settings
+  title: 'Settings'
+  base_route: eepal_prefecture.settings
+
+entity.eepal_prefecture.canonical:
+  route_name: entity.eepal_prefecture.canonical
+  base_route: entity.eepal_prefecture.canonical
+  title: 'View'
+
+entity.eepal_prefecture.edit_form:
+  route_name: entity.eepal_prefecture.edit_form
+  base_route: entity.eepal_prefecture.canonical
+  title: 'Edit'
+
+entity.eepal_prefecture.delete_form:
+  route_name:  entity.eepal_prefecture.delete_form
+  base_route:  entity.eepal_prefecture.canonical
+  title: Delete
+  weight: 10
+
+# Eepal region routing definition
+eepal_region.settings_tab:
+  route_name: eepal_region.settings
+  title: 'Settings'
+  base_route: eepal_region.settings
+
+entity.eepal_region.canonical:
+  route_name: entity.eepal_region.canonical
+  base_route: entity.eepal_region.canonical
+  title: 'View'
+
+entity.eepal_region.edit_form:
+  route_name: entity.eepal_region.edit_form
+  base_route: entity.eepal_region.canonical
+  title: 'Edit'
+
+entity.eepal_region.delete_form:
+  route_name:  entity.eepal_region.delete_form
+  base_route:  entity.eepal_region.canonical
+  title: Delete
+  weight: 10
+
+# Eepal school routing definition
+eepal_school.settings_tab:
+  route_name: eepal_school.settings
+  title: 'Settings'
+  base_route: eepal_school.settings
+
+entity.eepal_school.canonical:
+  route_name: entity.eepal_school.canonical
+  base_route: entity.eepal_school.canonical
+  title: 'View'
+
+entity.eepal_school.edit_form:
+  route_name: entity.eepal_school.edit_form
+  base_route: entity.eepal_school.canonical
+  title: 'Edit'
+
+entity.eepal_school.delete_form:
+  route_name:  entity.eepal_school.delete_form
+  base_route:  entity.eepal_school.canonical
+  title: Delete
+  weight: 10
+
+# Eepal specialties in epal routing definition
+eepal_specialties_in_epal.settings_tab:
+  route_name: eepal_specialties_in_epal.settings
+  title: 'Settings'
+  base_route: eepal_specialties_in_epal.settings
+
+entity.eepal_specialties_in_epal.canonical:
+  route_name: entity.eepal_specialties_in_epal.canonical
+  base_route: entity.eepal_specialties_in_epal.canonical
+  title: 'View'
+
+entity.eepal_specialties_in_epal.edit_form:
+  route_name: entity.eepal_specialties_in_epal.edit_form
+  base_route: entity.eepal_specialties_in_epal.canonical
+  title: 'Edit'
+
+entity.eepal_specialties_in_epal.delete_form:
+  route_name:  entity.eepal_specialties_in_epal.delete_form
+  base_route:  entity.eepal_specialties_in_epal.canonical
+  title: Delete
+  weight: 10
+
+# Eepal sectors routing definition
+eepal_sectors.settings_tab:
+  route_name: eepal_sectors.settings
+  title: 'Settings'
+  base_route: eepal_sectors.settings
+
+entity.eepal_sectors.canonical:
+  route_name: entity.eepal_sectors.canonical
+  base_route: entity.eepal_sectors.canonical
+  title: 'View'
+
+entity.eepal_sectors.edit_form:
+  route_name: entity.eepal_sectors.edit_form
+  base_route: entity.eepal_sectors.canonical
+  title: 'Edit'
+
+entity.eepal_sectors.delete_form:
+  route_name:  entity.eepal_sectors.delete_form
+  base_route:  entity.eepal_sectors.canonical
+  title: Delete
+  weight: 10
+
+# Eepal sectors in epal routing definition
+eepal_sectors_in_epal.settings_tab:
+  route_name: eepal_sectors_in_epal.settings
+  title: 'Settings'
+  base_route: eepal_sectors_in_epal.settings
+
+entity.eepal_sectors_in_epal.canonical:
+  route_name: entity.eepal_sectors_in_epal.canonical
+  base_route: entity.eepal_sectors_in_epal.canonical
+  title: 'View'
+
+entity.eepal_sectors_in_epal.edit_form:
+  route_name: entity.eepal_sectors_in_epal.edit_form
+  base_route: entity.eepal_sectors_in_epal.canonical
+  title: 'Edit'
+
+entity.eepal_sectors_in_epal.delete_form:
+  route_name:  entity.eepal_sectors_in_epal.delete_form
+  base_route:  entity.eepal_sectors_in_epal.canonical
+  title: Delete
+  weight: 10
+

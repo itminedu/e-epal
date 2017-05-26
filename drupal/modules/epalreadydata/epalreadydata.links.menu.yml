@@ -1,0 +1,112 @@
+
+# Eepal admin area menu items definition
+entity.eepal_admin_area.collection:
+  title: 'Eepal admin area list'
+  route_name: entity.eepal_admin_area.collection
+  description: 'List Eepal admin area entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_admin_area.admin.structure.settings:
+  title: Eepal admin area settings
+  description: 'Configure Eepal admin area entities'
+  route_name: eepal_admin_area.settings
+  parent: system.admin_structure
+
+# Eepal specialty menu items definition
+entity.eepal_specialty.collection:
+  title: 'Eepal specialty list'
+  route_name: entity.eepal_specialty.collection
+  description: 'List Eepal specialty entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_specialty.admin.structure.settings:
+  title: Eepal specialty settings
+  description: 'Configure Eepal specialty entities'
+  route_name: eepal_specialty.settings
+  parent: system.admin_structure
+
+# Eepal prefecture menu items definition
+entity.eepal_prefecture.collection:
+  title: 'Eepal prefecture list'
+  route_name: entity.eepal_prefecture.collection
+  description: 'List Eepal prefecture entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_prefecture.admin.structure.settings:
+  title: Eepal prefecture settings
+  description: 'Configure Eepal prefecture entities'
+  route_name: eepal_prefecture.settings
+  parent: system.admin_structure
+
+# Eepal region menu items definition
+entity.eepal_region.collection:
+  title: 'Eepal region list'
+  route_name: entity.eepal_region.collection
+  description: 'List Eepal region entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_region.admin.structure.settings:
+  title: Eepal region settings
+  description: 'Configure Eepal region entities'
+  route_name: eepal_region.settings
+  parent: system.admin_structure
+
+# Eepal school menu items definition
+entity.eepal_school.collection:
+  title: 'Eepal school list'
+  route_name: entity.eepal_school.collection
+  description: 'List Eepal school entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_school.admin.structure.settings:
+  title: Eepal school settings
+  description: 'Configure Eepal school entities'
+  route_name: eepal_school.settings
+  parent: system.admin_structure
+
+# Eepal specialties in epal menu items definition
+entity.eepal_specialties_in_epal.collection:
+  title: 'Eepal specialties in epal list'
+  route_name: entity.eepal_specialties_in_epal.collection
+  description: 'List Eepal specialties in epal entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_specialties_in_epal.admin.structure.settings:
+  title: Eepal specialties in epal settings
+  description: 'Configure Eepal specialties in epal entities'
+  route_name: eepal_specialties_in_epal.settings
+  parent: system.admin_structure
+
+# Eepal sectors menu items definition
+entity.eepal_sectors.collection:
+  title: 'Eepal sectors list'
+  route_name: entity.eepal_sectors.collection
+  description: 'List Eepal sectors entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_sectors.admin.structure.settings:
+  title: Eepal sectors settings
+  description: 'Configure Eepal sectors entities'
+  route_name: eepal_sectors.settings
+  parent: system.admin_structure
+
+# Eepal sectors in epal menu items definition
+entity.eepal_sectors_in_epal.collection:
+  title: 'Eepal sectors in epal list'
+  route_name: entity.eepal_sectors_in_epal.collection
+  description: 'List Eepal sectors in epal entities'
+  parent: system.admin_structure
+  weight: 100
+
+eepal_sectors_in_epal.admin.structure.settings:
+  title: Eepal sectors in epal settings
+  description: 'Configure Eepal sectors in epal entities'
+  route_name: eepal_sectors_in_epal.settings
+  parent: system.admin_structure

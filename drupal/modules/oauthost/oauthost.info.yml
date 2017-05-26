@@ -1,0 +1,5 @@
+name: oauthost
+type: module
+description: Authentication Provider OST
+core: 8.x
+package: oauthost

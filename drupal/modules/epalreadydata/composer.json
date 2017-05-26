@@ -1,0 +1,14 @@
+{
+  "name": "drupal/epalreadydata",
+  "type": "drupal-module",
+  "description": "Data Avaialble from MySchool System",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/epalreadydata",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/epalreadydata",
+    "source": "http://cgit.drupalcode.org/epalreadydata"
+  },
+  "require": { }
+}

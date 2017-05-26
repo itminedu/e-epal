@@ -1,0 +1,28 @@
+
+# CASOST Config menu items definition
+entity.casost_config.collection:
+  title: 'CASOST Config list'
+  route_name: entity.casost_config.collection
+  description: 'List CASOST Config entities'
+  parent: system.admin_structure
+  weight: 100
+
+casost_config.admin.structure.settings:
+  title: CASOST Config settings
+  description: 'Configure CASOST Config entities'
+  route_name: casost_config.settings
+  parent: system.admin_structure
+
+# CASOST Session menu items definition
+entity.casost_session.collection:
+  title: 'CASOST Session list'
+  route_name: entity.casost_session.collection
+  description: 'List CASOST Session entities'
+  parent: system.admin_structure
+  weight: 100
+
+casost_session.admin.structure.settings:
+  title: CASOST Session settings
+  description: 'Configure CASOST Session entities'
+  route_name: casost_session.settings
+  parent: system.admin_structure

@@ -1,0 +1,217 @@
+add epal student entities:
+  title: 'Create new EPAL Student entities'
+
+administer epal student entities:
+  title: 'Administer EPAL Student entities'
+  description: 'Allow to access the administration form to configure EPAL Student entities.'
+  restrict access: true
+
+delete epal student entities:
+  title: 'Delete EPAL Student entities'
+
+edit epal student entities:
+  title: 'Edit EPAL Student entities'
+
+access epal student overview:
+  title: 'Access the EPAL Student overview page'
+
+view published epal student entities:
+  title: 'View published EPAL Student entities'
+
+view unpublished epal student entities:
+  title: 'View unpublished EPAL Student entities'
+add epal student class entities:
+  title: 'Create new EPAL Student Class entities'
+
+administer epal student class entities:
+  title: 'Administer EPAL Student Class entities'
+  description: 'Allow to access the administration form to configure EPAL Student Class entities.'
+  restrict access: true
+
+delete epal student class entities:
+  title: 'Delete EPAL Student Class entities'
+
+edit epal student class entities:
+  title: 'Edit EPAL Student Class entities'
+
+access epal student class overview:
+  title: 'Access the EPAL Student Class overview page'
+
+view published epal student class entities:
+  title: 'View published EPAL Student Class entities'
+
+view unpublished epal student class entities:
+  title: 'View unpublished EPAL Student Class entities'
+add epal student epal chosen entities:
+  title: 'Create new Epal student epal chosen entities'
+
+administer epal student epal chosen entities:
+  title: 'Administer Epal student epal chosen entities'
+  description: 'Allow to access the administration form to configure Epal student epal chosen entities.'
+  restrict access: true
+
+delete epal student epal chosen entities:
+  title: 'Delete Epal student epal chosen entities'
+
+edit epal student epal chosen entities:
+  title: 'Edit Epal student epal chosen entities'
+
+access epal student epal chosen overview:
+  title: 'Access the Epal student epal chosen overview page'
+
+view published epal student epal chosen entities:
+  title: 'View published Epal student epal chosen entities'
+
+view unpublished epal student epal chosen entities:
+  title: 'View unpublished Epal student epal chosen entities'
+add epal student course field entities:
+  title: 'Create new Epal student course field entities'
+
+administer epal student course field entities:
+  title: 'Administer Epal student course field entities'
+  description: 'Allow to access the administration form to configure Epal student course field entities.'
+  restrict access: true
+
+delete epal student course field entities:
+  title: 'Delete Epal student course field entities'
+
+edit epal student course field entities:
+  title: 'Edit Epal student course field entities'
+
+access epal student course field overview:
+  title: 'Access the Epal student course field overview page'
+
+view published epal student course field entities:
+  title: 'View published Epal student course field entities'
+
+view unpublished epal student course field entities:
+  title: 'View unpublished Epal student course field entities'
+add epal users entities:
+  title: 'Create new Epal users entities'
+
+administer epal users entities:
+  title: 'Administer Epal users entities'
+  description: 'Allow to access the administration form to configure Epal users entities.'
+  restrict access: true
+
+delete epal users entities:
+  title: 'Delete Epal users entities'
+
+edit epal users entities:
+  title: 'Edit Epal users entities'
+
+access epal users overview:
+  title: 'Access the Epal users overview page'
+
+view published epal users entities:
+  title: 'View published Epal users entities'
+
+view unpublished epal users entities:
+  title: 'View unpublished Epal users entities'
+add epal student sector field entities:
+  title: 'Create new Epal student sector field entities'
+
+administer epal student sector field entities:
+  title: 'Administer Epal student sector field entities'
+  description: 'Allow to access the administration form to configure Epal student sector field entities.'
+  restrict access: true
+
+delete epal student sector field entities:
+  title: 'Delete Epal student sector field entities'
+
+edit epal student sector field entities:
+  title: 'Edit Epal student sector field entities'
+
+access epal student sector field overview:
+  title: 'Access the Epal student sector field overview page'
+
+view published epal student sector field entities:
+  title: 'View published Epal student sector field entities'
+
+view unpublished epal student sector field entities:
+  title: 'View unpublished Epal student sector field entities'
+add epal criteria entities:
+  title: 'Create new Epal criteria entities'
+
+administer epal criteria entities:
+  title: 'Administer Epal criteria entities'
+  description: 'Allow to access the administration form to configure Epal criteria entities.'
+  restrict access: true
+
+delete epal criteria entities:
+  title: 'Delete Epal criteria entities'
+
+edit epal criteria entities:
+  title: 'Edit Epal criteria entities'
+
+access epal criteria overview:
+  title: 'Access the Epal criteria overview page'
+
+view published epal criteria entities:
+  title: 'View published Epal criteria entities'
+
+view unpublished epal criteria entities:
+  title: 'View unpublished Epal criteria entities'
+add epal student moria entities:
+  title: 'Create new Epal student moria entities'
+
+administer epal student moria entities:
+  title: 'Administer Epal student moria entities'
+  description: 'Allow to access the administration form to configure Epal student moria entities.'
+  restrict access: true
+
+delete epal student moria entities:
+  title: 'Delete Epal student moria entities'
+
+edit epal student moria entities:
+  title: 'Edit Epal student moria entities'
+
+access epal student moria overview:
+  title: 'Access the Epal student moria overview page'
+
+view published epal student moria entities:
+  title: 'View published Epal student moria entities'
+
+view unpublished epal student moria entities:
+  title: 'View unpublished Epal student moria entities'
+add epal class limits entities:
+  title: 'Create new Epal class limits entities'
+
+administer epal class limits entities:
+  title: 'Administer Epal class limits entities'
+  description: 'Allow to access the administration form to configure Epal class limits entities.'
+  restrict access: true
+
+delete epal class limits entities:
+  title: 'Delete Epal class limits entities'
+
+edit epal class limits entities:
+  title: 'Edit Epal class limits entities'
+
+access epal class limits overview:
+  title: 'Access the Epal class limits overview page'
+
+view published epal class limits entities:
+  title: 'View published Epal class limits entities'
+
+view unpublished epal class limits entities:
+  title: 'View unpublished Epal class limits entities'
+add epal config entities:
+  title: 'Create new Epal config entities'
+
+administer epal config entities:
+  title: 'Administer Epal config entities'
+  description: 'Allow to access the administration form to configure Epal config entities.'
+  restrict access: true
+
+delete epal config entities:
+  title: 'Delete Epal config entities'
+
+edit epal config entities:
+  title: 'Edit Epal config entities'
+
+view published epal config entities:
+  title: 'View published Epal config entities'
+
+view unpublished epal config entities:
+  title: 'View unpublished Epal config entities'

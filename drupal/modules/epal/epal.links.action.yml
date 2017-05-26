@@ -1,0 +1,50 @@
+entity.epal_student.add_form:
+  route_name: entity.epal_student.add_form
+  title: 'Add EPAL Student'
+  appears_on:
+    - entity.epal_student.collection
+entity.epal_student_class.add_form:
+  route_name: entity.epal_student_class.add_form
+  title: 'Add EPAL Student Class'
+  appears_on:
+    - entity.epal_student_class.collection
+entity.epal_student_epal_chosen.add_form:
+  route_name: entity.epal_student_epal_chosen.add_form
+  title: 'Add Epal student epal chosen'
+  appears_on:
+    - entity.epal_student_epal_chosen.collection
+entity.epal_student_course_field.add_form:
+  route_name: entity.epal_student_course_field.add_form
+  title: 'Add Epal student course field'
+  appears_on:
+    - entity.epal_student_course_field.collection
+entity.epal_users.add_form:
+  route_name: entity.epal_users.add_form
+  title: 'Add Epal users'
+  appears_on:
+    - entity.epal_users.collection
+entity.epal_student_sector_field.add_form:
+  route_name: entity.epal_student_sector_field.add_form
+  title: 'Add Epal student sector field'
+  appears_on:
+    - entity.epal_student_sector_field.collection
+entity.epal_criteria.add_form:
+  route_name: entity.epal_criteria.add_form
+  title: 'Add Epal criteria'
+  appears_on:
+    - entity.epal_criteria.collection
+entity.epal_student_moria.add_form:
+  route_name: entity.epal_student_moria.add_form
+  title: 'Add Epal student moria'
+  appears_on:
+    - entity.epal_student_moria.collection
+entity.epal_class_limits.add_form:
+  route_name: entity.epal_class_limits.add_form
+  title: 'Add Epal class limits'
+  appears_on:
+    - entity.epal_class_limits.collection
+entity.epal_config.add_form:
+  route_name: entity.epal_config.add_form
+  title: 'Add Epal config'
+  appears_on:
+    - entity.epal_config.collection

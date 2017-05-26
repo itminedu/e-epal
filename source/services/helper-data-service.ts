@@ -414,7 +414,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
         return new Promise((resolve, reject) => {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)
-                .map(response => response)
+                .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
                     window.onbeforeunload = function () {console.log("unloading")};

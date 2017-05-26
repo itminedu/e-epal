@@ -541,19 +541,10 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
-                .map(response => response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    console.log("Error Saving Profile");
-                    reject("Error Saving Profile");
-                },
-                () => console.log("Saving Profile"));
-        });
-
+        return this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
+            .map(response => response.json());
+               
+       
     }
 
 

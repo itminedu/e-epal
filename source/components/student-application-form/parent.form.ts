@@ -156,7 +156,7 @@ import {AppSettings} from '../../app.settings';
             .then(res => {
                 this._prfa.saveProfile(this.formGroup.value);
                 this.showLoader.next(false);
-                this.router.navigate(['/epal-class-select']);})
+                this.router.navigate(['/intro-statement']);})
             .catch(err => {
                 this.showLoader.next(false);
                 console.log(err)

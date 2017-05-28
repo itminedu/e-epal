@@ -5,7 +5,8 @@ import { Seq } from 'immutable';
 import {
   LOGININFO_SAVE,
   LOGININFO_INIT,
-  PROFILE_SAVE
+  PROFILE_SAVE,
+  STATEMENTAGREE_SAVE
 } from '../../constants';
 
 export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, action): ILoginInfo {
@@ -44,6 +45,15 @@ export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, ac
                 });
             });
             return state;
+
+        case STATEMENTAGREE_SAVE:
+            state.forEach(loginInfoToken => {
+                    loginInfoToken.disclaimer_checked = action.payload.disclaimer_checked;
+                    return state.withMutations(function (list) {
+                        list.set(0, loginInfoToken);
+                    });
+                });
+                return state;
 
     case LOGININFO_INIT:
         return LOGININFO_INITIAL_STATE;

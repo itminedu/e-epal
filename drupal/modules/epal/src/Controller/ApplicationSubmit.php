@@ -42,7 +42,7 @@ class ApplicationSubmit extends ControllerBase {
 
 		if (!$request->isMethod('POST')) {
 			return $this->respondWithStatus([
-					"message" => t("Method Not Allowed")
+					"error_code" => 2001
 				], Response::HTTP_METHOD_NOT_ALLOWED);
     	}
 
@@ -55,7 +55,7 @@ class ApplicationSubmit extends ControllerBase {
 		}
 		else {
 			return $this->respondWithStatus([
-					"message" => t("Bad Request")
+					"error_code" => 5002
 				], Response::HTTP_BAD_REQUEST);
 		}
 
@@ -91,10 +91,15 @@ class ApplicationSubmit extends ControllerBase {
 
 				//'currentepal' => $applicationForm[0][currentepal],
 				//'currentsector' => $applicationForm[0][currentsector],
-        'points' => $applicationForm[0][points],
+                'points' => $applicationForm[0][points],
 				'relationtostudent' => $applicationForm[0][relationtostudent],
 				'telnum' => $applicationForm[0][telnum]
             );
+
+            if (($errorCode = $this->validateStudent($student)) > 0) {
+                return $this->respondWithStatus([
+    					"error_code" => $errorCode ], Response::HTTP_OK);
+            }
 
 			$entity_storage_student = $this->entityTypeManager->getStorage('epal_student');
 			$entity_object = $entity_storage_student->create($student);
@@ -164,7 +169,7 @@ class ApplicationSubmit extends ControllerBase {
 				$entity_storage_sector->save($entity_object);
 			}
 			return $this->respondWithStatus([
-					"message" => t("Application saved successfully")
+					"error_code" => 0
 				], Response::HTTP_OK);
 		}
 
@@ -172,7 +177,7 @@ class ApplicationSubmit extends ControllerBase {
 			$this->logger->warning($e->getMessage());
 			$transaction->rollback();
 			return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured")
+					"error_code" => 5001
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	 }
@@ -181,5 +186,12 @@ class ApplicationSubmit extends ControllerBase {
          $res = new JsonResponse($arr);
          $res->setStatusCode($s);
          return $res;
+     }
+
+     private function validateStudent($student) {
+         if(!$student["agreement"]) {
+             return 1001;
+         }
+         return 0;
      }
 }

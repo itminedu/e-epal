@@ -32,11 +32,11 @@ import { HelperDataService } from '../../services/helper-data-service';
 @Component({
     selector: 'application-submit',
     template: `
-    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (criteria$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
+    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
     <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header modal-header-success">
+          <div class="modal-header {{modalHeader | async}}">
               <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
@@ -112,29 +112,29 @@ import { HelperDataService } from '../../services/helper-data-service';
                 <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
                 <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
 
-                <ul class="list-group left-side-view" style="margin-bottom: 20px;">
+<!--                <ul class="list-group left-side-view" style="margin-bottom: 20px;">
                 <li class="list-group-item active">
                             <div *ngIf="currentUrl === '/application-submit'">
                                    Κοινωνικά/Εισοδηματικά Κριτήρια
                             </div>
                 </li>
-                </ul>
+                </ul>   -->
         </div>
 
-            <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
+<!--            <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
             <div *ngIf="criteriaField$.selected === true">
                   {{criteriaField$.name}}
             </div>
-            </div>
+            </div>  -->
 
-            <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(criteria$ | async).size > 0">
+            <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
                 <div class="col-md-6">
                     <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
                         <i class="fa fa-backward"></i>
                     </button>
                 </div>
                 <div class="col-md-6">
-                    <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (criteria$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
+                    <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
                         <span style="font-size: 0.9em; font-weight: bold;">Υποβολή&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
                     </button>
                 </div>
@@ -171,6 +171,7 @@ import { HelperDataService } from '../../services/helper-data-service';
     private loginInfoSub: Subscription;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
+    private modalHeader: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
     public currentUrl: string;
@@ -203,6 +204,7 @@ import { HelperDataService } from '../../services/helper-data-service';
 
                 this.modalTitle =  new BehaviorSubject("");
                 this.modalText =  new BehaviorSubject("");
+                this.modalHeader =  new BehaviorSubject("");
                 this.isModalShown = new BehaviorSubject(false);
                 this.showLoader = new BehaviorSubject(false);
             };
@@ -264,7 +266,7 @@ import { HelperDataService } from '../../services/helper-data-service';
           return state.regions;
       }).subscribe(this.regions$);
 
-      this.criteriaSub = this._ngRedux.select(state => {
+/*      this.criteriaSub = this._ngRedux.select(state => {
           if (state.criter.size > 0) {
               state.criter.reduce(({}, criteria) => {
                 //code to be replaced in next version
@@ -278,7 +280,7 @@ import { HelperDataService } from '../../services/helper-data-service';
               }, {});
           }
           return state.criter;
-      }).subscribe(this.criteria$);
+      }).subscribe(this.criteria$); */
 
       this.sectorsSub = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
@@ -308,7 +310,7 @@ import { HelperDataService } from '../../services/helper-data-service';
     ngOnDestroy() {
         (<any>$('#studentFormSentNotice')).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.criteriaSub) this.criteriaSub.unsubscribe();
+//        if (this.criteriaSub) this.criteriaSub.unsubscribe();
         if (this.regionsSub) this.regionsSub.unsubscribe();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
         if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
@@ -319,7 +321,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         this.sectors$.unsubscribe();
         this.sectorFields$.unsubscribe();
         this.studentDataFields$.unsubscribe();
-        this.criteria$.unsubscribe();
+//        this.criteria$.unsubscribe();
         this.loginInfo$.unsubscribe();
     }
 
@@ -336,23 +338,19 @@ import { HelperDataService } from '../../services/helper-data-service';
           aitisiObj[0].cu_fathername = this.cu_fathername;
           aitisiObj[0].cu_mothername = this.cu_mothername;
           aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
-          //console.log(aitisiObj[0]['studentbirthdate']);
           aitisiObj[0]['currentclass'] = this.classSelected;
-          //aitisiObj[0]['studentamka'] = ...;
           aitisiObj[0]['points'] = this.totalPoints;
 
           for (let i=0; i < this.epalSelected.length; i++)
             epalObj[i] =new StudentEpalChosen(null, this.epalSelected[i] , this.epalSelectedOrder[i]);
           aitisiObj['1'] =   epalObj;
 
-          for (let i=0; i < this.studentCriteria.length; i++)
-            criteriaObj[i] =new StudentCriteriaChosen(null, null, this.studentCriteria[i]);
-          aitisiObj['2'] = criteriaObj;
+//          for (let i=0; i < this.studentCriteria.length; i++)
+//            criteriaObj[i] =new StudentCriteriaChosen(null, null, this.studentCriteria[i]);
+//          aitisiObj['2'] = criteriaObj;
 
-          //if (aitisiObj[0]['currentclass'] === "Β' Λυκείου" )
           if (aitisiObj[0]['currentclass'] === "2" )
             aitisiObj['3'] =  new StudentSectorChosen(null, this.sectorSelected);
-          //else if (aitisiObj[0]['currentclass'] === "Γ' Λυκείου" )
           else if (aitisiObj[0]['currentclass'] === "3" || aitisiObj[0]['currentclass'] === "4" ) {
             aitisiObj['3'] =  new StudentCourseChosen(null, this.courseSelected);
           }
@@ -380,20 +378,38 @@ import { HelperDataService } from '../../services/helper-data-service';
       success => {
           (<any>$('.loading')).remove();
           this.showLoader.next(false);
-          this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
-          this.modalText.next("Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Αίτησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας");
-          this._eca.initEpalClasses();
-          this._sfa.initSectorFields();
-          this._rsa.initRegionSchools();
-          this._csa.initSectorCourses();
-          this._sdfa.initStudentDataFields();
-          this._cria.initCriteria();
-          console.log("success post");
-          this.showModal();
-           },
+          let errorCode = parseInt(success.error_code);
+          if (errorCode === 0) {
+              this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
+              this.modalText.next("Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Αίτησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας");
+              this.modalHeader.next("modal-header-success");
+              this._eca.initEpalClasses();
+              this._sfa.initSectorFields();
+              this._rsa.initRegionSchools();
+              this._csa.initSectorCourses();
+              this._sdfa.initStudentDataFields();
+              this._cria.initCriteria();
+              console.log("success post");
+              this.showModal();
+          }
+          else if (errorCode === 1001) {
+              this.modalTitle.next("Αποτυχία Υποβολής Αίτησης");
+              this.modalText.next("Δεν έχετε αποδεχθεί τους όρους χρήσης");
+              this.modalHeader.next("modal-header-danger");
+              console.log("no disclaimer checked");
+              this.showModal();
+          } else {
+              this.modalTitle.next("Αποτυχία Υποβολής Αίτησης");
+              this.modalText.next("Ελέξτε τη φόρμα σας. Υπάρχουν λάθη - ελλείψεις που δεν επιτρέπουν την υποβολή");
+              this.modalHeader.next("modal-header-danger");
+              console.log("other error");
+              this.showModal();
+          }
+      },
       error => {
           (<any>$('.loading')).remove();
           this.showLoader.next(false);
+          this.modalHeader.next("modal-header-danger");
           this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
           this.modalText.next("Η υποβολή της αίτησής σας απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης");
           this.showLoader.next(false);

@@ -47,9 +47,14 @@ import { API_ENDPOINT } from '../../app.settings';
               Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ
           </button>
           <br><br>
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)" [hidden]="minedu_userName == ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide' " >
           <i class="fa fa-file-text"></i>
               Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων
+          </button>
+          <br><br>
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)" [hidden]="minedu_userName == '' " >
+          <i class="fa fa-file-text"></i>
+              Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)
           </button>
           <br><br>
         </div>
@@ -122,7 +127,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
       if (repId == 1)
         this.router.navigate(['/ministry/report-general', repId]);
-      else if (repId == 2 || repId == 3)
+      else if (repId == 2 || repId == 3 || repId == 5)
         this.router.navigate(['/ministry/report-all-stat', repId]);
       else if (repId == 4)
         this.router.navigate(['/ministry/report-no-capacity', repId]);

@@ -174,7 +174,7 @@ createReport(regionSel) {
 
  let regSel = 0;
 
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0,0).subscribe(data => {
+ this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0,0, 0).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
   },
@@ -238,7 +238,8 @@ generateGraphData() {
      labelsX.push("2η Προτίμηση");
      labelsX.push("3η Προτίμηση");
      labelsX.push("Μη τοποθετημένοι");
-     for (let i = 1; i <=  4; i++) {
+     labelsX.push("Προσωρινά τοποθετημένοι σε ολιγομελή");
+     for (let i = 1; i <=  5; i++) {
        this.d3data.push([
          labelsX[i-1],
          this.data[i].numStudents /   this.data[0].numStudents,

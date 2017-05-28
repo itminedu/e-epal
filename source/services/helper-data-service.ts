@@ -619,7 +619,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel, distribfinal) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -638,7 +638,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         }
         else if (routepath == "/ministry/report-all-stat/"){
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel + "/"  +
-                                  clsel + "/"  + secsel + "/"  + coursel , options)
+                                  clsel + "/"  + secsel + "/"  + coursel + "/" + distribfinal , options)
                 .map(response => response.json());
           }
           else if (routepath == "/ministry/report-no-capacity/"){

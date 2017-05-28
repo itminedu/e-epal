@@ -1,4 +1,4 @@
-import { LOGININFO_SAVE, PROFILE_SAVE, LOGININFO_RECEIVED } from '../constants';
+import { LOGININFO_SAVE, PROFILE_SAVE, LOGININFO_RECEIVED, STATEMENTAGREE_SAVE } from '../constants';
 import { LOGININFO_INIT } from '../constants';
 import { Injectable } from '@angular/core';
 import { NgRedux } from 'ng2-redux';
@@ -37,6 +37,15 @@ saveProfile = (profile) => {
    type: PROFILE_SAVE,
    payload: {
      profile
+   }
+ });
+};
+
+saveStatementAgree = (disclaimer_checked) => {
+  return this._ngRedux.dispatch({
+   type: STATEMENTAGREE_SAVE,
+   payload: {
+     disclaimer_checked
    }
  });
 };

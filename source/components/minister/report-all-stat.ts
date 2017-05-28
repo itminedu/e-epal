@@ -313,6 +313,21 @@ import { API_ENDPOINT } from '../../app.settings';
           this.SectorSelectionsSub.unsubscribe();
       if (this.CourseSelectionsSub)
           this.CourseSelectionsSub.unsubscribe();
+
+          if (this.loginInfo$)
+            this.loginInfo$.unsubscribe();
+          if (this.generalReport$)
+              this.generalReport$.unsubscribe();
+          if (this.RegionSelections$)
+              this.RegionSelections$.unsubscribe();
+          if (this.AdminAreaSelections$)
+              this.AdminAreaSelections$.unsubscribe();
+          if (this.SchoolSelections$)
+              this.SchoolSelections$.unsubscribe();
+          if (this.SectorSelections$)
+              this.SectorSelections$.unsubscribe();
+          if (this.CourseSelections$)
+              this.CourseSelections$.unsubscribe();
       if (this.showAdminList)
           this.showAdminList.unsubscribe();
       if (this.showSectorList)
@@ -321,6 +336,8 @@ import { API_ENDPOINT } from '../../app.settings';
           this.showCourseList.unsubscribe();
       if (this.RegionRetrieveSub)
           this.RegionRetrieveSub.unsubscribe();
+          if (this.RegionRetrieve$)
+              this.RegionRetrieve$.unsubscribe();
 
     }
 

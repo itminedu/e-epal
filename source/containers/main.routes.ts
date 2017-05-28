@@ -12,6 +12,7 @@ import Home from '../components/home';
 import SchoolHome from '../components/school.home';
 import MinistryHome from '../components/ministry.home';
 import CourseFieldsSelect from '../components/student-application-form/course.fields.select';
+import Disclaimer from '../components/student-application-form/disclaimer';
 import EpalClassesSelect from '../components/student-application-form/epal.class.select';
 import SectorFieldsSelect from '../components/student-application-form/sector.fields.select';
 import RegionSchoolsSelect from '../components/student-application-form/region.schools.select';
@@ -51,6 +52,7 @@ export const MainRoutes: Routes = [
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
 //  { path: 'students-list', component: StudentsList },
   { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard] },
+  { path: 'intro-statement', component: Disclaimer, canActivate: [StudentAuthGuard] },
   { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard] },
   { path: 'sector-fields-select', component: SectorFieldsSelect, canActivate: [StudentAuthGuard] },
   { path: 'region-schools-select', component: RegionSchoolsSelect, canActivate: [StudentAuthGuard] },
@@ -82,6 +84,7 @@ export const MainDeclarations = [
   SchoolHome,
   MinistryHome,
   CourseFieldsSelect,
+  Disclaimer,
   EpalClassesSelect,
   SectorFieldsSelect,
   RegionSchoolsSelect,

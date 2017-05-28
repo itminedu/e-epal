@@ -310,7 +310,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         let headers = new Headers({
             "Content-Type": "application/json",
-            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });

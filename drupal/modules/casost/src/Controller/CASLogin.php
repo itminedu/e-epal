@@ -99,15 +99,13 @@ class CASLogin extends ControllerBase
             // Enable verbose error messages. Disable in production!
             //phpCAS::setVerbose(true);
 
-            phpCAS::client($this->serverVersion,
+            phpCAS::client(
+                $this->serverVersion,
                 $this->serverHostname,
                 intval($this->serverPort),
                 $this->serverUri,
-                boolval($this->changeSessionId));
-
-
-//            \phpCAS::setServerLoginURL('http://sso-test.sch.gr/login');
-//            \phpCAS::setServerServiceValidateURL('http://sso-test.sch.gr/cas/samlValidate');
+                boolval($this->changeSessionId)
+            );
 
             if ($this->CASServerCACert) {
                 if ($this->CASServerCNValidate) {
@@ -124,12 +122,9 @@ class CASLogin extends ControllerBase
                 return $this->redirectForbidden($configRowName, '5001');
             }
             $attributes = phpCAS::getAttributes();
-/*            foreach ($attributes as $attr_key => $attr_value) {
-                $this->logger->warning($attr_key);
-                $this->logger->warning(phpCAS::getAttribute($attr_key));
-            } */
 
-/*            $isAllowed = true;
+/* 
+            $isAllowed = true;
             $att1 = $attributes[$this->allowed1];
             $att2 = $attributes[$this->allowed2];
             if (!isset($att1) || !isset($att2)) {
@@ -155,15 +150,17 @@ class CASLogin extends ControllerBase
             }
             if (!$found1 || !$found2) {
                 $isAllowed = false;
-            } */
-
-    /*        if (!$isAllowed) {
+            } 
+            
+            if (!$isAllowed) {
                 $response = new Response();
                 $response->setContent(t('Access is allowed only to official school accounts'));
                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
                 $response->headers->set('Content-Type', 'application/json;charset=UTF-8');
                 return $response;
-            } */
+            }
+*/
+
             $CASUser = phpCAS::getUser();
 
             $this->logger->warning($CASUser);
@@ -179,14 +176,15 @@ class CASLogin extends ControllerBase
             $physicaldeliveryofficename = $filterAttribute("physicaldeliveryofficename");
 
 
-/****** the following is for production ***************************/
-
-        /*    if (!$umdobject || $umdobject !== "Account") {
+/****** the following is for production : Χρήση μόνο από ΕΠΙΣΗΜΟΥΣ ΛΟΓΑΡΙΑΣΜΟΥΣ ***************************/
+/*
+            if (!$umdobject || $umdobject !== "Account") {
                 return $this->redirectForbidden($configRowName, '5002');
             }
             if (!$physicaldeliveryofficename || preg_replace('/\s+/', '', $physicaldeliveryofficename) !== 'ΕΠΙΣΗΜΟΣΛΟΓΑΡΙΑΣΜΟΣ') {
                 return $this->redirectForbidden($configRowName, '5003');
-            } */
+            }
+*/
 
             phpCAS::trace($umdobject);
             phpCAS::trace($physicaldeliveryofficename);
@@ -198,20 +196,14 @@ class CASLogin extends ControllerBase
                 return $this->redirectForbidden($configRowName, '5004');
             }
 
-// $this->logger->warning('redirecturl=' . $this->redirectUrl);
             $epalToken = $this->authenticatePhase2($request, $CASUser, $userAssigned, $filterAttribute('cn'));
             if ($epalToken) {
                 if ('casost_sch_sso_config' === $configRowName) {
-                /*    $cookie = new Cookie('auth_token', $epalToken, 0, '/', null, false, false);
-                    $cookie2 = new Cookie('auth_role', $exposedRole, 0, '/', null, false, false); */
-
                     return new RedirectResponse($this->redirectUrl . $epalToken.'&auth_role=' . $userAssigned["exposedRole"], 302, []);
                 } else {
                     \Drupal::service('page_cache_kill_switch')->trigger();
                     return new RedirectResponseWithCookieExt($this->redirectUrl . $epalToken.'&auth_role=' . $userAssigned["exposedRole"], 302, []);
                 }
-//                $headers = array("auth_token" => $epalToken, "auth_role" => "director");
-//                return new RedirectResponse($this->redirectUrl, 302, $headers);
             } else {
                 return $this->redirectForbidden($configRowName, '5005');
             }

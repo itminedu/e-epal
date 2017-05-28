@@ -169,6 +169,10 @@ import { API_ENDPOINT } from '../../app.settings';
         this.loginInfoSub.unsubscribe();
       if (this.settingsSub)
         this.settingsSub.unsubscribe();
+        if (this.loginInfo$)
+          this.loginInfo$.unsubscribe();
+        if (this.settings$)
+          this.settings$.unsubscribe();
     }
 
     ngOnInit() {

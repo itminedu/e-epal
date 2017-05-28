@@ -56,6 +56,7 @@ import {AppSettings} from '../../app.settings';
         </div>
       </div>
 
+<div style="min-height: 500px;">
       <h4> Επιλογή Σχολείου</h4>
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
@@ -108,6 +109,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
     </form>
+    </div>
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
@@ -328,7 +330,7 @@ import {AppSettings} from '../../app.settings';
               || (this.numSelected.value === 0) )    {
 
           //this.modalHeader = "modal-header-success";
-          this.modalHeader.next("modal-header-success");
+          this.modalHeader.next("modal-header-danger");
           this.modalTitle.next("Επιλογή αριθμού σχολείων");
           if (this.numSelected.value === 0)
             this.modalText.next("Δεν έχετε επιλέξει κανένα σχολείο!");

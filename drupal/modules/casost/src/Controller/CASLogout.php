@@ -20,6 +20,7 @@ class CASLogout extends ControllerBase
     protected $serverPort;
     protected $serverUri;
     protected $changeSessionId;
+    protected $logoutRedirectUrl;
     protected $CASServerCACert;
     protected $CASServerCNValidate;
     protected $noCASServerValidation;
@@ -76,6 +77,7 @@ class CASLogout extends ControllerBase
                 $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
                 $this->redirectUrl = $CASOSTConfig->redirecturl->value;
                 $this->changeSessionId = $CASOSTConfig->changesessionid->value;
+                $this->logoutRedirectUrl = $CASOSTConfig->logoutredirecturl->value;
                 $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
                 $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
                 $this->noCASServerValidation = $CASOSTConfig->nocasservervalidation->value;
@@ -93,14 +95,16 @@ class CASLogout extends ControllerBase
             // Enable debugging
             phpCAS::setDebug("phpcas.log");
             // Enable verbose error messages. Disable in production!
-            phpCAS::setVerbose(true);
+           // phpCAS::setVerbose(true);
 
             // Initialize phpCAS
-            phpCAS::client($this->serverVersion,
+            phpCAS::client(
+                $this->serverVersion,
                 $this->serverHostname,
                 intval($this->serverPort),
                 $this->serverUri,
-                boolval($this->changeSessionId));
+                boolval($this->changeSessionId)
+            );
 
             $authToken = $request->headers->get('PHP_AUTH_USER');
             $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
@@ -109,32 +113,22 @@ class CASLogout extends ControllerBase
             if (!$user) {
                 return $this->redirectForbidden($configRowName, '7002');
             }
-//            phpCAS::handleLogoutRequests();
-
-//            phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
-//            session_unset();
-//            session_destroy();
             $user->setPassword(uniqid('pw'));
             $user->save();
 
-
-
-
             $response = new Response();
-            $response->setContent('logout successful');
+            $response->setContent("{\"message\": \"Server logout successful\",\"next\": \"{$this->logoutRedirectUrl}\"}");
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
 
-        //    phpCAS::logout(array('url'=>$this->redirectUrl));
-        //    phpCAS::logout();
-        session_unset();
-        session_destroy();
+            session_unset();
+            session_destroy();
             \Drupal::service('page_cache_kill_switch')->trigger();
-//            phpCAS::logoutWithRedirectServiceAndUrl('https://sso-test.sch.gr/logout','');
-//            header('Location: '.'https://sso-test.sch.gr/login?service=https%3A%2F%2Feduslim2.minedu.gov.gr%2Fdrupal%2Fcas%2Flogin%3Fconfig%3D2');
-//            header('Location: https://sso-test.sch.gr/logout');
-    //        exit(0);
-    //        return new RedirectResponseWithCookieExt("https://sso-test.sch.gr/logout", 302, []);
+            // phpCAS::logout(array('service' => 'http://eduslim2.minedu.gov.gr/dist/#/school'));
+            // phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
+            // phpCAS::handleLogoutRequests();
+
+            session_start();
             return $response;
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());

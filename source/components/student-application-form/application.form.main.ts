@@ -85,9 +85,9 @@ import {
             telnum:  ['', [Validators.pattern(VALID_DIGITS_PATTERN),Validators.required]],
         });
 
-        this.studentCriteriaGroup = this.fb.group({
+/*        this.studentCriteriaGroup = this.fb.group({
             formArray: this.rss,
-        });
+        }); */
 
     };
 
@@ -126,7 +126,7 @@ import {
             return state.studentDataFields;
         }).subscribe(this.studentDataFields$);
 
-        this._sdfb.getCriteria(true);
+/*        this._sdfb.getCriteria(true);
         this.criteriaSub = this._ngRedux.select(state => {
             if (state.criter.size > 0) {
                 state.criter.reduce(({}, criteria) => {
@@ -140,34 +140,35 @@ import {
                 }, {});
             }
             return state.criter;
-        }).subscribe(this.criteria$);
+        }).subscribe(this.criteria$); */
 
     }
 
     ngOnDestroy() {
         (<any>$('#applicationFormNotice')).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.criteriaSub) this.criteriaSub.unsubscribe();
+//        if (this.criteriaSub) this.criteriaSub.unsubscribe();
         if (this.studentDataFields$) this.studentDataFields$.unsubscribe();
-        if (this.criteria$) this.criteria$.unsubscribe();
+//        if (this.criteria$) this.criteria$.unsubscribe();
         if (this.loginInfo$) this.loginInfo$.unsubscribe();
     }
 
     navigateBack() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-        this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
+//        this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
         this.router.navigate(['/schools-order-select']);
     }
 
     submitSelected() {
-        if (this.studentDataGroup.invalid || this.studentCriteriaGroup.invalid) {
+        // if (this.studentDataGroup.invalid || this.studentCriteriaGroup.invalid) {
+        if (this.studentDataGroup.invalid) {
             this.modalHeader.next("modal-header-danger");
             this.modalTitle.next("Η αίτηση δεν είναι πλήρης");
             this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*)");
             this.showModal();
         } else {
             this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-            this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
+//            this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
             this.router.navigate(['/application-submit']);
         }
     }

@@ -310,7 +310,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         let headers = new Headers({
             "Content-Type": "application/json",
-            "X-CSRF-Token": "LU92FaWYfImfZxfldkF5eVnssdHoV7Aa9fg8K1bWYUc",
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
@@ -414,7 +413,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
         return new Promise((resolve, reject) => {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)
-                .map(response => response)
+                .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
                     window.onbeforeunload = function () {console.log("unloading")};
@@ -541,19 +540,10 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
-                .map(response => response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    console.log("Error Saving Profile");
-                    reject("Error Saving Profile");
-                },
-                () => console.log("Saving Profile"));
-        });
-
+        return this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
+            .map(response => response.json());
+               
+       
     }
 
 

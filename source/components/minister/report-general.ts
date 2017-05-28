@@ -149,6 +149,10 @@ import { API_ENDPOINT } from '../../app.settings';
         this.loginInfoSub.unsubscribe();
       if (this.generalReportSub)
           this.generalReportSub.unsubscribe();
+          if (this.loginInfo$)
+            this.loginInfo$.unsubscribe();
+          if (this.generalReport$)
+              this.generalReport$.unsubscribe();
 
     }
 

@@ -11,13 +11,13 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 
 import {
     FormBuilder,
-    FormGroup,
+    FormGroup, 
     FormControl,
     FormArray,
     Validators,
 } from '@angular/forms';
 @Component({
-    selector: 'perfecture-view',
+    selector: 'eduadmin-view',
     template: `
             <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3>
 
@@ -44,7 +44,7 @@ import {
    `
 })
 
-@Injectable() export default class PerfectureView implements OnInit, OnDestroy {
+@Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
@@ -85,7 +85,7 @@ import {
                   this.School$.next(x);
                   console.log(x[0].id, "perfectureID");
                    this.perfecture = x[0].id;
-                   this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(1).subscribe(data => {
+                   this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(0).subscribe(data => {
                        this.SchoolsPerPerf$.next(data);
                    },
                        error => {

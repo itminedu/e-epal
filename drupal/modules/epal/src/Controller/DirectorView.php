@@ -427,7 +427,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
 
 
 
-    public function getSchoolsPerPerfetcure(Request $request)
+    public function getSchoolsPerPerfetcure(Request $request, $check_status)
     {
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -436,14 +436,20 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
         $user = reset($users);
         if ($user)
             {
-                $perfectureId = $user ->  init -> value;
-                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $perfectureId ));
+                $selectionId = $user ->  init -> value;
+                if ($check_status == 1){
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('region_edu_admin_id'=> $selectionId ));
+                } 
+                else
+                {
+                    $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('edu_admin_id'=> $selectionId ));
+                }  
                 if ($schools)        
                 {
                     $list = array();
 
                     foreach ($schools as $object) {
-                             $status = $this->returnstatus(147);  
+                             $status = $this->returnstatus($object -> id());  
                              $list[] = array(
                                     'id' =>$object -> id(),
                                     'name' => $object -> name ->value,
@@ -595,10 +601,74 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
 
 public function returnstatus($id)
 {
-    if ($id == 147)
-       return true ;
-    return false;
-    
+                $schoolid = $id;
+                $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));               
+                $SchoolCat = reset($SchoolCats);
+                if ($SchoolCat){
+                $categ = $SchoolCat-> metathesis_region -> value;
+                }
+                $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $schoolid ));
+               
+                if ($CourseA)        
+                {
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 1, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => -1, 'currentclass' => 1 ));
+                    
+                    //foreach ($CourseA as $object) {
+                            if (sizeof($studentPerSchool) < $limit){
+                                return false; 
+                                exit;
+                            }
+                                                         
+                }          //  }
+
+            
+                $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                if ($CourseB)
+                {
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 2, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+
+                    foreach ($CourseB as $object) {
+                    $sectorid = $object -> sector_id -> entity -> id();
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2 ));
+                         if (sizeof($studentPerSchool) < $limit){
+                                return false; 
+                                exit;   
+                            }
+                    }
+                }
+                $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                if ($CourseC)
+                {
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 3, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+
+                    foreach ($CourseC as $object) {
+                    $specialityid = $object -> specialty_id -> entity -> id() ;
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal'=> $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3 ));
+
+                         if (sizeof($studentPerSchool) < $limit){
+                                return false;
+                                exit; 
+                                }   
+                    }
+                }
+                return true;
+                exit; 
 }
 
 

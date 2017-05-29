@@ -207,7 +207,7 @@ epal.ministry.storesettings:
   requirements:
       _user_is_logged_in: 'TRUE'
 regionview:
-  path: '/epal/ScoolperPerf/{perfectureId}'
+  path: '/epal/ScoolperPerf'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -252,5 +252,13 @@ gettypeofschool:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+getlimitspercourse:
+  path: '/epal/getlimitsperCourse/{classid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getlimitsperCourse'
   requirements:
     _user_is_logged_in: 'TRUE'

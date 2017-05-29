@@ -786,6 +786,115 @@ public function gettypeofschool(Request $request)
     }
 
 
+
+
+    public function getlimitsperCourse(Request $request, $classid)
+    {
+      $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user)
+            {
+              $schoolid = $user ->  init -> value;
+               $list= array();
+
+                $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));               
+                $SchoolCat = reset($SchoolCats);
+                if ($SchoolCat){
+                $categ = $SchoolCat-> metathesis_region -> value;
+                
+                 $list = array();
+               if ($classid == 1)
+               {
+               
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 1, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+                    
+                   
+                    
+                             $list[] = array(
+                                    'id' => '1',
+                                    'name' => 'Α Λυκείου',
+                                    'categ' => $categ,
+                                    'classes' => 1,
+                                    'limitdown' => $limit,
+                                    );
+                                
+                }            
+
+            
+                if ($classid == 2){
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 2, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+
+                    
+                    
+                         $list[] = array(
+                            
+                            'name' => 'Β Λυκείου ',
+                            
+                            'categ' => $categ,
+                            'classes' => 2,
+                            'limitdown' => $limit,
+
+                          );
+                    }
+                
+                
+                if ($classid == 3){
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name'=> 3, 'category' => $categ ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown)
+                    {
+                        $limit = $limitdown -> limit_down -> value;
+                    }
+
+                    
+                    
+                         $list[] = array(
+                            
+                            
+                            'categ' => $categ,
+                            'classes' => 3,
+                            'limitdown' => $limit,
+                            
+                          );
+                    }
+                
+               
+              
+                            return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+                }
+                else
+                {
+                       return $this->respondWithStatus([
+                            'message' => t("Perfecture not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+
+                }
+            }    
+            else
+            {
+
+                   return $this->respondWithStatus([
+                            'message' => t("User not found!"),
+                        ], Response::HTTP_FORBIDDEN);
+            }
+    }
+
+
+
    private function respondWithStatus($arr, $s) {
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);

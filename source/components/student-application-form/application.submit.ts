@@ -7,17 +7,15 @@ import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
 import { IRegions } from '../../store/regionschools/regionschools.types';
-import { ICriter } from '../../store/criteria/criteria.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
-import { CRITERIA_INITIAL_STATE } from '../../store/criteria/criteria.initial-state';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { Student, StudentEpalChosen, StudentCourseChosen, StudentSectorChosen, StudentCriteriaChosen } from '../students/student';
+import { Student, StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from '../students/student';
 import {AppSettings} from '../../app.settings';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
@@ -25,7 +23,6 @@ import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { CriteriaActions } from '../../actions/criteria.actions';
 import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
 import { HelperDataService } from '../../services/helper-data-service';
 
@@ -74,6 +71,25 @@ import { HelperDataService } from '../../services/helper-data-service';
                 <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_mothername }}</div>
             </div>
         </div>
+        <table>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="regionaddress">Διεύθυνση κατοικίας αιτούμενου κηδεμόνα</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{studentDataField$.regionaddress}} </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{studentDataField$.regiontk}} </p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{studentDataField$.regionarea}} </p>
+                        </div>
+                    </td>
+               </tr>
+        </table>
 
         <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
 
@@ -85,29 +101,9 @@ import { HelperDataService } from '../../services/helper-data-service';
         <div><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
         <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
         <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
-        <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{studentDataField$.fathersurname}} </p></div>
         <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
-        <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{studentDataField$.mothersurname}} </p></div>
         <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
-                <table>
-                        <tr>
-                            <td>
-                                <div class="form-group">
-                                    <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{studentDataField$.regionaddress}} </p>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-group">
-                                    <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{studentDataField$.regiontk}} </p>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="form-group">
-                                    <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{studentDataField$.regionarea}} </p>
-                                </div>
-                            </td>
-                       </tr>
-                </table>
+
                 <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
                 <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
                 <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
@@ -150,21 +146,18 @@ import { HelperDataService } from '../../services/helper-data-service';
     private student;
     private epalSelected: Array<number> = new Array();
     private epalSelectedOrder: Array<number> = new Array();
-    private studentCriteria: Array<number> = new Array();
     private courseSelected;
     private sectorSelected;
     private classSelected;
     private totalPoints=  <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private regions$: BehaviorSubject<IRegions>;
-    private criteria$: BehaviorSubject<ICriter>;
     private sectors$: BehaviorSubject<ISectors>;
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     private studentDataFieldsSub: Subscription;
     private regionsSub: Subscription;
-    private criteriaSub: Subscription;
     private sectorsSub: Subscription;
     private sectorFieldsSub: Subscription;
     private epalclassesSub: Subscription;
@@ -188,7 +181,6 @@ import { HelperDataService } from '../../services/helper-data-service';
                 private _rsa: RegionSchoolsActions,
                 private _eca: EpalClassesActions,
                 private _sdfa: StudentDataFieldsActions,
-                private _cria: CriteriaActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router,
                 private http: Http
@@ -199,7 +191,6 @@ import { HelperDataService } from '../../services/helper-data-service';
                 this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
                 this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
                 this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
-                this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
                 this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
                 this.modalTitle =  new BehaviorSubject("");
@@ -266,22 +257,6 @@ import { HelperDataService } from '../../services/helper-data-service';
           return state.regions;
       }).subscribe(this.regions$);
 
-/*      this.criteriaSub = this._ngRedux.select(state => {
-          if (state.criter.size > 0) {
-              state.criter.reduce(({}, criteria) => {
-                //code to be replaced in next version
-                  //if (criteria.selected === true && Number(criteria.id) !== 11)
-                  if (criteria.selected === true )  {
-                      this.studentCriteria.push(Number(criteria.id));
-                      this.totalPoints = this.totalPoints + Number(criteria.points);
-                    }
-
-                  return criteria;
-              }, {});
-          }
-          return state.criter;
-      }).subscribe(this.criteria$); */
-
       this.sectorsSub = this._ngRedux.select(state => {
           state.sectors.reduce((prevSector, sector) =>{
               sector.courses.reduce((prevCourse, course) =>{
@@ -310,7 +285,6 @@ import { HelperDataService } from '../../services/helper-data-service';
     ngOnDestroy() {
         (<any>$('#studentFormSentNotice')).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-//        if (this.criteriaSub) this.criteriaSub.unsubscribe();
         if (this.regionsSub) this.regionsSub.unsubscribe();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
         if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
@@ -321,7 +295,6 @@ import { HelperDataService } from '../../services/helper-data-service';
         this.sectors$.unsubscribe();
         this.sectorFields$.unsubscribe();
         this.studentDataFields$.unsubscribe();
-//        this.criteria$.unsubscribe();
         this.loginInfo$.unsubscribe();
     }
 
@@ -330,7 +303,6 @@ import { HelperDataService } from '../../services/helper-data-service';
           // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
           let aitisiObj: Array<any> = [];
           let epalObj: Array<StudentEpalChosen> = [];
-          let criteriaObj: Array<StudentCriteriaChosen> = [];
 
           aitisiObj[0] = this.student;
           aitisiObj[0].cu_name = this.cu_name;
@@ -344,10 +316,6 @@ import { HelperDataService } from '../../services/helper-data-service';
           for (let i=0; i < this.epalSelected.length; i++)
             epalObj[i] =new StudentEpalChosen(null, this.epalSelected[i] , this.epalSelectedOrder[i]);
           aitisiObj['1'] =   epalObj;
-
-//          for (let i=0; i < this.studentCriteria.length; i++)
-//            criteriaObj[i] =new StudentCriteriaChosen(null, null, this.studentCriteria[i]);
-//          aitisiObj['2'] = criteriaObj;
 
           if (aitisiObj[0]['currentclass'] === "2" )
             aitisiObj['3'] =  new StudentSectorChosen(null, this.sectorSelected);
@@ -388,7 +356,6 @@ import { HelperDataService } from '../../services/helper-data-service';
               this._rsa.initRegionSchools();
               this._csa.initSectorCourses();
               this._sdfa.initStudentDataFields();
-              this._cria.initCriteria();
               console.log("success post");
               this.showModal();
           }

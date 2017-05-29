@@ -38,7 +38,7 @@ epal.current_user:
     _controller: '\Drupal\epal\Controller\CurrentUser::getLoginInfo'
   requirements:
     _user_is_logged_in: 'TRUE'
-submitedapplications:
+epal.submitedapplications:
   path: '/epal/subapplic'
   options:
     _auth: [ 'basic_auth' ]
@@ -46,7 +46,7 @@ submitedapplications:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
-studentapplication:
+epal.studentapplication:
   path: '/epal/student/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
@@ -54,7 +54,7 @@ studentapplication:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getStudentApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
-epalchosen:
+epal.epalchosen:
   path: '/epal/epalchosen/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
@@ -73,12 +73,12 @@ epal.application_submit:
 epal.allocation:
   path: '/epal/distribution'
   options:
-      _auth: [ 'basic_auth' ]
+    _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
     _user_is_logged_in: 'TRUE'
-sectorperschool:
+epal.sectorperschool:
   path: '/epal/sectorperSchool'
   options:
     _auth: [ 'basic_auth' ]
@@ -86,7 +86,7 @@ sectorperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getSectorsPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-specialityperschool:
+epal.specialityperschool:
   path: '/epal/specialityperSchool/{sectorId}'
   options:
     _auth: [ 'basic_auth' ]
@@ -94,7 +94,7 @@ specialityperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getSpecialPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-confirmstudents:
+epal.confirmstudents:
   path: '/epal/confirmstudent'
   options:
     _auth: [ 'basic_auth' ]
@@ -102,7 +102,7 @@ confirmstudents:
     _controller: '\Drupal\epal\Controller\DirectorView::ConfirmStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
-studentperschool:
+epal.studentperschool:
   path: '/epal/studentperSchool/{selectId}/{classId}/{limitdown}/{limitup}'
   options:
     _auth: [ 'basic_auth' ]
@@ -110,7 +110,7 @@ studentperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::getStudentPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-savecapacity:
+epal.savecapacity:
   path: '/epal/savecapacity/{taxi}/{tomeas}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
@@ -125,7 +125,7 @@ epal.ministry.log_in_go:
   defaults:
     _controller: '\Drupal\epal\Controller\MinistryLogin::loginGo'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.log_out_go:
   path: '/ministry/logout'
   options:
@@ -133,7 +133,7 @@ epal.ministry.log_out_go:
   defaults:
     _controller: '\Drupal\epal\Controller\MinistryLogin::logoutGo'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.general_report:
   path: '/ministry/general-report'
   options:
@@ -141,7 +141,7 @@ epal.ministry.general_report:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makegGeneralReport'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-completeness:
   path: '/ministry/report-completeness/{regionId}/{adminId}/{schId}'
   options:
@@ -149,7 +149,7 @@ epal.ministry.report-completeness:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportCompleteness'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-all-stat:
   path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}'
   options:
@@ -157,7 +157,7 @@ epal.ministry.report-all-stat:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportAllStat'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-no-capacity:
   path: '/ministry/report-no-capacity/{capacityEnabled}'
   options:
@@ -165,7 +165,7 @@ epal.ministry.report-no-capacity:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportNoCapacity'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.retrieve-registry-id:
   path: '/ministry/retrieve-registry-id'
   options:
@@ -173,7 +173,7 @@ epal.ministry.retrieve-registry-id:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::retrieveUserRegistryNo'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.massive_mail:
   path: '/ministry/send-massive-mail'
   options:
@@ -181,7 +181,7 @@ epal.ministry.massive_mail:
   defaults:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToStudents'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.retrievesettings:
   path: '/ministry/retrieve-settings'
   options:
@@ -189,7 +189,7 @@ epal.ministry.retrievesettings:
   defaults:
     _controller: '\Drupal\epal\Controller\MinisterSettings::retrieveSettings'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.storesettings:
   path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}'
   options:
@@ -197,16 +197,16 @@ epal.ministry.storesettings:
   defaults:
     _controller: '\Drupal\epal\Controller\MinisterSettings::storeSettings'
   requirements:
-      _user_is_logged_in: 'TRUE'
-regionview:
-  path: '/epal/ScoolperPerf/{perfectureId}'
+    _user_is_logged_in: 'TRUE'
+epal.perfectureschools:
+  path: '/epal/schools-per-perf'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfetcure'
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfecture'
   requirements:
     _user_is_logged_in: 'TRUE'
-coursesperschools:
+epal.coursesperschools:
   path: '/epal/CoursesperSch/{schoolid}'
   options:
     _auth: [ 'basic_auth' ]
@@ -214,7 +214,7 @@ coursesperschools:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-critirioschosen:
+epal.critirioschosen:
   path: '/epal/critiriachosen/{studentId}/{type}'
   options:
     _auth: [ 'basic_auth' ]
@@ -222,7 +222,7 @@ critirioschosen:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
   requirements:
     _user_is_logged_in: 'TRUE'
-findcapacity:
+epal.findcapacity:
   path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
@@ -230,7 +230,7 @@ findcapacity:
     _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
   requirements:
     _user_is_logged_in: 'TRUE'
-findschoolid:
+epal.findschoolid:
   path: '/epal/getschool'
   options:
     _auth: [ 'basic_auth' ]
@@ -238,7 +238,7 @@ findschoolid:
     _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
   requirements:
     _user_is_logged_in: 'TRUE'
-gettypeofschool:
+epal.gettypeofschool:
   path: '/epal/gettypeofschool'
   options:
     _auth: [ 'basic_auth' ]
@@ -246,5 +246,3 @@ gettypeofschool:
     _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
   requirements:
     _user_is_logged_in: 'TRUE'
-
-    

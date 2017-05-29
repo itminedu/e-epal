@@ -542,8 +542,8 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
         return this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
             .map(response => response.json());
-               
-       
+
+
     }
 
 
@@ -664,7 +664,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/schools-per-perf/` , options)
             .map(response => response.json());
     }
 

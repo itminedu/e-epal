@@ -56,6 +56,27 @@ import {
        </form>
        </div>
 
+    <div id="checksaved" (onHidden)="onHidden('#checksaved')" 
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Πρέπει να συπληρώσετε όλα τα πεδία</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#checksaved')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Η αποθήκευση δε μπορεί να γίνει αν δεν συμπληρώσετε όλα τα στοιχεία της φόρμας!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <div id="capacitysaved" (onHidden)="onHidden('#capacitysaved')" 
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -75,6 +96,9 @@ import {
         </div>
       </div>
     </div>
+
+
+    
 
 
    `
@@ -98,10 +122,13 @@ import {
     private classCapacity$: BehaviorSubject<any>;
     private classCapacitySub: Subscription;
     private retrievedStudent: BehaviorSubject<boolean>;
+    private modalTitle: BehaviorSubject<string>;
+    private modalText: BehaviorSubject<string>;
+    private modalHeader: BehaviorSubject<string>;
     
 
 
-
+ 
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
@@ -114,6 +141,9 @@ import {
         this.selectionCClass = new BehaviorSubject(false);
         this.retrievedStudent = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
+        this.modalTitle =  new BehaviorSubject("");
+        this.modalText =  new BehaviorSubject("");
+        this.modalHeader =  new BehaviorSubject("");
         this.formGroup = this.fb.group({
             tomeas: ['', []],
             taxi: ['', []],
@@ -155,6 +185,7 @@ import {
 
     ngOnInit() {
         (<any>$('#capacitysaved')).appendTo("body");
+        (<any>$('#checksaved')).appendTo("body");
         this.retrievedStudent.next(false);
 
             this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
@@ -298,11 +329,20 @@ import {
 
     saveCapacity() {
 
+        var taxi = +this.formGroup.value.taxi;
         var tomeas = +this.formGroup.value.tomeas;
         var specialit = +this.formGroup.value.specialit;
+        var capc = +this.formGroup.value.capacity;
+        
+
+         if ((taxi === 2 && tomeas === 0) || (taxi === 3  && tomeas === 0 ) || (taxi ===3  && specialit === 0 ) 
+             || (taxi === 4  && tomeas === 0 ) || (taxi ===4  && specialit === 0 ) || (taxi = 0) || (capc ===0))
+          {
+              this.showModal("#checksaved");
+          } else 
+        {
         
          this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity).subscribe(data => {
-                
                  },
                 error => {
                     
@@ -312,9 +352,11 @@ import {
                  console.log("Saved Capacity");
                  this.showModal("#capacitysaved");
                  });
+         }
                  
 
     }
 
+ 
 
 }

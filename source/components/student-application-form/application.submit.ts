@@ -15,7 +15,7 @@ import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionsc
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { Student, StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from '../students/student';
+import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from '../students/student';
 import {AppSettings} from '../../app.settings';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
@@ -54,7 +54,7 @@ import { HelperDataService } from '../../services/helper-data-service';
 
 <!--        <application-preview-select></application-preview-select>   -->
 
-        <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" style = "margin-bottom: 20px;" >
+        <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" >
             <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                 <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
             </div>
@@ -71,33 +71,17 @@ import { HelperDataService } from '../../services/helper-data-service';
                 <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ loginInfoRow$.cu_mothername }}</div>
             </div>
         </div>
-        <table>
-                <tr>
-                    <td>
-                        <div class="form-group">
-                            <label for="regionaddress">Διεύθυνση κατοικίας αιτούμενου κηδεμόνα</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{studentDataField$.regionaddress}} </p>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{studentDataField$.regiontk}} </p>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{studentDataField$.regionarea}} </p>
-                        </div>
-                    </td>
-               </tr>
-        </table>
-
         <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
+        <div class="row oddin" style="margin: 0px 2px 20px 2px; line-height: 2em;">
+            <div class="col-md-3" style="font-size: 0.8em;">Διεύθυνση</div>
+            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.regionaddress}}</div>
+            <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
+            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.regiontk}} - {{studentDataField$.regionarea}}</div>
+        </div>
 
-        <ul class="list-group left-side-view" style="margin-bottom: 20px;">
-        <li class="list-group-item active">
-            Στοιχεία μαθητή
-        </li>
-        </ul>
+        <div class="row evenin" style="margin: 20px 2px 10px 2px; line-height: 2em;">
+            <div class="col-md-12" style="font-size: 1.5em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
+        </div>
         <div><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
         <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
         <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
@@ -108,21 +92,7 @@ import { HelperDataService } from '../../services/helper-data-service';
                 <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
                 <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
 
-<!--                <ul class="list-group left-side-view" style="margin-bottom: 20px;">
-                <li class="list-group-item active">
-                            <div *ngIf="currentUrl === '/application-submit'">
-                                   Κοινωνικά/Εισοδηματικά Κριτήρια
-                            </div>
-                </li>
-                </ul>   -->
         </div>
-
-<!--            <div *ngFor="let criteriaField$ of criteriaFields$ | async;">
-            <div *ngIf="criteriaField$.selected === true">
-                  {{criteriaField$.name}}
-            </div>
-            </div>  -->
-
             <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
                 <div class="col-md-6">
                     <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">
@@ -143,7 +113,6 @@ import { HelperDataService } from '../../services/helper-data-service';
 @Injectable() export default class ApplicationSubmit implements OnInit {
 
     private authToken;
-    private student;
     private epalSelected: Array<number> = new Array();
     private epalSelectedOrder: Array<number> = new Array();
     private courseSelected;
@@ -234,12 +203,6 @@ import { HelperDataService } from '../../services/helper-data-service';
       }).subscribe(this.epalclasses$);
 
       this.studentDataFieldsSub = this._ngRedux.select(state => {
-          if (state.studentDataFields.size > 0) {
-              state.studentDataFields.reduce(({}, studentDataField) => {
-                  this.student = studentDataField;
-                  return studentDataField;
-              }, {});
-          }
           return state.studentDataFields;
       }).subscribe(this.studentDataFields$);
 
@@ -304,14 +267,39 @@ import { HelperDataService } from '../../services/helper-data-service';
           let aitisiObj: Array<any> = [];
           let epalObj: Array<StudentEpalChosen> = [];
 
-          aitisiObj[0] = this.student;
+          let std = this.studentDataFields$.getValue().get(0);
+          console.log(std);
+          aitisiObj[0] = <any>{};
+          aitisiObj[0].name = std.name;
+          aitisiObj[0].studentsurname = std.studentsurname;
+          aitisiObj[0].studentbirthdate = std.studentbirthdate;
+          aitisiObj[0].fatherfirstname = std.fatherfirstname;
+          aitisiObj[0].motherfirstname = std.motherfirstname;
+          aitisiObj[0].regionaddress = std.regionaddress;
+          aitisiObj[0].regionarea = std.regionarea;
+          aitisiObj[0].regiontk = std.regiontk;
+          aitisiObj[0].certificatetype = std.certificatetype;
+//          aitisiObj[0].graduation_year = std.graduation_year;
+//          aitisiObj[0].lastschool_registrynumber = std.lastschool_registrynumber;
+//          aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
+//          aitisiObj[0].lastschool_class = std.lastschool_class;
+//          aitisiObj[0].currentepal = std.currentepal;
+
+          aitisiObj[0].graduation_year = 0;
+          aitisiObj[0].lastschool_registrynumber = '';
+          aitisiObj[0].lastschool_schoolyear = '2015-2016';
+          aitisiObj[0].lastschool_class = '1';
+          aitisiObj[0].currentepal = 154;
+
+          aitisiObj[0].relationtostudent = std.relationtostudent;
+          aitisiObj[0].telnum = std.telnum;
+
           aitisiObj[0].cu_name = this.cu_name;
           aitisiObj[0].cu_surname = this.cu_surname;
           aitisiObj[0].cu_fathername = this.cu_fathername;
           aitisiObj[0].cu_mothername = this.cu_mothername;
           aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
-          aitisiObj[0]['currentclass'] = this.classSelected;
-          aitisiObj[0]['points'] = this.totalPoints;
+          aitisiObj[0].currentclass = this.classSelected;
 
           for (let i=0; i < this.epalSelected.length; i++)
             epalObj[i] =new StudentEpalChosen(null, this.epalSelected[i] , this.epalSelectedOrder[i]);

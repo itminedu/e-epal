@@ -67,7 +67,7 @@ import { API_ENDPOINT } from '../../app.settings';
                 </select>
           </div>
 
-          <button type="button" class="btn-link" (click)="toggleCourseFilter()" *ngIf = "reportId == 3" >
+          <button type="button" class="btn-link" (click)="toggleCourseFilter()" *ngIf = "reportId == 3 || reportId == 5" >
               > Φίλτρο Επιλογής Τομέα / Ειδικότητας
           </button>
           <br>
@@ -170,6 +170,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private classSelected: number;
     private sectorSelected: number;
     private courseSelected: number;
+    private distribFinalized: number;
     private enableRegionFilter: boolean;
     private enableCourseFilter: boolean;
     private userLoggedIn: string;
@@ -358,6 +359,12 @@ createReport(regionSel) {
   }
   else if (this.reportId === 3)  {
     route = "/ministry/report-all-stat/";
+    this.distribFinalized = 1;
+    this.settings = this.reportSchema.reportAllStatSchema;
+  }
+  else if (this.reportId === 5)  {
+    route = "/ministry/report-all-stat/";
+    this.distribFinalized = 0;
     this.settings = this.reportSchema.reportAllStatSchema;
   }
 
@@ -385,7 +392,7 @@ createReport(regionSel) {
  else if (this.userLoggedIn == DIDE_ROLE)
     admSel = this.adminAreaSelected;
 
-  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel).subscribe(data => {
+  this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel, this.distribFinalized).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
 

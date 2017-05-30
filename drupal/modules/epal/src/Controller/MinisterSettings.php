@@ -87,7 +87,7 @@ class MinisterSettings extends ControllerBase {
 
 			 //minister settings retrieve
 			 $config_storage = $this->entityTypeManager->getStorage('epal_config');
-	 		 $epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+	 		 $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
 	 		 $epalConfig = reset($epalConfigs);
 	 		 if (!$epalConfig) {
 	 				return $this->respondWithStatus([
@@ -157,7 +157,7 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 		 }
 
 		 $config_storage = $this->entityTypeManager->getStorage('epal_config');
- 		 $epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+ 		 $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
  		 $epalConfig = reset($epalConfigs);
  		 if (!$epalConfig) {
  				return $this->respondWithStatus([

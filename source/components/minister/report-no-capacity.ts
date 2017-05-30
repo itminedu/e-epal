@@ -172,7 +172,7 @@ createReport() {
     return;
   }
 
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, this.enableCapacityFilter, 0, 0, 0, 0,0).subscribe(data => {
+ this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, this.enableCapacityFilter, 0, 0, 0, 0, 0, 0).subscribe(data => {
       this.generalReport$.next(data);
       this.data = data;
   },

@@ -42,8 +42,14 @@ import { API_ENDPOINT } from '../../app.settings';
     <h5> >Αποστολή ειδοποιήσεων <br></h5>
     <br><br>
     <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents()" >
-          Μαζική αποστολή e-mail στους μαθητές που δεν τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(true)" >
+          Μαζική αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
+      </button>
+    </div>
+    <br>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(false)" >
+          Μαζική αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
 
@@ -126,13 +132,13 @@ import { API_ENDPOINT } from '../../app.settings';
         //this.isModalShown.next(false);
     }
 
-    informUnlocatedStudents() {
+    informUnlocatedStudents(unallocated) {
 
       this.successSending = -2;
       this.numSuccessMails = 0;
       this.numFailMails = 0;
 
-      this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+      this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword, unallocated).subscribe(data => {
           this.numSuccessMails = data.num_success_mail;
           this.numFailMails = data.num_fail_mail;
           //console.log("HERE!");
@@ -144,20 +150,17 @@ import { API_ENDPOINT } from '../../app.settings';
 
           this.modalTitle.next("Κατανομή Μαθητών");
           this.modalText.next("Αποτυχία αποστολής e-mails!");
-          //this.modalHeader = "modal-header-warning";
           this.modalHeader.next("modal-header-warning");
           this.showModal();
         },
         () => {
-          console.log("Success");
+          console.log("Επιτυχής αποστολή e-mails!");
           this.successSending = 1;
 
-          //this.modalHeader = "modal-header-success";
           this.modalHeader.next("modal-header-success");
           this.modalTitle.next("Κατανομή Μαθητών");
           let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
           if (this.numFailMails != 0) {
-            //this.modalHeader = "modal-header-warning";
             this.modalHeader.next("modal-header-warning");
             txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
           }

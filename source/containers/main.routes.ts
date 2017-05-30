@@ -26,6 +26,7 @@ import AfterSubmit from '../components/student-application-form/after.submit';
 import DirectorView from '../components/director/director-view';
 import DirectorButtons from '../components/director/director.buttons';
 import PerfectureView from '../components/infoviews/perfecture-view';
+import EduadminView from '../components/infoviews/eduadmin-view';
 import DirectorClassCapacity from '../components/director/director-classcapacity';
 import MinisterView from '../components/minister/minister-view';
 import MinisterReports from '../components/minister/minister-reports';
@@ -37,6 +38,8 @@ import MinisterSettings from '../components/minister/minister-settings';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
+import  EduAdminAuthGuard from  '../guards/eduadmin.auth.guard';
+
 import MinistryAuthGuard from '../guards/ministry.auth.guard';
 import Breadcrumbs from '../components/main/breadcrumbs';
 
@@ -74,6 +77,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/minister-informstudents', component: InformStudents, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-settings', component: MinisterSettings, canActivate: [MinistryAuthGuard] },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
+  { path: 'school/eduadmin-view', component: EduadminView, canActivate: [EduAdminAuthGuard] },
 ];
 
 export const MainDeclarations = [
@@ -108,5 +112,6 @@ export const MainDeclarations = [
   MinisterSettings,
   PerfectureView,
   Breadcrumbs,
-  DirectorButtons
+  DirectorButtons,
+  EduadminView,
 ];

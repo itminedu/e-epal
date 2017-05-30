@@ -653,7 +653,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    getSchoolPerPerfecture() {
+    getSchoolPerPerfecture(status) {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -664,7 +664,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` + status , options)
             .map(response => response.json());
     }
 

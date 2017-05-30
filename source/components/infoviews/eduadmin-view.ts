@@ -11,7 +11,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 
 import {
     FormBuilder,
-    FormGroup, 
+    FormGroup,
     FormControl,
     FormArray,
     Validators,
@@ -85,7 +85,7 @@ import {
                   this.School$.next(x);
                   console.log(x[0].id, "perfectureID");
                    this.perfecture = x[0].id;
-                   this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(0).subscribe(data => {
+                   this.SchoolPerPerfSub = this._hds.getSchools().subscribe(data => {
                        this.SchoolsPerPerf$.next(data);
                    },
                        error => {

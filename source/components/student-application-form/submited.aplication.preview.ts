@@ -13,7 +13,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
- 
+
 @Component({
     selector: 'submited-preview',
     template: `
@@ -76,16 +76,6 @@ import * as html2canvas from "html2canvas"
                       <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>
                       <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
                       <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
-
-                    <h5>Κοινωνικά Κριτίρια </h5>
-                    <div *ngFor="let critiriaChoices$  of CritirioChosen$ | async" [hidden]="UserData$.id !== userActive">
-                         {{critiriaChoices$.critirio}}
-                    </div>
-
-                    <h5>Εισοδηματικά Κριτίρια </h5>
-                    <div *ngFor="let incomeChoices$  of incomeChosen$ | async" [hidden]="UserData$.id !== userActive">
-                         {{incomeChoices$.critirio}}
-                     </div>
 
                     <h5>Επιλογές ΕΠΑΛ</h5>
                     <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
@@ -211,20 +201,6 @@ import * as html2canvas from "html2canvas"
                 console.log("Error Getting Schools");
             },
              () => console.log("Getting Schools"));
-    this.CritirioChosenSub = this._hds.getCritiria(this.userActive+1, 1).subscribe(data => {
-        this.CritirioChosen$.next(data)},
-            error => {
-                this.CritirioChosen$.next([{}]);
-                console.log("Error Getting Schools");
-            },
-             () => console.log("Getting Schools"));
-    this.incomeChosenSub = this._hds.getCritiria(this.userActive+1, 2).subscribe(data => {
-          this.incomeChosen$.next(data)},
-              error => {
-                  this.incomeChosen$.next([{}]);
-                  console.log("Error Getting Schools");
-              },
-               () => console.log("Getting Schools"));
 
    }
 
@@ -244,7 +220,7 @@ import * as html2canvas from "html2canvas"
             doc.addImage(img, 'PNG',0, 0, 210, 297);
             console.log(img, doc, "ok2");
             doc.save('applications.pdf');
- 
+
           }
 
 
@@ -267,21 +243,19 @@ html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
       onrendered: function(canvas: HTMLCanvasElement) {
         var img = canvas.toDataURL();
                   var doc = new jsPDF();
-                               
+
                   console.log("mphkaneo");
              setTimeout(function(){
-               
 
-                 
+
+
     }, 100000);
               doc.addImage(img, 'PNG',0, 0, 1000, 1000);
                   console.log("mphkaneoneo");
                   doc.save('applications.pdf');
 }
 }); }
-  
-  
+
+
 
 }
- 
-

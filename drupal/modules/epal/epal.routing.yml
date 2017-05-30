@@ -151,7 +151,7 @@ epal.ministry.report-completeness:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.report-all-stat:
-  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}'
+  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}/{finalized}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -174,12 +174,20 @@ epal.ministry.retrieve-registry-id:
     _controller: '\Drupal\epal\Controller\ReportsCreator::retrieveUserRegistryNo'
   requirements:
     _user_is_logged_in: 'TRUE'
-epal.ministry.massive_mail:
-  path: '/ministry/send-massive-mail'
+epal.ministry.massive_mail_unallocated:
+  path: '/ministry/send-unallocated-massive-mail'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToStudents'
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail_located:
+  path: '/ministry/send-located-massive-mail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToLocatedStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.retrievesettings:
@@ -203,7 +211,7 @@ epal.perfectureschools:
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfecture'
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchools'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.coursesperschools:
@@ -244,5 +252,13 @@ epal.gettypeofschool:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+getlimitspercourse:
+  path: '/epal/getlimitsperCourse/{classid}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::getlimitsperCourse'
   requirements:
     _user_is_logged_in: 'TRUE'

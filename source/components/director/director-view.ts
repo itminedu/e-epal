@@ -146,6 +146,7 @@ import {
 
             </nav>
             </div>
+
             </form>
             </div>
 
@@ -175,14 +176,18 @@ import {
     private selectionBClass: BehaviorSubject<boolean>;
     private selectiontype: BehaviorSubject<boolean>;
     private selectionCClass: BehaviorSubject<boolean>;
+    private limitsSub: Subscription;
+    private limits$: BehaviorSubject<any>;
     private SchoolId ;
     private currentclass: Number;
     private saved: Array<number> = new Array();
     private limitdown = 0;
     private limitup = 5;
     private pageno = 1;
+    public totallimit;
     private userActive = <number>-1;
     private type: Number;
+    public tot_pages: number;
 
 
     @ViewChild('fileInput') fileInput: ElementRef;
@@ -198,9 +203,11 @@ import {
         this.StudentsSize$ = new BehaviorSubject({});
         this.SavedStudents$ = new BehaviorSubject({});
         this.SubmitedDetails$ = new BehaviorSubject([{}]);
+        this.limits$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.selectionBClass = new BehaviorSubject(false);
         this.selectionCClass = new BehaviorSubject(false);
+        //this.outoflimits = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
         this.selectiontype = new BehaviorSubject(true);
 
@@ -214,6 +221,7 @@ import {
         });
 
     }
+
 
     ngOnDestroy() {
         if (this.StudentSelectedSub)
@@ -230,6 +238,7 @@ import {
             this.SubmitedDetailsSub.unsubscribe();
 
     }
+
 
     ngOnInit() {
 
@@ -328,57 +337,96 @@ import {
 
     findstudent(txop, pageno) {
 
-        var tot_pages: number;
+       
         var sectorint = +this.formGroup.value.tomeas;
-        if (txop.value === "1") {
-            this.currentclass = 1;
-        }
-        else if (txop.value === "2") {
-            this.currentclass = 2;
-        }
-        else if (txop.value === "3") {
-            this.currentclass = 3;
-        }
-
-        else if (txop.value === "4") {
-            this.currentclass = 4;
-        }
+        this.currentclass = +txop.value;
+        
         this.formGroup.get('pageno').setValue(this.pageno);
         if (this.pageno == 1) {
-            console.log(this.SchoolId, sectorint, this.currentclass, "testaaaaaa");
+
+            console.log("mphkepage = 1");
             this.StudentsSizeSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, 0, 0).subscribe(x => {
                 this.StudentsSize$.next(x);
-                tot_pages = x.id / 5;
-                if (x.id % 5 > 0) {
-                    tot_pages = (x.id - (x.id % 5)) / 5 + 1;
-                }
-                console.log(tot_pages,"totpages")
-                if (isNaN(tot_pages)){
-                  this.retrievedStudent.next(false);
-                  tot_pages = 0;
-                }
-                this.formGroup.get('maxpage').setValue(tot_pages);
-            });
+                this.totallimit = x.id;
 
-        }
-        console.log(this.limitdown, this.limitup,"mits");
-        this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
-            this.StudentInfo$.next(data);
-            if (tot_pages === 0){
-                  console.log("tot.pages", this.formGroup.value.maxpage);
-                  this.retrievedStudent.next(false);
+            this.limitsSub = this._hds.getlimitsofcourse(this.currentclass).subscribe(data => {
+            this.limits$.next(data);
+            console.log(this.totallimit, data[0].limitdown, "oria");
+             this.tot_pages = x.id / 5;
+                if (x.id % 5 > 0) {
+                    this.tot_pages = (x.id - (x.id % 5)) / 5 + 1;
                 }
-             else
-              {
-                console.log("tot.pages", this.formGroup.value.maxpage, "max", tot_pages);
+                console.log(this.tot_pages,"totpages")
+                if (isNaN(this.tot_pages)){
+                  this.retrievedStudent.next(false);
+                  this.tot_pages = 0;
+                }
+            if ( (x.id < data[0].limitdown) || (isNaN(this.tot_pages)))
+            {
+              console.log("mphkeprwto!")
+                  this.retrievedStudent.next(false);
+                  this.tot_pages = 0;
+                  this.formGroup.get('maxpage').setValue(this.tot_pages);
+                  //this.outoflimits.next(true);
+            }
+            else
+            {
+               // this.outoflimits.next(false);
+                
+                this.formGroup.get('maxpage').setValue(this.tot_pages);
+                console.log(this.tot_pages,"mazeuw mathites");
+                this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
+                this.StudentInfo$.next(data);
+            
+                console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
                 this.retrievedStudent.next(true);
-              }
-        },
+              
+            },
             error => {
                 this.StudentInfo$.next([{}]);
                 console.log("Error Getting Students");
             },
             () => console.log("Getting Students"));
+
+
+
+            }
+            
+              },
+            error => {
+                this.limits$.next([{}]);
+                console.log("Error Getting limits");
+            },
+            () => console.log("Getting limits"));
+               
+            });
+
+        }
+        else{
+              console.log("eisai edw", this.tot_pages);
+     
+       
+              if (this.tot_pages == 0 ){
+                  console.log("mphke1", this.formGroup.value.maxpage, this.tot_pages);
+                  this.retrievedStudent.next(false);
+                }
+             else
+              {
+                console.log(this.tot_pages,"mazeuw mathites");
+                this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
+                this.StudentInfo$.next(data);
+            
+                console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
+                this.retrievedStudent.next(true);
+              
+            },
+            error => {
+                this.StudentInfo$.next([{}]);
+                console.log("Error Getting Students");
+            },
+            () => console.log("Getting Students"));
+          }
+        }
 
     }
 

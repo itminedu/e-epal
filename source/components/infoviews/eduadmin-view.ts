@@ -17,7 +17,7 @@ import {
     Validators,
 } from '@angular/forms';
 @Component({
-    selector: 'perfecture-view',
+    selector: 'eduadmin-view',
     template: `
             <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3>
 
@@ -44,7 +44,7 @@ import {
    `
 })
 
-@Injectable() export default class PerfectureView implements OnInit, OnDestroy {
+@Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;

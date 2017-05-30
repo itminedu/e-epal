@@ -99,7 +99,8 @@ class ReportsCreator extends ControllerBase {
 				for ($i=0; $i < 3; $i++)	{
 					$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																		->fields('eStudent', array('id', 'distribution_id'))
-																		->condition('eStudent.distribution_id', $i+1, '=');
+																		->condition('eStudent.distribution_id', $i+1, '=')
+																		->condition('eStudent.finalized', 1 , '=');
 					array_push($numData, $sCon->countQuery()->execute()->fetchField());
 				}
 
@@ -116,6 +117,14 @@ class ReportsCreator extends ControllerBase {
 																	->condition('eStudent.id', $studentIds, 'NOT IN');
 				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
 
+				//υπολογισμός αριθμού αιτήσεων που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα
+				$numInSmallClasses = 0;
+				$sCon = $this->connection->select('epal_student_class', 'eStudent')
+																		->fields('eStudent', array('id'))
+																		->condition('eStudent.finalized', 0 , '=');
+				$numInSmallClasses = $sCon->countQuery()->execute()->fetchField();
+
+
 				 $list = array();
 
 				 array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numTotal));
@@ -123,6 +132,7 @@ class ReportsCreator extends ControllerBase {
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση", 'numStudents' => $numData[1]));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση", 'numStudents' => $numData[2]));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση", 'numStudents' => $numNoAllocated));
+				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα", 'numStudents' => $numInSmallClasses));
 
 				 return $this->respondWithStatus(
 								 $list
@@ -223,19 +233,15 @@ class ReportsCreator extends ControllerBase {
 						$numClassSectors += $sectorsInEpal->capacity_class_sector;
 					array_push($capacity,  $numClassSectors * $limitUp);
 					//χωρητικότητα για Γ' τάξη
-					//ΑΛΛΑΓΗ -> ΠΡΟΣΘΗΚΗ ΝΕΟΥ ΠΕΔΙΟΥ ΓΙΑ CAPACITY ΣΤΗ Δ';
 					$sCon = $this->connection->select('eepal_specialties_in_epal_field_data', 'eSchool')
 																		->fields('eSchool', array('id',  'capacity_class_specialty'))
 																		->condition('eSchool.epal_id', $epalSchool->id , '=');
 					$specialtiesInEpals = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 					$numClassSpecialties = 0;
-					//$numClassSpecialtiesNight = 0;
 					foreach ($specialtiesInEpals as $specialtiesInEpal)	{
 						$numClassSpecialties += $specialtiesInEpal->capacity_class_specialty;
-						//$numClassSpecialtiesNight += $specialtiesInEpal->capacity_class_specialty;
 					}
 					array_push($capacity,  $numClassSpecialties * $limitUp);
-					//array_push($capacity,  $numClassSpecialtiesNight * $limitUp);
 
 					//χωρητικότητα για Δ' τάξη
 					if ($epalSchool->operation_shift === "ΕΣΠΕΡΙΝΟ")	{
@@ -262,7 +268,8 @@ class ReportsCreator extends ControllerBase {
 						$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																			->fields('eStudent', array('id', 'epal_id', 'currentclass'))
 																			->condition('eStudent.epal_id', $epalSchool->id , '=')
-																			->condition('eStudent.currentclass', $classId , '=');
+																			->condition('eStudent.currentclass', $classId , '=')
+																			->condition('eStudent.finalized', 1 , '=');
 						array_push( $num, $sCon->countQuery()->execute()->fetchField() );
 						//βρες ποσοστά συμπλήρωσης
 						array_push( $perc, number_format($num[$classId-1] / $capacity[$classId-1] * 100, 2));
@@ -300,7 +307,7 @@ class ReportsCreator extends ControllerBase {
 
 
 
-		public function makeReportAllStat(Request $request, $regionId, $adminId, $schId, $classId, $sectorId, $courseId)	{
+		public function makeReportAllStat(Request $request, $regionId, $adminId, $schId, $classId, $sectorId, $courseId, $finalized)	{
 
 			try  {
 
@@ -408,7 +415,10 @@ class ReportsCreator extends ControllerBase {
 																									->fields('eStudent', array('id'))
 																									->condition('eStudent.epal_id', $epalSchool->id , '=')
 																									->condition('eStudent.currentclass', 3 , '=')
-																									->condition('eStudent.specialization_id', $specialtiesInEpal->specialty_id , '=');
+																									->condition('eStudent.specialization_id', $specialtiesInEpal->specialty_id , '=')
+																									->condition('eStudent.finalized', $finalized , '=');
+												//if ($finalized === 1)
+												//	$sCon->condition('eStudent.finalized', 1 , '=');
 												$numStud = $sCon->countQuery()->execute()->fetchField();
 												array_push( $numColumn, $numStud );
 												array_push($capacityColumn, $specialtiesInEpal->capacity_class_specialty * $limitup);
@@ -454,7 +464,10 @@ class ReportsCreator extends ControllerBase {
 																									->fields('eStudent', array('id'))
 																									->condition('eStudent.epal_id', $epalSchool->id , '=')
 																									->condition('eStudent.currentclass', 4 , '=')
-																									->condition('eStudent.specialization_id', $specialtiesInEpal->specialty_id , '=');
+																									->condition('eStudent.specialization_id', $specialtiesInEpal->specialty_id , '=')
+																									->condition('eStudent.finalized', $finalized , '=');
+												//if ($finalized === 1)
+												//	$sCon->condition('eStudent.finalized', 1 , '=');
 												$numStud = $sCon->countQuery()->execute()->fetchField();
 												array_push( $numColumn, $numStud );
 												array_push($capacityColumn, $specialtiesInEpal->capacity_class_specialty_d * $limitup);
@@ -494,7 +507,10 @@ class ReportsCreator extends ControllerBase {
 																				->fields('eStudent', array('id'))
 																				->condition('eStudent.epal_id', $epalSchool->id , '=')
 																				->condition('eStudent.currentclass', 2 , '=')
-																				->condition('eStudent.specialization_id', $sectorsInEpal->sector_id , '=');
+																				->condition('eStudent.specialization_id', $sectorsInEpal->sector_id , '=')
+																				->condition('eStudent.finalized', $finalized , '=');
+							//if ($finalized === 1)
+							//	$sCon->condition('eStudent.finalized', 1 , '=');
 							$numStud = $sCon->countQuery()->execute()->fetchField();
 							array_push( $numColumn, $numStud );
 							array_push($capacityColumn, $sectorsInEpal->capacity_class_sector * $limitup);
@@ -518,6 +534,9 @@ class ReportsCreator extends ControllerBase {
 
 					$clidstart = 1;
 					$clidend = 4;
+					//Για ολιγομελή τμήματα, μην εμφανίζεις συνολικά τις Β', Γ', Δ' τάξεις ???
+					//if ($finalized === "0")
+					//	$clidend = 1;
 
 					if ($classId !== "0")	{
 						$clidstart = $classId;
@@ -542,8 +561,10 @@ class ReportsCreator extends ControllerBase {
 						$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																			->fields('eStudent', array('id', 'epal_id', 'currentclass'))
 																			->condition('eStudent.epal_id', $epalSchool->id , '=')
-																			->condition('eStudent.currentclass', $clId , '=');
-
+																			->condition('eStudent.currentclass', $clId , '=')
+																			->condition('eStudent.finalized', $finalized , '=');
+						//if ($finalized === 1)
+						//		$sCon->condition('eStudent.finalized', 1 , '=');
 						$numStud =  $sCon->countQuery()->execute()->fetchField();
 						array_push($schoolNameColumn, $epalSchool->name);
 						array_push($regionColumn, $epalRegion->name);
@@ -717,7 +738,8 @@ class ReportsCreator extends ControllerBase {
 
 
 					//εύρεση αριθμού τμημάτων (χωρητικότητα) για κάθε τμήμα της Α' τάξης
-					if ( ($capacityEnabled === "0" && ($epalSchool->capacity_class_a === "0" || !isset($epalSchool->capacity_class_a)) )  ||  ($capacityEnabled === "1")  )	{
+					//$epalSchool->capacity_class_a === "0" ||
+					if ( ($capacityEnabled === '0' && ( !isset($epalSchool->capacity_class_a)) )  ||  ($capacityEnabled === "1")  )	{
 							array_push($regionColumn, $epalRegion->name);
 							array_push($adminColumn, $epalAdmin->name);
 							array_push($schoolNameColumn, $epalSchool->name);
@@ -726,7 +748,7 @@ class ReportsCreator extends ControllerBase {
 					}
 
 					//εύρεση αριθμού τμημάτων (χωρητικότητα) για κάθε τομέα της Β' τάξης
-					//ΠΡΟΣΟΧΗ: χειρισμ΄ός τιμών: 0 και null
+					//ΠΡΟΣΟΧΗ: χειρισμ΄ός τιμών: 0 (ΟΧΙ??) και null
 
 					$sCon = $this->connection->select('eepal_sectors_in_epal_field_data', 'eSchool')
 																		->fields('eSchool', array('sector_id','capacity_class_sector'))
@@ -737,7 +759,7 @@ class ReportsCreator extends ControllerBase {
 					//$sCon->condition($db_or) ;
 					if ($capacityEnabled === "0")	{
 						$sCon->condition( db_or()
-															->condition('eSchool.capacity_class_sector', 0, '=')
+															//->condition('eSchool.capacity_class_sector', 0, '=')
 															->condition('eSchool.capacity_class_sector', null, 'is')  ) ;
 					}
 					$sectorsInEpals = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
@@ -766,7 +788,7 @@ class ReportsCreator extends ControllerBase {
 
 					if ($capacityEnabled === "0")	{
 							$sCon->condition( db_or()
-																->condition('eSchool.capacity_class_specialty', 0, '=')
+																//->condition('eSchool.capacity_class_specialty', 0, '=')
 																->condition('eSchool.capacity_class_specialty', null, 'is')  ) ;
 						}
 
@@ -798,7 +820,7 @@ class ReportsCreator extends ControllerBase {
 
 					if ($capacityEnabled === "0")	{
 							$sCon->condition( db_or()
-																->condition('eSchool.capacity_class_specialty_d', 0, '=')
+																//->condition('eSchool.capacity_class_specialty_d', 0, '=')
 																->condition('eSchool.capacity_class_specialty_d', null, 'is')  ) ;
 						}
 

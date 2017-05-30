@@ -609,7 +609,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel) {
+    makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel, distribfinal) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -628,7 +628,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         }
         else if (routepath == "/ministry/report-all-stat/"){
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/"  + schsel + "/"  +
-                                  clsel + "/"  + secsel + "/"  + coursel , options)
+                                  clsel + "/"  + secsel + "/"  + coursel + "/" + distribfinal , options)
                 .map(response => response.json());
           }
           else if (routepath == "/ministry/report-no-capacity/"){
@@ -641,19 +641,26 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    informUnlocatedStudents(username, userpassword) {
+    informUnlocatedStudents(username, userpassword, unallocated) {
 
       let headers = new Headers({
           "Content-Type": "application/json",
       });
       this.createMinistryAuthorizationHeader(headers, username, userpassword );
       let options = new RequestOptions({ headers: headers });
-      return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/send-massive-mail` , options)
+
+      let route="";
+      if (unallocated == true)
+        route = "ministry/send-unallocated-massive-mail";
+      else
+        route = "ministry/send-located-massive-mail";
+
+      return this.http.get(`${AppSettings.API_ENDPOINT}/` + route , options)
           .map(response => response.json());
     }
 
 
-    getSchoolPerPerfecture() {
+    getSchools() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -871,6 +878,22 @@ gettypeofschool(){
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/gettypeofschool/`, options)
+            .map(response => response.json());
+
+}
+
+getlimitsofcourse(classid){
+
+    this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/getlimitsperCourse/`+ classid , options)
             .map(response => response.json());
 
 }

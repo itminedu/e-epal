@@ -155,6 +155,7 @@ class CBController extends ControllerBase
                 $user->setUsername($epalToken);
                 $user->save();
                 $epalUser->set('authtoken', $epalToken);
+                // $epalUser->set('accesstoken', $authToken); // SPAPAD TODO $accessToken['oauth_token']);
                 $epalUser->set('accesstoken', $accessToken['oauth_token']);
                 $epalUser->set('accesstoken_secret', $accessToken['oauth_token_secret']);
                 $epalUser->set('requesttoken',$this->requestToken);

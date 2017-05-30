@@ -128,116 +128,111 @@ class CBController extends ControllerBase
 
     public function authenticatePhase2($request, $authToken, $authVerifier)
     {
-    $taxis_userid = null;
-    $trx = $this->connection->startTransaction();
-    try {
-        $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
-        $oauth->enableDebug();
-        $oauth->setToken($authToken, $this->requestTokenSecret);
-        $accessToken = $oauth->getAccessToken($this->access_token_url, '', $authVerifier);
-        $oauth->setToken($accessToken['oauth_token'], $accessToken['oauth_token_secret']);
-        $oauth->fetch($this->api_url);
+        $taxis_userid = null;
+        $trx = $this->connection->startTransaction();
+        try {
+            $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
+            $oauth->enableDebug();
+            $oauth->setToken($authToken, $this->requestTokenSecret);
+            $accessToken = $oauth->getAccessToken($this->access_token_url, '', $authVerifier);
+            $oauth->setToken($accessToken['oauth_token'], $accessToken['oauth_token_secret']);
+            $oauth->fetch($this->api_url);
 
-        $this->logger->warning($oauth->getLastResponse());
-        $taxis_userid = $this->xmlParse($oauth->getLastResponse(), 'messageText');
+            $this->logger->warning($oauth->getLastResponse());
+            $taxis_userid = $this->xmlParse($oauth->getLastResponse(), 'messageText');
 
-        $currentTime = time();
-        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userid));
-        $epalUser = reset($epalUsers);
+            $currentTime = time();
+            $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userid));
+            $epalUser = reset($epalUsers);
 
-        $epalToken = md5(uniqid(mt_rand(), true));
-        if ($epalUser) {
-            $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
-            if ($user) {
-//                $user->setPassword('harispass');
-//                $user->setUsername('harisp');
+            $epalToken = md5(uniqid(mt_rand(), true));
+            if ($epalUser) {
+                $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
+                if ($user) {
+                    $user->setPassword($epalToken);
+                    $user->setUsername($epalToken);
+                    $user->save();
+                    $epalUser->set('authtoken', $epalToken);
+                    $epalUser->set('accesstoken', $accessToken['oauth_token']);
+                    $epalUser->set('accesstoken_secret', $accessToken['oauth_token_secret']);
+                    $epalUser->set('requesttoken',$this->requestToken);
+                    $epalUser->set('requesttoken_secret', $this->requestTokenSecret);
+                    $epalUser->set('timelogin', $currentTime);
+                    $epalUser->set('userip', $request->getClientIp());
+
+                    $epalUser->save();
+                }
+            }
+
+            if ($epalUser === null || !$epalUser) {
+
+                //Create a User
+                $user = User::create();
+                //Mandatory settings
+                $unique_id = uniqid('####');
                 $user->setPassword($epalToken);
-                $user->setUsername($epalToken);
+                $user->enforceIsNew();
+                $user->setEmail($unique_id);
+                $user->setUsername($epalToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
+                $user->activate();
+                $user->set('init', $unique_id);
+
+                //Set Language
+                $language_interface = \Drupal::languageManager()->getCurrentLanguage();
+                $user->set('langcode', $language_interface->getId());
+                $user->set('preferred_langcode', $language_interface->getId());
+                $user->set('preferred_admin_langcode', $language_interface->getId());
+
+                //Adding default user role
+                $user->addRole('applicant');
                 $user->save();
-                $epalUser->set('authtoken', $epalToken);
-                $epalUser->set('accesstoken', $accessToken['oauth_token']);
-                $epalUser->set('accesstoken_secret', $accessToken['oauth_token_secret']);
-                $epalUser->set('requesttoken',$this->requestToken);
-                $epalUser->set('requesttoken_secret', $this->requestTokenSecret);
-                $epalUser->set('timelogin', $currentTime);
-                $epalUser->set('userip', $request->getClientIp());
 
-                $epalUser->save();
+                $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('mail' => $unique_id));
+                $user = reset($users);
+                if ($user) {
+                    $this->logger->warning('userid 190='.$user->id().'*** name='.$user->name->value);
+
+                    $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
+                        'langcode' => 'el',
+                        'user_id' => $user->id(),
+                        'drupaluser_id' => $user->id(),
+                        'taxis_userid' => $taxis_userid,
+                        'taxis_taxid' => $unique_id,
+                        'name' => $unique_id,
+                        'surname' => $unique_id,
+                        'fathername' => $unique_id,
+                        'mothername' => $unique_id,
+                        'accesstoken' => $accessToken['oauth_token'],
+                        'accesstoken_secret' => $accessToken['oauth_token_secret'],
+                        'authtoken' => $epalToken,
+                        'requesttoken' => $this->requestToken,
+                        'requesttoken_secret' => $this->requestTokenSecret,
+                        'timelogin' => $currentTime,
+                        'timeregistration' => $currentTime,
+                        'timetokeninvalid' => 0,
+                        'userip' => $request->getClientIp(),
+                        'status' => 1
+                    ));
+                    $epalUser->save();
+                } else {
+                    return false;
+                }
+
             }
+            $this->oauthostSession->set('authtoken', $epalToken);
+            $this->oauthostSession->save();
+            // $this->oauthostSession->delete();
+
+            return $epalToken;
+        } catch (OAuthException $e) {
+            $this->logger->warning($e->getMessage());
+            $trx->rollback();
+            return false;
+        } catch (\Exception $ee) {
+            $this->logger->warning($ee->getMessage());
+            $trx->rollback();
+            return false;
         }
-
-        if ($epalUser === null || !$epalUser) {
-
-            //Create a User
-            $user = User::create();
-            //Mandatory settings
-            $unique_id = uniqid('####');
-            $user->setPassword($epalToken);
-            $user->enforceIsNew();
-            $user->setEmail($unique_id);
-            $user->setUsername($epalToken); //This username must be unique and accept only a-Z,0-9, - _ @ .
-            $user->activate();
-            $user->set('init', $unique_id);
-
-            //Set Language
-            $language_interface = \Drupal::languageManager()->getCurrentLanguage();
-            $user->set('langcode', $language_interface->getId());
-            $user->set('preferred_langcode', $language_interface->getId());
-            $user->set('preferred_admin_langcode', $language_interface->getId());
-
-            //Adding default user role
-            $user->addRole('applicant');
-            $user->save();
-
-
-            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('mail' => $unique_id));
-            $user = reset($users);
-            if ($user) {
-                $this->logger->warning('userid 190='.$user->id().'*** name='.$user->name->value);
-
-                $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
-            //    'langcode' => $language_interface->getId(),
-                'langcode' => 'el',
-                'user_id' => $user->id(),
-                'drupaluser_id' => $user->id(),
-                'taxis_userid' => $taxis_userid,
-                'taxis_taxid' => $unique_id,
-                'name' => $unique_id,
-                'surname' => $unique_id,
-                'fathername' => $unique_id,
-                'mothername' => $unique_id,
-                'accesstoken' => $accessToken['oauth_token'],
-                'accesstoken_secret' => $accessToken['oauth_token_secret'],
-                'authtoken' => $epalToken,
-                'requesttoken' => $this->requestToken,
-                'requesttoken_secret' => $this->requestTokenSecret,
-                'timelogin' => $currentTime,
-                'timeregistration' => $currentTime,
-                'timetokeninvalid' => 0,
-                'userip' => $request->getClientIp(),
-                'status' => 1
-            ));
-            $epalUser->save();
-            } else {
-                return false;
-            }
-
-        }
-        $this->oauthostSession->set('authtoken', $epalToken);
-        $this->oauthostSession->save();
-//        $this->oauthostSession->delete();
-
-
-        return $epalToken;
-    } catch (OAuthException $e) {
-        $this->logger->warning($e->getMessage());
-        $trx->rollback();
-        return false;
-    } catch (\Exception $ee) {
-        $this->logger->warning($ee->getMessage());
-        $trx->rollback();
-        return false;
-    }
 
         return false;
     }

@@ -207,7 +207,7 @@ epal.ministry.storesettings:
   requirements:
       _user_is_logged_in: 'TRUE'
 regionview:
-  path: '/epal/ScoolperPerf'
+  path: '/epal/ScoolperPerf/{check_status}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

@@ -15,6 +15,7 @@ import { LOGININFO_INITIAL_STATE } from '../store/logininfo/logininfo.initial-st
 import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../constants';
 import { CookieService } from 'ngx-cookie';
 
+import * as FileSaver from 'file-saver';
 
 const HEADER = { headers: new Headers({ 'Content-Type': 'application/json' }) };
 
@@ -40,6 +41,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
+                    console.log("NAIIIIII!");
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     return loginInfoToken;
@@ -446,6 +448,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     getStudentDetails(headerid) {
         let headerIdNew = headerid.toString();
         this.loginInfo$.getValue().forEach(loginInfoToken => {
+            console.log("Nai");
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
@@ -542,8 +545,8 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
         return this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
             .map(response => response.json());
-               
-       
+
+
     }
 
 
@@ -895,6 +898,48 @@ getlimitsofcourse(classid){
         let options = new RequestOptions({ headers: headers });
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/getlimitsperCourse/`+ classid , options)
             .map(response => response.json());
+
+}
+
+createPdfServerSide(auth_token, role)  {
+
+  /*
+  this.loginInfo$.getValue().forEach(loginInfoToken => {
+      this.authToken = loginInfoToken.auth_token;
+      this.authRole = loginInfoToken.auth_role;
+      console.log("Θα μπει;");
+      console.log(this.authToken);
+  });
+  */
+
+  let headers = new Headers({
+      "Content-Type": "application/json",
+  });
+  this.authToken = auth_token;
+  this.authRole = role;
+  console.log(this.authToken);
+  console.log(this.authRole);
+  this.createAuthorizationHeader(headers);
+  let options = new RequestOptions({ headers: headers });
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`, options)
+  //   .map(response => response.json());
+
+
+  return new Promise((resolve, reject) => {
+      this.http.post(`${AppSettings.API_ENDPOINT}/epal/pdf-application`, options)
+          .map(response => response.json())
+          .subscribe(data => {
+              resolve(data);
+              console.log("Nik");
+              //console.log(data['_body']);
+          },
+          error => {
+              reject("Error POST in createPdfServerSide");
+          },
+          () => console.log("Nikos!!!"));
+  });
+
 
 }
 

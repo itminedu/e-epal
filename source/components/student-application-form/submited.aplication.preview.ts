@@ -13,10 +13,23 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
- 
+
+import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../../app.settings';
+import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import {
+    FormBuilder,
+    FormGroup,
+    FormControl,
+    FormArray
+} from '@angular/forms';
+
+
 @Component({
     selector: 'submited-preview',
     template: `
+
+
+
     <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
              <breadcrumbs></breadcrumbs>
@@ -97,13 +110,26 @@ import * as html2canvas from "html2canvas"
              </div>
             </ul>
             <br>
-            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
+            <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
+
+            <!--
+            <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application" #form>
+              <button type="submit" (click)="form.submit()">Εξαγωγή σε PDF - ΝΕΟ!</button>
+            </form>
+            -->
+
+            <!--<a href="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application">Download</a>-->
 
    `
 })
 
 @Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
 
+    private apiEndPointParams = API_ENDPOINT_PARAMS;
+    public formGroup: FormGroup;
+
+    loginInfo$: BehaviorSubject<ILoginInfo>;
+    loginInfoSub: Subscription;
 
     private SubmitedApplic$: BehaviorSubject<any>;
     private SubmitedUsersSub: Subscription;
@@ -119,15 +145,21 @@ import * as html2canvas from "html2canvas"
     private CritirioChosenSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
 
+    private data;
+    private authToken: string;
+    private role: string;
+
 
     public StudentId;
     private userActive = <number>-1;
 
   @ViewChild('target') element: ElementRef;
 
-    constructor(private _hds: HelperDataService,
+    constructor(private _ngRedux: NgRedux<IAppState>,
+                private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
                 private router: Router ,
+                private fb: FormBuilder,
               )
     {
        this.SubmitedApplic$ = new BehaviorSubject([{}]);
@@ -136,6 +168,11 @@ import * as html2canvas from "html2canvas"
        this.CritirioChosen$ = new BehaviorSubject([{}]);
        this.incomeChosen$ = new BehaviorSubject([{}]);
        this.showLoader$ = new BehaviorSubject(false);
+
+       this.formGroup = this.fb.group({
+       });
+
+      this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     }
 
     ngOnDestroy()
@@ -151,6 +188,11 @@ import * as html2canvas from "html2canvas"
         if (this.incomeChosenSub)
             this.incomeChosenSub.unsubscribe();
 
+        if (this.loginInfoSub)
+          this.loginInfoSub.unsubscribe();
+        if (this.loginInfo$)
+          this.loginInfo$.unsubscribe();
+
         this.SubmitedDetails$.unsubscribe();
         this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
@@ -158,6 +200,20 @@ import * as html2canvas from "html2canvas"
     }
 
     ngOnInit() {
+
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                  this.authToken = loginInfoToken.auth_token;
+                  this.role = loginInfoToken.auth_role;
+                  console.log("....");
+                  console.log(this.authToken);
+                  return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
+
 
         this.showLoader$.next(true);
 
@@ -244,7 +300,7 @@ import * as html2canvas from "html2canvas"
             doc.addImage(img, 'PNG',0, 0, 210, 297);
             console.log(img, doc, "ok2");
             doc.save('applications.pdf');
- 
+
           }
 
 
@@ -267,21 +323,58 @@ html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
       onrendered: function(canvas: HTMLCanvasElement) {
         var img = canvas.toDataURL();
                   var doc = new jsPDF();
-                               
+
                   console.log("mphkaneo");
              setTimeout(function(){
-               
 
-                 
+
+
     }, 100000);
               doc.addImage(img, 'PNG',0, 0, 1000, 1000);
                   console.log("mphkaneoneo");
                   doc.save('applications.pdf');
 }
 }); }
-  
-  
+
+
+createPdfServerSide()
+{
+
+  /*
+  this.SubmitedDetailsSub = this._hds.createPdfServerSide().subscribe(data => {
+         this.data = data;
+    },
+        error => {
+
+            console.log("Error Getting createPdfServerSide");
+        },
+        () => {
+          console.log("Success Getting createPdfServerSide");
+          //$window.open(this.data);
+          //window.open("data:application/pdf," + encodeURI(this.data));
+          console.log("Test Now!");
+          console.log(this.data);
+
+          //window.open("https://www.w3schools.com");
+
+        }
+
+    );
+    */
+
+
+    this._hds.createPdfServerSide(this.authToken, this.role)
+    .then(msg => {
+        //console.log("Nikos2");
+    })
+    .catch(err => {console.log(err);
+        //console.log("Nikos1");
+        console.log(err);
+      });
+
 
 }
- 
 
+
+
+}

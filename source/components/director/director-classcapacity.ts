@@ -9,6 +9,9 @@ import { IAppState } from '../../store/store';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
+import { VALID_CAPACITY_PATTERN} from '../../constants';
+import {maxValue} from '../../constants';
+
 
 import {
     FormBuilder,
@@ -48,7 +51,14 @@ import {
 
 
       <p style="margin-top: 20px; line-height: 2em;"> Αλλάξτε παρακαλώ τον αριθμό των τμημάτων που μπορείτε να δημιουργήσετε στο σχολείο σας και πατήστε  <i>Αποθήκευση</i>.</p>
-       <input  type="number" formControlName="capacity" min="1" max="10">
+       <input  type="number" formControlName="capacity" min="1" max="10" ng-min="1" ng-max="99" >
+
+        <div class="alert alert-danger" *ngIf="formGroup.get('capacity').touched && formGroup.get('capacity').hasError('maxValue')">
+      Συμπληρώστε την διαθεσιμότητα σας σε τμήματα !
+      </div>
+       <div class="alert alert-danger" *ngIf="formGroup.get('capacity').touched && formGroup.get('capacity').hasError('required')">
+          Παρακαλώ συμπληρώστε ένα μικρότερο αριθμό!
+      </div>
 
             <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
                 Αποθήκευση
@@ -148,10 +158,14 @@ import {
             tomeas: ['', []],
             taxi: ['', []],
             specialit: ['', []],
-            capacity: ['', []],
+            capacity: ['', [Validators.pattern(VALID_CAPACITY_PATTERN),Validators.required, maxValue(99)]],
             });
 
     }
+
+
+    
+
 
     public showModal(popupMsgId):void {
         console.log("about to show modal");
@@ -325,8 +339,6 @@ import {
     }
 
 
-
-
     saveCapacity() {
 
         var taxi = +this.formGroup.value.taxi;
@@ -336,7 +348,9 @@ import {
         
 
          if ((taxi === 2 && tomeas === 0) || (taxi === 3  && tomeas === 0 ) || (taxi ===3  && specialit === 0 ) 
-             || (taxi === 4  && tomeas === 0 ) || (taxi ===4  && specialit === 0 ) || (taxi = 0) || (capc ===0))
+             || (taxi === 4  && tomeas === 0 ) || (taxi ===4  && specialit === 0 ) || (taxi = 0) || (this.formGroup.invalid)
+
+             )
           {
               this.showModal("#checksaved");
           } else 

@@ -362,6 +362,13 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
             {
                  $postData = json_decode($content);
                  $cap = $postData->capacity;
+                 if ($cap<= 0 || $cap > 99)
+                 {
+                    return $this->respondWithStatus([
+                    'message' => t("Number out of limits!"),
+                ], Response::HTTP_BAD_REQUEST);
+                 }
+
                 if (($tomeas == 0) && ($specialit == 0))
                 {
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));

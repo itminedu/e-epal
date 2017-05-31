@@ -10,6 +10,7 @@ use Drupal\user\Entity\User;
 use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use phpCAS;
 
@@ -116,10 +117,15 @@ class CASLogout extends ControllerBase
             $user->setPassword(uniqid('pw'));
             $user->save();
 
-            $response = new Response();
-            $response->setContent("{\"message\": \"Server logout successful\",\"next\": \"{$this->logoutRedirectUrl}\"}");
-            $response->setStatusCode(Response::HTTP_OK);
-            $response->headers->set('Content-Type', 'application/json');
+            // $response = new Response();
+            // $response->setContent("{\"message\": \"Server logout successful\",\"next\": \"{$this->logoutRedirectUrl}\"}");
+            // $response->setStatusCode(Response::HTTP_OK);
+            // $response->headers->set('Content-Type', 'application/json');
+
+            $response = (new JsonResponse([
+                "message" => "Server logout successful",
+                "next" => "{$this->logoutRedirectUrl}"
+            ]))->setStatusCode(Response::HTTP_OK);
 
             session_unset();
             session_destroy();

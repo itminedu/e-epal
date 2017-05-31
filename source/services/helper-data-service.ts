@@ -396,20 +396,20 @@ export class HelperDataService implements OnInit, OnDestroy {
 
         let headers = new Headers({
             "Content-Type": "application/json",
-
         });
 
-        if (this.authRole === MINISTRY_ROLE)
-            this.createMinistryAuthorizationHeader(headers, this.minedu_userName, this.minedu_userPassword);
-        else
-            this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers, withCredentials: true });
         let logoutRoute = '/oauth/logout';
+        if (this.authRole === MINISTRY_ROLE) {
+            this.createMinistryAuthorizationHeader(headers, this.minedu_userName, this.minedu_userPassword);
+        } else {
+            this.createAuthorizationHeader(headers);
+        }
         if (this.authRole === SCHOOL_ROLE || this.authRole === PDE_ROLE || this.authRole === DIDE_ROLE) {
             logoutRoute = '/cas/logout';
-        }
-        else if (this.authRole === MINISTRY_ROLE)
+        } else if (this.authRole === MINISTRY_ROLE) {
             logoutRoute = '/ministry/logout';
+        }
 
         return new Promise((resolve, reject) => {
             this.http.post(`${AppSettings.API_ENDPOINT}${logoutRoute}${AppSettings.API_ENDPOINT_PARAMS}`, {}, options)

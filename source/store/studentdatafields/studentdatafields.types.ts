@@ -28,6 +28,10 @@ export interface IStudentDataField {
   regiontk: string;
   regionarea: string;
   certificatetype: string;
+  graduation_year: number;
+  lastschool_schoolname: any;
+  lastschool_schoolyear: string;
+  lastschool_class: string;
   relationtostudent: string;
   currentclass: string;
   points: number;

@@ -1,3 +1,8 @@
+
+import {ValidatorFn} from '@angular/forms';
+import {AbstractControl} from '@angular/forms';
+
+
 export const COURSEFIELDS_RECEIVED = 'COURSEFIELDS_RECEIVED';
 export const COURSEFIELDS_SELECTED_SAVE = 'COURSEFIELDS_SELECTED_SAVE';
 
@@ -40,7 +45,10 @@ export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΙΎΌΏα-ωάέήίΐ�
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 // export const VALID_DIGITS_PATTERN = '69[0-9]*$';
-export const VALID_DIGITS_PATTERN = '2[0-9]*$';
+export const VALID_DIGITS_PATTERN = '[0-9]*$';
+export const VALID_TELEPHONE_PATTERN = '2[0-9]*$';
+export const VALID_YEAR_PATTERN = '[0-9]*$';
+export const VALID_CAPACITY_PATTERN = '[0-9]*$';
 
 export const VALID_EMAIL_PATTERN = '[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}';
 
@@ -58,3 +66,26 @@ export const STUDENT_ROLE = 'student';
 export const PDE_ROLE = 'pde';
 export const DIDE_ROLE = 'dide';
 export const MINISTRY_ROLE = 'supervisor';
+export const FIRST_SCHOOL_YEAR = 1950;
+
+export function maxValue(max: Number): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} => {
+    const input = control.value,
+          isValid = input > 99;
+    if(isValid)
+        return { 'maxValue': {max} }
+    else
+        return null;
+  };
+}
+
+export function minValue(min: Number): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} => {
+    const input = control.value,
+          isValid = input < 1;
+    if(isValid)
+        return { 'minValue': {min} }
+    else
+        return null;
+  };
+}

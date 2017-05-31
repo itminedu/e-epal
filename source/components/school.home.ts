@@ -14,16 +14,16 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
 @Component({
     selector: "school-home",
     template: `
-<div>
-    <div *ngIf="errorCode != undefined && errorCode != ''" style="min-height: 300px;">
-        <div [ngSwitch]="errorCode">
+<div style="min-height: 300px; margin-top: 100px;">
+    <div *ngIf="(errorCode$ | async) != ''">
+        <div [ngSwitch]="errorCode$ | async">
             <p class="text-danger" *ngSwitchCase="5001">Προέκυψε σφάλμα κατά την διαδικασία αυθεντικοποίησης σας.</p>
             <p class="text-danger" *ngSwitchCase="5002">Πρέπει να συνδεθείτε με λογαριασμό του Πανελλήνιου Σχολικού Δικτύου, για να χρησιμοποιήσετε την εφαρμογή.</p>
             <p class="text-danger" *ngSwitchCase="5003">Πρέπει να συνδεθείτε με τον επίσημο λογαριασμό μονάδας στο Πανελλήνιο Σχολικό Δίκτυο, για να χρησιμοποιήσετε την εφαρμογή.</p>
             <p class="text-danger" *ngSwitchCase="5004">Ο ρόλος που αντιστοιχεί στον λογαριασμό σας στο Πανελλήνιο Σχολικό Δίκτυο δεν επιτρέπεται να χρησιμοποιήσετε την εφαρμογή.</p>
             <p class="text-danger" *ngSwitchCase="5005">Προέκυψε σφάλμα κατά την διαδικασία αυθεντικοποίησης σας.</p>
             <p class="text-danger" *ngSwitchCase="6000">Προέκυψε σφάλμα κατά την διαδικασία αυθεντικοποίησης σας. <br/>Παρακαλώ συνδεθείτε χρησιμοποιώντας τα στοιχεία του επίσημου λογαριασμού που διαθέτει η μονάδα στο Πανελλήνιο Σχολικό Δίκτυο.</p>
-            <p class="text-danger" *ngSwitchDefault>Προέκυψε σφάλμα {{ errorCode }}</p>
+            <p class="text-danger" *ngSwitchDefault>Προέκυψε σφάλμα {{ errorCode$ | async }}</p>
         </div>
         <div class="alert alert-danger" role="alert">Για να επαναλάβετε τη διαδικασία σύνδεσης πρέπει πρώτα να αποσυνδεθείτε.</div>
         <div class="row">
@@ -33,11 +33,11 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
             </div>
         </div>
     </div>
-    <div *ngIf="errorCode == undefined || erroCode == ''">
+    <div *ngIf="(errorCode$ | async) == ''">
         <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
             <!-- <input type="hidden" name="X-oauth-enabled" value="true"> -->
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
-            <div class="row" style="min-height: 300px; margin-top: 100px;">
+            <div class="row">
                 <div *ngIf="!authToken" class="col-md-8 offset-md-4">
                     <button type="submit" class="btn-primary btn-lg" (click)="form.submit()">
                     Είσοδος μέσω Π.Σ.Δ<span class="glyphicon glyphicon-menu-right"></span>
@@ -53,7 +53,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
 export default class SchoolHome implements OnInit, OnDestroy {
     public formGroup: FormGroup;
     private authToken: string;
-    private errorCode: string;
+    private errorCode$: BehaviorSubject<string>;
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
@@ -71,10 +71,10 @@ export default class SchoolHome implements OnInit, OnDestroy {
         private _cookieService: CookieService
     ) {
         this.authToken = "";
-        this.errorCode = "";
         this.authRole = "";
         this.name = "";
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.errorCode$ = new BehaviorSubject('');
         this.formGroup = this.fb.group({
         });
     };
@@ -83,6 +83,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
         this.loginInfo$.unsubscribe();
+        this.errorCode$.unsubscribe();
     };
 
     ngOnInit() {
@@ -112,17 +113,11 @@ export default class SchoolHome implements OnInit, OnDestroy {
             if (params) {
                 this.authToken = params["auth_token"];
                 this.authRole = params["auth_role"];
-                this.errorCode = params["error_code"];
-            } else {
-                this.authToken = "";
-                this.authRole = "";
-                this.errorCode = "";
+                this.errorCode$.next((params["error_code"] === undefined) ? "" : params["error_code"]);
             }
-
-            if (this.authToken && this.authRole && this.errorCode != "") {
+            if (this.authToken && this.authRole && this.errorCode$.getValue() == "") {
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             }
-
         });
     }
 

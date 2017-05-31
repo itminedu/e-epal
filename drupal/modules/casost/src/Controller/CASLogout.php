@@ -38,11 +38,12 @@ class CASLogout extends ControllerBase
     protected $connection;
 
     public function __construct(
-    EntityTypeManagerInterface $entityTypeManager,
-    QueryFactory $entity_query,
-    Connection $connection,
-    LoggerChannelFactoryInterface $loggerChannel)
-    {
+        EntityTypeManagerInterface $entityTypeManager,
+        QueryFactory $entity_query,
+        Connection $connection,
+        LoggerChannelFactoryInterface $loggerChannel
+    ) {
+    
         $this->entityTypeManager = $entityTypeManager;
         $this->entity_query = $entity_query;
         $this->connection = $connection;
@@ -56,14 +57,13 @@ class CASLogout extends ControllerBase
           $container->get('entity.query'),
           $container->get('database'),
           $container->get('logger.factory')
-      );
+        );
     }
 
     public function logoutGo(Request $request)
     {
         $configRowName = 'casost_sch_sso_config';
         try {
-
             $configRowId = $request->query->get('config');
             if ($configRowId) {
                 $configRowName = $configRowName.'_'.$configRowId;
@@ -136,7 +136,57 @@ class CASLogout extends ControllerBase
         }
     }
 
-    private function redirectForbidden($configRowName, $errorCode) {
+    public function logoutCasGo(Request $request)
+    {
+        $configRowName = 'casost_sch_sso_config';
+        try {
+            $configRowId = $request->query->get('config');
+            if ($configRowId) {
+                $configRowName = $configRowName.'_'.$configRowId;
+            }
+            $CASOSTConfigs = $this->entityTypeManager->getStorage('casost_config')->loadByProperties(array('name' => $configRowName));
+            $CASOSTConfig = reset($CASOSTConfigs);
+            if ($CASOSTConfig) {
+                $this->serverVersion = $CASOSTConfig->serverversion->value;
+                $this->serverHostname = $CASOSTConfig->serverhostname->value;
+                $this->serverPort = $CASOSTConfig->serverport->value;
+                $this->serverUri = $CASOSTConfig->serveruri->value === null ? '' : $CASOSTConfig->serveruri->value;
+                $this->redirectUrl = $CASOSTConfig->redirecturl->value;
+                $this->changeSessionId = $CASOSTConfig->changesessionid->value;
+                $this->logoutRedirectUrl = $CASOSTConfig->logoutredirecturl->value;
+                $this->CASServerCACert = $CASOSTConfig->casservercacert->value;
+                $this->CASServerCNValidate = $CASOSTConfig->casservercnvalidate->value;
+                $this->noCASServerValidation = $CASOSTConfig->nocasservervalidation->value;
+                $this->proxy = $CASOSTConfig->proxy->value;
+                $this->handleLogoutRequests = $CASOSTConfig->handlelogoutrequests->value;
+                $this->CASLang = $CASOSTConfig->caslang->value;
+                $this->allowed1 = $CASOSTConfig->allowed1->value;
+                $this->allowed1Value = $CASOSTConfig->allowed1value->value;
+                $this->allowed2 = $CASOSTConfig->allowed2->value;
+                $this->allowed2Value = $CASOSTConfig->allowed2value->value;
+            } else {
+                return $this->redirectForbidden($configRowName, '7001');
+            }
+
+            $response = new Response();
+            $response->setContent("{\"message\": \"Server logout continue\",\"next\": \"{$this->logoutRedirectUrl}\"}");
+            $response->setStatusCode(Response::HTTP_OK);
+            $response->headers->set('Content-Type', 'application/json');
+
+            session_unset();
+            session_destroy();
+            \Drupal::service('page_cache_kill_switch')->trigger();
+
+            session_start();
+            return $response;
+        } catch (\Exception $e) {
+            $this->logger->warning($e->getMessage());
+            return $this->redirectForbidden($configRowName, '8000');
+        }
+    }
+
+    private function redirectForbidden($configRowName, $errorCode)
+    {
         session_unset();
         session_destroy();
         \Drupal::service('page_cache_kill_switch')->trigger();

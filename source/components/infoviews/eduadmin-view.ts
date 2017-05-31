@@ -19,13 +19,16 @@ import {
 @Component({
     selector: 'eduadmin-view',
     template: `
-            <h3> Αριθμός Μαθητών ανα τμήμα σχολείου </h3>
-
+            <h4> Αριθμός Μαθητών ανα τμήμα σχολείου!!! </h4>
+            <div class = "loading" *ngIf="(SchoolsPerPerf$ | async).size === 0">
+            </div>
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
                   <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
                      <h5> {{SchoolNames$.name}}</h5>
                   </li>
+                <div class = "loading" *ngIf="(CoursesPerPerf$ | async).size === 0">
+                </div>
                  <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" [hidden]="SchoolNames$.id !== regionActive" >
                     <div> {{CoursesNames$.name}}</div> <div class= "aastyle"><strong>Αριθμός Μαθητών:</strong>{{CoursesNames$.size}} </div>
 

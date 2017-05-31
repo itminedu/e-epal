@@ -778,7 +778,7 @@ retrieveAdminSettings(username, userpassword)  {
       .map(response => response.json());
 }
 
-storeAdminSettings(username, userpassword, capac, dirview, applogin)  {
+storeAdminSettings(username, userpassword, capac, dirview, applogin, appresults)  {
 
   let headers = new Headers({
       "Content-Type": "application/json",
@@ -787,7 +787,8 @@ storeAdminSettings(username, userpassword, capac, dirview, applogin)  {
   this.createMinistryAuthorizationHeader(headers, username, userpassword );
   let options = new RequestOptions({ headers: headers });
 
-  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/store-settings/` + Number(capac) + "/" + Number(dirview) + "/" + Number(applogin)  , options)
+  return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/store-settings/` +
+        Number(capac) + "/" + Number(dirview) + "/" + Number(applogin) + "/" + Number(appresults) , options)
       .map(response => response.json());
 }
 

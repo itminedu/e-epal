@@ -42,13 +42,13 @@ import { API_ENDPOINT } from '../../app.settings';
     <h5> >Αποστολή ειδοποιήσεων <br></h5>
     <br><br>
     <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(true)" >
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(true)" [disabled] = "!applicantsResultsDisabled" >
           Μαζική αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
     <br>
     <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(false)" >
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(false)" [disabled] = "!applicantsResultsDisabled">
           Μαζική αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
@@ -62,14 +62,16 @@ import { API_ENDPOINT } from '../../app.settings';
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
-    //public modalHeader: string;
+    private settings$: BehaviorSubject<any>;
     loginInfoSub: Subscription;
+    private settingsSub: Subscription;
     private numSuccessMails:number;
     private numFailMails:number;
     private successSending:number;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
+    private applicantsResultsDisabled: boolean;
 
     constructor(
         private _ngRedux: NgRedux<IAppState>,
@@ -78,10 +80,10 @@ import { API_ENDPOINT } from '../../app.settings';
         private router: Router) {
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          //this.isModalShown = new BehaviorSubject(false);
           this.modalTitle =  new BehaviorSubject("");
           this.modalText =  new BehaviorSubject("");
           this.modalHeader =  new BehaviorSubject("");
+          this.settings$ = new BehaviorSubject([{}]);
 
     }
 
@@ -104,6 +106,8 @@ import { API_ENDPOINT } from '../../app.settings';
       this.numFailMails = 0;
       this.successSending = -1;
 
+      this.retrieveSettings();
+
     }
 
     ngOnDestroy() {
@@ -112,12 +116,17 @@ import { API_ENDPOINT } from '../../app.settings';
 
       if (this.loginInfoSub)
         this.loginInfoSub.unsubscribe();
-        if (this.loginInfo$)
-          this.loginInfo$.unsubscribe();
+      if (this.loginInfo$)
+        this.loginInfo$.unsubscribe();
+      if (this.settingsSub)
+        this.settingsSub.unsubscribe();
+      if (this.loginInfo$)
+        this.loginInfo$.unsubscribe();
+      if (this.settings$)
+        this.settings$.unsubscribe();
 
 
     }
-
 
     public showModal():void {
         console.log("about to show modal");
@@ -168,6 +177,33 @@ import { API_ENDPOINT } from '../../app.settings';
           this.showModal();
         }
       )
+
+    }
+
+
+    retrieveSettings()  {
+
+      this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+           this.settings$.next(data);
+       },
+         error => {
+           this.settings$.next([{}]);
+           console.log("Error Getting MinisterRetrieveSettings");
+         },
+         () => {
+           console.log("Success Getting MinisterRetrieveSettings");
+
+           this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
+
+           if (this.applicantsResultsDisabled == false) {
+             this.modalTitle.next("Κατανομή Μαθητών");
+             this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
+                                 ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές.") );
+             this.modalHeader.next("modal-header-warning");
+             this.showModal();
+           }
+         }
+       )
 
     }
 

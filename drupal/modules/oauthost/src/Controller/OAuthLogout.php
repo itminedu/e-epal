@@ -145,10 +145,10 @@ class OAuthLogout extends ControllerBase
             $this->oauthostSession->delete();
             $this->logger->info("OAUTH remote logout success for [{$username}]");
 
-            $response = new Response();
-            $response->setContent("{\"message\": \"Server logout successful\",\"next\": \"{$this->redirect_url}\"}");
-            $response->setStatusCode(Response::HTTP_OK);
-            $response->headers->set('Content-Type', 'application/json');
+            $response = (new JsonResponse([
+                "message" => "Server logout successful",
+                "next" => "{$this->redirect_url}"
+            ]))->setStatusCode(Response::HTTP_OK);
 
             return $response;
         } catch (Exception $e) {

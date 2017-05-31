@@ -12,3 +12,9 @@ casost.log_out_go:
     _controller: '\Drupal\casost\Controller\CASLogout::logoutGo'
   requirements:
     _user_is_logged_in: 'TRUE'
+casost.log_out_cas_go:
+  path: /cas/logoutcas
+  defaults:
+    _controller: '\Drupal\casost\Controller\CASLogout::logoutCasGo'
+  requirements:
+    _access: 'TRUE'

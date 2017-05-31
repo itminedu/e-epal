@@ -90,16 +90,6 @@ import {
                       <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
                       <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
 
-                    <h5>Κοινωνικά Κριτίρια </h5>
-                    <div *ngFor="let critiriaChoices$  of CritirioChosen$ | async" [hidden]="UserData$.id !== userActive">
-                         {{critiriaChoices$.critirio}}
-                    </div>
-
-                    <h5>Εισοδηματικά Κριτίρια </h5>
-                    <div *ngFor="let incomeChoices$  of incomeChosen$ | async" [hidden]="UserData$.id !== userActive">
-                         {{incomeChoices$.critirio}}
-                     </div>
-
                     <h5>Επιλογές ΕΠΑΛ</h5>
                     <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
                          Σχολείο: {{epalChoices$.epal_id}}
@@ -267,20 +257,6 @@ import {
                 console.log("Error Getting Schools");
             },
              () => console.log("Getting Schools"));
-    this.CritirioChosenSub = this._hds.getCritiria(this.userActive+1, 1).subscribe(data => {
-        this.CritirioChosen$.next(data)},
-            error => {
-                this.CritirioChosen$.next([{}]);
-                console.log("Error Getting Schools");
-            },
-             () => console.log("Getting Schools"));
-    this.incomeChosenSub = this._hds.getCritiria(this.userActive+1, 2).subscribe(data => {
-          this.incomeChosen$.next(data)},
-              error => {
-                  this.incomeChosen$.next([{}]);
-                  console.log("Error Getting Schools");
-              },
-               () => console.log("Getting Schools"));
 
    }
 
@@ -335,6 +311,7 @@ html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
                   doc.save('applications.pdf');
 }
 }); }
+
 
 
 createPdfServerSide()

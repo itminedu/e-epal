@@ -39,13 +39,11 @@ class ApplicationSubmit extends ControllerBase {
     }
 
  	public function appSubmit(Request $request) {
-
 		if (!$request->isMethod('POST')) {
 			return $this->respondWithStatus([
 					"error_code" => 2001
 				], Response::HTTP_METHOD_NOT_ALLOWED);
     	}
-
 		$applicationForm = array();
 
 		$content = $request->getContent();
@@ -58,96 +56,83 @@ class ApplicationSubmit extends ControllerBase {
 					"error_code" => 5002
 				], Response::HTTP_BAD_REQUEST);
 		}
-
 		$transaction = $this->connection->startTransaction();
 		try {
 			//insert records in entity: epal_student
-
 			$authToken = $request->headers->get('PHP_AUTH_USER');
 	        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
 	        $epalUser = reset($epalUsers);
+            if (!$epalUser){
+    			return $this->respondWithStatus([
+    					"error_code" => 4003
+    				], Response::HTTP_FORBIDDEN);
+    		}
 
 			$student = array(
-				'epaluser_id' => $epalUser->id(),
-				'name' => $applicationForm[0][name],
-				'studentsurname' => $applicationForm[0][studentsurname],
-				'birthdate' => $applicationForm[0][studentbirthdate],
-				'fatherfirstname' => $applicationForm[0][fatherfirstname],
-				'fathersurname' => $applicationForm[0][fathersurname],
-				'motherfirstname' => $applicationForm[0][motherfirstname],
-				'mothersurname' => $applicationForm[0][mothersurname],
-				'studentamka' => $applicationForm[0][studentamka],
-				'regionaddress' => $applicationForm[0][regionaddress],
-				'regionarea' => $applicationForm[0][regionarea],
-				'regiontk' => $applicationForm[0][regiontk],
-				'certificatetype' => $applicationForm[0][certificatetype],
-				//'lastam' => $applicationForm[0][lastam],
-				'currentclass' => $applicationForm[0][currentclass],
-                'guardian_name' => $applicationForm[0][cu_name],
-                'guardian_surname' => $applicationForm[0][cu_surname],
-                'guardian_fathername' => $applicationForm[0][cu_fathername],
-                'guardian_mothername' => $applicationForm[0][cu_mothername],
-                'agreement' => $applicationForm[0][disclaimer_checked],
-
-				//'currentepal' => $applicationForm[0][currentepal],
-				//'currentsector' => $applicationForm[0][currentsector],
-                'points' => $applicationForm[0][points],
-				'relationtostudent' => $applicationForm[0][relationtostudent],
-				'telnum' => $applicationForm[0][telnum]
+                'langcode' => 'el',
+                'student_record_id' => 0,
+                'sex' => 0,
+                'fathersurname' => '',
+                'mothersurname' => '',
+                'studentamka' => '',
+                'lastam' => '',
+                'graduate_school' => 0,
+                'apolytirio_id' => '',
+                'currentsector' => '',
+                'currentcourse' => '',
+                'points' => 0,
+                'user_id' => $epalUser->user_id->target_id,
+                'epaluser_id' => $epalUser->id(),
+				'name' => $applicationForm[0]['name'],
+				'studentsurname' => $applicationForm[0]['studentsurname'],
+				'birthdate' => $applicationForm[0]['studentbirthdate'],
+				'fatherfirstname' => $applicationForm[0]['fatherfirstname'],
+				'motherfirstname' => $applicationForm[0]['motherfirstname'],
+				'regionaddress' => $applicationForm[0]['regionaddress'],
+				'regionarea' => $applicationForm[0]['regionarea'],
+				'regiontk' => $applicationForm[0]['regiontk'],
+                'certificatetype' => $applicationForm[0]['certificatetype'],
+				'graduation_year' => $applicationForm[0]['graduation_year'],
+                'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
+                'lastschool_schoolyear' => $applicationForm[0]['lastschool_schoolyear'],
+                'lastschool_class' => $applicationForm[0]['lastschool_class'],
+                'currentepal' => $applicationForm[0]['currentepal'],
+				'currentclass' => $applicationForm[0]['currentclass'],
+                'guardian_name' => $applicationForm[0]['cu_name'],
+                'guardian_surname' => $applicationForm[0]['cu_surname'],
+                'guardian_fathername' => $applicationForm[0]['cu_fathername'],
+                'guardian_mothername' => $applicationForm[0]['cu_mothername'],
+                'agreement' => $applicationForm[0]['disclaimer_checked'],
+				'relationtostudent' => $applicationForm[0]['relationtostudent'],
+				'telnum' => $applicationForm[0]['telnum']
             );
 
             if (($errorCode = $this->validateStudent($student)) > 0) {
                 return $this->respondWithStatus([
     					"error_code" => $errorCode ], Response::HTTP_OK);
             }
-
 			$entity_storage_student = $this->entityTypeManager->getStorage('epal_student');
 			$entity_object = $entity_storage_student->create($student);
 			$entity_storage_student->save($entity_object);
 
 			$created_student_id = $entity_object->id();
 
-			//insert records in entity: epal_student_epal_chosen
 			for ($i = 0; $i < sizeof($applicationForm[1]); $i++) {
 				$epalchosen = array(
-					//'name' => $applicationForm[1][$i][name],
 					'student_id' => $created_student_id,
-					'epal_id' => $applicationForm[1][$i][epal_id],
-					'choice_no' => $applicationForm[1][$i][choice_no]
-					//'points_for_order' => $applicationForm[1][$i][points_for_order],
-					//'distance_from_epal' => $applicationForm[1][$i][distance_from_epal],
-					//'points_for_distance' => $applicationForm[1][$i][points_for_distance],
+					'epal_id' => $applicationForm[1][$i]['epal_id'],
+					'choice_no' => $applicationForm[1][$i]['choice_no']
 				);
 				$entity_storage_epalchosen = $this->entityTypeManager->getStorage('epal_student_epal_chosen');
 				$entity_object = $entity_storage_epalchosen->create($epalchosen);
 				$entity_storage_epalchosen->save($entity_object);
 			}
 
-			//insert records in entity: epal_student_moria
-			for ($i = 0; $i < sizeof($applicationForm[2]); $i++) {
-				$criteria = array(
-					//'name' => $applicationForm[2][$i][name],
-					'student_id' => $created_student_id,
-					'income' => $applicationForm[2][$i][income],
-					'criterio_id' => $applicationForm[2][$i][criterio_id],
-					//'moria' => $applicationForm[2][$i][moria],
-				);
-				$entity_storage_criteria = $this->entityTypeManager->getStorage('epal_student_moria');
-				$entity_object = $entity_storage_criteria->create($criteria);
-				$entity_storage_criteria->save($entity_object);
-			}
 
-			//insert records in entity: 	epal_student_course_field (αφορά μαθητές Γ' Λυκείου)
-			//						or:		epal_student_sector_field (αφορά μαθητές Β' Λυκείου)
-
-      //if ($applicationForm[0][currentclass] === "Γ' Λυκείου")	{
-      if ($applicationForm[0][currentclass] === "3" || $applicationForm[0][currentclass] === "4" )	{
-				//$course =  array('name
+      if ($applicationForm[0]['currentclass'] === "3" || $applicationForm[0]['currentclass'] === "4" )	{
 				$course = array(
-					//'name' => $aitisi[3][name],
-					//'student_id' => $aitis[3][student_i],
 					'student_id' => $created_student_id,
-					'coursefield_id' => $applicationForm[3][coursefield_id]
+					'coursefield_id' => $applicationForm[3]['coursefield_id']
 				);
 
 				$entity_storage_course = $this->entityTypeManager->getStorage('epal_student_course_field');
@@ -155,13 +140,10 @@ class ApplicationSubmit extends ControllerBase {
 				$entity_storage_course->save($entity_object);
 			}
 
-			//else if ($applicationForm[0][currentclass] === "Β' Λυκείου")	{
-      else if ($applicationForm[0][currentclass] === "2")	{
+      else if ($applicationForm[0]['currentclass'] === "2")	{
 				$sector = array(
-					//'name' => $applicationForm[3][name],
 					'student_id' => $created_student_id,
-					//'student_id' => $aitis[3][student_i],
-					'sectorfield_id' => $applicationForm[3][sectorfield_id]
+					'sectorfield_id' => $applicationForm[3]['sectorfield_id']
 				);
 
 				$entity_storage_sector = $this->entityTypeManager->getStorage('epal_student_sector_field');
@@ -174,7 +156,9 @@ class ApplicationSubmit extends ControllerBase {
 		}
 
 		catch (\Exception $e) {
+            print_r($e->getMessage());
 			$this->logger->warning($e->getMessage());
+
 			$transaction->rollback();
 			return $this->respondWithStatus([
 					"error_code" => 5001

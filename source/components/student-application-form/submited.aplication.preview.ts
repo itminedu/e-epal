@@ -340,29 +340,11 @@ html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
 createPdfServerSide()
 {
 
-  /*
-  this.SubmitedDetailsSub = this._hds.createPdfServerSide().subscribe(data => {
-         this.data = data;
-    },
-        error => {
 
-            console.log("Error Getting createPdfServerSide");
-        },
-        () => {
-          console.log("Success Getting createPdfServerSide");
-          //$window.open(this.data);
-          //window.open("data:application/pdf," + encodeURI(this.data));
-          console.log("Test Now!");
-          console.log(this.data);
-
-          //window.open("https://www.w3schools.com");
-
-        }
-
-    );
-    */
+    this._hds.createPdfServerSide(this.authToken, this.role);
 
 
+    /*
     this._hds.createPdfServerSide(this.authToken, this.role)
     .then(msg => {
         //console.log("Nikos2");
@@ -371,6 +353,7 @@ createPdfServerSide()
         //console.log("Nikos1");
         console.log(err);
       });
+      */
 
 
 }

@@ -1,4 +1,4 @@
-import {Http, Headers, RequestOptions} from '@angular/http';
+import {Http, Headers, RequestOptions, ResponseContentType, Response } from '@angular/http';
 import {Injectable, OnInit, OnDestroy} from '@angular/core';
 import {BehaviorSubject} from "rxjs/Rx";
 import 'rxjs/add/operator/map';
@@ -913,25 +913,50 @@ createPdfServerSide(auth_token, role)  {
   */
 
   let headers = new Headers({
+      //"Content-Type": "application/json",
       "Content-Type": "application/json",
+       //"Access-Control-Allow-Origin": "true",
+
   });
   this.authToken = auth_token;
   this.authRole = role;
   console.log(this.authToken);
   console.log(this.authRole);
   this.createAuthorizationHeader(headers);
-  let options = new RequestOptions({ headers: headers });
+  let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.Blob }]);
+  //let options = new RequestOptions({ headers: headers });
+  return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`,   options)
 
-  //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`, options)
-  //   .map(response => response.json());
+    .map(response => response.json())
+    //.map(response => (response.blob())
+    //.map((res:Response) => res.blob())
+    //.map(response => (<Response>response).blob())
+    .subscribe(
+        data => {
+
+            console.log("Hello!");
+            console.log(data);
+            var blob = new Blob([data['pdfString']], {type: 'application/pdf'});
+            console.log(blob);
+            FileSaver.saveAs(blob, "testData.pdf");
+
+    },
+        err => console.error(err),
+    () => console.log('done')
+);
 
 
+  /*
   return new Promise((resolve, reject) => {
       this.http.post(`${AppSettings.API_ENDPOINT}/epal/pdf-application`, options)
-          .map(response => response.json())
+          //.map(response => response.json())
           .subscribe(data => {
               resolve(data);
               console.log("Nik");
+
+              var blob = new Blob([data['_body']], {type: 'application/pdf'});
+              console.log(blob);
+              FileSaver.saveAs(blob, "testData.pdf");
               //console.log(data['_body']);
           },
           error => {
@@ -939,6 +964,7 @@ createPdfServerSide(auth_token, role)  {
           },
           () => console.log("Nikos!!!"));
   });
+  */
 
 
 }

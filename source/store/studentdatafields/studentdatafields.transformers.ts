@@ -20,7 +20,12 @@ export function deimmutifyStudentDataFields(state: IStudentDataFields): IStudent
           motherfirstname: studentdataField.motherfirstname, mothersurname: studentdataField.mothersurname,
           studentamka: studentdataField.studentamka, regionaddress: studentdataField.regionaddress,
           regiontk: studentdataField.regiontk,regionarea: studentdataField.regionarea,
-          certificatetype: studentdataField.certificatetype, relationtostudent: studentdataField.relationtostudent,
+          certificatetype: studentdataField.certificatetype,
+          graduation_year: studentdataField.graduation_year,
+          lastschool_schoolname: studentdataField.lastschool_schoolname,
+          lastschool_schoolyear: studentdataField.lastschool_schoolyear,
+          lastschool_class: studentdataField.lastschool_class,
+          relationtostudent: studentdataField.relationtostudent,
           currentclass: studentdataField.currentclass, points: studentdataField.points
         });
     });

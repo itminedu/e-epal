@@ -1138,6 +1138,46 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
                             ->setDisplayConfigurable('form', true)
                             ->setDisplayConfigurable('view', true);
 
+      $fields['lastschool_unittypeid'] = BaseFieldDefinition::create('integer')
+                             ->setLabel(t('Τύπος τελευταίου σχολείου'))
+                             ->setDescription(t('Τύπος τελευταίου σχολείου'))
+                             ->setSettings(array(
+                                'max_length' => 3,
+                                'text_processing' => 0,
+                             ))
+                            ->setRequired(true)
+                             ->setDisplayOptions('view', array(
+                            'label' => 'above',
+                            'type' => 'string',
+                            'weight' => -4,
+                             ))
+                             ->setDisplayOptions('form', array(
+                            'type' => 'integer',
+                            'weight' => -4,
+                             ))
+                             ->setDisplayConfigurable('form', true)
+                             ->setDisplayConfigurable('view', true);
+
+      $fields['lastschool_schoolname'] = BaseFieldDefinition::create('string')
+                          ->setLabel(t('Ονομασία τελευταίου σχολείου'))
+                          ->setDescription(t('Ονομασία τελευταίου σχολείου'))
+                          ->setSettings(array(
+                            'max_length' => 200,
+                            'text_processing' => 0,
+                          ))
+                        ->setRequired(true)
+                          ->setDisplayOptions('view', array(
+                            'label' => 'above',
+                            'type' => 'string',
+                            'weight' => -4,
+                          ))
+                          ->setDisplayOptions('form', array(
+                            'type' => 'string_textfield',
+                            'weight' => -4,
+                        ))
+                          ->setDisplayConfigurable('form', true)
+                          ->setDisplayConfigurable('view', true);
+
       $fields['lastschool_schoolyear'] = BaseFieldDefinition::create('string')
                                 ->setLabel(t('Σχολικό έτος φοίτησης τελευταίου σχολείου'))
                                 ->setDescription(t('Σχολικό έτος φοίτησης τελευταίου σχολείου'))

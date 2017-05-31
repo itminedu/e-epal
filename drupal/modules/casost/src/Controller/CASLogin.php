@@ -123,7 +123,7 @@ class CASLogin extends ControllerBase
             }
             $attributes = phpCAS::getAttributes();
 
-/* 
+/*
             $isAllowed = true;
             $att1 = $attributes[$this->allowed1];
             $att2 = $attributes[$this->allowed2];
@@ -150,8 +150,8 @@ class CASLogin extends ControllerBase
             }
             if (!$found1 || !$found2) {
                 $isAllowed = false;
-            } 
-            
+            }
+
             if (!$isAllowed) {
                 $response = new Response();
                 $response->setContent(t('Access is allowed only to official school accounts'));

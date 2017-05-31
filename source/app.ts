@@ -7,6 +7,7 @@ import { NgReduxModule, DevToolsExtension, NgRedux } from 'ng2-redux';
 import {BrowserModule} from '@angular/platform-browser';
 import { CookieModule } from 'ngx-cookie';
 import { MyDatePickerModule } from 'mydatepicker';
+import { NguiAutoCompleteModule } from '@ngui/auto-complete';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -22,7 +23,6 @@ import {
 } from '@angular/common';
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import Main from './containers/main';
 import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 
@@ -60,6 +60,7 @@ class MyLocalization extends NgLocalization {
     BrowserModule,
     MyDatePickerModule,
     FormsModule,
+    NguiAutoCompleteModule,
     RouterModule,
     ReactiveFormsModule,
     APP_ROUTER_PROVIDERS,

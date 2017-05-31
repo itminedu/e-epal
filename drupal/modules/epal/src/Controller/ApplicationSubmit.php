@@ -68,6 +68,7 @@ class ApplicationSubmit extends ControllerBase {
     				], Response::HTTP_FORBIDDEN);
     		}
 
+
 			$student = array(
                 'langcode' => 'el',
                 'student_record_id' => 0,
@@ -94,9 +95,10 @@ class ApplicationSubmit extends ControllerBase {
                 'certificatetype' => $applicationForm[0]['certificatetype'],
 				'graduation_year' => $applicationForm[0]['graduation_year'],
                 'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
+                'lastschool_unittypeid' => $applicationForm[0]['lastschool_unittypeid'],
+                'lastschool_schoolname' => $applicationForm[0]['lastschool_schoolname'],
                 'lastschool_schoolyear' => $applicationForm[0]['lastschool_schoolyear'],
                 'lastschool_class' => $applicationForm[0]['lastschool_class'],
-                'currentepal' => $applicationForm[0]['currentepal'],
 				'currentclass' => $applicationForm[0]['currentclass'],
                 'guardian_name' => $applicationForm[0]['cu_name'],
                 'guardian_surname' => $applicationForm[0]['cu_surname'],
@@ -111,6 +113,22 @@ class ApplicationSubmit extends ControllerBase {
                 return $this->respondWithStatus([
     					"error_code" => $errorCode ], Response::HTTP_OK);
             }
+            $lastSchoolRegistryNumber = $student['lastschool_registrynumber'];
+            $lastSchoolYear = (int)(substr($student['lastschool_schoolyear'], -4));
+            if ((int)date("Y") === $lastSchoolYear && (int)$student['lastschool_unittypeid'] === 5) {
+                $epalSchools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $lastSchoolRegistryNumber));
+    	        $epalSchool = reset($epalSchools);
+                if (!$epalSchool){
+        			return $this->respondWithStatus([
+        					"error_code" => 4004
+        				], Response::HTTP_FORBIDDEN);
+        		} else {
+                    $student['currentepal'] = $epalSchool->id();
+                }
+            } else {
+                $student['currentepal'] = 0;
+            }
+
 			$entity_storage_student = $this->entityTypeManager->getStorage('epal_student');
 			$entity_object = $entity_storage_student->create($student);
 			$entity_storage_student->save($entity_object);
@@ -175,6 +193,9 @@ class ApplicationSubmit extends ControllerBase {
      private function validateStudent($student) {
          if(!$student["agreement"]) {
              return 1001;
+         }
+         if(!$student["lastschool_schoolyear"] || strlen($student["lastschool_schoolyear"]) !== 9) {
+             return 1002;
          }
          return 0;
      }

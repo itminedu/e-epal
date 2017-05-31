@@ -82,15 +82,24 @@ import { HelperDataService } from '../../services/helper-data-service';
         <div class="row evenin" style="margin: 20px 2px 10px 2px; line-height: 2em;">
             <div class="col-md-12" style="font-size: 1.5em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
         </div>
-        <div><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
-        <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
-        <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
-        <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
-        <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
+        <div><label for="name">Όνομα μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
+        <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
+        <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
+        <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
+        <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
 
-                <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
-                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
-                <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
+                <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
+                <div><label for="graduation_year">Έτος κτήσης απολυτηρίου</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.graduation_year}} </p></div>
+                <div><label for="lastschool_schoolname">Σχολείο τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolname.name}} </p></div>
+                <div><label for="lastschool_schoolyear">Σχολικό έτος τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolyear}} </p></div>
+
+                <div *ngIf="studentDataField$.lastschool_class === 1"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Α'</p></div>
+                <div *ngIf="studentDataField$.lastschool_class === 2"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Β'</p></div>
+                <div *ngIf="studentDataField$.lastschool_class === 3"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Γ'</p></div>
+                <div *ngIf="studentDataField$.lastschool_class === 4"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Δ'</p></div>
+
+                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
+                <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
 
         </div>
             <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
@@ -285,11 +294,13 @@ import { HelperDataService } from '../../services/helper-data-service';
 //          aitisiObj[0].lastschool_class = std.lastschool_class;
 //          aitisiObj[0].currentepal = std.currentepal;
 
-          aitisiObj[0].graduation_year = 0;
-          aitisiObj[0].lastschool_registrynumber = '';
-          aitisiObj[0].lastschool_schoolyear = '2015-2016';
-          aitisiObj[0].lastschool_class = '1';
-          aitisiObj[0].currentepal = 154;
+          aitisiObj[0].graduation_year = std.graduation_year;
+          aitisiObj[0].lastschool_registrynumber = std.lastschool_schoolname.registry_no;
+          aitisiObj[0].lastschool_schoolname = std.lastschool_schoolname.name;
+          aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
+          aitisiObj[0].lastschool_unittypeid = std.lastschool_schoolname.unit_type_id;
+          aitisiObj[0].lastschool_class = std.lastschool_class;
+//          aitisiObj[0].currentepal = 154;
 
           aitisiObj[0].relationtostudent = std.relationtostudent;
           aitisiObj[0].telnum = std.telnum;
@@ -387,8 +398,10 @@ import { HelperDataService } from '../../services/helper-data-service';
   public hideModal():void {
       console.log("going to post-submit from hide()");
       (<any>$('#studentFormSentNotice')).modal('hide');
-      //(<any>$('.modal-backdrop')).remove();
-      this.router.navigate(['/post-submit']);
+      if (this.modalHeader.getValue() === "modal-header-success") {
+          this.router.navigate(['/post-submit']);
+      }
+  
   }
 
   public onHidden():void {

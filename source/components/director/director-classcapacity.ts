@@ -11,6 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { VALID_CAPACITY_PATTERN} from '../../constants';
 import {maxValue} from '../../constants';
+import {minValue} from '../../constants';
 
 
 import {
@@ -54,10 +55,13 @@ import {
        <input  type="number" formControlName="capacity" min="1" max="10" ng-min="1" ng-max="99" >
 
         <div class="alert alert-danger" *ngIf="formGroup.get('capacity').touched && formGroup.get('capacity').hasError('maxValue')">
-      Συμπληρώστε την διαθεσιμότητα σας σε τμήματα !
+          Παρακαλώ συμπληρώστε ένα μικρότερο αριθμό!
+      </div>
+       <div class="alert alert-danger" *ngIf="formGroup.get('capacity').touched && formGroup.get('capacity').hasError('minValue')">
+          Παρακαλώ συμπληρώστε ένα μεγαλύτερο αριθμό!
       </div>
        <div class="alert alert-danger" *ngIf="formGroup.get('capacity').touched && formGroup.get('capacity').hasError('required')">
-          Παρακαλώ συμπληρώστε ένα μικρότερο αριθμό!
+          Συμπληρώστε την διαθεσιμότητα σας σε τμήματα !
       </div>
 
             <button type="button" class="btn-primary btn-sm pull-right" (click) ="saveCapacity()">
@@ -158,7 +162,7 @@ import {
             tomeas: ['', []],
             taxi: ['', []],
             specialit: ['', []],
-            capacity: ['', [Validators.pattern(VALID_CAPACITY_PATTERN),Validators.required, maxValue(99)]],
+            capacity: ['', [Validators.pattern(VALID_CAPACITY_PATTERN),Validators.required, maxValue(99), minValue(1)]],
             });
 
     }

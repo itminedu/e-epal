@@ -44,8 +44,6 @@ export const CRITERIA_INIT = 'CRITERIA_INIT';
 export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΙΎΌΏα-ωάέήίΐύόώ ]*$';
 export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
-<<<<<<< HEAD
-export const VALID_DIGITS_PATTERN = '69[0-9]*$';
 export const VALID_CAPACITY_PATTERN = '[0-9]*$';
 
 
@@ -74,6 +72,17 @@ export function maxValue(max: Number): ValidatorFn {
           isValid = input > 99;
     if(isValid) 
         return { 'maxValue': {max} }
+    else 
+        return null;
+  };
+}
+
+export function minValue(min: Number): ValidatorFn {
+  return (control: AbstractControl): {[key: string]: any} => {
+    const input = control.value,
+          isValid = input < 1;
+    if(isValid) 
+        return { 'minValue': {min} }
     else 
         return null;
   };

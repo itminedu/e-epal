@@ -542,8 +542,8 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
         return this.http.post(`${AppSettings.API_ENDPOINT}/epal/confirmstudent`, { students, type}, options)
             .map(response => response.json());
-               
-       
+
+
     }
 
 
@@ -660,7 +660,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    getSchoolPerPerfecture(status) {
+    getSchools() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -671,7 +671,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/ScoolperPerf/` + status , options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/schools-per-perf/` , options)
             .map(response => response.json());
     }
 

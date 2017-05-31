@@ -74,9 +74,7 @@ import {
             studentbirthdate: ['', [Validators.required]],
             //studentbirthdate: ['', [Validators.pattern(VALID_DATE_PATTERN),Validators.required]],
             fatherfirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            fathersurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             motherfirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            mothersurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionaddress: ['', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -110,9 +108,7 @@ import {
                     this.studentDataGroup.controls['name'].setValue(studentDataField.name);
                     this.studentDataGroup.controls['studentsurname'].setValue(studentDataField.studentsurname);
                     this.studentDataGroup.controls['fatherfirstname'].setValue(studentDataField.fatherfirstname);
-                    this.studentDataGroup.controls['fathersurname'].setValue(studentDataField.fathersurname);
                     this.studentDataGroup.controls['motherfirstname'].setValue(studentDataField.motherfirstname);
-                    this.studentDataGroup.controls['mothersurname'].setValue(studentDataField.mothersurname);
                     this.studentDataGroup.controls['regionaddress'].setValue(studentDataField.regionaddress);
                     this.studentDataGroup.controls['regiontk'].setValue(studentDataField.regiontk);
                     this.studentDataGroup.controls['regionarea'].setValue(studentDataField.regionarea);

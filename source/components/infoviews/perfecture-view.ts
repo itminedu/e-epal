@@ -85,7 +85,7 @@ import {
                   this.School$.next(x);
                   console.log(x[0].id, "perfectureID");
                    this.perfecture = x[0].id;
-                   this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture(1).subscribe(data => {
+                   this.SchoolPerPerfSub = this._hds.getSchools().subscribe(data => {
                        this.SchoolsPerPerf$.next(data);
                    },
                        error => {

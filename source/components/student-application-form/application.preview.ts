@@ -87,7 +87,6 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
     private sectorsSub: Subscription;
     private regionsSub: Subscription;
     private sectorFieldsSub: Subscription;
-    private criteriaFieldsSub: Subscription;
     private courseActive = "-1";
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;

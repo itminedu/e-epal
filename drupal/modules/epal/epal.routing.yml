@@ -268,6 +268,8 @@ epal.findcapacityperschool:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::FindCapacityPerSchool'
+requirements:
+  _user_is_logged_in: 'TRUE'
 epal.applicant.creationpdf:
   path: '/epal/pdf-application'
   options:

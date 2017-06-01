@@ -118,13 +118,17 @@ class ApplicationSubmit extends ControllerBase {
             if ((int)date("Y") === $lastSchoolYear && (int)$student['lastschool_unittypeid'] === 5) {
                 $epalSchools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $lastSchoolRegistryNumber));
     	        $epalSchool = reset($epalSchools);
-                if (!$epalSchool){
+        /*        if (!$epalSchool){
         			return $this->respondWithStatus([
         					"error_code" => 4004
         				], Response::HTTP_FORBIDDEN);
-        		} else {
+        		} else { */
+                if ($epalSchool) {
                     $student['currentepal'] = $epalSchool->id();
+                } else {
+                    $student['currentepal'] = 0;
                 }
+
             } else {
                 $student['currentepal'] = 0;
             }

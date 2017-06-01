@@ -59,17 +59,24 @@ import {
     };
 
     private observableSource = (keyword: any): Observable<any[]> => {
-    let url: string = 'https://mm.sch.gr/api/units?name='+keyword;
-    if (keyword) {
-      return this.http.get(url)
-        .map(res => {
-          let json = res.json();
-          return json.data;
-        })
-    } else {
-      return Observable.of([]);
-    }
-    }
+        let url: string = 'https://mm.sch.gr/api/units?name='+keyword;
+        if (keyword) {
+            return this.http.get(url)
+                .map(res => {
+                    let json = res.json();
+                    let retArr = <any>Array();
+                    for (var i=0; i<json.data.length; i++) {
+                        retArr[i] = {};
+                        retArr[i].registry_no = json.data[i].registry_no;
+                        retArr[i].name = json.data[i].name;
+                        retArr[i].unit_type_id = json.data[i].unit_type_id;
+                    }
+                    return retArr;
+                })
+        } else {
+            return Observable.of([]);
+        }
+    };
 
     constructor(private fb: FormBuilder,
                 private _sdfa: StudentDataFieldsActions,
@@ -102,7 +109,7 @@ import {
             relationtostudent: ['', this.checkChoice],
             telnum:  ['', [Validators.pattern(VALID_TELEPHONE_PATTERN),Validators.required]],
             graduation_year: ['', this.checkChoice],
-            lastschool_schoolname: ['', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
+            lastschool_schoolname: ['', [Validators.required]],
             lastschool_schoolyear: ['', this.checkChoice],
             lastschool_class: ['', this.checkChoice],
         });

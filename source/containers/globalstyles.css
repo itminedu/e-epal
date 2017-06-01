@@ -312,3 +312,11 @@ overflow-x: scroll;
 .signout {
     font-size: 0.8em;
 }
+
+label {
+    font-weight: bold;
+    color: #777777;
+    font-size: 0.9em;
+    padding-bottom: 2px;
+    margin-bottom: 0px;
+}

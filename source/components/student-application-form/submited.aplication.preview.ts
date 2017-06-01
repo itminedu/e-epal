@@ -102,6 +102,7 @@ import {
             <br>
             <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
 
+
             <!--
             <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application" #form>
               <button type="submit" (click)="form.submit()">Εξαγωγή σε PDF - ΝΕΟ!</button>

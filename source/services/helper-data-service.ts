@@ -57,6 +57,9 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
     createAuthorizationHeader(headers: Headers) {
+      console.log("Αυτά είναι Α:");
+      console.log(this.authToken);
+      console.log(this.authRole);
         headers.append('Authorization', 'Basic ' + btoa(this.authToken + ':' + this.authToken));
     }
 
@@ -920,7 +923,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-createPdfServerSide(auth_token, role)  {
+createPdfServerSide_OLD(auth_token, role)  {
 
   /*
   this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -937,13 +940,24 @@ createPdfServerSide(auth_token, role)  {
        //"Access-Control-Allow-Origin": "true",
 
   });
-  this.authToken = auth_token;
-  this.authRole = role;
+  //this.authToken = auth_token;
+  //this.authRole = role;
+  console.log("Αυτά είναι:");
   console.log(this.authToken);
   console.log(this.authRole);
   this.createAuthorizationHeader(headers);
-  let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.Blob }]);
-  //let options = new RequestOptions({ headers: headers });
+  //let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.Blob }]);
+  let options = new RequestOptions({ headers: headers });
+
+  console.log("Nikos1");
+
+  //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`, options)
+  //    .map(response => response.json());
+
+
+
+
+
   return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`,   options)
 
     .map(response => response.json())
@@ -963,6 +977,7 @@ createPdfServerSide(auth_token, role)  {
         err => console.error(err),
     () => console.log('done')
 );
+
 
 
   /*
@@ -987,6 +1002,91 @@ createPdfServerSide(auth_token, role)  {
 
 
 }
+
+
+
+
+createPdfServerSide(auth_token, role) {
+
+        /*
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+            console.log("Θα μπει;");
+            console.log(this.authToken);
+        });
+        */
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+            //"Access-Control-Allow-Origin": "true",
+
+        });
+        this.authToken = auth_token;
+        this.authRole = role;
+        // console.log(this.authToken);
+        // console.log(this.authRole);
+        this.createAuthorizationHeader(headers);
+        // let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.ArrayBuffer }]);
+        let options = new RequestOptions({ headers: headers, responseType: ResponseContentType.Blob });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`, options)
+            // .map(response => response.json())
+            // .map((res: Response): Blob => {
+            //     return (<any>res)._body;
+            // })
+            // .map((res: Response): Blob => {
+            //     return res.ok ?
+            //         // res.blob()
+            //         new Blob([(<any>res)._body], { type: 'application/octet-stream' })
+            //         : undefined;
+            // })
+            // .map(res => res.blob())
+            //.map(response => (<Response>response).blob())
+            .map( (res) => {
+                return new Blob([res['_body']], {type: "application/octet-stream" })
+            })
+            .subscribe(
+                data => {
+                    console.log(data);
+                    // var blob = new Blob([data['pdfString']], { type: 'application/octet-stream' });
+                    // var blob = new Blob([data.arrayBuffer()], { type: 'application/octet-stream' });
+                    // var blob = new Blob([data.blob()], { type: 'application/pdf' });
+                    // var blob = new Blob([data], { type: 'application/pdf' });
+                    // var blob = new Blob([btoa(data['pdfString'])]);
+                    // console.log(blob);
+                    FileSaver.saveAs(data, "testData.pdf");
+                    // var url = window.URL.createObjectURL(blob);
+                    // window.open(url);
+                },
+                err => console.error(err),
+                () => console.log('PDF export completed')
+            );
+
+
+        /*
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/pdf-application`, options)
+                //.map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                    console.log("Nik");
+
+                    var blob = new Blob([data['_body']], {type: 'application/pdf'});
+                    console.log(blob);
+                    FileSaver.saveAs(blob, "testData.pdf");
+                    //console.log(data['_body']);
+                },
+                error => {
+                    reject("Error POST in createPdfServerSide");
+                },
+                () => console.log("Nikos!!!"));
+        });
+        */
+
+
+    }
+
+
 
 
 }

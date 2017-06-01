@@ -199,7 +199,7 @@ epal.ministry.retrievesettings:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.storesettings:
-  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}'
+  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}/{applicantsResultsDisabled}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -260,5 +260,13 @@ getlimitspercourse:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getlimitsperCourse'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.applicant.creationpdf:
+  path: '/epal/pdf-application'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\PdfCreator::createApplicantPDF'
   requirements:
     _user_is_logged_in: 'TRUE'

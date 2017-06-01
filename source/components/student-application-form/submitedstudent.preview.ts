@@ -86,7 +86,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     createPdf()
     {
-        
+
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
             var img = canvas.toDataURL();
@@ -94,6 +94,24 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             doc.addImage(img, 'PNG', 10, 10);
             doc.save('applications.pdf');
         });
+    }
+
+    createPdfServerSide()
+    {
+        //this.SubmitedDetailsSub = this._hds.createPdfServerSide().subscribe(this.SubmitedDetails$);
+
+        /*
+        this._hds.createPdfServerSide()
+
+        .then(msg => {
+            //console.log("Nikos2");
+        })
+        .catch(err => {console.log(err);
+            //console.log("Nikos1");
+            console.log(err);
+          });
+          */
+
     }
 
 

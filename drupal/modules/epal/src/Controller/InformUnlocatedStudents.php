@@ -94,7 +94,8 @@ class InformUnlocatedStudents extends ControllerBase {
 
 				// εύρεση μαθητών που η αίτησή τους ΔΕΝ ικανοποιήθηκε
 				$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																	->fields('eStudent', array('student_id'));
+																	->fields('eStudent', array('student_id'))
+																	->condition('eStudent.finalized', 0 , '=');
 				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 				$studentIds = array();
 
@@ -224,7 +225,8 @@ class InformUnlocatedStudents extends ControllerBase {
 				 // εύρεση μαθητών που η αίτησή τους ΙΚΑΝΟΠΟΙΗΘΗΚΕ
 
  				$sCon = $this->connection->select('epal_student_class', 'eStudent')
- 																	->fields('eStudent', array('student_id', 'epal_id'));
+ 																	->fields('eStudent', array('student_id', 'epal_id'))
+																	->condition('eStudent.finalized', 1 , '=');
  				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
  				$studentIds = array();
 

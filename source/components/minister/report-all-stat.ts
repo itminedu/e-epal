@@ -12,7 +12,7 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
 import {reportsSchema, TableColumn} from './reports-schema';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { PDE_ROLE, DIDE_ROLE } from '../../constants';
+import { DIDE_ROLE, PDE_ROLE, MINISTRY_ROLE } from '../../constants';
 import {csvCreator} from './csv-creator';
 import {chartCreator} from './chart-creator';
 
@@ -43,8 +43,13 @@ import { API_ENDPOINT } from '../../app.settings';
           <!--<h5> >Επιλογή Φίλτρων <br><br></h5>-->
           <br>
           <button type="button" class="btn-link" (click)="toggleRegionFilter()" >
-              > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου
+
+          <div *ngIf = "userLoggedIn == 'supervisor'">    > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου </div>
+          <div *ngIf = "userLoggedIn == 'dide'" >    > Φίλτρο Επιλογής Σχολείου </div>
+          <div *ngIf = "userLoggedIn == 'pde'">    > Φίλτρο Επιλογής Δ/νσης Εκπ/σης - Σχολείου </div>
+
           </button>
+
           <div  class="col-md-11 offset-md-1">
                 <label *ngIf = "enableRegionFilter && userLoggedIn == 'supervisor'"> Περιφερειακή Διεύθυνση </label>
                 <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn != 'supervisor'" formControlName="region">
@@ -67,10 +72,12 @@ import { API_ENDPOINT } from '../../app.settings';
                 </select>
           </div>
 
-          <button type="button" class="btn-link" (click)="toggleCourseFilter()" *ngIf = "reportId == 3 || reportId == 5" >
-              > Φίλτρο Επιλογής Τομέα / Ειδικότητας
-          </button>
-          <br>
+          <div *ngIf = "reportId == 3 || reportId == 5" >
+            <button type="button" class="btn-link" (click)="toggleCourseFilter()" >
+                  > Φίλτρο Επιλογής Τομέα / Ειδικότητας
+            </button>
+          </div>
+
           <div  class="col-md-11 offset-md-1">
                 <label for="classid" *ngIf = "enableCourseFilter" >Τάξη</label><br/>
                 <select #class_sel  class="form-control" (change)="checkclass(class_sel)" *ngIf = "enableCourseFilter" formControlName="classid" >
@@ -97,7 +104,6 @@ import { API_ENDPOINT } from '../../app.settings';
                   <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
                 </select>
           </div>
-
           <br>
           <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>

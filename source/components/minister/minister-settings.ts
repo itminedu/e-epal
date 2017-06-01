@@ -85,6 +85,17 @@ import {
           </div>
           <br>
 
+          <div class="row">
+            <div class="col-md-1 ">
+              <input type="checkbox" [checked]="applicantsResultsDisabled" formControlName="applicantsResultsDisabled"
+              (click)="toggleApplicantsResults()" >
+            </div>
+            <div class="col-md-9">
+              <label for="applicantsResultsDisabled">Απενεργοποίηση δυνατότητας προβολής αποτελεσμάτων κατανομής από τους μαθητές </label>
+            </div>
+          </div>
+          <br>
+
           <button type="submit" class="btn btn-md pull-right"  (click)="storeSettings()" >
               Εφαρμογή
           </button>
@@ -106,11 +117,11 @@ import {
     private settings$: BehaviorSubject<any>;
     loginInfoSub: Subscription;
     private settingsSub: Subscription;
-    //private data;
 
     private capacityDisabled: boolean;
     private directorViewDisabled: boolean;
     private applicantsLoginDisabled: boolean;
+    private applicantsResultsDisabled: boolean;
     private dataRetrieved: number;
 
     private minedu_userName: string;
@@ -125,6 +136,7 @@ import {
               capacityDisabled: ['', []],
               directorViewDisabled: ['', []],
               applicantsLoginDisabled: ['', []],
+              applicantsResultsDisabled: ['', []],
           });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -201,6 +213,7 @@ import {
            this.capacityDisabled = Boolean(Number(this.settings$.value['capacityDisabled']));
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
            this.applicantsLoginDisabled = Boolean(Number(this.settings$.value['applicantsLoginDisabled']));
+           this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
            this.dataRetrieved = 1;
          }
@@ -212,7 +225,8 @@ import {
 
       this.dataRetrieved = -1;
 
-      this.settingsSub = this._hds.storeAdminSettings(this.minedu_userName, this.minedu_userPassword, this.capacityDisabled, this.directorViewDisabled, this.applicantsLoginDisabled )
+      this.settingsSub = this._hds.storeAdminSettings(this.minedu_userName, this.minedu_userPassword,
+              this.capacityDisabled, this.directorViewDisabled, this.applicantsLoginDisabled, this.applicantsResultsDisabled )
         .subscribe(data => {
            this.settings$.next(data);
            //this.data = data;
@@ -262,11 +276,11 @@ import {
 
     }
 
+    toggleApplicantsResults() {
 
+      this.applicantsResultsDisabled = !this.applicantsResultsDisabled;
 
-
-
-
+    }
 
 
 

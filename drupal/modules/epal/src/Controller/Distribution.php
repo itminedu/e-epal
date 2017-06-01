@@ -148,7 +148,8 @@ class Distribution extends ControllerBase {
 							"message" => t("Unexpected Error in initializeResults function")
 						], Response::HTTP_INTERNAL_SERVER_ERROR);
 
-			if ($limitUp_class = $this->retrieveCapacityLimitUp("1") === ERROR_DB)
+			if ( ($limitUp_class = $this->retrieveCapacityLimitUp("1") ) === ERROR_DB)
+			//if ($limitUp_class === DB_ERROR)
 					return $this->respondWithStatus([
 							"message" => t("Unexpected Error in retrieveCapacityLimitUp function")
 						], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -264,6 +265,7 @@ class Distribution extends ControllerBase {
 								return $this->respondWithStatus([
 										"message" => t("Unexpected Error in initializeResults function AFTER findSmallClasses call Function")
 									], Response::HTTP_INTERNAL_SERVER_ERROR);
+
 			}
 
 

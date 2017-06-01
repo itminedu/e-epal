@@ -75,14 +75,8 @@ class Distribution extends ControllerBase {
 
 	public function createDistribution(Request $request) {
 
-		//$this->findSmallClasses();
-		//return;
-
-
-
 		$numDistributions = 3;
 		$sizeOfBlock = 100000;
-
 
 		//POST method is checked
 		if (!$request->isMethod('POST')) {
@@ -114,11 +108,12 @@ class Distribution extends ControllerBase {
 								'message' => t("User Invalid Role"),
 						], Response::HTTP_FORBIDDEN);
 		}
-		
 
-		 //check where distribution can be done now ($capacityDisabled / $directorViewDisabled settings)
-		$capacityDisabled = false;
-		$directorViewDisabled = false;
+
+		//check where distribution can be done now ($capacityDisabled / $directorViewDisabled settings)
+		$capacityDisabled = "0";
+		$directorViewDisabled = "0";
+		$applicantsResultsDisabled = "0";
 		$config_storage = $this->entityTypeManager->getStorage('epal_config');
 		$epalConfigs = $config_storage->loadByProperties(array('id' => 1));
 		$epalConfig = reset($epalConfigs);
@@ -130,12 +125,15 @@ class Distribution extends ControllerBase {
 		else {
 			 $capacityDisabled = $epalConfig->lock_school_capacity->getString();
 			 $directorViewDisabled = $epalConfig->lock_school_students_view->getString();
+			 $applicantsResultsDisabled = $epalConfig->lock_results->getString();
 		}
-		if ($capacityDisabled === "0" or $directorViewDisabled === "0")  {
+		if ($capacityDisabled === "0" || $directorViewDisabled === "0" || $applicantsResultsDisabled === "0")  {
 			 return $this->respondWithStatus([
 							 'message' => t("capacityDisabled and / or directorViewDisabled settings are false"),
 					 ], Response::HTTP_FORBIDDEN);
 		}
+
+
 
 
 
@@ -145,16 +143,18 @@ class Distribution extends ControllerBase {
 		try {
 
 			//initialize/empty epal_student_class if there are already data in it!
-			//$this->connection->delete('epal_student_class')->execute();
-			$this->initializeResults();
+			if ($this->initializeResults() === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in initializeResults function")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
 
-			//$limitUp_class = $this->retrieveCapacityLimitUp("Α");
-			$limitUp_class = $this->retrieveCapacityLimitUp("1");
+			if ($limitUp_class = $this->retrieveCapacityLimitUp("1") === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in retrieveCapacityLimitUp function")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
 			//print_r("<br> ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ: " . $limitUp_class);
 
 			while ($this->choice_id <= $numDistributions)	 {
-
-				//print_r("<br>ΠΕΡΑΣΜΑ: " . $this->choice_id);
 
 				//υπολογισμός πλήθους non-finalized αιτήσεων για να καθοριστεί ο αριθμός των fetches που θα κάνουμε με συγκεκριμένο sizeOfBlock
 				if ($this->choice_id === 1)	{
@@ -176,7 +176,10 @@ class Distribution extends ControllerBase {
 																					->condition('eStudent.id', $j*$sizeOfBlock, '<=');
 								$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-								$this->locateStudent($this->choice_id, $epalStudents);
+								if ($this->locateStudent($this->choice_id, $epalStudents) === ERROR_DB)
+										return $this->respondWithStatus([
+												"message" => t("Unexpected Error in locateStudent function")
+											], Response::HTTP_INTERNAL_SERVER_ERROR);
 
 								$num = $num + sizeof($epalStudents);
 								$j = $j + 1;
@@ -190,7 +193,11 @@ class Distribution extends ControllerBase {
 																						->condition('eStudent.id', $this->pendingStudents, 'IN');
 									$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-									$this->locateStudent($this->choice_id, $epalStudents);
+									if ($this->locateStudent($this->choice_id, $epalStudents) === ERROR_DB)
+											return $this->respondWithStatus([
+													"message" => t("Unexpected Error in locateStudent function")
+												], Response::HTTP_INTERNAL_SERVER_ERROR);
+
 								}
 								else {	//αν δεν υπάρχουν εκκρεμότητες, μην συνεχίζεις με άλλο πέρασμα
 									break;
@@ -207,14 +214,20 @@ class Distribution extends ControllerBase {
 
 				foreach ($eepalSchools as $eepalSchool)	{
 
-						$this->checkCapacityAndArrange($eepalSchool->id, "1", "-1", $limitUp_class, $eepalSchool->capacity_class_a);
+						if ($this->checkCapacityAndArrange($eepalSchool->id, "1", "-1", $limitUp_class, $eepalSchool->capacity_class_a) === ERROR_DB)
+								return $this->respondWithStatus([
+										"message" => t("Unexpected Error in checkCapacityAndArrange function")
+									], Response::HTTP_INTERNAL_SERVER_ERROR);
 
 						$sCon = $this->connection->select('eepal_sectors_in_epal_field_data', 'eSchool')
 																			->fields('eSchool', array('epal_id', 'sector_id', 'capacity_class_sector'))
 																			->condition('eSchool.epal_id', $eepalSchool->id, '=');
 						$eepalSectorsInEpal = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 						foreach ($eepalSectorsInEpal as $eepalSecInEp)	{
-							$this->checkCapacityAndArrange($eepalSchool->id, "2", $eepalSecInEp->sector_id, $limitUp_class, $eepalSecInEp->capacity_class_sector);
+							if ($this->checkCapacityAndArrange($eepalSchool->id, "2", $eepalSecInEp->sector_id, $limitUp_class, $eepalSecInEp->capacity_class_sector) === ERROR_DB)
+									return $this->respondWithStatus([
+											"message" => t("Unexpected Error in checkCapacityAndArrange function")
+										], Response::HTTP_INTERNAL_SERVER_ERROR);
 					  }
 
 						$sCon = $this->connection->select('eepal_specialties_in_epal_field_data', 'eSchool')
@@ -222,10 +235,17 @@ class Distribution extends ControllerBase {
 																			->condition('eSchool.epal_id', $eepalSchool->id, '=');
 						$eepalSpecialtiesInEpal = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 						foreach ($eepalSpecialtiesInEpal as $eepalSpecialInEp)	{
-							$this->checkCapacityAndArrange($eepalSchool->id, "3", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty);
+							//Γ' Λυκείου
+							if ($this->checkCapacityAndArrange($eepalSchool->id, "3", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty) === ERROR_DB)
+									return $this->respondWithStatus([
+											"message" => t("Unexpected Error in checkCapacityAndArrange function")
+										], Response::HTTP_INTERNAL_SERVER_ERROR);
 							//Δ' Λυκείου
 							if ($eepalSchool->operation_shift === "ΕΣΠΕΡΙΝΟ")	{
-								$this->checkCapacityAndArrange($eepalSchool->id, "4", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty);
+								if ($this->checkCapacityAndArrange($eepalSchool->id, "4", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty) === ERROR_DB)
+										return $this->respondWithStatus([
+												"message" => t("Unexpected Error in checkCapacityAndArrange function")
+											], Response::HTTP_INTERNAL_SERVER_ERROR);
 							}
 						}
 
@@ -235,7 +255,18 @@ class Distribution extends ControllerBase {
 
 	  	} //end while
 
-			$this->findSmallClasses();
+			if ($this->findSmallClasses() === ERROR_DB)	{
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in findSmallClasses function AFTER initial Distribution!")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+						//αν αποτύχει, δεν γίνεται rollback. --> Λύση: διαγρα΄φή των όποιων αποτελεσμάτων
+						if ($this->initializeResults() === ERROR_DB)
+								return $this->respondWithStatus([
+										"message" => t("Unexpected Error in initializeResults function AFTER findSmallClasses call Function")
+									], Response::HTTP_INTERNAL_SERVER_ERROR);
+			}
+
+
 
 		}	//end try
 
@@ -251,7 +282,7 @@ class Distribution extends ControllerBase {
 		if ($content = $request->getContent()) {
 				$postData = json_decode($content);
 				return $this->respondWithStatus([
-						'message' => "Distribution has made successfu",
+						'message' => "Distribution has made successfully",
 				], Response::HTTP_OK);
 			}
 			else {
@@ -340,14 +371,10 @@ class Distribution extends ControllerBase {
 	catch (\Exception $e) {
 		$this->logger->warning($e->getMessage());
 		$transaction->rollback();
-		return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured during locateStudent Method of Distribution")
-				], Response::HTTP_INTERNAL_SERVER_ERROR);
+		return ERROR_DB;
 	}
 
-	return $this->respondWithStatus([
-			"message" => t("locateStudent Method of Distribution has made successfully")
-		], Response::HTTP_OK);
+	return SUCCESS;
 
 	}
 
@@ -366,9 +393,7 @@ class Distribution extends ControllerBase {
 	catch (\Exception $e) {
 		$this->logger->warning($e->getMessage());
 		$transaction->rollback();
-		return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured during retrieveCapacityLimitUp Method of Distribution")
-				], Response::HTTP_INTERNAL_SERVER_ERROR);
+		return ERROR_DB;
 	}
 
 	return $row->limit_up;
@@ -394,43 +419,14 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 				->condition('studentClass.specialization_id', $secCourId, '=');
 			$epalStudentClass = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-			//print_r("<br> ΣΧΟΛΕΙΟ: " .  $epalId . " ΤΑΞΗ: "  . $classId . " ΤΟΜΕΑΣ/ΕΙΔΙΚΟΤΗΤΑ: " . $secCourId .  " ΧΩΡΗΤΙΚΟΤΗΤΑ: " . sizeof($epalStudentClass));
-
-			//ΕΠΙΠΛΕΟΝ ΕΠΙΠΕΔΟ ΑΣΦΑΛΕΙΑΣ: αν δεν υπάρχει ο συγκεκριμένος τομέας/ειδικότητα στο σχολείο
-			//ο μαθητής που τοποθετήθηκε με την locateStudent να διαγραφεί
-			//Σημείωση: κανονικά κάτι τέτοιο δεν μπορεί να συμβεί από το front-end (δηλ. μαθητής να δηλώσει τομέα/ειδικότητα που δεν προσφέρεται..)
-			//ΑΝ ΜΠΕΙ ΠΡΕΠΕΙ ΝΑ ΕΝΣΩΜΑΤΩΘΕΙ ΣΤΗΝ LOCATESTUDENT..
-			/*
-			if (sizeof($epalStudentClass) === 0)	{
-				//print_r("<br>ΜΠΗΚΑ! ");
-				foreach ($epalStudentClass as $epalStudCl)	{
-					//print_r("<br>ΜΠΗΚΑ! ΜΑΘΗΤΗΣ: " .  $epalStudCl->student_id);
-					$query = $this->connection->delete('epal_student_class')
-													->condition('student_id', $epalStudCl->student_id)
-													->execute();
-					}
-			}
-			*/
-			//ΤΕΛΟΣ
-
 			$limit = $limitup * $capacity;
 			if (sizeof($epalStudentClass) > $limit)	{
 				//print_r("<br>ΥΠΕΡΧΕΙΛΙΣΗ!");
-				foreach ($epalStudentClass as $epalStudCl)	{
+
+				//foreach ($epalStudentClass as $epalStudCl)	{
 					//Υπολογισμός μορίων του μαθητή και (πιθανή) αποθήκευσή τους
 					//ΣΗΜΕΙΩΣΗ: Ο υπoλογισμός γίνεται στο front-end
-
-					//$points = $this->calculatePoints();
-					/*
-					$query = $this->connection->update('epal_student');
-					$query->fields([
-						'points' =>$points,
-					]);
-					$query->condition('id',$epalStudCl->student_id);
-					$query->execute();
-					*/
-
-				}
+				//}
 				$this->makeSelectionOfStudents($epalStudentClass,$limit);
 			}
 			else { //αφαίρεσε όσους μαθητές βρίσκονται στον πίνακα εκκρεμοτήτων
@@ -446,14 +442,10 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 	catch (\Exception $e) {
 		$this->logger->warning($e->getMessage());
 		$transaction->rollback();
-		return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured during checkCapacityAndArrange Method of Distribution")
-				], Response::HTTP_INTERNAL_SERVER_ERROR);
+		return ERROR_DB;
 	}
 
-	return $this->respondWithStatus([
-				"message" => t("checkCapacityAndArrange Method of Distribution has made successfully")
-			], Response::HTTP_OK);
+	return SUCCESS;
 
 	}
 
@@ -578,17 +570,13 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 						catch (\Exception $e) {
 							$this->logger->warning($e->getMessage());
 							$transaction->rollback();
-							return $this->respondWithStatus([
-										"message" => t("An unexpected problem occured during DELETE proccess in makeSelectionOfStudents Method of Distribution")
-									], Response::HTTP_INTERNAL_SERVER_ERROR);
+							return ERROR_DB;
 						}
 					} //end if currentepal
 			 }	//end foreach
 		}	//endif newlimit
 
-		return $this->respondWithStatus([
-				"message" => t("makeSelectionOfStudents Method of Distribution has made successfully")
-			], Response::HTTP_OK);
+		return SUCCESS;
 
 	}	//end function
 
@@ -618,10 +606,9 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 			}
 			catch (\Exception $e) {
 				$this->logger->warning($e->getMessage());
-				return $this->respondWithStatus([
-							"message" => t("An unexpected problem occured during initializeResults Method of Distribution")
-						], Response::HTTP_INTERNAL_SERVER_ERROR);
+				return ERROR_DB;
 			}
+			return SUCCESS;
 		}
 
 
@@ -694,6 +681,8 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 
 
 			} //end for each school/department
+
+			return SUCCESS;
 
 	}	//end function
 

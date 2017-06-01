@@ -32,6 +32,8 @@ import { API_ENDPOINT } from '../../app.settings';
         <h5> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">
+
+        <!--
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide'" >
           <i class="fa fa-file-text"></i>
               Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
@@ -52,12 +54,50 @@ import { API_ENDPOINT } from '../../app.settings';
               Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων
           </button>
           <br><br>
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)" [hidden]="minedu_userName == '' " >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide' " >
           <i class="fa fa-file-text"></i>
               Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)
           </button>
           <br><br>
         </div>
+        -->
+
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)"  >
+          <i class="fa fa-file-text"></i>
+              Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(2)"  >
+          <i class="fa fa-file-text"></i>
+              Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(3)"  >
+          <i class="fa fa-file-text"></i>
+              Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)"  >
+          <i class="fa fa-file-text"></i>
+              Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)"  >
+          <i class="fa fa-file-text"></i>
+              Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)
+          </button>
+          <br><br>
+        </div>
+      </div>
 
     </div>
 

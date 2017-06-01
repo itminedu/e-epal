@@ -105,6 +105,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private distStatus = "READY";
     private capacityDisabled: boolean;
     private directorViewDisabled: boolean;
+    private applicantsResultsDisabled: boolean;
 
     constructor(/*private fb: FormBuilder,*/
       //  private _ata: LoginInfoActions,
@@ -169,10 +170,10 @@ import { API_ENDPOINT } from '../../app.settings';
         this.loginInfoSub.unsubscribe();
       if (this.settingsSub)
         this.settingsSub.unsubscribe();
-        if (this.loginInfo$)
-          this.loginInfo$.unsubscribe();
-        if (this.settings$)
-          this.settings$.unsubscribe();
+      if (this.loginInfo$)
+        this.loginInfo$.unsubscribe();
+      if (this.settings$)
+        this.settings$.unsubscribe();
     }
 
     ngOnInit() {
@@ -205,10 +206,7 @@ import { API_ENDPOINT } from '../../app.settings';
       this.showModal("#distributionWaitingNotice");
 
       this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
-
       .then(msg => {
-          //console.log("Nikos2");
-
           this.modalTitle.next("Κατανομή Μαθητών");
           this.modalText.next("Η κατανομή ολοκληρώθηκε με επιτυχία!");
           this.modalHeader.next("modal-header-success");
@@ -218,8 +216,6 @@ import { API_ENDPOINT } from '../../app.settings';
             this.distStatus = "FINISHED";
       })
       .catch(err => {console.log(err);
-          //console.log("Nikos1");
-          //console.log(err);
           this.distStatus = "ERROR";
 
           this.modalTitle.next("Κατανομή Μαθητών");
@@ -247,6 +243,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
            this.capacityDisabled = Boolean(Number(this.settings$.value['capacityDisabled']));
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
+           this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
            console.log("Debugging..");
            console.log(this.capacityDisabled);
@@ -265,7 +262,13 @@ import { API_ENDPOINT } from '../../app.settings';
              this.modalHeader.next("modal-header-warning");
              this.showModal("#distributionNotice");
            }
-
+           else if (this.applicantsResultsDisabled == false) {
+             this.modalTitle.next("Κατανομή Μαθητών");
+             this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να εκτελέσετε την κατανομή, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΑΠΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
+                                 ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές.") );
+             this.modalHeader.next("modal-header-warning");
+             this.showModal("#distributionNotice");
+           }
 
            //this.dataRetrieved = 1;
          }

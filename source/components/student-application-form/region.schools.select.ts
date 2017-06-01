@@ -326,7 +326,7 @@ import {AppSettings} from '../../app.settings';
     navigateToApplication() {
         //[disabled] = " ( (selectionLimitOptional  | async) === false && (classNight  | async) === false  && (numSelected | async) < (selectionLimit | async) )
           //                || ( (numSelected | async) === 0)"
-        if ( (this.selectionLimitOptional.value === false && this.classNight.value === false && this.numSelected.value < this.selectionLimit.value )
+        if ( (this.selectionLimitOptional.value === false /*&& this.classNight.value === false */ && this.numSelected.value < this.selectionLimit.value )
               || (this.numSelected.value === 0) )    {
 
           //this.modalHeader = "modal-header-success";

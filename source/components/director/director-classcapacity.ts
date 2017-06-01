@@ -71,9 +71,10 @@ import {
        </form>
        <br>
        <br>
+
       <div class="row"> <b>Οι δηλώσεις σας </b></div>
       <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
-                <li *ngIf="(CapacityPerCourses$.class != 4)" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
+                <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
                    <h5 >{{CapacityPerCourses$.taxi}}&nbsp;{{CapacityPerCourses$.capacity}} </h5>
                 </li>
        </div>
@@ -81,7 +82,6 @@ import {
 
        </div>
 
-     
 
 
     <div id="checksaved" (onHidden)="onHidden('#checksaved')" 

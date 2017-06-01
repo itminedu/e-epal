@@ -207,7 +207,7 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
             'text_processing' => 0,
           ))
           ->setRequired(FALSE)
-          ->setDefaultValue(FALSE)
+          ->setDefaultValue(TRUE)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'boolean',
@@ -227,7 +227,7 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
             'text_processing' => 0,
           ))
           ->setRequired(FALSE)
-          ->setDefaultValue(FALSE)
+          ->setDefaultValue(TRUE)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'boolean',
@@ -247,7 +247,27 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
             'text_processing' => 0,
           ))
           ->setRequired(FALSE)
-          ->setDefaultValue(FALSE)
+          ->setDefaultValue(TRUE)
+          ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayOptions('form', array(
+            'type' => 'boolean',
+            'weight' => -4,
+          ))
+          ->setDisplayConfigurable('form', TRUE)
+          ->setDisplayConfigurable('view', TRUE);
+
+      $fields['lock_results'] = BaseFieldDefinition::create('boolean')
+          ->setLabel(t('Lock Results'))
+          ->setDescription(t('Lock Results.'))
+          ->setSettings(array(
+            'text_processing' => 0,
+          ))
+          ->setRequired(FALSE)
+          ->setDefaultValue(TRUE)
           ->setDisplayOptions('view', array(
             'label' => 'above',
             'type' => 'boolean',

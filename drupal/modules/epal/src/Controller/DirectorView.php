@@ -499,9 +499,6 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
     }
 
 
-
-
-
     public function getCoursesPerSchool(Request $request, $schoolid)
     {
       $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -509,13 +506,31 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);
         if ($user)
-            {
+            {   
+                $newid = $user ->  init -> value;
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if (($tmpRole === 'regioneduadmin') || ($tmpRole === 'eduadmin')) {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
 
-               $list= array();
+                else if ($userRole === 'regioneduadmin') {
+                    $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid, 'region_edu_admin_id' => $newid));
+                }
+                else if ($userRole === 'eduadmin') {
+                    $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid , 'edu_admin_id' => $newid));
+                }
 
-                $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));
                 $SchoolCat = reset($SchoolCats);
                 if ($SchoolCat){
+                $list= array();
                 $categ = $SchoolCat-> metathesis_region -> value;
                 }
                 $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $schoolid ));
@@ -978,6 +993,110 @@ public function gettypeofschool(Request $request)
                         ], Response::HTTP_FORBIDDEN);
             }
     }
+
+
+
+    public function FindCapacityPerSchool(Request $request)
+    {
+
+    
+       $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+         $user = reset($users);
+         if ($user) {
+            $schoolid = $user ->  init -> value;
+           $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid));
+             $school = reset($schools);
+             if (!$school) {
+                 $this->logger->warning("no access to this school=" . $user->id());
+                 $response = new Response();
+                 $response->setContent('No access to this school');
+                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                 $response->headers->set('Content-Type', 'application/json');
+                 return $response;
+             }
+
+                 $list = array();
+                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
+                 $classcapacity = reset($CapacityPerClass);
+
+
+                  if ($classcapacity) {
+
+
+                    $list[] = array(
+                        'class' => 1,
+                        'taxi' => 'Ά Λυκείου',
+                        'capacity' => $classcapacity -> capacity_class_a -> value ,
+                       );
+                    }
+                
+                    $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                    if ($CourseB)
+                    {
+                        foreach ($CourseB as $object)
+                        {
+                        $sectorid = $object -> sector_id -> entity -> id();
+                        $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $sectorid ));
+                        $classcapacity = reset($CapacityPerClass);
+                        if ($classcapacity) {
+                          $list[] = array(
+                            'class' => 2,
+                                'taxi' => 'Β Λυκείου  '.$object -> sector_id -> entity-> get('name')->value,
+                                'capacity' => $classcapacity -> capacity_class_sector -> value ,
+                                );
+                            }
+                        }
+                    }
+                    $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
+                    if ($CourseC)
+                    {
+                        foreach ($CourseC as $object) {
+                        $specialityid = $object -> specialty_id -> entity -> id() ;
+                        $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
+                        $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                               $list[] = array(
+                                'class' => 3,
+                                    'taxi' => 'Γ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
+                                    'capacity' => $classcapacity -> capacity_class_specialty -> value ,
+                            );
+                        }
+                        }
+                    }
+               
+                if ($CourseC)
+                    {
+                        foreach ($CourseC as $object)
+                         {
+                            $specialityid = $object -> specialty_id -> entity -> id() ;
+                            $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
+                            $classcapacity = reset($CapacityPerClass);
+                            if ($classcapacity) {
+                                $list[] = array(
+                                    'class' => 4,
+                                    'taxi' => 'Δ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
+                                    'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
+                                    
+                                    );
+                                }
+                            }
+                        }
+
+                      return $this->respondWithStatus(
+                                     $list
+                                   , Response::HTTP_OK);
+
+
+            } else {
+            return $this->respondWithStatus([
+                    'message' => t("EPAL user not found"),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
+
 
 
 

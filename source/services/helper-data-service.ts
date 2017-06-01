@@ -512,8 +512,9 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperSchool/`, options)
-            .map(response => response.json());
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/sectorperschool/` , options)
+         .map(response => response.json());
     }
 
 
@@ -529,7 +530,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperSchool/` + SectorIdNew, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/specialityperschool/` + SectorIdNew, options)
             .map(response => response.json());
     }
 
@@ -550,7 +551,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperSchool/` + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperschool/` + SelectIdNew + '/' + classId + '/' + limitdown + '/' + limitup, options)
             .map(response => response.json());
     }
 
@@ -715,7 +716,9 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/CoursesperSch/` + PerfectureIdNew, options)
+
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/coursespersch/` + PerfectureIdNew , options)
+
             .map(response => response.json());
     }
 
@@ -870,7 +873,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findCapacity/` + taxi + '/' + tomeas + '/' + specialit, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findcapacity/` + taxi + '/' + tomeas + '/' + specialit, options)
             .map(response => response.json());
 
     }
@@ -918,7 +921,25 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/getlimitsperCourse/` + classid, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/getlimitspercourse/`+ classid , options)
+            .map(response => response.json());
+
+}
+
+
+    FindCapacityPerSchool(){
+
+    this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/findcapacityperschool/` , options)
+
             .map(response => response.json());
 
     }

@@ -17,13 +17,14 @@ import {minValue} from '../../constants';
 import {
     FormBuilder,
     FormGroup,
-    FormControl,
+    FormControl, 
     FormArray,
     Validators,
 } from '@angular/forms';
 @Component({
     selector: 'director-classcapacity',
     template: `
+    <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
   <form [formGroup]="formGroup">
       <label for="taxi">Τάξη</label><br/>
@@ -68,7 +69,20 @@ import {
                 Αποθήκευση
              </button>
        </form>
+       <br>
+       <br>
+
+      <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
+      <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
+                <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
+                   <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === null" >{{CapacityPerCourses$.taxi}}&nbsp; <b>{{CapacityPerCourses$.capacity}}</b></h5>
+                </li>
        </div>
+
+
+       </div>
+
+
 
     <div id="checksaved" (onHidden)="onHidden('#checksaved')" 
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -131,6 +145,8 @@ import {
     private selectionCClass: BehaviorSubject<boolean>;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;
+    private CapacityPerCourse$: BehaviorSubject<any>;
+    private CapacityPerCourseSub: Subscription;
     private SchoolId;
     private currentclass: Number;
     private classCapacity$: BehaviorSubject<any>;
@@ -139,6 +155,7 @@ import {
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
+    private showLoader: BehaviorSubject<boolean>;
     
 
 
@@ -150,6 +167,7 @@ import {
         this.StudentSelected$ = new BehaviorSubject([{}]);
         this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
         this.classCapacity$ = new BehaviorSubject([{}]);
+        this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.selectionBClass = new BehaviorSubject(false);
         this.selectiontype = new BehaviorSubject(true);
         this.selectionCClass = new BehaviorSubject(false);
@@ -158,6 +176,7 @@ import {
         this.modalTitle =  new BehaviorSubject("");
         this.modalText =  new BehaviorSubject("");
         this.modalHeader =  new BehaviorSubject("");
+        this.showLoader = new BehaviorSubject(false);
         this.formGroup = this.fb.group({
             tomeas: ['', []],
             taxi: ['', []],
@@ -205,8 +224,9 @@ import {
         (<any>$('#capacitysaved')).appendTo("body");
         (<any>$('#checksaved')).appendTo("body");
         this.retrievedStudent.next(false);
+       
 
-            this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
+                this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);                 
                   console.log(x[0].type, "schoolid!");
                    this.SchoolId = x[0].type;
@@ -220,6 +240,20 @@ import {
                       console.log("Error Getting School");
                   },
                   () => console.log("Getting School "));
+
+
+                  this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+                  this.CapacityPerCourse$.next(x);                 
+                  },
+                  error => {
+                      this.CapacityPerCourse$.next([{}]);
+                      console.log("Error Getting Capacity perSchool");
+                  },
+                  () => console.log("Getting School "));
+
+
+
+
 
     }
 
@@ -235,7 +269,9 @@ import {
                 capacity: '',
             });
             console.log("a class");
+            this.showLoader.next(true);
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, 0, 0).subscribe(data => {
+                this.showLoader.next(false);
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
                 this.formGroup.patchValue({
@@ -294,9 +330,11 @@ import {
         console.log(tmop, txop, "tomeas!!!!");
         if (txop.value === "2") {
             console.log("b class");
+            this.showLoader.next(true);
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, 0).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
+                this.showLoader.next(false);
                 this.formGroup.patchValue({
                 capacity : data[0].capacity,
             });
@@ -324,10 +362,11 @@ import {
         if (txop.value === "3" || txop.value === "4") {
             console.log("c class");
             console.log(sectorint, specialint, "cclass")
+            this.showLoader.next(true);
             this.classCapacitySub = this._hds.getCapacityPerSchool(this.formGroup.value.taxi, sectorint, specialint).subscribe(data => {
                 this.classCapacity$.next(data);
                 this.retrievedStudent.next(true);
-                
+               this.showLoader.next(false); 
                this.formGroup.patchValue({
                 capacity : data[0].capacity,
             });
@@ -359,8 +398,18 @@ import {
               this.showModal("#checksaved");
           } else 
         {
-        
+        this.showLoader.next(true);
          this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity).subscribe(data => {
+                 this.showLoader.next(false);
+
+                this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+                  this.CapacityPerCourse$.next(x);                 
+                  },
+                  error => {
+                      this.CapacityPerCourse$.next([{}]);
+                      console.log("Error Getting Capacity perSchool");
+                  },
+                  () => console.log("Getting School "));
                  },
                 error => {
                     
@@ -370,10 +419,12 @@ import {
                  console.log("Saved Capacity");
                  this.showModal("#capacitysaved");
                  });
-         }
+
+
+             }
                  
 
-    }
+        }
 
  
 

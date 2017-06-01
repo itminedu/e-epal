@@ -72,10 +72,10 @@ import {
        <br>
        <br>
 
-      <div class="row"> <b>Οι δηλώσεις σας </b></div>
+      <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
       <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
-                   <h5 >{{CapacityPerCourses$.taxi}}&nbsp;{{CapacityPerCourses$.capacity}} </h5>
+                   <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === null" >{{CapacityPerCourses$.taxi}}&nbsp; <b>{{CapacityPerCourses$.capacity}}</b></h5>
                 </li>
        </div>
 
@@ -401,6 +401,15 @@ import {
         this.showLoader.next(true);
          this.saveCapacitySub = this._hds.saveCapacity(this.formGroup.value.taxi, tomeas, specialit, this.formGroup.value.capacity).subscribe(data => {
                  this.showLoader.next(false);
+
+                this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+                  this.CapacityPerCourse$.next(x);                 
+                  },
+                  error => {
+                      this.CapacityPerCourse$.next([{}]);
+                      console.log("Error Getting Capacity perSchool");
+                  },
+                  () => console.log("Getting School "));
                  },
                 error => {
                     
@@ -412,14 +421,6 @@ import {
                  });
 
 
-                this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CapacityPerCourse$.next(x);                 
-                  },
-                  error => {
-                      this.CapacityPerCourse$.next([{}]);
-                      console.log("Error Getting Capacity perSchool");
-                  },
-                  () => console.log("Getting School "));
              }
                  
 

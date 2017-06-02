@@ -95,12 +95,18 @@ class SubmitedApplications extends ControllerBase
                             'fathersurname' =>$object -> fathersurname ->value,
                             'motherfirstname' => $object -> motherfirstname ->value,
                             'mothersurname' =>$object -> mothersurname ->value,
-                            'guardianfirstname' =>$epalUser -> name ->value,
-                            'guardiansurname' =>$epalUser -> surname ->value,                            
+                            'guardian_name' =>$object -> guardian_name ->value,
+                            'guardian_surname' =>$object -> guardian_surname ->value,
+                            'guardian_fathername' =>$object -> guardian_fathername ->value,
+                            'guardian_mothername' =>$object -> guardian_mothername ->value,
+                            'lastschool_schoolname' =>$object -> lastschool_schoolname ->value,
+                            'lastschool_schoolyear' =>$object -> lastschool_schoolyear ->value,
+                            'lastschool_class' =>$object -> currentclass ->value,
                             'regionaddress' =>$object -> regionaddress ->value,
                             'regiontk' =>$object -> regiontk ->value,
                             'regionarea' =>$object -> regionarea ->value,
                             'certificatetype' =>$object -> certificatetype ->value,
+                            'graduation_year' =>$object -> graduation_year ->value,
                             'telnum' =>$object -> telnum ->value,
                             'relationtostudent' =>$object -> relationtostudent ->value,
                             'birthdate' =>$object -> birthdate ->value,
@@ -191,7 +197,7 @@ public function getEpalChosen(Request $request, $studentId)
                 foreach ($critiriaChosen as $object) {
                     $critirio_id = $object -> criterio_id ->entity -> id();
                     $critiriatype = $this->entityTypeManager->getStorage('epal_criteria')->loadByProperties(array( 'id'=>$critirio_id ));
-                    $typeofcritiria = reset($critiriatype);    
+                    $typeofcritiria = reset($critiriatype);
                     $typecrit = $typeofcritiria -> category -> value;
                     if ($typecrit == "Κοινωνικό" && $type == 1){
                         $list[] = array(

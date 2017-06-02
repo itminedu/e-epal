@@ -31,6 +31,7 @@ class PDFCreator extends ControllerBase {
 	protected $entityTypeManager;
 	protected $logger;
 	protected $connection;
+	protected $pdf;
 
 	public function __construct(
 		EntityTypeManagerInterface $entityTypeManager,
@@ -55,7 +56,7 @@ class PDFCreator extends ControllerBase {
       );
     }
 
-	public function createApplicantPDF(Request $request) {
+	public function createApplicantPDF(Request $request, $studentId) {
 
 		try {
 			 if (!$request->isMethod('GET')) {
@@ -64,33 +65,16 @@ class PDFCreator extends ControllerBase {
 				], Response::HTTP_METHOD_NOT_ALLOWED);
 			 }
 
-			 /*
-			 $authToken = $request->headers->get('PHP_AUTH_USER');
-			 $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
-			 $epalUser = reset($epalUsers);
-			 if ($epalUser)	{
-					 //$userid = $epalUser -> id();
-					 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-					 $user = reset($users);
-					 if (!$user) {
-							 return $this->respondWithStatus([
-											 'message' => t("User not found"),
-									 ], Response::HTTP_FORBIDDEN);
-					 }
-				 }
-				 */
-
 			 //user validation
-			 /*
+
 			 $authToken = $request->headers->get('PHP_AUTH_USER');
 			 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
 			 $user = reset($users);
-
-
+			 /*
 			 return $this->respondWithStatus([
 							 'message' => t("User:") . $authToken,
 					 ], Response::HTTP_FORBIDDEN);
-
+			 */
 
 			 if (!$user) {
 					 return $this->respondWithStatus([
@@ -108,31 +92,41 @@ class PDFCreator extends ControllerBase {
 					 break;
 				 }
 
-
+				 /*
  				 return $this->respondWithStatus([
  	 							'message' => t("User Role:") . $role,
  	 					], Response::HTTP_FORBIDDEN);
-
+				 */
 
 			 if (!$validRole) {
 					 return $this->respondWithStatus([
 									 'message' => t("User Invalid Role"),
 							 ], Response::HTTP_FORBIDDEN);
 			 }
-			 */
+
 			 //$user->id()
 
-			$pdf = new FPDF();
-			$pdf->AliasNbPages();
-			$pdf->AddPage();
 
-			//Mine
-			//$pdf->SetFont('Arial','B',16);
-			//$pdf->Cell(40,10,'Hello World! This is a funny day!!!!Hello World! This is a funny day!!!!Hello World! This is a funny day!!!!');
-			$pdf->AddFont('open-sans.light', '', 'open-sans.light.php');
-			$pdf->SetFont('open-sans.light', '', 16);
-			$pdf->Cell(40,10, $this->prepareString('Καλό Καλοκαίρι!!!'));
-			//End Mine
+			 $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id'=> $studentId));
+			  if (sizeof($epalStudents) === 1) {
+						$epalStudent = reset($epalStudents);
+				}
+				else {
+					return $this->respondWithStatus([
+						"message" => t("No such a studentId Or double studentId")
+					], Response::HTTP_INTERNAL_SERVER_ERROR);
+				}
+
+
+				$this->initPdfHandler();
+				$this->createHeader($epalStudent);
+				$this->createGuardianInfo($epalStudent);
+				$this->createStudentInfo($epalStudent);
+				$this->createStudentChoices($epalStudent);
+
+
+
+
 
 			/*
 			// $pdf->SetFont('Arial','B',16);
@@ -151,11 +145,11 @@ class PDFCreator extends ControllerBase {
 
 
 
-			$pdf->Close(); // Δεν χρειάζεται, το κάνει η Output
-			//$s = $pdf->Output("S", "export.pdf", true);
-			$s = $pdf->Output("S", "export.pdf", true);
+			//$this->pdf->Close(); // Δεν χρειάζεται, το κάνει η Output
+			$s = $this->pdf->Output("S", "export.pdf", true);
 
-            $response = new Response($s, Response::HTTP_OK, ['Content-Type', 'application/pdf']);
+
+			$response = new Response($s, Response::HTTP_OK, ['Content-Type', 'application/pdf']);
 			return $response;
 
 		} //end try
@@ -168,21 +162,304 @@ class PDFCreator extends ControllerBase {
 
 	}
 
+
+
+	private function initPdfHandler()	{
+
+		$this->pdf = new FPDF();
+		$this->pdf->AliasNbPages();
+		$this->pdf->AddPage();
+
+		$this->pdf->AddFont('open-sans.light', '', 'open-sans.light.php');
+		$this->pdf->AddFont('open-sans.bold', '', 'open-sans.bold.php');
+
+	}
+
+	private function createHeader($student)	{
+
+		$this->pdf->SetFont('open-sans.bold', '', 16);
+		$this->pdf->MultiCell(0, 8, $this->prepareString('Ηλεκτρονική Αίτηση Εγγραφής Μαθητή σε ΕΠΑΛ'), 0, 'C');
+		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->MultiCell(0, 8, $this->prepareString('με αρ.πρωτ. ' . $student->id->value . ' / ' .  date('d-m-y (ώρα: H:i:s)',  $student->created->value)), 0, 'C');
+		$this->pdf->Ln();
+
+	}
+
+	private function createGuardianInfo($student)	{
+
+		$width = 45;
+		$height = 8;
+
+		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->SetFillColor(255,178,102);
+		$this->pdf->MultiCell(0, $height, $this->prepareString('Στοιχεία αιτούμενου κηδεμόνα'), 0, 'C',true);
+		$this->pdf->Ln(4);
+
+		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_name->value), 0, 'L');
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_surname->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα πατέρα:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_fathername->value), 0, 'L');
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μητέρας:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_mothername->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$fullAddressTxt = /*'Διεύθυνση κατοικίας: ' . */ $student->regionaddress->value . ', ΤΚ: ' . $student->regiontk->value . ', ' . $student->regionarea->value;
+		$this->pdf->Cell($width, $height, $this->prepareString('Διεύθυνση κατοικίας: '), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($fullAddressTxt), 0, 'L');
+		$this->pdf->Ln();
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+30, $height, $this->prepareString('Αποδοχή όρων χρήσης συστήματος:'), 0, 'L');
+		$this->pdf->SetFont('open-sans.bold', '', 12);
+		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveAgreementLiteral($student->agreement->value) ), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Ln();
+
+
+	}
+
+	private function createStudentInfo($student)	{
+
+		$width = 45;
+		$height = 8;
+		$heightln = 4;
+
+		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->SetFillColor(255,178,102);
+		$this->pdf->MultiCell(0, $height, $this->prepareString('Στοιχεία μαθητή'), 0, 'C',true);
+		$this->pdf->Ln(4);
+
+		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μαθητή:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->name->value), 0, 'L');
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα πατέρα:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->fatherfirstname->value), 0, 'L');
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μητέρας:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->motherfirstname->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Ημ/νία γέννησης:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->birthdate->value), 0, 'L');
+
+		$this->pdf->Cell($width, $height, $this->prepareString('Τηλ. επικ/νίας:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->telnum->value), 0, 'L');
+		$this->pdf->Ln();
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Τύπος απολυτηρίου:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->certificatetype->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Έτος κτήσης απολυτηρίου:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->graduation_year->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Σχολείο τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->multiCell(0, $height, $this->prepareString($student->lastschool_schoolname->value), 0, 'L');
+		//$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Τάξη τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveClassName($student->lastschool_class->value)), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Σχ.έτος τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->lastschool_schoolyear->value), 0, 'L');
+		$this->pdf->Ln();
+
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Αίτηση από:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($student->relationtostudent->value), 0, 'L');
+		$this->pdf->Ln();
+		$this->pdf->Ln();
+
+	}
+
+	private function createStudentChoices($student)	{
+
+		$width = 45;
+		$height = 8;
+
+		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->SetFillColor(255,178,102);
+		$this->pdf->MultiCell(0, $height, $this->prepareString('Επιλεχθέντα σχολεία'), 0, 'C',true);
+		$this->pdf->Ln(4);
+
+		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->Cell($width, $height, $this->prepareString('Τάξη εγγραφής:'), 0, 'L');
+		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveClassName($student->currentclass->value)), 0, 'L');
+		$this->pdf->Ln();
+
+		if ($student->currentclass->value === "2")
+			$this->createSectorChoice($student);
+		else if ($student->currentclass->value === "3" || $student->currentclass->value === "4")
+			$this->createCourseChoice($student);
+
+		$this->createSchoolChoices($student);
+
+		//$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
+		//$this->pdf->Cell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
+		//$this->pdf->Ln();
+
+	}
+
+	private function createSectorChoice($student)	{
+
+		 $width = 45;
+		 $height = 8;
+		 $this->pdf->SetFont('open-sans.light', '', 12);
+
+		 $epalSectors = $this->entityTypeManager->getStorage('epal_student_sector_field')->loadByProperties(array('student_id'=> $student->id->value));
+		 $this->pdf->Cell($width, $height, $this->prepareString('Τομέας Επιλογής:'), 0, 'L');
+		 if (sizeof($epalSectors) !== 1)	{
+	 		 $this->pdf->multiCell(0, $height, $this->prepareString(""), 0, 'L');
+		 }
+		 else {
+			 $epalSector = reset($epalSectors);
+			 $sectorId = $epalSector->sectorfield_id->getString();
+			 $sectorNames = $this->entityTypeManager->getStorage('eepal_sectors')->loadByProperties(array('id'=> $sectorId));
+			 if (sizeof($sectorNames) !== 1)	{
+					$this->pdf->multiCell(0, $height, $this->prepareString(""), 0, 'L');
+			 }
+			 else {
+				 $sectorName = reset($sectorNames);
+		 		 $this->pdf->multiCell(0, $height, $this->prepareString($sectorName->name->value), 0, 'L');
+			 }
+	 	 }
+	   //$this->pdf->Ln();
+
+}
+
+private function createCourseChoice($student)	{
+
+	 $width = 45;
+	 $height = 8;
+	 $this->pdf->SetFont('open-sans.light', '', 12);
+
+	 $epalCourses = $this->entityTypeManager->getStorage('epal_student_course_field')->loadByProperties(array('student_id'=> $student->id->value));
+	 $this->pdf->Cell($width, $height, $this->prepareString('Ειδικότητα Επιλογής:'), 0, 'L');
+	 if (sizeof($epalCourses) !== 1)	{
+		 $this->pdf->multiCell(0, $height, $this->prepareString(""), 0, 'L');
+	 }
+	 else {
+		 $epalCourse = reset($epalCourses);
+		 $courseId = $epalCourse->coursefield_id->getString();
+		 $courseNames = $this->entityTypeManager->getStorage('eepal_specialty')->loadByProperties(array('id'=> $courseId));
+		 if (sizeof($courseNames) !== 1)	{
+				$this->pdf->multiCell(0, $height, $this->prepareString(""), 0, 'L');
+		 }
+		 else {
+			 $courseName = reset($courseNames);
+			 $this->pdf->multiCell(0, $height, $this->prepareString($courseName->name->value), 0, 'L');
+		 }
+	 }
+	// $this->pdf->Ln();
+
+	 $this->createCorresponingSector($courseName);
+
+	 $this->pdf->Ln();
+
+
+}
+
+private function createSchoolChoices($student)	{
+
+	 //$width = 55;
+	 $height = 8;
+	 $this->pdf->SetFont('open-sans.light', '', 12);
+
+	 $this->pdf->Ln(4);
+
+	 $epalSchools = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id'=> $student->id->value));
+	 foreach ($epalSchools as $epalSchool)	{
+		 $msg = "";
+		 if ($epalSchool->choice_no->value === "1")
+		 	$msg = "Πρώτη";
+		 else if ($epalSchool->choice_no->value === "2")
+			 $msg = "Δεύτερη";
+		 else if ($epalSchool->choice_no->value === "3")
+			 $msg = "Τρίτη";
+		 //$this->pdf->Cell($width, $height, $this->prepareString($txtOrder . ' επιλογή σχολείου προτίμησης :'), 0, 'L');
+		 $msg .= " επιλογή σχολείου προτίμησης: ";
+
+		 $epalSchoolNames = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $epalSchool->epal_id->getString()));
+		 $epalSchoolName = reset($epalSchoolNames);
+		 //$this->pdf->Cell($width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
+
+		 //$msg .= $epalSchoolName->name->value;
+		 $schName = $epalSchoolName->name->value;
+		 //$this->pdf->multiCell(0, $height, $this->prepareString($msg), 0, 'J');
+
+		 $this->pdf->Cell(80, $height, $this->prepareString($msg), 0, 'L');
+		 $this->pdf->multiCell(0, $height, $this->prepareString($schName), 0, 'L');
+		 //$this->pdf->ln();
+
+	 }
+
+}
+
+
+
+private function createCorresponingSector($course)	{
+
+	$width = 45;
+	$height = 8;
+
+	//$this->pdf->Ln();
+	$this->pdf->Cell($width, $height, $this->prepareString('(Τομέας ειδικότητας: '), 0, 'L');
+	$sectorId = $course->sector_id->getString();
+	$sectorNames = $this->entityTypeManager->getStorage('eepal_sectors')->loadByProperties(array('id'=> $sectorId));
+	if (sizeof($sectorNames) !== 1)	{
+		 $this->pdf->Cell($width, $height, $this->prepareString(""), 0, 'L');
+	}
+	else {
+		$sectorName = reset($sectorNames);
+		$this->pdf->Cell($width, $height, $this->prepareString($sectorName->name->value) . ')', 0, 'L');
+	}
+
+}
+
+	private function retrieveClassName($classId)	{
+			if ($classId === "1")
+				return 'Α\' τάξη';
+			else if ($classId === "2")
+				return 'Β\' τάξη';
+			else if ($classId === "3")
+				return 'Γ\' τάξη';
+			else if ($classId === "4")
+				return 'Δ\' τάξη';
+			else
+				return 'Μη διαθέσιμη τάξη';
+	}
+
+	private function retrieveAgreementLiteral($aggreeId)	{
+		if ($aggreeId === "1")
+			return 'ΝΑΙ';
+		else
+			return 'ΟΧΙ';
+	}
+
+
+
+
+
 	private function prepareString($string, $from_encoding = 'UTF-8', $to_encoding = 'ISO-8859-7') {
 		return iconv($from_encoding, $to_encoding, $string);
 	}
-		// OBSOLETE
-		// public  function array_utf8_encode($dat)
-		// {
-		//     if (is_string($dat))
-		//         return utf8_encode($dat);
-		//     if (!is_array($dat))
-		//         return $dat;
-		//     $ret = array();
-		//     foreach ($dat as $i => $d)
-		//         $ret[$i] = self::array_utf8_encode($d);
-		//     return $ret;
-		// }
+
+
 
 	private function respondWithStatus($arr, $s) {
 		$res = new JsonResponse($arr);

@@ -1,107 +1,130 @@
-import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
-import {Observable} from "rxjs/Observable";
-import {IStudentDataFields, IStudentDataField} from '../../store/studentdatafields';
 import {Http, Headers, RequestOptions} from '@angular/http';
-import {Removetags} from '../../pipes/removehtmltags';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import * as html2canvas from "html2canvas"
 
 
 @Component({
     selector: 'submited-preview',
     template: `
-
+<div style="min-height: 500px; margin-bottom: 20px;">
     <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
+        <br/>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
 
-              <ul class="list-group main-view">
-               <div *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd"
-                 [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
-                  <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
-                 </li>
-                  <div #target class = "target "id = "target">
-
-                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" >
-                      <table>
-                        <tr><td>
-                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p>
-                          </div>
-                        </td>
-                        <td>
-                         <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p>
-                          </div>
-                        </td></tr>
-                      </table>
-                      <div class="form-group"><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p> </div>
-                      <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{StudentDetails$.studentsurname}} </p></div>
-                      <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
-                      <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
-                      <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
-                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>
-                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>
-
-                      <table>
-                              <tr>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{StudentDetails$.regionaddress}} </p>
-                                      </div>
-                                  </td>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{StudentDetails$.regiontk}} </p>
-                                      </div>
-                                  </td>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{StudentDetails$.regionarea}} </p>
-                                      </div>
-                                  </td>
-                             </tr>
-                      </table>
-                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>
-                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
-                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
-
-                    <h5>Επιλογές ΕΠΑΛ</h5>
-                    <div *ngFor="let epalChoices$  of EpalChosen$ | async" [hidden]="UserData$.id !== userActive">
-                         Σχολείο: {{epalChoices$.epal_id}}
-                         Σειρά Προτίμισης:{{epalChoices$.choice_no}}
-                    </div>
-                   </div>
+              <div class="row" style="margin: 0px 2px 0px 2px; line-height: 2em; background-color: #ccc;">
+                  <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
+                  <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Όνομα</div>
               </div>
-             </div>
-            </ul>
-            <br>
-            <button type="button" (click)="createPdfServerSide()" [disabled] = "userActive == -1">Εξαγωγή σε PDF</button>
 
-            <!--
-            <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application" #form>
-              <button type="submit" (click)="form.submit()">Εξαγωγή σε PDF - ΝΕΟ!</button>
-            </form>
-            -->
+               <div class="row isclickable"  style="margin: 0px 2px 0px 2px; line-height: 2em;"
+               [class.oddout]="isOdd"
+               [class.evenout]="isEven"
+               (click)="setActiveUser(UserData$.id)"
+               [class.selectedout]="userActive === UserData$.id"
+               *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
+                    <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.studentsurname}}</div>
+                    <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{UserData$.name}}</div>
 
-            <!--<a href="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application">Download</a>-->
+
+                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 30px 30px 30px 30px;">
+                  <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.guardian_name}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.guardian_surname}}</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα πατέρα</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.guardian_fathername }}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα μητέρας</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.guardian_mothername }}</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Διεύθυνση</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regionaddress}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regiontk}} - {{StudentDetails$.regionarea}}</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα μαθητή</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.name}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο μαθητή</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.studentsurname}}</div>
+                  </div>
+                  <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα Πατέρα</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.fatherfirstname}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Όνομα Μητέρας</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.motherfirstname}}</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Τύπος απολυτηρίου</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.certificatetype}}</div>
+                  </div>
+
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Έτος κτήσης απολυτηρίου</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.graduation_year}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Σχολείο τελευταίας φοίτησης</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
+                  </div>
+
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === 1" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α'</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === 2" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β'</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === 3" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ'</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === 4" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ'</div>
+                  </div>
+
+                    <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                        <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
+                        <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Σειρά Προτίμησης</div>
+                    </div>
+
+                    <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of EpalChosen$ | async; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== userActive">
+                        <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{epalChoices$.epal_id}}</div>
+                        <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{epalChoices$.choice_no}}</div>
+                    </div>
+
+                    <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                        <div class="col-md-12 col-md-offset-8">
+                            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
+                                <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
+                            </button>
+                        </div>
+
+                    </div>
+                    </div>
+
+              </div>
+              </div>
 
    `
 })
 
-@Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
+@Injectable() export default class SubmitedPreview implements OnInit, OnDestroy {
 
     private SubmitedApplic$: BehaviorSubject<any>;
     private SubmitedUsersSub: Subscription;
@@ -118,26 +141,24 @@ import * as html2canvas from "html2canvas"
     public StudentId;
     private userActive = <number>-1;
 
-  @ViewChild('target') element: ElementRef;
+    @ViewChild('target') element: ElementRef;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
-                private _hds: HelperDataService,
-                private activatedRoute: ActivatedRoute,
-                private router: Router ,
-                /*private fb: FormBuilder,*/
-              )
-    {
-       this.SubmitedApplic$ = new BehaviorSubject([{}]);
-       this.SubmitedDetails$ = new BehaviorSubject([{}]);
-       this.EpalChosen$ = new BehaviorSubject([{}]);
-       this.CritirioChosen$ = new BehaviorSubject([{}]);
-       this.incomeChosen$ = new BehaviorSubject([{}]);
-       this.showLoader$ = new BehaviorSubject(false);
+        private _hds: HelperDataService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        /*private fb: FormBuilder,*/
+    ) {
+        this.SubmitedApplic$ = new BehaviorSubject([{}]);
+        this.SubmitedDetails$ = new BehaviorSubject([{}]);
+        this.EpalChosen$ = new BehaviorSubject([{}]);
+        this.CritirioChosen$ = new BehaviorSubject([{}]);
+        this.incomeChosen$ = new BehaviorSubject([{}]);
+        this.showLoader$ = new BehaviorSubject(false);
 
     }
 
-    ngOnDestroy()
-    {
+    ngOnDestroy() {
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
@@ -177,92 +198,42 @@ import * as html2canvas from "html2canvas"
     }
 
 
-  setActiveUser(ind,i)
-  {
-      ind = +ind;
-      console.log(this.userActive,"RA",ind);
-      if (ind === this.userActive){
-        ind = -1;
-      }
-      ind--;
-      this.userActive = ind+1 ;
-      this.showLoader$.next(true);
-      this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive+1).subscribe(data => {
-          this.SubmitedDetails$.next(data);
-          this.showLoader$.next(false);
-    },
+    setActiveUser(ind: number): void {
+        ind = +ind;
+        if (ind === this.userActive) {
+            ind = -1;
+            return;
+        }
+        ind--;
+        this.userActive = ind + 1;
+        this.showLoader$.next(true);
+        this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive + 1).subscribe(data => {
+            this.SubmitedDetails$.next(data);
+            this.showLoader$.next(false);
+        },
             error => {
                 this.SubmitedDetails$.next([{}]);
                 console.log("Error Getting Schools");
                 this.showLoader$.next(false);
             },
-             () => {
-                 console.log("Getting Schools");
-                 this.showLoader$.next(false);
-             });
-      this.EpalChosenSub = this._hds.getEpalchosen(this.userActive+1).subscribe(data => {
-        this.EpalChosen$.next(data)},
+            () => {
+                console.log("Getting Schools");
+                this.showLoader$.next(false);
+            });
+        this.EpalChosenSub = this._hds.getEpalchosen(this.userActive + 1).subscribe(data => {
+            this.EpalChosen$.next(data)
+        },
             error => {
                 this.EpalChosen$.next([{}]);
                 console.log("Error Getting Schools");
             },
-             () => console.log("Getting Schools"));
+            () => console.log("Getting Schools"));
+    }
 
-   }
+    createPdfServerSide() {
+        //this._hds.createPdfServerSide(this.authToken, this.role, this.userActive +1 );
+        this._hds.createPdfServerSide(this.userActive + 1);
 
-
- createPdf_version1() {
-       html2canvas(document.getElementById("target")).then(function(canvas)
-        {
-          var img=new Image();
-          img.src=canvas.toDataURL();
-          img.onload=function(){
-            console.log(img,"img");
-            var doc = new jsPDF();
-            console.log(img, doc, "ok");
-            doc.addImage(img, 'PNG',0, 0, 210, 297);
-            console.log(img, doc, "ok2");
-            doc.save('applications.pdf');
-          }
-        },
-        function(error){
-            console.log("i fail");
-        });
-}
-
-
-
-
-createPdf()  {
-
-  html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
-        onrendered: function(canvas: HTMLCanvasElement) {
-          var img = canvas.toDataURL();
-                    var doc = new jsPDF();
-
-                    console.log("mphkaneo");
-               setTimeout(function(){
-
-
-
-      }, 100000);
-                doc.addImage(img, 'PNG',0, 0, 1000, 1000);
-                    console.log("mphkaneoneo");
-                    doc.save('applications.pdf');
-  }
-  });
-
-}
-
-
-
-createPdfServerSide()
-{
-    //this._hds.createPdfServerSide(this.authToken, this.role, this.userActive +1 );
-    this._hds.createPdfServerSide(this.userActive +1 );
-
-}
-
-
+    }
 
 }

@@ -98,8 +98,9 @@ import { HelperDataService } from '../../services/helper-data-service';
                 <div *ngIf="studentDataField$.lastschool_class === 3"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Γ'</p></div>
                 <div *ngIf="studentDataField$.lastschool_class === 4"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Δ'</p></div>
 
-                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
                 <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
+                <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
+
 
         </div>
             <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
@@ -401,7 +402,7 @@ import { HelperDataService } from '../../services/helper-data-service';
       if (this.modalHeader.getValue() === "modal-header-success") {
           this.router.navigate(['/post-submit']);
       }
-  
+
   }
 
   public onHidden():void {

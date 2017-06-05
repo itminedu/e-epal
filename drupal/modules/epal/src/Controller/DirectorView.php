@@ -43,40 +43,47 @@ public function getSectorsPerSchool(Request $request)
          $user = reset($users);
          if ($user) {
                 $epalId = $user ->  init -> value;
-
-             $schools = $this->entityTypeManager->getStorage('eepal_school')->
-             loadByProperties(array('id' => $epalId));
-             $school = reset($schools);
-             if (!$school) {
-                 $this->logger->warning("no access to this school=" . $user->id());
-                 $response = new Response();
-                 $response->setContent('No access to this school');
-                 $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                 $response->headers->set('Content-Type', 'application/json');
-                 return $response;
-             }
-
-
-                $userid = $user -> id();
-                //$epalIdNew = intval($epalId);
-                $sectorPerSchool = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id'=> $epalId));
-                $i = 0;
-
-            if ($sectorPerSchool) {
-                 $list = array();
-                foreach ($sectorPerSchool as $object) {
-                    $list[] = array(
-                            'sector_id' => $object -> sector_id ->entity->get('name')->value ,
-                            'id' => $object -> sector_id -> entity -> id()
-);
-
-                   	 $i++;
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->
+                     loadByProperties(array('id' => $epalId));
+                     $school = reset($schools);
+                     if (!$school) {
+                         $this->logger->warning("no access to this school=" . $user->id());
+                         $response = new Response();
+                         $response->setContent('No access to this school');
+                         $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                         $response->headers->set('Content-Type', 'application/json');
+                         return $response;
+                     }
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
                 }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
+                       $sectorPerSchool = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id'=> $epalId));
+                        if ($sectorPerSchool) {
+                         $list = array();
+                        foreach ($sectorPerSchool as $object) {
+                            $list[] = array(
+                                    'sector_id' => $object -> sector_id ->entity->get('name')->value ,
+                                    'id' => $object -> sector_id -> entity -> id()
+                                    );
+                        }
 
                 return $this->respondWithStatus(
                         $list
                     , Response::HTTP_OK);
                 }
+            }
              else {
                        return $this->respondWithStatus([
                     'message' => t("School not found!!!"),
@@ -114,8 +121,24 @@ public function getSpecialPerSchool(Request $request , $sectorId)
                  $response->headers->set('Content-Type', 'application/json');
                  return $response;
              }
-                $userid = $user -> id();
-                //$epalIdNew = intval($epalId);
+
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
+
+              
                 $specialityPerSchool = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id'=> $epalId));
                 $i = 0;
 
@@ -140,6 +163,7 @@ public function getSpecialPerSchool(Request $request , $sectorId)
                         $list
                     , Response::HTTP_OK);
                 }
+            }
              else {
                        return $this->respondWithStatus([
                     'message' => t("School not found!!!"),
@@ -178,9 +202,25 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                 return $response;
             }
 
-                $userid = $user -> id();
-                //$epalIdNew = intval($epalId);
-                $selectIdNew = intval($selectId);
+
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
+                
+              
+                $selectIdNew = $epalId;
                 if ($classId == 1)
                 {
                  $selectIdNew = -1;
@@ -251,14 +291,16 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                                 $list
                             , Response::HTTP_OK);
                         }
+                    }
+                    
              else {
                  $list = array();
                        return $this->respondWithStatus($list, Response::HTTP_OK);
                 }
 
+            }
 
-
-        }
+        
         else {
 
             return $this->respondWithStatus([
@@ -284,6 +326,21 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
          $user = reset($users);
          if ($user) {
 //
+                 $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
 
             $postData = null;
 
@@ -310,6 +367,7 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                 return $this->respondWithStatus([
                     'message' => t("saved"),
                 ], Response::HTTP_OK);
+            }
             }
              else
               {
@@ -356,67 +414,85 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
                  $response->headers->set('Content-Type', 'application/json');
                  return $response;
              }
-            $postData = null;
-
-            if ($content = $request->getContent())
-            {
-                 $postData = json_decode($content);
-                 $cap = $postData->capacity;
-                 if ($cap<= 0 || $cap > 99)
-                 {
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
                     return $this->respondWithStatus([
-                    'message' => t("Number out of limits!"),
-                ], Response::HTTP_BAD_REQUEST);
-                 }
-
-                if (($tomeas == 0) && ($specialit == 0))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                         $classcapacity->set('capacity_class_a', $cap);
-                         $classcapacity->save();
-                    }
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
                 }
 
-
-                if (($tomeas != 0) && ($specialit == 0))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeas ));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                         $classcapacity->set('capacity_class_sector', $cap);
-                         $classcapacity->save();
-                    }
-                }
+                else if ($userRole === 'epal')
+                 {
 
 
-                if (($tomeas != 0) && ($specialit != 0) && ($taxi == 3))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                         $classcapacity->set('capacity_class_specialty', $cap);
-                         $classcapacity->save();
-                    }
-                }
+                    $postData = null;
+
+                    if ($content = $request->getContent())
+                    {
+                         $postData = json_decode($content);
+                         $cap = $postData->capacity;
+                         if ($cap<= 0 || $cap > 99)
+                         {
+                            return $this->respondWithStatus([
+                            'message' => t("Number out of limits!"),
+                        ], Response::HTTP_BAD_REQUEST);
+                         }
+
+                        if (($tomeas == 0) && ($specialit == 0))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                                 $classcapacity->set('capacity_class_a', $cap);
+                                 $classcapacity->save();
+                            }
+                        }
 
 
-                if (($tomeas != 0) && ($specialit != 0) && ($taxi == 4))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                         $classcapacity->set('capacity_class_specialty_d', $cap);
-                         $classcapacity->save();
-                    }
-                }
+                        if (($tomeas != 0) && ($specialit == 0))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeas ));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                                 $classcapacity->set('capacity_class_sector', $cap);
+                                 $classcapacity->save();
+                            }
+                        }
+
+
+                        if (($specialit != 0) && ($taxi == 3))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                                 $classcapacity->set('capacity_class_specialty', $cap);
+                                 $classcapacity->save();
+                            }
+                        }
+
+
+                        if (($specialit != 0) && ($taxi == 4))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialit));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                                 $classcapacity->set('capacity_class_specialty_d', $cap);
+                                 $classcapacity->save();
+                            }
+                        }
 
 
 
-                return $this->respondWithStatus([
-                    'message' => t("saved"),
-                ], Response::HTTP_OK);
+                        return $this->respondWithStatus([
+                            'message' => t("saved"),
+                        ], Response::HTTP_OK);
+                        }
             }
              else
               {
@@ -727,84 +803,96 @@ public function findCapacity(Request $request,$taxi,$tomeas,$specialit)
                  $response->headers->set('Content-Type', 'application/json');
                  return $response;
              }
-
-              $list = array();
-
-                if (($tomeasnew == 0) && ($specialitnew == 0))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
-                 $classcapacity = reset($CapacityPerClass);
-
-
-                  if ($classcapacity) {
-
-
-                    $list[] = array(
-                        'taxi' => $taxi,
-                       'capacity' => $classcapacity -> capacity_class_a -> value ,
-                       );
+              $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
                     }
                 }
-
-
-                if (($tomeasnew != 0) && ($specialitnew == 0))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeasnew ));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                    $list[] = array(
-                        'taxi' => $taxi,
-                        'tomeas' => $tomeasnew,
-                        'special' =>$specialitnew,
-                        'capacity' => $classcapacity -> capacity_class_sector -> value ,
-                        'sector' =>$tomeasnew."lala".$specialitnew
-                        );
-                    }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
                 }
 
+                else if ($userRole === 'epal')
+                 {
 
-                if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 3))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                    $list[] = array(
-                        'taxi' =>$taxi,
-                        'tomeas' => $tomeasnew,
-                        'special' =>$specialitnew,
-                        'tomeas' =>  $classcapacity ->  specialty_id -> value,
-                        'capacity' => $classcapacity -> capacity_class_specialty -> value ,
-                        'specialty' =>"fromspeciality"
-                        );
-                    }
-                }
+                      $list = array();
 
-                if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 4))
-                {
-                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
-                 $classcapacity = reset($CapacityPerClass);
-                  if ($classcapacity) {
-                    $list[] = array(
-                        'taxi' =>$taxi,
-                        'tomeas' => $tomeasnew,
-                        'special' =>$specialitnew,
-                        'tomeas' =>  $classcapacity ->  specialty_id -> value,
-                        'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
-                        'specialty' =>"fromspecialityd"
-                        );
-                    }
-                }
+                        if (($tomeasnew == 0) && ($specialitnew == 0))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
+                         $classcapacity = reset($CapacityPerClass);
 
 
+                          if ($classcapacity) {
 
 
+                            $list[] = array(
+                                'taxi' => $taxi,
+                               'capacity' => $classcapacity -> capacity_class_a -> value ,
+                               );
+                            }
+                        }
 
-                      return $this->respondWithStatus(
-                                     $list
-                                   , Response::HTTP_OK);
+
+                        if (($tomeasnew != 0) && ($specialitnew == 0))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $tomeasnew ));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                            $list[] = array(
+                                'taxi' => $taxi,
+                                'tomeas' => $tomeasnew,
+                                'special' =>$specialitnew,
+                                'capacity' => $classcapacity -> capacity_class_sector -> value ,
+                                'sector' =>$tomeasnew."lala".$specialitnew
+                                );
+                            }
+                        }
 
 
-            } else {
+                        if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 3))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                            $list[] = array(
+                                'taxi' =>$taxi,
+                                'tomeas' => $tomeasnew,
+                                'special' =>$specialitnew,
+                                'tomeas' =>  $classcapacity ->  specialty_id -> value,
+                                'capacity' => $classcapacity -> capacity_class_specialty -> value ,
+                                'specialty' =>"fromspeciality"
+                                );
+                            }
+                        }
+
+                        if (($tomeasnew != 0) && ($specialitnew != 0) && ($taxi == 4))
+                        {
+                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialitnew));
+                         $classcapacity = reset($CapacityPerClass);
+                          if ($classcapacity) {
+                            $list[] = array(
+                                'taxi' =>$taxi,
+                                'tomeas' => $tomeasnew,
+                                'special' =>$specialitnew,
+                                'tomeas' =>  $classcapacity ->  specialty_id -> value,
+                                'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
+                                'specialty' =>"fromspecialityd"
+                                );
+                            }
+                        }
+
+                             return $this->respondWithStatus(
+                                             $list
+                                           , Response::HTTP_OK);
+
+                            }
+            }
+             else {
             return $this->respondWithStatus([
                     'message' => t("EPAL user not found"),
                 ], Response::HTTP_FORBIDDEN);
@@ -865,8 +953,22 @@ public function gettypeofschool(Request $request)
                      $response->headers->set('Content-Type', 'application/json');
                      return $response;
                  }
-                 else
+                  $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
                  {
+                 
                         $list = array();
                         $list[] = array(
                             'type' =>  $school ->  operation_shift  -> value,
@@ -898,7 +1000,34 @@ public function gettypeofschool(Request $request)
         if ($user)
             {
               $schoolid = $user ->  init -> value;
-               $list= array();
+
+              $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array( 'id' => $schoolid));
+                $school = reset($schools);
+                if (!$school) {
+                    $this->logger->warning("no access to this school=" . $user->id());
+                    $response = new Response();
+                    $response->setContent('No access to this school');
+                    $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                    $response->headers->set('Content-Type', 'application/json');
+                    return $response;
+                }
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
+
+                 $list= array();
 
                 $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $schoolid ));
                 $SchoolCat = reset($SchoolCats);
@@ -976,6 +1105,7 @@ public function gettypeofschool(Request $request)
                             return $this->respondWithStatus(
                                      $list
                                    , Response::HTTP_OK);
+                        }
                 }
                 else
                 {
@@ -999,7 +1129,7 @@ public function gettypeofschool(Request $request)
     public function FindCapacityPerSchool(Request $request)
     {
 
-    
+        $i = 0;
        $authToken = $request->headers->get('PHP_AUTH_USER');
 
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
@@ -1016,6 +1146,21 @@ public function gettypeofschool(Request $request)
                  $response->headers->set('Content-Type', 'application/json');
                  return $response;
              }
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal')  {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                }
+
+                else if ($userRole === 'epal')
+                 {
 
                  $list = array();
                  $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid ));
@@ -1027,11 +1172,14 @@ public function gettypeofschool(Request $request)
 
                     $list[] = array(
                         'class' => 1,
+                        'newsector' => 0,
+                        'newspecialit' => 0,
                         'taxi' => 'Ά Λυκείου',
                         'capacity' => $classcapacity -> capacity_class_a -> value ,
+                        'globalindex' => $i ,
                        );
                     }
-                
+                    $i++;
                     $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
                     if ($CourseB)
                     {
@@ -1042,11 +1190,15 @@ public function gettypeofschool(Request $request)
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
                           $list[] = array(
-                            'class' => 2,
+                                'class' => 2,
+                                'newsector' => $object -> sector_id -> entity -> id(),
+                                'newspecialit' => 0,
                                 'taxi' => 'Β Λυκείου  '.$object -> sector_id -> entity-> get('name')->value,
                                 'capacity' => $classcapacity -> capacity_class_sector -> value ,
+                                'globalindex' => $i ,
                                 );
                             }
+                            $i++;
                         }
                     }
                     $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid ));
@@ -1059,10 +1211,14 @@ public function gettypeofschool(Request $request)
                           if ($classcapacity) {
                                $list[] = array(
                                 'class' => 3,
+                                    'newsector' => 0,
+                                    'newspecialit' => $object -> specialty_id -> entity -> id(),
                                     'taxi' => 'Γ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
                                     'capacity' => $classcapacity -> capacity_class_specialty -> value ,
+                                    'globalindex' => $i ,
                             );
                         }
+                        $i++;
                         }
                     }
                
@@ -1076,18 +1232,22 @@ public function gettypeofschool(Request $request)
                             if ($classcapacity) {
                                 $list[] = array(
                                     'class' => 4,
+                                    'newsector' => 0,
+                                    'newspecialit' => $object -> specialty_id -> entity -> id(),
                                     'taxi' => 'Δ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
                                     'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
+                                    'globalindex' => $i ,
                                     
                                     );
                                 }
+                                $i++;
                             }
                         }
 
                       return $this->respondWithStatus(
                                      $list
                                    , Response::HTTP_OK);
-
+                  }
 
             } else {
             return $this->respondWithStatus([

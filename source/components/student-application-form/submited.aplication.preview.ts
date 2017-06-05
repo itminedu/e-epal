@@ -14,21 +14,10 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import * as html2canvas from "html2canvas"
 
-import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../../app.settings';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from '@angular/forms';
-
 
 @Component({
     selector: 'submited-preview',
     template: `
-
-
 
     <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
@@ -66,7 +55,6 @@ import {
                       <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>
                       <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>
 
-
                       <table>
                               <tr>
                                   <td>
@@ -100,7 +88,7 @@ import {
              </div>
             </ul>
             <br>
-            <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
+            <button type="button" (click)="createPdfServerSide()" [disabled] = "userActive == -1">Εξαγωγή σε PDF</button>
 
             <!--
             <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/drupal-8.2.6/epal/pdf-application" #form>
@@ -115,30 +103,17 @@ import {
 
 @Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
 
-    private apiEndPointParams = API_ENDPOINT_PARAMS;
-    public formGroup: FormGroup;
-
-    loginInfo$: BehaviorSubject<ILoginInfo>;
-    loginInfoSub: Subscription;
-
     private SubmitedApplic$: BehaviorSubject<any>;
     private SubmitedUsersSub: Subscription;
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
-
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
-
     private incomeChosen$: BehaviorSubject<any>;
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
-
-    private data;
-    private authToken: string;
-    private role: string;
-
 
     public StudentId;
     private userActive = <number>-1;
@@ -149,7 +124,7 @@ import {
                 private _hds: HelperDataService,
                 private activatedRoute: ActivatedRoute,
                 private router: Router ,
-                private fb: FormBuilder,
+                /*private fb: FormBuilder,*/
               )
     {
        this.SubmitedApplic$ = new BehaviorSubject([{}]);
@@ -159,10 +134,6 @@ import {
        this.incomeChosen$ = new BehaviorSubject([{}]);
        this.showLoader$ = new BehaviorSubject(false);
 
-       this.formGroup = this.fb.group({
-       });
-
-      this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     }
 
     ngOnDestroy()
@@ -178,11 +149,6 @@ import {
         if (this.incomeChosenSub)
             this.incomeChosenSub.unsubscribe();
 
-        if (this.loginInfoSub)
-          this.loginInfoSub.unsubscribe();
-        if (this.loginInfo$)
-          this.loginInfo$.unsubscribe();
-
         this.SubmitedDetails$.unsubscribe();
         this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
@@ -190,20 +156,6 @@ import {
     }
 
     ngOnInit() {
-
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                  this.authToken = loginInfoToken.auth_token;
-                  this.role = loginInfoToken.auth_role;
-                  console.log("....");
-                  console.log(this.authToken);
-                  return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-
 
         this.showLoader$.next(true);
 
@@ -223,8 +175,6 @@ import {
             });
 
     }
-
-
 
 
   setActiveUser(ind,i)
@@ -260,13 +210,10 @@ import {
 
    }
 
- createPdf1()
-    {
 
+ createPdf_version1() {
        html2canvas(document.getElementById("target")).then(function(canvas)
         {
-
-
           var img=new Image();
           img.src=canvas.toDataURL();
           img.onload=function(){
@@ -276,62 +223,43 @@ import {
             doc.addImage(img, 'PNG',0, 0, 210, 297);
             console.log(img, doc, "ok2");
             doc.save('applications.pdf');
-
           }
-
-
-
-
-
-          },
-          function(error){
-              console.log("i fail");
-            });
-     }
-
-
-
-
-createPdf()
-{
-
-html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
-      onrendered: function(canvas: HTMLCanvasElement) {
-        var img = canvas.toDataURL();
-                  var doc = new jsPDF();
-
-                  console.log("mphkaneo");
-             setTimeout(function(){
-
-
-
-    }, 100000);
-              doc.addImage(img, 'PNG',0, 0, 1000, 1000);
-                  console.log("mphkaneoneo");
-                  doc.save('applications.pdf');
+        },
+        function(error){
+            console.log("i fail");
+        });
 }
-}); }
+
+
+
+
+createPdf()  {
+
+  html2canvas(document.getElementById("target"), <Html2Canvas.Html2CanvasOptions>{
+        onrendered: function(canvas: HTMLCanvasElement) {
+          var img = canvas.toDataURL();
+                    var doc = new jsPDF();
+
+                    console.log("mphkaneo");
+               setTimeout(function(){
+
+
+
+      }, 100000);
+                doc.addImage(img, 'PNG',0, 0, 1000, 1000);
+                    console.log("mphkaneoneo");
+                    doc.save('applications.pdf');
+  }
+  });
+
+}
 
 
 
 createPdfServerSide()
 {
-
-
-    this._hds.createPdfServerSide(this.authToken, this.role);
-
-
-    /*
-    this._hds.createPdfServerSide(this.authToken, this.role)
-    .then(msg => {
-        //console.log("Nikos2");
-    })
-    .catch(err => {console.log(err);
-        //console.log("Nikos1");
-        console.log(err);
-      });
-      */
-
+    //this._hds.createPdfServerSide(this.authToken, this.role, this.userActive +1 );
+    this._hds.createPdfServerSide(this.userActive +1 );
 
 }
 

@@ -37,7 +37,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 </div>
 
             </div>
-            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
+            <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
    `
 })
 
@@ -98,19 +98,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     createPdfServerSide()
     {
-        //this.SubmitedDetailsSub = this._hds.createPdfServerSide().subscribe(this.SubmitedDetails$);
-
-        /*
-        this._hds.createPdfServerSide()
-
-        .then(msg => {
-            //console.log("Nikos2");
-        })
-        .catch(err => {console.log(err);
-            //console.log("Nikos1");
-            console.log(err);
-          });
-          */
+        this._hds.createPdfServerSide(this.StudentId);
 
     }
 

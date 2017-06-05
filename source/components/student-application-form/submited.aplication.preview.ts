@@ -38,6 +38,7 @@ import {
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Όνομα</div>
               </div>
+
                <div class="row isclickable"  style="margin: 0px 2px 0px 2px; line-height: 2em;"
                [class.oddout]="isOdd"
                [class.evenout]="isEven"
@@ -52,8 +53,9 @@ import {
                  [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
                   <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
                  </li>  -->
+<!--                 <div style="margin 5px 50px 5px 50px;"> -->
 
-                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 10px 5px 10px 5px;">
+                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 30px 30px 30px 30px;">
                   <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
                   </div>
@@ -114,13 +116,6 @@ import {
                       <div *ngIf="StudentDetails$.lastschool_class === 4" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ'</div>
                   </div>
 
-                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                      <div class="col-md-3" style="font-size: 0.8em;">Τηλέφωνο επικοινωνίας</div>
-                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.telnum}}</div>
-                      <div class="col-md-3" style="font-size: 0.8em;">Η αίτηση γίνεται από</div>
-                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.relationtostudent}}</div>
-                  </div>
-
                     <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                         <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
                         <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Σειρά Προτίμησης</div>
@@ -133,8 +128,9 @@ import {
 
                     </div>
               </div>
-<!--            </ul> -->
-            <br>
+<!--              </div>  -->
+
+
             <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
 
    `

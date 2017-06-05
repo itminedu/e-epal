@@ -196,16 +196,28 @@ import {
 
     submitSelected() {
         // if (this.studentDataGroup.invalid || this.studentCriteriaGroup.invalid) {
-        if (this.studentDataGroup.invalid) {
+        if (this.studentDataGroup.invalid || this.invalidFormData()) {
             this.modalHeader.next("modal-header-danger");
             this.modalTitle.next("Η αίτηση δεν είναι πλήρης");
-            this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*)");
+            if (this.invalidFormData())
+                this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Το σχολείο τελευταίας φοίτησης πρέπει να αναζητηθεί και να επιλεχθεί από τα αποτελέσματα της αναζήτησης.");
+            else
+                this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*)");
+
             this.showModal();
         } else {
             this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
 //            this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
             this.router.navigate(['/application-submit']);
         }
+    }
+
+    private invalidFormData() : boolean {
+
+        if (!this.studentDataGroup.controls['lastschool_schoolname'].value.registry_no)
+            return true;
+
+        return false;
     }
 
     checkcriteria(cb, mutual_disabled) {

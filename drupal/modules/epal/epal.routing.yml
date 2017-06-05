@@ -271,7 +271,7 @@ epal.findcapacityperschool:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.applicant.creationpdf:
-  path: '/epal/pdf-application'
+  path: '/epal/pdf-application/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

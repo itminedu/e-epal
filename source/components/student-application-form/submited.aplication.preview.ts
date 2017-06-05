@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
@@ -10,29 +10,17 @@ import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
-import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../../app.settings';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from '@angular/forms';
-
 
 @Component({
     selector: 'submited-preview',
     template: `
-
-
-
+<div style="min-height: 500px; margin-bottom: 20px;">
     <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
          <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
+        <br/>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
-
-              <!-- <ul class="list-group main-view"> -->
 
               <div class="row" style="margin: 0px 2px 0px 2px; line-height: 2em; background-color: #ccc;">
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
@@ -48,12 +36,6 @@ import {
                     <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.studentsurname}}</div>
                     <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{UserData$.name}}</div>
 
-
-<!--                 <li class="list-group-item isclickable" [class.oddout]="isOdd"
-                 [class.evenout]="isEven" (click)="setActiveUser(UserData$.id)" [class.selectedout]="userActive === UserData$.id" >
-                  <h5> {{UserData$.name}}&nbsp;{{UserData$.studentsurname}} </h5>
-                 </li>  -->
-<!--                 <div style="margin 5px 50px 5px 50px;"> -->
 
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 30px 30px 30px 30px;">
                   <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
@@ -126,60 +108,57 @@ import {
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{epalChoices$.choice_no}}</div>
                     </div>
 
+                    <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                        <div class="col-md-12 col-md-offset-8">
+                            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
+                                <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
+                            </button>
+                        </div>
+
                     </div>
+                    </div>
+
               </div>
-<!--              </div>  -->
-
-
-            <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
+              </div>
 
    `
 })
 
-@Injectable() export default class SubmitedPreview implements OnInit , OnDestroy{
+@Injectable() export default class SubmitedPreview implements OnInit, OnDestroy {
 
     private SubmitedApplic$: BehaviorSubject<any>;
     private SubmitedUsersSub: Subscription;
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
-
     private EpalChosen$: BehaviorSubject<any>;
     private EpalChosenSub: Subscription;
-
     private incomeChosen$: BehaviorSubject<any>;
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
 
-    private data;
-    private authToken: string;
-    private role: string;
-
-
     public StudentId;
     private userActive = <number>-1;
 
-  @ViewChild('target') element: ElementRef;
+    @ViewChild('target') element: ElementRef;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
-                private _hds: HelperDataService,
-                private activatedRoute: ActivatedRoute,
-                private router: Router ,
-                private fb: FormBuilder,
-              )
-    {
-       this.SubmitedApplic$ = new BehaviorSubject([{}]);
-       this.SubmitedDetails$ = new BehaviorSubject([{}]);
-       this.EpalChosen$ = new BehaviorSubject([{}]);
-       this.CritirioChosen$ = new BehaviorSubject([{}]);
-       this.incomeChosen$ = new BehaviorSubject([{}]);
-       this.showLoader$ = new BehaviorSubject(false);
+        private _hds: HelperDataService,
+        private activatedRoute: ActivatedRoute,
+        private router: Router,
+        /*private fb: FormBuilder,*/
+    ) {
+        this.SubmitedApplic$ = new BehaviorSubject([{}]);
+        this.SubmitedDetails$ = new BehaviorSubject([{}]);
+        this.EpalChosen$ = new BehaviorSubject([{}]);
+        this.CritirioChosen$ = new BehaviorSubject([{}]);
+        this.incomeChosen$ = new BehaviorSubject([{}]);
+        this.showLoader$ = new BehaviorSubject(false);
 
     }
 
-    ngOnDestroy()
-    {
+    ngOnDestroy() {
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
@@ -198,7 +177,6 @@ import {
     }
 
     ngOnInit() {
-
 
         this.showLoader$.next(true);
 
@@ -220,59 +198,42 @@ import {
     }
 
 
-  setActiveUser(ind: number): void
-  {
-      ind = +ind;
-      if (ind === this.userActive){
-        ind = -1;
-        return;
-      }
-      ind--;
-      this.userActive = ind+1 ;
-      this.showLoader$.next(true);
-      this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive+1).subscribe(data => {
-          this.SubmitedDetails$.next(data);
-          this.showLoader$.next(false);
-    },
+    setActiveUser(ind: number): void {
+        ind = +ind;
+        if (ind === this.userActive) {
+            ind = -1;
+            return;
+        }
+        ind--;
+        this.userActive = ind + 1;
+        this.showLoader$.next(true);
+        this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive + 1).subscribe(data => {
+            this.SubmitedDetails$.next(data);
+            this.showLoader$.next(false);
+        },
             error => {
                 this.SubmitedDetails$.next([{}]);
                 console.log("Error Getting Schools");
                 this.showLoader$.next(false);
             },
-             () => {
-                 console.log("Getting Schools");
-                 this.showLoader$.next(false);
-             });
-      this.EpalChosenSub = this._hds.getEpalchosen(this.userActive+1).subscribe(data => {
-        this.EpalChosen$.next(data)},
+            () => {
+                console.log("Getting Schools");
+                this.showLoader$.next(false);
+            });
+        this.EpalChosenSub = this._hds.getEpalchosen(this.userActive + 1).subscribe(data => {
+            this.EpalChosen$.next(data)
+        },
             error => {
                 this.EpalChosen$.next([{}]);
                 console.log("Error Getting Schools");
             },
-             () => console.log("Getting Schools"));
-   }
+            () => console.log("Getting Schools"));
+    }
 
-createPdfServerSide()
-{
+    createPdfServerSide() {
+        //this._hds.createPdfServerSide(this.authToken, this.role, this.userActive +1 );
+        this._hds.createPdfServerSide(this.userActive + 1);
 
-
-    this._hds.createPdfServerSide(this.authToken, this.role);
-
-
-    /*
-    this._hds.createPdfServerSide(this.authToken, this.role)
-    .then(msg => {
-        //console.log("Nikos2");
-    })
-    .catch(err => {console.log(err);
-        //console.log("Nikos1");
-        console.log(err);
-      });
-      */
-
-
-}
-
-
+    }
 
 }

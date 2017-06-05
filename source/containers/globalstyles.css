@@ -174,7 +174,8 @@
     background-color: #eeeeee;
 }
 .selectedout {
-    background-color: #fd9665;
+/*    background-color: #fd9665; */
+    background-color: #cfcfcf;
 }
 
 .changecolor

@@ -138,7 +138,7 @@ public function getSpecialPerSchool(Request $request , $sectorId)
                 else if ($userRole === 'epal')
                  {
 
-              
+
                 $specialityPerSchool = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id'=> $epalId));
                 $i = 0;
 
@@ -218,8 +218,8 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
 
                 else if ($userRole === 'epal')
                  {
-                
-              
+
+
                 $selectIdNew = $epalId;
                 if ($classId == 1)
                 {
@@ -259,7 +259,7 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                                     $checkstudentstatus = reset($checkstatus);
                                    if ($i >= $limitdown && $i < $limitup)
                                    {
-                                    $newstatus = $checkstudentstatus -> directorconfirm-> getValue();
+                                    $newstatus = $checkstudentstatus -> directorconfirm-> value;
 
                                    $list[] = array(
                                     'i' => $i,
@@ -270,12 +270,18 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                                     'fathersurname' =>$epalStudent -> fathersurname ->value,
                                     'motherfirstname' => $epalStudent -> motherfirstname ->value,
                                     'mothersurname' =>$epalStudent -> mothersurname ->value,
-                                    'guardianfirstname' =>$epalUser -> name ->value,
-                                    'guardiansurname' =>$epalUser -> surname ->value,
+                                    'guardian_name' =>$epalStudent -> guardian_name ->value,
+                                    'guardian_surname' =>$epalStudent -> guardian_surname ->value,
+                                    'guardian_fathername' =>$epalStudent -> guardian_fathername ->value,
+                                    'guardian_mothername' =>$epalStudent -> guardian_mothername ->value,
+                                    'lastschool_schoolname' =>$epalStudent -> lastschool_schoolname ->value,
+                                    'lastschool_schoolyear' =>$epalStudent -> lastschool_schoolyear ->value,
+                                    'lastschool_class' =>$epalStudent -> currentclass ->value,
                                     'regionaddress' =>$epalStudent -> regionaddress ->value,
                                     'regiontk' =>$epalStudent -> regiontk ->value,
                                     'regionarea' =>$epalStudent -> regionarea ->value,
                                     'certificatetype' =>$epalStudent -> certificatetype ->value,
+                                    'graduation_year' =>$epalStudent -> graduation_year ->value,
                                     'telnum' =>$epalStudent -> telnum ->value,
                                     'relationtostudent' =>$epalStudent -> relationtostudent ->value,
                                     'birthdate' =>$epalStudent -> birthdate ->value,
@@ -292,7 +298,7 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                             , Response::HTTP_OK);
                         }
                     }
-                    
+
              else {
                  $list = array();
                        return $this->respondWithStatus($list, Response::HTTP_OK);
@@ -300,7 +306,7 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
 
             }
 
-        
+
         else {
 
             return $this->respondWithStatus([
@@ -582,7 +588,7 @@ public function SaveCapacity(Request $request,$taxi,$tomeas,$specialit)
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);
         if ($user)
-            {   
+            {
                 $newid = $user ->  init -> value;
                 $userRoles = $user->getRoles();
                 $userRole = '';
@@ -968,7 +974,7 @@ public function gettypeofschool(Request $request)
 
                 else if ($userRole === 'epal')
                  {
-                 
+
                         $list = array();
                         $list[] = array(
                             'type' =>  $school ->  operation_shift  -> value,
@@ -1221,7 +1227,7 @@ public function gettypeofschool(Request $request)
                         $i++;
                         }
                     }
-               
+
                 if ($CourseC)
                     {
                         foreach ($CourseC as $object)
@@ -1237,7 +1243,7 @@ public function gettypeofschool(Request $request)
                                     'taxi' => 'Δ Λυκείου  '.$object -> specialty_id -> entity-> get('name')->value,
                                     'capacity' => $classcapacity -> capacity_class_specialty_d -> value ,
                                     'globalindex' => $i ,
-                                    
+
                                     );
                                 }
                                 $i++;

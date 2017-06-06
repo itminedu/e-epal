@@ -58,63 +58,88 @@ import {
                   <h5> {{StudentDetails$.name}}&nbsp;{{StudentDetails$.name}} </h5>
                 </li>
 
-                    <div [hidden]="userActive !== StudentDetails$.i" >
-                     <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
+                    <div [hidden]="userActive !== StudentDetails$.i"  style="margin: 30px 30px 30px 30px;">
+
+                     <p style="margin-top: 20px; line-height: 2em;"> Παρακαλούμε, αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
+
+                     <div class="row" style="margin-bottom: 20px;">
+                     <div class="col-md-6">
                       <strong><label>Επιβεβαίωση Εγγραφής:</label> </strong>
                       <select #cb name="{{StudentDetails$.id}}" (change)="updateCheckedOptions(StudentDetails$.id, cb)" >
-                          <option value=1 [selected]="StudentDetails$.checkstatus === '1' ">Ναι</option>
-                          <option value=2 [selected]="StudentDetails$.checkstatus === '0' ">Όχι</option>
-                          <option value=3 [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'"></option>
+                          <option value="1" [selected]="StudentDetails$.checkstatus === '1' ">Ναι</option>
+                          <option value="2" [selected]="StudentDetails$.checkstatus === '0' ">Όχι</option>
+                          <option value="3" [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'"></option>
                       </select>
+                      </div>
+                      <div class="col-md-6">
                       <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(txoption)">
                            Επιβεβαίωση Εγγραφής
                        </button>
-
-                      <table>
-                        <tr><td>
-                          <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardianfirstname">Όνομα κηδεμόνα</label><p class="form-control" id="guardianfirstname" style="border:1px solid #eceeef;">{{StudentDetails$.guardianfirstname}} </p>
-                          </div>
-                        </td>
-                        <td>
-                         <div class="form-group" *ngIf="StudentDetails$.relationtostudent === 'Μαθητής' ">
-                            <label for="guardiansurname">Επώνυμο κηδεμόνα</label><p class="form-control" id="guardiansurname" style="border:1px solid #eceeef;">{{StudentDetails$.guardiansurname}} </p>
-                          </div>
-                        </td></tr>
-                      </table>
-                      <div class="form-group"><label for="name">Όνομα μαθητή</label> <p class="form-control" id="name" style="border:1px solid #eceeef;">    {{StudentDetails$.name}} </p> </div>
-                      <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" id = "studentsurname" style="border:1px solid #eceeef;"> {{StudentDetails$.studentsurname}} </p></div>
-                      <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" id = "fatherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.fatherfirstname}} </p></div>
-                      <div><label for="fathersurname">Επώνυμο Πατέρα</label> <p class="form-control" id = "fathersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.fathersurname}} </p></div>
-                      <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" id = "motherfirstname" style="border:1px solid #eceeef;"> {{StudentDetails$.motherfirstname}} </p></div>
-                      <div><label for="mothersurname">Επώνυμο Μητέρας</label> <p class="form-control" id = "mothersurname" style="border:1px solid #eceeef;"> {{StudentDetails$.mothersurname}} </p></div>
-                      <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" id = "birthdate" style="border:1px solid #eceeef;"> {{StudentDetails$.birthdate}} </p></div>
+                     </div>
+                     </div>
 
 
-                      <table>
-                              <tr>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regionaddress">Διεύθυνση κατοικίας</label><p class="form-control" id = "regionaddress" style="border:1px solid #eceeef;"> {{StudentDetails$.regionaddress}} </p>
-                                      </div>
-                                  </td>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regiontk">TK </label><p class="form-control" id = "regiontk" style="border:1px solid #eceeef;"> {{StudentDetails$.regiontk}} </p>
-                                      </div>
-                                  </td>
-                                  <td>
-                                      <div class="form-group">
-                                          <label for="regionarea">Πόλη/Περιοχή</label><p class="form-control" id = "regionarea" style="border:1px solid #eceeef;"> {{StudentDetails$.regionarea}} </p>
-                                      </div>
-                                  </td>
-                             </tr>
-                      </table>
-                      <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" id = "certificatetype" style="border:1px solid #eceeef;"> {{StudentDetails$.certificatetype}} </p></div>
-                      <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" id = "telnum" style="border:1px solid #eceeef;"> {{StudentDetails$.telnum}} </p></div>
-                      <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" id = "relationtostudent" style="border:1px solid #eceeef;"> {{StudentDetails$.relationtostudent}} </p></div>
+                       <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.guardian_name}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.guardian_surname}}</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα πατέρα</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.guardian_fathername }}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα μητέρας</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.guardian_mothername }}</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Διεύθυνση</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regionaddress}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regiontk}} - {{StudentDetails$.regionarea}}</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα μαθητή</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.name}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο μαθητή</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.studentsurname}}</div>
+                       </div>
+                       <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα Πατέρα</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.fatherfirstname}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Όνομα Μητέρας</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.motherfirstname}}</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τύπος απολυτηρίου</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.certificatetype}}</div>
+                       </div>
+
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Έτος κτήσης απολυτηρίου</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.graduation_year}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Σχολείο τελευταίας φοίτησης</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
+                       </div>
+
+                       <div class="row oddin" style="margin: 0px 2px 20px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === 1" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α'</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === 2" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β'</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === 3" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ'</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === 4" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ'</div>
+                       </div>
+
                  </div>
-<!--             </div>  -->
              </div>
              </div>
              </ul>
@@ -244,7 +269,7 @@ import {
 
 
     this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);                 
+                  this.School$.next(x);
                   console.log(x[0].type, "schoolid!");
                    this.SchoolId = x[0].type;
                    if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
@@ -258,8 +283,8 @@ import {
                   },
                   () => console.log("Getting School "));
 
-                  
-        }        
+
+        }
 
 
     verifyclass(txop) {
@@ -337,10 +362,10 @@ import {
 
     findstudent(txop, pageno) {
 
-       
+
         var sectorint = +this.formGroup.value.tomeas;
         this.currentclass = +txop.value;
-        
+
         this.formGroup.get('pageno').setValue(this.pageno);
         if (this.pageno == 1) {
 
@@ -372,15 +397,15 @@ import {
             else
             {
                // this.outoflimits.next(false);
-                
+
                 this.formGroup.get('maxpage').setValue(this.tot_pages);
                 console.log(this.tot_pages,"mazeuw mathites");
                 this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
                 this.StudentInfo$.next(data);
-            
+
                 console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
                 this.retrievedStudent.next(true);
-              
+
             },
             error => {
                 this.StudentInfo$.next([{}]);
@@ -391,21 +416,21 @@ import {
 
 
             }
-            
+
               },
             error => {
                 this.limits$.next([{}]);
                 console.log("Error Getting limits");
             },
             () => console.log("Getting limits"));
-               
+
             });
 
         }
         else{
               console.log("eisai edw", this.tot_pages);
-     
-       
+
+
               if (this.tot_pages == 0 ){
                   console.log("mphke1", this.formGroup.value.maxpage, this.tot_pages);
                   this.retrievedStudent.next(false);
@@ -415,10 +440,10 @@ import {
                 console.log(this.tot_pages,"mazeuw mathites");
                 this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
                 this.StudentInfo$.next(data);
-            
+
                 console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
                 this.retrievedStudent.next(true);
-              
+
             },
             error => {
                 this.StudentInfo$.next([{}]);
@@ -441,7 +466,7 @@ import {
         else if (cbvalue.value === '2') {
             this.saved[i] = id;
             this.type = 2;
-            
+
             console.log("not confirmed")
         }
         else if (cbvalue.value === '3') {
@@ -455,7 +480,7 @@ import {
 
       this.SavedStudentsSub = this._hds.saveConfirmStudents(this.saved, this.type).subscribe(data => {
             this.SavedStudents$.next(data);
-        
+
         },
             error => {
                 this.SavedStudents$.next([{}]);
@@ -465,9 +490,9 @@ import {
               console.log("saved Students");
             this.findstudent(txop, this.pageno);
           });
-       
-        
-       
+
+
+
     }
 
     checkcclass() {

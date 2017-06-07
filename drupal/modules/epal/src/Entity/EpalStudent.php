@@ -527,7 +527,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
       ->setLabel(t('Όνομα μαθητή'))
       ->setDescription(t('Δώσε το μικρό μαθητή.'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 1000,
         'text_processing' => 0,
       ))
       ->setRequired(true)
@@ -548,7 +548,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Επώνυμο μαθητή'))
           ->setDescription(t('Δώσε το επώνυμο μαθητή.'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 1000,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -604,7 +604,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Όνομα του πατέρα'))
           ->setDescription(t('Δώσε το όνομα του πατέρα.'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 1000,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -646,7 +646,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Όνομα μητέρας'))
           ->setDescription(t('Δώσε το όνομα της μητέρας.'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 1000,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -709,7 +709,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Διεύθνση κηδεμόνα'))
           ->setDescription(t('Δώσε τη διεύθυνση κηδεμόνα.'))
           ->setSettings(array(
-            'max_length' => 100,
+            'max_length' => 1500,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -730,7 +730,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('ΤΚ περιοχής'))
           ->setDescription(t('Δώσε τον ΤΚ της διεύθυνσης κατοικίας.'))
           ->setSettings(array(
-            'max_length' => 10,
+            'max_length' => 500,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -750,7 +750,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Πόλη-Κοινότητα'))
           ->setDescription(t('Δώσε την πόλη ή κοινότητα που διαμένεις.'))
           ->setSettings(array(
-            'max_length' => 100,
+            'max_length' => 1500,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -771,7 +771,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Τύπος απολυτηρίου'))
           ->setDescription(t('Δώσε τον τύπο απολυτηρίου, πχ Απολυτήριο Γυμνασίου'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 1500,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -959,7 +959,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Σχέση αιτούντα με μαθητή'))
           ->setDescription(t('Δώσε τη σχέση αιτούντα με μαθητή, πχ  Γονέας - Κηδεμόνας - Μαθητής'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 600,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -980,7 +980,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
           ->setLabel(t('Τηλέφωνο επικοινωνίας'))
           ->setDescription(t('Δώσε το τηλέφωνο επικοινωνίας'))
           ->setSettings(array(
-            'max_length' => 50,
+            'max_length' => 600,
             'text_processing' => 0,
           ))
           ->setRequired(true)
@@ -1038,7 +1038,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
             ->setLabel(t('Όνομα κηδεμόνα'))
             ->setDescription(t('Δώσε το όνομα κηδεμόνα.'))
             ->setSettings(array(
-              'max_length' => 50,
+              'max_length' => 1000,
               'text_processing' => 0,
             ))
             ->setRequired(true)
@@ -1059,7 +1059,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
                 ->setLabel(t('Επώνυμο κηδεμόνα'))
                 ->setDescription(t('Δώσε το επώνυμο κηδεμόνα.'))
                 ->setSettings(array(
-                  'max_length' => 50,
+                  'max_length' => 1000,
                   'text_processing' => 0,
                 ))
               ->setRequired(true)
@@ -1080,7 +1080,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
                     ->setLabel(t('Όνομα πατέρα κηδεμόνα'))
                     ->setDescription(t('Δώσε το όνομα πατέρα του κηδεμόνα.'))
                     ->setSettings(array(
-                      'max_length' => 50,
+                      'max_length' => 1000,
                       'text_processing' => 0,
                     ))
                   ->setRequired(true)
@@ -1101,7 +1101,7 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
                         ->setLabel(t('Όνομα μητέρας κηδεμόνα'))
                         ->setDescription(t('Δώσε το όνομα μητέρας του κηδεμόνα.'))
                         ->setSettings(array(
-                          'max_length' => 50,
+                          'max_length' => 1000,
                           'text_processing' => 0,
                         ))
                       ->setRequired(true)

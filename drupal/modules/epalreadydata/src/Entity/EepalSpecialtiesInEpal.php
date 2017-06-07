@@ -284,6 +284,48 @@ class EepalSpecialtiesInEpal extends ContentEntityBase implements EepalSpecialti
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+      $fields['students_added_class_specialty'] = BaseFieldDefinition::create('integer')
+        ->setLabel(t('Επιπλέον αριθμός μαθητών για εγγραφή'))
+        ->setDescription(t('Δώσε τον επιπλέον αριθμό μαθητών για εγγραφή.'))
+        ->setSettings(array(
+             'max_length' => 2,
+             'text_processing' => 0,
+           ))
+        ->setRequired(false)
+        ->setDefaultValue(0)
+        ->setDisplayOptions('view', array(
+             'label' => 'above',
+             'type' => 'integer',
+             'weight' => -4,
+           ))
+        ->setDisplayOptions('form', array(
+             'type' => 'integer',
+             'weight' => -4,
+           ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
+      $fields['students_added_class_specialty_d'] = BaseFieldDefinition::create('integer')
+        ->setLabel(t('Επιπλέον αριθμός μαθητών για εγγραφή στη Δ Λυκείου'))
+        ->setDescription(t('Δώσε τον επιπλέον αριθμό μαθητών για εγγραφή στη Δ Λυκείου.'))
+        ->setSettings(array(
+             'max_length' => 2,
+             'text_processing' => 0,
+           ))
+        ->setRequired(false)
+        ->setDefaultValue(0)
+        ->setDisplayOptions('view', array(
+             'label' => 'above',
+             'type' => 'integer',
+             'weight' => -4,
+           ))
+        ->setDisplayOptions('form', array(
+             'type' => 'integer',
+             'weight' => -4,
+           ))
+        ->setDisplayConfigurable('form', TRUE)
+        ->setDisplayConfigurable('view', TRUE);
+
   $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal specialties in epal is published.'))

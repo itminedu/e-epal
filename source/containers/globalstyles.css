@@ -174,8 +174,10 @@
     background-color: #eeeeee;
 }
 .selectedout {
-/*    background-color: #fd9665; */
-    background-color: #cfcfcf;
+    background-color: #fd9665;
+}
+.selectedappout {
+    background-color: #a38d82;
 }
 
 .changecolor

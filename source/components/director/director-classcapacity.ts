@@ -17,7 +17,7 @@ import {minValue} from '../../constants';
 import {
     FormBuilder,
     FormGroup,
-    FormControl, 
+    FormControl,
     FormArray,
     Validators,
 } from '@angular/forms';
@@ -27,7 +27,7 @@ import {
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
-     
+
        <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω'λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο αριθμό,
        επιλέξτε τη νέα δυναμική και πατήστε το σύμβολο <i>ok</i>. Προσοχή! Κανένα τμήμα δεν πρέπει να έχει δυναμική 0.</p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
@@ -40,11 +40,11 @@ import {
                  <div class="col-md-4" col-md-offset-2>
                    <label *ngIf="!isEdit" (click)="isEdit=true" (click)="setActive(i)"> {{CapacityPerCourses$.capacity}} </label>
                    <input *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive"
-                     id="{{CapacityPerCourses$.globalindex}}" type="number" 
-                   name="{{CapacityPerCourses$.globalindex}}" value ={{CapacityPerCourses$.capacity}} 
+                     id="{{CapacityPerCourses$.globalindex}}" type="number"
+                   name="{{CapacityPerCourses$.globalindex}}" value ={{CapacityPerCourses$.capacity}}
                    (change)="handleChange($event)">
                    </div>
-                 <div class="col-md-1"> 
+                 <div class="col-md-1">
             <button *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive" type="button" class="btn-primary pull-right"
              (click)="isEdit=false" (click) ="saveCapacity(CapacityPerCourses$.newspecialit, CapacityPerCourses$.newsector, CapacityPerCourses$.class, CapacityPerCourses$.capacity)">
                <i class="fa fa-check" aria-hidden="true"></i>
@@ -53,12 +53,12 @@ import {
              </div>
                 </li>
        </div>
-    
+
       </form>
     </div>
 
 
-  <div id="checksaved" (onHidden)="onHidden('#checksaved')" 
+  <div id="checksaved" (onHidden)="onHidden('#checksaved')"
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -78,19 +78,13 @@ import {
       </div>
     </div>
 
-   
-
-
-    
-
-
    `
 })
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
-    
+
     private CapacityPerCourse$: BehaviorSubject<any>;
     private CapacityPerCourseSub: Subscription;
     private saveCapacitySub: Subscription;
@@ -104,25 +98,25 @@ import {
     private SchoolId;
 
 
- 
+
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router) {
-        
+
         this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.isEdit = false;
         this.School$ = new BehaviorSubject([{}]);
         this.selectiontype = new BehaviorSubject(true);
         this.formGroup = this.fb.group({
-            
+
              });
 
     }
 
 
-    
+
    public showModal(popupMsgId):void {
         console.log("about to show modal");
         //(<any>$('#distributionWaitingNotice')).modal('show');
@@ -140,13 +134,13 @@ import {
 
 
     ngOnDestroy() {
-       
+
     }
 
     ngOnInit() {
                  (<any>$('#checksaved')).appendTo("body");
                   this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);                 
+                  this.School$.next(x);
                   console.log(x[0].type, "schoolid!");
                    this.SchoolId = x[0].type;
                    if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
@@ -161,10 +155,10 @@ import {
                   () => console.log("Getting School "));
 
 
-            
+
                   this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CapacityPerCourse$.next(x);   
-                             
+                  this.CapacityPerCourse$.next(x);
+
                   },
                   error => {
                       this.CapacityPerCourse$.next([{}]);
@@ -192,15 +186,15 @@ import {
           if (this.newvalue <=0 || this.newvalue >10)
           {
               this.showModal("#checksaved");
-          } 
-          else 
+          }
+          else
           {
           this.showLoader.next(true);
          this.saveCapacitySub = this._hds.saveCapacity(taxi, sect, spec, this.newvalue).subscribe(data => {
                  this.showLoader.next(false);
 
                 this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CapacityPerCourse$.next(x);                 
+                  this.CapacityPerCourse$.next(x);
                   },
                   error => {
                       this.CapacityPerCourse$.next([{}]);
@@ -209,7 +203,7 @@ import {
                   () => console.log("Getting School "));
                  },
                 error => {
-                    
+
                     console.log("Error Saving Capacity");
                 },
                 () =>{
@@ -218,17 +212,17 @@ import {
 
 
              }
-                 
+
            }
         }
 
- 
+
   setActive(ind) {
-      
+
       this.courseActive = ind;
       console.log(this.courseActive, ind, "ind");
     }
 
-   
+
 
 }

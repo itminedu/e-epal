@@ -264,6 +264,27 @@ class EepalSectorsInEpal extends ContentEntityBase implements EepalSectorsInEpal
      ->setDisplayConfigurable('form', TRUE)
      ->setDisplayConfigurable('view', TRUE);
 
+     $fields['students_added_class_sector'] = BaseFieldDefinition::create('integer')
+       ->setLabel(t('Επιπλέον αριθμός μαθητών για εγγραφή'))
+       ->setDescription(t('Δώσε τον επιπλέον αριθμό μαθητών για εγγραφή.'))
+       ->setSettings(array(
+            'max_length' => 2,
+            'text_processing' => 0,
+          ))
+       ->setRequired(false)
+       ->setDefaultValue(0)
+       ->setDisplayOptions('view', array(
+            'label' => 'above',
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+       ->setDisplayOptions('form', array(
+            'type' => 'integer',
+            'weight' => -4,
+          ))
+       ->setDisplayConfigurable('form', TRUE)
+       ->setDisplayConfigurable('view', TRUE);
+
   $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Eepal sectors in epal is published.'))

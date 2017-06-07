@@ -42,14 +42,20 @@ import { API_ENDPOINT } from '../../app.settings';
     <h5> >Αποστολή ειδοποιήσεων <br></h5>
     <br><br>
     <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(true)" [disabled] = "!applicantsResultsDisabled" >
-          Μαζική αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(1)" [disabled] = "!applicantsResultsDisabled" >
+          Αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
     <br>
     <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(false)" [disabled] = "!applicantsResultsDisabled">
-          Μαζική αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(2)" [disabled] = "!applicantsResultsDisabled" >
+          Αποστολή e-mail στους μαθητές που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα<span class="glyphicon glyphicon-menu-right"></span>
+      </button>
+    </div>
+    <br>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(3)" [disabled] = "!applicantsResultsDisabled">
+          Αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
     </div>
 

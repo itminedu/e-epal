@@ -674,9 +674,11 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         let route = "";
-        if (unallocated == true)
+        if (unallocated == 1)
             route = "ministry/send-unallocated-massive-mail";
-        else
+        else if(unallocated == 2)
+            route = "ministry/send-unallocated-sc-massive-mail";
+        else if(unallocated == 3)
             route = "ministry/send-located-massive-mail";
 
         return this.http.get(`${AppSettings.API_ENDPOINT}/` + route, options)
@@ -1032,7 +1034,7 @@ createPdfServerSide_OLD(auth_token, role)  {
             console.log(data);
             var blob = new Blob([data['pdfString']], {type: 'application/pdf'});
             console.log(blob);
-            FileSaver.saveAs(blob, "testData.pdf");
+            FileSaver.saveAs(blob, "appConfirmation.pdf");
 
     },
         err => console.error(err),
@@ -1051,7 +1053,7 @@ createPdfServerSide_OLD(auth_token, role)  {
 
               var blob = new Blob([data['_body']], {type: 'application/pdf'});
               console.log(blob);
-              FileSaver.saveAs(blob, "testData.pdf");
+              FileSaver.saveAs(blob, "appConfirmation.pdf");
               //console.log(data['_body']);
           },
           error => {
@@ -1089,7 +1091,7 @@ createPdfServerSide(headerid) {
             .subscribe(
                 data => {
                     console.log(data);
-                    FileSaver.saveAs(data, "testData.pdf");
+                    FileSaver.saveAs(data, "appConfirmation.pdf");
                 },
                 err => console.error(err),
                 () => console.log('PDF export completed')

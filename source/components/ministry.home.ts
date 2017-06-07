@@ -84,8 +84,8 @@ export default class MinistryHome implements OnInit {
 
 
         this.userDataGroup = this.fb.group({
-          minedu_username: ['minedu01', [Validators.required]],
-          minedu_userpassword: ['12345678', [Validators.required]],
+          minedu_username: ['', [Validators.required]],
+          minedu_userpassword: ['', [Validators.required]],
           cu_name: [''],
           auth_role: [''],
         });

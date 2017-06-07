@@ -48,17 +48,15 @@ import {
              </button>
              <br>
              <br>
-              <ul class="list-group main-view">
               <div *ngIf="(retrievedStudent | async)">
+                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)"
+                  [class.selectedappout]="userActive === StudentDetails$.i" [class.confirmed]="StudentDetails$.checkstatus === '1'"
+                  [class.notconfirmed]="StudentDetails$.checkstatus === '0'" [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')" style="margin: 0px 2px 0px 2px;">
+                  <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{StudentDetails$.studentsurname}}</div>
+                  <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{StudentDetails$.name}}</div>
 
-               <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index; let isOdd=odd; let isEven=even"  >
-                 <li class="list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)"
-                  [class.selectedout]="userActive === StudentDetails$.i" [class.confirmed]="StudentDetails$.checkstatus === '1'"
-                  [class.notconfirmed]="StudentDetails$.checkstatus === '0'" [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')">
-                  <h5> {{StudentDetails$.name}}&nbsp;{{StudentDetails$.name}} </h5>
-                </li>
-
-                    <div [hidden]="userActive !== StudentDetails$.i"  style="margin: 30px 30px 30px 30px;">
+                <div style="width: 100%; color: #000000;">
+                    <div [hidden]="userActive !== StudentDetails$.i"  style="margin: 20px 10px 10px 10px;">
 
                      <p style="margin-top: 20px; line-height: 2em;"> Παρακαλούμε, αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
 
@@ -100,14 +98,15 @@ import {
                            <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regiontk}} - {{StudentDetails$.regionarea}}</div>
                        </div>
+
+                       <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
+                       </div>
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Όνομα μαθητή</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.name}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο μαθητή</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.studentsurname}}</div>
-                       </div>
-                       <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
                        </div>
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Όνομα Πατέρα</div>
@@ -129,21 +128,36 @@ import {
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
                        </div>
 
-                       <div class="row oddin" style="margin: 0px 2px 20px 2px; line-height: 2em;">
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === 1" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α'</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === 2" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β'</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === 3" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ'</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === 4" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ'</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                       </div>
+
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-6" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
+                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                       </div>
+                       <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-6" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
+                       </div>
+                       <div *ngIf="StudentDetails$.currentclass === '3' || StudentDetails$.currentclass === '4'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-6" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
                        </div>
 
                  </div>
+                 </div>
              </div>
              </div>
-             </ul>
-
           <br>
           <br>
           <div *ngIf="(retrievedStudent | async)">

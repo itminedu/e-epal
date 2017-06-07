@@ -41,7 +41,7 @@ export const CRITERIA_INIT = 'CRITERIA_INIT';
 
 //export const VALID_NAMES_PATTERN = '[Α-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
 export const VALID_NAMES_PATTERN = '[A-Za-zΑ-ΩΆΈΉΊΙΎΌΏα-ωάέήίΐύόώ ]*$';
-export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ ]*$';
+export const VALID_ADDRESS_PATTERN = '[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ\/. ]*$';
 export const VALID_ADDRESSTK_PATTERN = '[0-9 ]*$';
 // export const VALID_DIGITS_PATTERN = '69[0-9]*$';
 export const VALID_DIGITS_PATTERN = '[0-9]*$';

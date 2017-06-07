@@ -173,7 +173,7 @@ class CASLogin extends ControllerBase
             };
 
             $umdobject = $filterAttribute("umdobject");
-            $physicaldeliveryofficename = $filterAttribute("physicaldeliveryofficename");
+//            $physicaldeliveryofficename = $filterAttribute("physicaldeliveryofficename");
 
 
 /****** the following is for production : Χρήση μόνο από ΕΠΙΣΗΜΟΥΣ ΛΟΓΑΡΙΑΣΜΟΥΣ ***************************/
@@ -186,12 +186,27 @@ class CASLogin extends ControllerBase
             }
 */
 
+
             phpCAS::trace($umdobject);
             phpCAS::trace($physicaldeliveryofficename);
             $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
             $gsnunitcode = substr($gsnunitcodedn, strpos($gsnunitcodedn, ";") + 1);
             phpCAS::trace($gsnunitcode);
+
+/* check if myschool account */
+            if (!$umdobject || $umdobject !== "ISaccount") {
+                return $this->redirectForbidden($configRowName, '5002');
+            }
+            if (!$gsnunitcode || $gsnunitcode !== $CASUser) {
+                return $this->redirectForbidden($configRowName, '5003');
+            }
+/* end of checking myschool account */
+
+
             $userAssigned = $this->assignRoleToUser($gsnunitcode);
+
+
+
             if (sizeof($userAssigned) === 0) {
                 return $this->redirectForbidden($configRowName, '5004');
             }

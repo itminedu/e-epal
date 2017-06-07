@@ -86,9 +86,27 @@ class SubmitedApplications extends ControllerBase
                 $i = 0;
 
                  if ($epalStudents) {
+
+
                  $list = array();
+
                 foreach ($epalStudents as $object) {
+                    $sectorName = '';
+                    $courseName = '';
+                    if ($object->currentclass->value === '2') {
+                        $sectors = $this->entityTypeManager->getStorage('epal_student_sector_field')->loadByProperties(array('student_id' => $object->id()));
+                        $sector = reset($sectors);
+                        if ($sector)
+                            $sectorName = $this->entityTypeManager->getStorage('eepal_sectors')->load($sector->sectorfield_id->target_id)->name->value;
+                    }
+                    else if ($object->currentclass->value === '3' || $object->currentclass->value === '4') {
+                        $courses = $this->entityTypeManager->getStorage('epal_student_course_field')->loadByProperties(array('student_id' => $object->id()));
+                        $course = reset($courses);
+                        if ($course)
+                            $courseName = $this->entityTypeManager->getStorage('eepal_specialty')->load($course->coursefield_id->target_id)->name->value;
+                    }
                     $list[] = array(
+                            'applicationId' => $object->id(),
                             'name' => $object -> name ->value,
                             'studentsurname' => $object -> studentsurname ->value,
                             'fatherfirstname' => $object -> fatherfirstname ->value,
@@ -101,7 +119,10 @@ class SubmitedApplications extends ControllerBase
                             'guardian_mothername' =>$object -> guardian_mothername ->value,
                             'lastschool_schoolname' =>$object -> lastschool_schoolname ->value,
                             'lastschool_schoolyear' =>$object -> lastschool_schoolyear ->value,
-                            'lastschool_class' =>$object -> currentclass ->value,
+                            'lastschool_class' =>$object -> lastschool_class ->value,
+                            'currentclass' =>$object -> currentclass ->value,
+                            'currentsector' =>$sectorName,
+                            'currentcourse' =>$courseName,
                             'regionaddress' =>$object -> regionaddress ->value,
                             'regiontk' =>$object -> regiontk ->value,
                             'regionarea' =>$object -> regionarea ->value,
@@ -109,7 +130,9 @@ class SubmitedApplications extends ControllerBase
                             'graduation_year' =>$object -> graduation_year ->value,
                             'telnum' =>$object -> telnum ->value,
                             'relationtostudent' =>$object -> relationtostudent ->value,
-                            'birthdate' =>$object -> birthdate ->value,
+                            'birthdate' => substr($object->birthdate->value, 8, 2) . '/' . substr($object->birthdate->value, 6, 2) . '/' . substr($object->birthdate->value, 0, 4),
+                            'created' => date('d/m/Y H:i', $object -> created ->value),
+
                         );
 
                     $i++;

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
-let jsPDF = require('jspdf');
+//let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -207,6 +207,10 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         ind--;
         this.userActive = ind + 1;
         this.showLoader$.next(true);
+
+        //OBSOLETE
+
+
         this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive + 1).subscribe(data => {
             this.SubmitedDetails$.next(data);
             this.showLoader$.next(false);
@@ -220,6 +224,8 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 console.log("Getting Schools");
                 this.showLoader$.next(false);
             });
+
+
         this.EpalChosenSub = this._hds.getEpalchosen(this.userActive + 1).subscribe(data => {
             this.EpalChosen$.next(data)
         },
@@ -228,6 +234,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 console.log("Error Getting Schools");
             },
             () => console.log("Getting Schools"));
+
     }
 
     createPdfServerSide() {

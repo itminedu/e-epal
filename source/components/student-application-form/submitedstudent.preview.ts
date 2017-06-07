@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
-let jsPDF = require('jspdf');
+//let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -84,6 +84,9 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             this.route.params.subscribe(params => {this.StudentId = params['id'];});
     }
 
+
+    //OBSOLETE
+    /*
     createPdf()
     {
 
@@ -95,6 +98,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             doc.save('applications.pdf');
         });
     }
+    */
 
     createPdfServerSide()
     {

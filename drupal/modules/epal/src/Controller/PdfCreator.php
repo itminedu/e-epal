@@ -32,6 +32,10 @@ class PDFCreator extends ControllerBase {
 	protected $logger;
 	protected $connection;
 	protected $pdf;
+	protected $fontLight;
+	protected $fontBold;
+	protected $fontSizeHeader;
+	protected $fontSizeRegular;
 
 	public function __construct(
 		EntityTypeManagerInterface $entityTypeManager,
@@ -117,6 +121,11 @@ class PDFCreator extends ControllerBase {
 					], Response::HTTP_INTERNAL_SERVER_ERROR);
 				}
 
+				$this->fontLight = "open-sans.light";
+				$this->fontBold = "open-sans.bold";
+				$this->fontSizeHeader = 14;
+				$this->fontSizeRegular = 11;
+
 
 				$this->initPdfHandler();
 				$this->createHeader($epalStudent);
@@ -170,17 +179,17 @@ class PDFCreator extends ControllerBase {
 		$this->pdf->AliasNbPages();
 		$this->pdf->AddPage();
 
-		$this->pdf->AddFont('open-sans.light', '', 'open-sans.light.php');
-		$this->pdf->AddFont('open-sans.bold', '', 'open-sans.bold.php');
+		$this->pdf->AddFont($this->fontLight, '', 'open-sans.light.php');
+		$this->pdf->AddFont($this->fontBold, '', 'open-sans.bold.php');
 
 	}
 
 	private function createHeader($student)	{
 
-		$this->pdf->SetFont('open-sans.bold', '', 16);
+		$this->pdf->SetFont($this->fontBold, '', 16);
 		$this->pdf->MultiCell(0, 8, $this->prepareString('Ηλεκτρονική Αίτηση Εγγραφής Μαθητή σε ΕΠΑΛ'), 0, 'C');
-		$this->pdf->SetFont('open-sans.bold', '', 14);
-		$this->pdf->MultiCell(0, 8, $this->prepareString('με αρ.πρωτ. ' . $student->id->value . ' / ' .  date('d-m-y (ώρα: H:i:s)',  $student->created->value)), 0, 'C');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeHeader);
+		$this->pdf->MultiCell(0, 8, $this->prepareString('με αριθμό αίτησης: ' . $student->id->value . ' / ' .  date('d-m-y (ώρα: H:i:s)',  $student->created->value)), 0, 'C');
 		$this->pdf->Ln();
 
 	}
@@ -190,35 +199,52 @@ class PDFCreator extends ControllerBase {
 		$width = 45;
 		$height = 8;
 
-		$this->pdf->SetFont('open-sans.bold', '', 14);
+
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeHeader);
 		$this->pdf->SetFillColor(255,178,102);
-		$this->pdf->MultiCell(0, $height, $this->prepareString('Στοιχεία αιτούμενου κηδεμόνα'), 0, 'C',true);
+		$this->pdf->MultiCell(0, $height, $this->prepareString('Στοιχεία αιτούμενου'), 0, 'C',true);
 		$this->pdf->Ln(4);
 
-		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_name->value), 0, 'L');
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->guardian_name->value), 0, 'L');
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
 		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_surname->value), 0, 'L');
-		$this->pdf->Ln();
+		//$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->guardian_surname->value), 0, 'L');
+		//$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα πατέρα:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_fathername->value), 0, 'L');
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->guardian_fathername->value), 0, 'L');
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μητέρας:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->guardian_mothername->value), 0, 'L');
-		$this->pdf->Ln();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->guardian_mothername->value), 0, 'L');
+		//$this->pdf->Ln();
 
-		$fullAddressTxt = /*'Διεύθυνση κατοικίας: ' . */ $student->regionaddress->value . ', ΤΚ: ' . $student->regiontk->value . ', ' . $student->regionarea->value;
+		//$fullAddressTxt = $student->regionaddress->value . ', ΤΚ: ' . $student->regiontk->value . ', ' . $student->regionarea->value;
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$regAddressTxt = 'ΤΚ: ' . $student->regiontk->value . ', ' . $student->regionarea->value;
 		$this->pdf->Cell($width, $height, $this->prepareString('Διεύθυνση κατοικίας: '), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($fullAddressTxt), 0, 'L');
-		$this->pdf->Ln();
-		$this->pdf->Ln();
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->regionaddress->value), 0, 'L');
 
-		$this->pdf->Cell($width+30, $height, $this->prepareString('Αποδοχή όρων χρήσης συστήματος:'), 0, 'L');
-		$this->pdf->SetFont('open-sans.bold', '', 12);
-		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveAgreementLiteral($student->agreement->value) ), 0, 'L');
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
+		$this->pdf->Cell($width, $height, $this->prepareString('ΤΚ - Πόλη: '), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($regAddressTxt), 0, 'L');
 		$this->pdf->Ln();
 
 		$this->pdf->Ln();
@@ -232,55 +258,84 @@ class PDFCreator extends ControllerBase {
 		$height = 8;
 		$heightln = 4;
 
-		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeHeader);
 		$this->pdf->SetFillColor(255,178,102);
 		$this->pdf->MultiCell(0, $height, $this->prepareString('Στοιχεία μαθητή'), 0, 'C',true);
 		$this->pdf->Ln(4);
 
-		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μαθητή:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->name->value), 0, 'L');
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->name->value), 0, 'L');
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
 		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
-		$this->pdf->Ln();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
+		//$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα πατέρα:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->fatherfirstname->value), 0, 'L');
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->fatherfirstname->value), 0, 'L');
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μητέρας:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->motherfirstname->value), 0, 'L');
-		$this->pdf->Ln();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->motherfirstname->value), 0, 'L');
+		//$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Ημ/νία γέννησης:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->birthdate->value), 0, 'L');
+		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->birthdate->value), 0, 'L');
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+		$this->pdf->SetXY($x+$width,$y);
 		$this->pdf->Cell($width, $height, $this->prepareString('Τηλ. επικ/νίας:'), 0, 'L');
-		$this->pdf->Cell($width, $height, $this->prepareString($student->telnum->value), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		$this->pdf->multiCell($width, $height, $this->prepareString($student->telnum->value), 0, 'L');
 		$this->pdf->Ln();
-		$this->pdf->Ln();
+		//$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Τύπος απολυτηρίου:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($student->certificatetype->value), 0, 'L');
 		$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Έτος κτήσης απολυτηρίου:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($student->graduation_year->value), 0, 'L');
 		$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Σχολείο τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->multiCell(0, $height, $this->prepareString($student->lastschool_schoolname->value), 0, 'L');
 		//$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Τάξη τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveClassName($student->lastschool_class->value)), 0, 'L');
 		$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Σχ.έτος τελευταίας φοίτησης:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($student->lastschool_schoolyear->value), 0, 'L');
 		$this->pdf->Ln();
 
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Αίτηση από:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($student->relationtostudent->value), 0, 'L');
 		$this->pdf->Ln();
 		$this->pdf->Ln();
@@ -292,13 +347,14 @@ class PDFCreator extends ControllerBase {
 		$width = 45;
 		$height = 8;
 
-		$this->pdf->SetFont('open-sans.bold', '', 14);
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeHeader);
 		$this->pdf->SetFillColor(255,178,102);
 		$this->pdf->MultiCell(0, $height, $this->prepareString('Επιλεχθέντα σχολεία'), 0, 'C',true);
 		$this->pdf->Ln(4);
 
-		$this->pdf->SetFont('open-sans.light', '', 12);
+		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString('Τάξη εγγραφής:'), 0, 'L');
+		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($this->retrieveClassName($student->currentclass->value)), 0, 'L');
 		$this->pdf->Ln();
 
@@ -309,17 +365,13 @@ class PDFCreator extends ControllerBase {
 
 		$this->createSchoolChoices($student);
 
-		//$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
-		//$this->pdf->Cell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
-		//$this->pdf->Ln();
-
 	}
 
 	private function createSectorChoice($student)	{
 
 		 $width = 45;
 		 $height = 8;
-		 $this->pdf->SetFont('open-sans.light', '', 12);
+		 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 
 		 $epalSectors = $this->entityTypeManager->getStorage('epal_student_sector_field')->loadByProperties(array('student_id'=> $student->id->value));
 		 $this->pdf->Cell($width, $height, $this->prepareString('Τομέας Επιλογής:'), 0, 'L');
@@ -335,6 +387,7 @@ class PDFCreator extends ControllerBase {
 			 }
 			 else {
 				 $sectorName = reset($sectorNames);
+				 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		 		 $this->pdf->multiCell(0, $height, $this->prepareString($sectorName->name->value), 0, 'L');
 			 }
 	 	 }
@@ -346,7 +399,7 @@ private function createCourseChoice($student)	{
 
 	 $width = 45;
 	 $height = 8;
-	 $this->pdf->SetFont('open-sans.light', '', 12);
+	 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 
 	 $epalCourses = $this->entityTypeManager->getStorage('epal_student_course_field')->loadByProperties(array('student_id'=> $student->id->value));
 	 $this->pdf->Cell($width, $height, $this->prepareString('Ειδικότητα Επιλογής:'), 0, 'L');
@@ -362,6 +415,7 @@ private function createCourseChoice($student)	{
 		 }
 		 else {
 			 $courseName = reset($courseNames);
+			 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 			 $this->pdf->multiCell(0, $height, $this->prepareString($courseName->name->value), 0, 'L');
 		 }
 	 }
@@ -374,11 +428,11 @@ private function createCourseChoice($student)	{
 
 }
 
-private function createSchoolChoices($student)	{
+private function createSchoolChoices_Ver1($student)	{
 
-	 //$width = 55;
+	 //$width = 45;
 	 $height = 8;
-	 $this->pdf->SetFont('open-sans.light', '', 12);
+	 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 
 	 $this->pdf->Ln(4);
 
@@ -396,19 +450,68 @@ private function createSchoolChoices($student)	{
 
 		 $epalSchoolNames = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $epalSchool->epal_id->getString()));
 		 $epalSchoolName = reset($epalSchoolNames);
-		 //$this->pdf->Cell($width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
 
-		 //$msg .= $epalSchoolName->name->value;
 		 $schName = $epalSchoolName->name->value;
-		 //$this->pdf->multiCell(0, $height, $this->prepareString($msg), 0, 'J');
-
+		 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		 $this->pdf->Cell(80, $height, $this->prepareString($msg), 0, 'L');
+		 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		 $this->pdf->multiCell(0, $height, $this->prepareString($schName), 0, 'L');
-		 //$this->pdf->ln();
 
 	 }
 
 }
+
+private function createSchoolChoices($student)	{
+
+	 $width = 45;
+	 $height = 8;
+	 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+
+	 $this->pdf->Ln(4);
+
+	 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+	 $this->pdf->Cell($width, $height, $this->prepareString('Σειρά προτίμησης'), 0, 0,  'L');
+	 $this->pdf->multiCell($width, $height, $this->prepareString('ΕΠΑΛ επιλογής'), 0, 'L');
+
+	 //$this->pdf->Ln();
+	 //$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+
+	 $epalSchools = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id'=> $student->id->value));
+	 foreach ($epalSchools as $epalSchool)	{
+
+		 $epalSchoolNames = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $epalSchool->epal_id->getString()));
+		 $epalSchoolName = reset($epalSchoolNames);
+
+		 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+		 //$epalSchool->choice_no->value
+
+		 $this->pdf->Cell($width, $height, $this->prepareString($epalSchool->choice_no->value), 0, 0,  'C');
+		 $this->pdf->multiCell(4*width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
+		 //$this->pdf->Ln();
+
+
+
+
+		 //....
+		 /*
+		 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+ 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μαθητή:'), 0, 'L');
+ 		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
+ 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+ 		$this->pdf->multiCell($width, $height, $this->prepareString($student->name->value), 0, 'L');
+
+ 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
+ 		$this->pdf->SetXY($x+$width,$y);
+ 		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
+ 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+ 		$this->pdf->multiCell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
+		*/
+
+	 }
+
+}
+
+
 
 
 
@@ -418,6 +521,7 @@ private function createCorresponingSector($course)	{
 	$height = 8;
 
 	//$this->pdf->Ln();
+	$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 	$this->pdf->Cell($width, $height, $this->prepareString('(Τομέας ειδικότητας: '), 0, 'L');
 	$sectorId = $course->sector_id->getString();
 	$sectorNames = $this->entityTypeManager->getStorage('eepal_sectors')->loadByProperties(array('id'=> $sectorId));

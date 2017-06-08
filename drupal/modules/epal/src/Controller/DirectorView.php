@@ -187,13 +187,15 @@ class DirectorView extends ControllerBase
                 return $this->respondWithStatus([
                              'error_code' => 4003,
                          ], Response::HTTP_FORBIDDEN);
+
             } elseif ($userRole === 'epal') {
-                $selectIdNew = $epalId;
+                $selectIdNew = $selectId;
                 if ($classId == 1) {
                     $selectIdNew = -1;
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId));
                 } else {
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId));
+
                 }
                 $i = 0;
 

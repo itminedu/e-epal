@@ -182,6 +182,14 @@ epal.ministry.massive_mail_unallocated:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail_unallocated_smallclass:
+  path: '/ministry/send-unallocated-sc-massive-mail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudentsSC'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.ministry.massive_mail_located:
   path: '/ministry/send-located-massive-mail'
   options:
@@ -276,5 +284,29 @@ epal.applicant.creationpdf:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\PdfCreator::createApplicantPDF'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.svc.getdidacticyears:
+  path: '/epal/get-didactic-years'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\WSConsumer::getAllDidactiYear'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.svc.getstudentpromotion:
+  path: '/epal/get-student-promotion/{didactic_year_id}/{lastname}/{firstname}/{father_firstname}/{mother_firstname}/{birthdate}/{registry_no}/{level_name}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalPromotion'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.svc.getstudentcertification:
+  path: '/epal/get-student-certification/{didactic_year_id}/{lastname}/{firstname}/{father_firstname}/{mother_firstname}/{birthdate}/{registry_no}/{level_name}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalCertification'
   requirements:
     _user_is_logged_in: 'TRUE'

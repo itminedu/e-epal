@@ -1,32 +1,32 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Router} from "@angular/router";
 import { Injectable } from "@angular/core";
 
-import { BehaviorSubject } from 'rxjs/Rx';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
-import { HelperDataService } from '../../services/helper-data-service';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../../constants';
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { CriteriaActions } from '../../actions/criteria.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
+import { BehaviorSubject } from "rxjs/Rx";
+import { NgRedux, select } from "ng2-redux";
+import { IAppState } from "../../store/store";
+import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LoginInfoActions } from "../../actions/logininfo.actions";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from "../../constants";
+import { EpalClassesActions } from "../../actions/epalclass.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { CriteriaActions } from "../../actions/criteria.actions";
+import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
 
 @Component({
-  selector: 'reg-header',
-  templateUrl: 'header.component.html'
+  selector: "reg-header",
+  templateUrl: "header.component.html"
 })
 export default class HeaderComponent implements OnInit, OnDestroy {
     private authToken: string;
     private authRole: string;
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
-    public cuser :any;
+    public cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
@@ -44,9 +44,9 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                 private router: Router
                 ) {
 
-                        this.authToken = '';
-                        this.authRole = '';
-                        this.cuName = '';
+                        this.authToken = "";
+                        this.authRole = "";
+                        this.cuName = "";
                         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
                         this.showLoader$ = new BehaviorSubject(false);
                         this.modalTitle =  new BehaviorSubject("");
@@ -56,7 +56,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         };
 
     ngOnInit() {
-        (<any>$('#headerNotice')).appendTo("body");
+        (<any>$("#headerNotice")).appendTo("body");
         this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -64,7 +64,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                     this.authRole = loginInfoToken.auth_role;
                     this.cuName = loginInfoToken.cu_name;
                     return loginInfoToken;
-                }, {})
+                }, {});
             }
 
             return state.loginInfo;
@@ -73,7 +73,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        (<any>$('#headerNotice')).remove();
+        (<any>$("#headerNotice")).remove();
         this.loginInfo$.unsubscribe();
 
     }
@@ -84,20 +84,20 @@ export default class HeaderComponent implements OnInit, OnDestroy {
             this._ata.initLoginInfo();
             if (this.authRole === SCHOOL_ROLE) {
                 // this.router.navigate(['/school']);
-                this.authToken = '';
-                this.authRole = '';
+                this.authToken = "";
+                this.authRole = "";
                 window.location.assign((<any> data).next);
             }
             else if (this.authRole === PDE_ROLE) {
-                // this.router.navigate(['/school']);
-                this.authToken = '';
-                this.authRole = '';
+                // this.router.navigate(["/school"]);
+                this.authToken = "";
+                this.authRole = "";
                 window.location.assign((<any> data).next);
             }
             else if (this.authRole === DIDE_ROLE) {
-                // this.router.navigate(['/school']);
-                this.authToken = '';
-                this.authRole = '';
+                // this.router.navigate(["/school"]);
+                this.authToken = "";
+                this.authRole = "";
                 window.location.assign((<any> data).next);
             }
             else if (this.authRole === STUDENT_ROLE) {
@@ -107,26 +107,26 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                 this._csa.initSectorCourses();
                 this._sdfa.initStudentDataFields();
                 this._cria.initCriteria();
-                this.router.navigate(['']);
+                this.router.navigate([""]);
             }
             else if (this.authRole === MINISTRY_ROLE) {
-                this.router.navigate(['/ministry']);
+                this.router.navigate(["/ministry"]);
             }
-            this.authToken = '';
-            this.authRole = '';
+            this.authToken = "";
+            this.authRole = "";
             this.showLoader$.next(false);
         }).catch(err => {
             this.showLoader$.next(false);
-            console.log(err)
+            console.log(err);
         });
     }
 
-    public showModal():void {
-        (<any>$('#headerNotice')).modal('show');
+    public showModal(): void {
+        (<any>$("#headerNotice")).modal("show");
     }
 
-    public hideModal():void {
-        (<any>$('#headerNotice')).modal('hide');
+    public hideModal(): void {
+        (<any>$("#headerNotice")).modal("hide");
     }
 
 }

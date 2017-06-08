@@ -559,9 +559,10 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 
 		//Αν δεν απέμειναν θέσεις (δηλαδή αν η χωρητικότητα είναι μικρότερη ή ίση από το πλήθος μαθητών που ήδη φοιτούν στο σχολείο)
 		//τότε διέγραψέ τους από τον προσωρινό πίνακα αποτελεσμάτων και βάλε τους στον στον πίνακα εκκρεμοτήτων
-		if ($newlimit <= 0) {
-			foreach($students as $student)	{
+
+	  foreach($students as $student)	{
 				if ($student->currentepal !== $student->epal_id)	{
+					if ($newlimit <= 0) {
 						//print_r("<br>ΣΕ ΕΚΚΡΕΜΟΤΗΤΑ - ΔΙΑΓΡΑΦΗ: " . $student->student_id);
 						array_push($this->pendingStudents, $student->student_id);
 						try {
@@ -574,9 +575,27 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 							$transaction->rollback();
 							return ERROR_DB;
 						}
-					} //end if currentepal
-			 }	//end foreach
-		}	//endif newlimit
+					} //endif new limit
+					else { //$newlimit > 0
+						//NEW CODE LINES
+						if ($this->choice_id !== 1)
+								$this->removeFromPendingStudents($student->student_id);
+					}
+					//END NEW CODE LINES
+			 }	//endif currentepal
+		}	//end foreach
+
+		//NEW CODE LINES
+		/*
+		else {
+			foreach($students as $student)
+				if ($student->currentepal !== $student->epal_id)
+					if ($this->choice_id !== 1)
+							$this->removeFromPendingStudents($student->student_id);
+		}
+		*/
+		//END NEW CODE LINES
+
 
 		return SUCCESS;
 

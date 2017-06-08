@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
-let jsPDF = require('jspdf');
+//let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -22,25 +22,34 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         <br/>
             Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
 
-              <div class="row" style="margin: 0px 2px 0px 2px; line-height: 2em; background-color: #ccc;">
+
+              <div class="row list-group-item" style="margin: 0px 2px 0px 2px; background-color: #ccc;">
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
-                  <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Όνομα</div>
+                  <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Όνομα</div>
               </div>
 
-               <div class="row isclickable"  style="margin: 0px 2px 0px 2px; line-height: 2em;"
+               <div class="row list-group-item isclickable"  style="margin: 0px 2px 0px 2px;"
                [class.oddout]="isOdd"
                [class.evenout]="isEven"
                (click)="setActiveUser(UserData$.id)"
-               [class.selectedout]="userActive === UserData$.id"
+               [class.selectedappout]="userActive === UserData$.id"
                *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
                     <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.studentsurname}}</div>
-                    <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{UserData$.name}}</div>
+                    <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.name}}</div>
 
+                    <div style="width: 100%">
+                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 10px 10px 10px 10px;">
 
-                  <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 30px 30px 30px 30px;">
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Αίτησης</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.applicationId}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Υποβλήθηκε</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.created}}</div>
+                  </div>
                   <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>
                   </div>
+
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Όνομα</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.guardian_name}}</div>
@@ -59,14 +68,15 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                       <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.regiontk}} - {{StudentDetails$.regionarea}}</div>
                   </div>
+
+                  <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
+                  </div>
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Όνομα μαθητή</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.name}}</div>
                       <div class="col-md-3" style="font-size: 0.8em;">Επώνυμο μαθητή</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.studentsurname}}</div>
-                  </div>
-                  <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                      <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
                   </div>
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Όνομα Πατέρα</div>
@@ -92,10 +102,26 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                       <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
                       <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === 1" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α'</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === 2" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β'</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === 3" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ'</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === 4" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ'</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                  </div>
+
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-6" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
+                      <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Α</div>
+                      <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Β</div>
+                      <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                      <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                  </div>
+                  <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-6" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
+                      <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
+                  </div>
+                  <div *ngIf="StudentDetails$.currentclass === '3' || StudentDetails$.currentclass === '4'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-6" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
+                      <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
                   </div>
 
                     <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
@@ -109,7 +135,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                     </div>
 
                     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
-                        <div class="col-md-12 col-md-offset-8">
+                        <div class="col-md-12">
                             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
                                 <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
                             </button>
@@ -117,6 +143,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
                     </div>
                     </div>
+                </div>
 
               </div>
               </div>
@@ -207,6 +234,10 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         ind--;
         this.userActive = ind + 1;
         this.showLoader$.next(true);
+
+        //OBSOLETE
+
+
         this.SubmitedDetailsSub = this._hds.getStudentDetails(this.userActive + 1).subscribe(data => {
             this.SubmitedDetails$.next(data);
             this.showLoader$.next(false);
@@ -220,6 +251,8 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 console.log("Getting Schools");
                 this.showLoader$.next(false);
             });
+
+
         this.EpalChosenSub = this._hds.getEpalchosen(this.userActive + 1).subscribe(data => {
             this.EpalChosen$.next(data)
         },
@@ -228,6 +261,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 console.log("Error Getting Schools");
             },
             () => console.log("Getting Schools"));
+
     }
 
     createPdfServerSide() {

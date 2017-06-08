@@ -213,10 +213,10 @@ class ApplicationSubmit extends ControllerBase
      *
      * @return int error code ελέγχου; 0 εάν ο έλεγχος επιτύχει, μη μηδενικό εάν αποτύχει:
      *  1001 δεν επιλέχθηκε το πλαίσιο συμφωνης γνώμης
-     *  1002 λανθασμένο τελευταίο έτος φοίτησης 
-     *  1003 λανθασμένη ημερομηνία 
-     *  8000 μη αναμενόμενο λάθος 
-     *  8001 δικτυακό λάθος κλήσης υπηρεσίας επιβεβαίωσης στοιχείων 
+     *  1002 λανθασμένο τελευταίο έτος φοίτησης
+     *  1003 λανθασμένη ημερομηνία
+     *  8000 μη αναμενόμενο λάθος
+     *  8001 δικτυακό λάθος κλήσης υπηρεσίας επιβεβαίωσης στοιχείων
      *  8002 τα στοιχεία φοίτησης δεν επικυρώθηκαν
      *  8003 τα στοιχεία φοίτησης δεν είναι έγκυρα
      */
@@ -231,16 +231,16 @@ class ApplicationSubmit extends ControllerBase
 
         // date in YYY-MM-DD, out d-m-Y
         $date_parts = explode('-', $student['birthdate'], 3);
-        if ((count($date_parts) !== 3) || 
+        if ((count($date_parts) !== 3) ||
             (checkdate($date_parts[1], $date_parts[2], $date_parts[0]) !== true)) {
             return 1003;
         }
-        $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
+/*        $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
 
-        // check as per specs: 
+        // check as per specs:
         // - can't check certification prior to 2014, pass through
         // - check certification if last passed class is gym
-        // - check promotion if last passed class is not gym 
+        // - check promotion if last passed class is not gym
 
         $check_certification = true;
         $check_promotion = true;
@@ -256,7 +256,7 @@ class ApplicationSubmit extends ControllerBase
         // now check service
         $pass = true;
         $error_code = 0;
-        if (($check_certification === true) || 
+        if (($check_certification === true) ||
             ($check_promotion === true)) {
             if ($check_promotion === true) {
                 $service = 'getStudentEpalPromotion';
@@ -297,7 +297,7 @@ class ApplicationSubmit extends ControllerBase
         $this->logger->info(
             'check certification: [' . var_export($check_certification, true) . '] ' .
             'check promotion: [' . var_export($check_promotion, true) . '] ' .
-            'pass: [' . var_export($pass, true) . '] ' . 
+            'pass: [' . var_export($pass, true) . '] ' .
             'check: ' . print_r([
                     $didactic_year_id,
                     $student['studentsurname'],
@@ -310,6 +310,6 @@ class ApplicationSubmit extends ControllerBase
             ], true));
         // return 1000; // TODO stop here until all checks are finished
 
-        return $error_code;
+        return $error_code; */
     }
 }

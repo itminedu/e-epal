@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Controller\ControllerBase;
 use OAuth;
+use DOMDocument;
 use OAuthException;
 use Drupal\user\Entity\User;
 use Drupal\Core\Database\Connection;
@@ -128,21 +129,25 @@ class CBController extends ControllerBase
 
     public function authenticatePhase2($request, $authToken, $authVerifier)
     {
-        $taxis_userid = null;
-        $trx = $this->connection->startTransaction();
         try {
+            $taxis_userid = null;
+            $trx = $this->connection->startTransaction();
             $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
-            $oauth->enableDebug();
+//            $oauth->enableDebug();
             $oauth->setToken($authToken, $this->requestTokenSecret);
             $accessToken = $oauth->getAccessToken($this->access_token_url, '', $authVerifier);
             $oauth->setToken($accessToken['oauth_token'], $accessToken['oauth_token_secret']);
             $oauth->fetch($this->api_url);
 
-            $this->logger->warning($oauth->getLastResponse());
-            $taxis_userid = $this->xmlParse($oauth->getLastResponse(), 'messageText');
+            $dom = $this->loadXML($oauth->getLastResponse());
+            $taxis_userData = $this->getXMLElements($dom);
+
+            if (!$taxis_userData || sizeof($taxis_userData) === 0) {
+                return false;
+            }
 
             $currentTime = time();
-            $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userid));
+            $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('taxis_userid' => $taxis_userData['tin']));
             $epalUser = reset($epalUsers);
 
             $epalToken = md5(uniqid(mt_rand(), true));
@@ -163,7 +168,6 @@ class CBController extends ControllerBase
                     $epalUser->save();
                 }
             }
-
             if ($epalUser === null || !$epalUser) {
 
                 //Create a User
@@ -190,17 +194,15 @@ class CBController extends ControllerBase
                 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('mail' => $unique_id));
                 $user = reset($users);
                 if ($user) {
-                    $this->logger->warning('userid 190='.$user->id().'*** name='.$user->name->value);
-
                     $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
                         'langcode' => 'el',
                         'user_id' => $user->id(),
                         'drupaluser_id' => $user->id(),
-                        'taxis_userid' => $taxis_userid,
-                        'taxis_taxid' => $unique_id,
-                        'name' => $unique_id,
-                        'surname' => $unique_id,
-                        'fathername' => $unique_id,
+                        'taxis_userid' => $taxis_userData['tin'],
+                        'taxis_taxid' => $taxis_userData['tin'],
+                        'name' => $taxis_userData['firstName'],
+                        'surname' => $taxis_userData['surname'],
+                        'fathername' => $taxis_userData['fathersName'],
                         'mothername' => $unique_id,
                         'accesstoken' => $accessToken['oauth_token'],
                         'accesstoken_secret' => $accessToken['oauth_token_secret'],
@@ -221,7 +223,6 @@ class CBController extends ControllerBase
             }
             $this->oauthostSession->set('authtoken', $epalToken);
             $this->oauthostSession->save();
-            // $this->oauthostSession->delete();
 
             return $epalToken;
         } catch (OAuthException $e) {
@@ -237,7 +238,66 @@ class CBController extends ControllerBase
         return false;
     }
 
-    public function xmlParse($xmlText, $token){
-        return '12345';
+    public function loadXML($text_response){
+        $dom = new DOMDocument();
+        // Fix possible whitespace problems
+        $dom->preserveWhiteSpace = false;
+
+        if (!($dom->loadXML($text_response))) {
+            $this->logger->warning('dom->loadXML() failed');
+            return false;
+        }
+
+        if (!($tree_response = $dom->documentElement)) {
+            $this->logger->warning('documentElement() failed');
+            return false;
+        }
+        return $dom;
+    }
+
+    public function getXMLElements($doc){
+        $webUserDetails = $doc->getElementsByTagName( "WebUserDetails" );
+        if (!$webUserDetails || $webUserDetails->length === 0)
+            return array(   // to be changed to empty array
+                'firstName' => '',
+                'surname' => '',
+                'fathersName' => '',
+                'comments' => '',
+                'tin' => '12345'
+            );
+//            return false;
+        foreach( $webUserDetails as $element )
+        {
+            $comments = $element->getElementsByTagName( "comments" );
+            $comment = $comments->item(0)->nodeValue;
+
+            $fathersNames = $element->getElementsByTagName( "fathersName" );
+            $fathersName = $fathersNames->item(0)->nodeValue;
+
+            $firstNames = $element->getElementsByTagName( "name" );
+            $firstName = $firstNames->item(0)->nodeValue;
+
+            $surnames = $element->getElementsByTagName( "surname" );
+            $surname = $surnames->item(0)->nodeValue;
+
+            $tins = $element->getElementsByTagName( "tin" );
+            $tin = $tins->item(0)->nodeValue;
+
+            if (!$tin || $tin === '')
+                return array(   // to be changed to empty array
+                    'firstName' => '',
+                    'surname' => '',
+                    'fathersName' => '',
+                    'comments' => '',
+                    'tin' => '12345'
+                );
+            return array(
+                'firstName' => $firstName,
+                'surname' => $surname,
+                'fathersName' => $fathersName,
+                'comments' => $comment,
+                'tin' => $tin
+            );
+        }
     }
 }

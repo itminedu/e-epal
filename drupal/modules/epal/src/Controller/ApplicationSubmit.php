@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
+use Drupal\epal\Crypt;
+
 class ApplicationSubmit extends ControllerBase {
 
     protected $entityTypeManager;
@@ -56,7 +58,37 @@ class ApplicationSubmit extends ControllerBase {
 					"error_code" => 5002
 				], Response::HTTP_BAD_REQUEST);
 		}
-		$transaction = $this->connection->startTransaction();
+
+    $crypt = new Crypt();
+    try  {
+      $name_encoded = $crypt->encrypt($applicationForm[0]['name']);
+      $studentsurname_encoded = $crypt->encrypt($applicationForm[0]['studentsurname']);
+      $fatherfirstname_encoded = $crypt->encrypt($applicationForm[0]['fatherfirstname']);
+      $motherfirstname_encoded = $crypt->encrypt($applicationForm[0]['motherfirstname']);
+      $regionaddress_encoded = $crypt->encrypt($applicationForm[0]['regionaddress']);
+      $regiontk_encoded = $crypt->encrypt($applicationForm[0]['regiontk']);
+      $regionarea_encoded = $crypt->encrypt($applicationForm[0]['regionarea']);
+      $certificatetype_encoded = $crypt->encrypt($applicationForm[0]['certificatetype']);
+      $relationtostudent_encoded = $crypt->encrypt($applicationForm[0]['relationtostudent']);
+      $telnum_encoded = $crypt->encrypt($applicationForm[0]['telnum']);
+      $guardian_name_encoded = $crypt->encrypt($applicationForm[0]['cu_name']);
+      $guardian_surname_encoded = $crypt->encrypt($applicationForm[0]['cu_surname']);
+      $guardian_fathername_encoded = $crypt->encrypt($applicationForm[0]['cu_fathername']);
+      $guardian_mothername_encoded = $crypt->encrypt($applicationForm[0]['cu_mothername']);
+    }
+    catch (\Exception $e) {
+        print_r($e->getMessage());
+        unset($crypt);
+  			$this->logger->warning($e->getMessage());
+  			return $this->respondWithStatus([
+  					"error_code" => 5001
+  				], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+    unset($crypt);
+
+
+
+    $transaction = $this->connection->startTransaction();
 		try {
 			//insert records in entity: epal_student
 			$authToken = $request->headers->get('PHP_AUTH_USER');
@@ -84,29 +116,43 @@ class ApplicationSubmit extends ControllerBase {
                 'points' => 0,
                 'user_id' => $epalUser->user_id->target_id,
                 'epaluser_id' => $epalUser->id(),
-				'name' => $applicationForm[0]['name'],
-				'studentsurname' => $applicationForm[0]['studentsurname'],
+				//'name' => $applicationForm[0]['name'],
+        'name' => $name_encoded,
+				//'studentsurname' => $applicationForm[0]['studentsurname'],
+        'studentsurname' => $studentsurname_encoded,
 				'birthdate' => $applicationForm[0]['studentbirthdate'],
-				'fatherfirstname' => $applicationForm[0]['fatherfirstname'],
-				'motherfirstname' => $applicationForm[0]['motherfirstname'],
-				'regionaddress' => $applicationForm[0]['regionaddress'],
-				'regionarea' => $applicationForm[0]['regionarea'],
-				'regiontk' => $applicationForm[0]['regiontk'],
-                'certificatetype' => $applicationForm[0]['certificatetype'],
+				//'fatherfirstname' => $applicationForm[0]['fatherfirstname'],
+        'fatherfirstname' => $fatherfirstname_encoded,
+				//'motherfirstname' => $applicationForm[0]['motherfirstname'],
+        'motherfirstname' => $motherfirstname_encoded,
+				//'regionaddress' => $applicationForm[0]['regionaddress'],
+        'regionaddress' => $regionaddress_encoded,
+				//'regionarea' => $applicationForm[0]['regionarea'],
+        'regionarea' => $regionarea_encoded,
+				//'regiontk' => $applicationForm[0]['regiontk'],
+        'regiontk' => $regiontk_encoded,
+        //'certificatetype' => $applicationForm[0]['certificatetype'],
+        'certificatetype' => $certificatetype_encoded,
 				'graduation_year' => $applicationForm[0]['graduation_year'],
-                'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
-                'lastschool_unittypeid' => $applicationForm[0]['lastschool_unittypeid'],
-                'lastschool_schoolname' => $applicationForm[0]['lastschool_schoolname'],
-                'lastschool_schoolyear' => $applicationForm[0]['lastschool_schoolyear'],
-                'lastschool_class' => $applicationForm[0]['lastschool_class'],
+        'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
+        'lastschool_unittypeid' => $applicationForm[0]['lastschool_unittypeid'],
+        'lastschool_schoolname' => $applicationForm[0]['lastschool_schoolname'],
+        'lastschool_schoolyear' => $applicationForm[0]['lastschool_schoolyear'],
+        'lastschool_class' => $applicationForm[0]['lastschool_class'],
 				'currentclass' => $applicationForm[0]['currentclass'],
-                'guardian_name' => $applicationForm[0]['cu_name'],
-                'guardian_surname' => $applicationForm[0]['cu_surname'],
-                'guardian_fathername' => $applicationForm[0]['cu_fathername'],
-                'guardian_mothername' => $applicationForm[0]['cu_mothername'],
-                'agreement' => $applicationForm[0]['disclaimer_checked'],
-				'relationtostudent' => $applicationForm[0]['relationtostudent'],
-				'telnum' => $applicationForm[0]['telnum']
+        //'guardian_name' => $applicationForm[0]['cu_name'],
+        'guardian_name' => $guardian_name_encoded,
+        //'guardian_surname' => $applicationForm[0]['cu_surname'],
+        'guardian_surname' => $guardian_surname_encoded,
+        //'guardian_fathername' => $applicationForm[0]['cu_fathername'],
+        'guardian_fathername' => $guardian_fathername_encoded,
+        //'guardian_mothername' => $applicationForm[0]['cu_mothername'],
+        'guardian_mothername' => $guardian_mothername_encoded,
+        'agreement' => $applicationForm[0]['disclaimer_checked'],
+				//'relationtostudent' => $applicationForm[0]['relationtostudent'],
+        'relationtostudent' => $relationtostudent_encoded,
+				//'telnum' => $applicationForm[0]['telnum']
+        'telnum' => $telnum_encoded
             );
 
             if (($errorCode = $this->validateStudent($student)) > 0) {

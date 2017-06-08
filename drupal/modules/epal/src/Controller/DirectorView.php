@@ -220,7 +220,7 @@ public function getStudentPerSchool(Request $request , $selectId, $classId, $lim
                  {
                 
               
-                $selectIdNew = $epalId;
+                $selectIdNew = intval($selectId);
                 if ($classId == 1)
                 {
                  $selectIdNew = -1;

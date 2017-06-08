@@ -83,7 +83,7 @@ export default class Main {
       {},
       middleware,
 //      tools ? [ ...enhancers, tools ] : enhancers);
-//      tools);
-      );
+      tools);
+//      );
   }
 }

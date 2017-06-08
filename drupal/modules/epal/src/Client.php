@@ -30,21 +30,9 @@ class Client
         $this->_settings = array_merge($this->_settings, $settings);
         $this->_settings['ws_endpoint_token'] = "{$this->_settings['ws_endpoint']}/oauth2/token";
         $this->_settings['ws_endpoint_token_granttype'] = 'password';
-        $this->_settings['ws_endpoint_studentepalinfo'] = "{$this->_settings['ws_endpoint']}/api/epal/GetStudentEpalInfo";
         $this->_settings['ws_endpoint_studentepalcertification'] = "{$this->_settings['ws_endpoint']}/api/epal/GetStudentEpalCertification";
         $this->_settings['ws_endpoint_studentepalpromotion'] = "{$this->_settings['ws_endpoint']}/api/epal/GetStudentEpalPromotion";
         $this->_settings['ws_endpoint_alldidactiyear'] = "{$this->_settings['ws_endpoint']}/api/general/GetAllDidactiYear";
-    }
-
-    /**
-     * Επιστρέφει πίνακα με κλειδιά τα property names των πεδίων που επιστρέφει η GetStudentEpalInfo
-     * και τιμές λεκτικά - ετικέτες τους.
-     *
-     * @return array
-     */
-    public function getStudentInfoFields()
-    {
-        return $this->studentInfoFields;
     }
 
     /**

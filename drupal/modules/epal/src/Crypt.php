@@ -16,7 +16,7 @@ class Crypt
         if (is_string($fname)) {
             $this->fname = $fname;
         } else {
-            $this->fname = __DIR__ . "/../../../../../app.txt";
+            $this->fname = __DIR__ . "/../../../../../../app.txt";
         }
     }
 

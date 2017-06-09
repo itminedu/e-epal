@@ -266,7 +266,7 @@ class ApplicationSubmit extends ControllerBase
             (checkdate($date_parts[1], $date_parts[2], $date_parts[0]) !== true)) {
             return 1003;
         }
-/*        $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
+        $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
 
         // check as per specs:
         // - can't check certification prior to 2014, pass through
@@ -307,12 +307,12 @@ class ApplicationSubmit extends ControllerBase
                     $student['lastschool_registrynumber'],
                     $level_name
                 );
-                $pass = ($service_rv === true);
-                if ($service_rv === true) {
+                $pass = ($service_rv == 'true');
+                if ($service_rv == 'true') {
                     $error_code = 0;
-                } elseif ($service_rv === false) {
+                } elseif ($service_rv == 'false') {
                     $error_code = 8002;
-                } elseif ($service_rv === null) {
+                } elseif ($service_rv == 'null') {
                     $error_code = 8003;
                 } else {
                     // -1 is an exception and data is already validated
@@ -324,23 +324,6 @@ class ApplicationSubmit extends ControllerBase
             }
         }
 
-        // TODO REMOVE
-        $this->logger->info(
-            'check certification: [' . var_export($check_certification, true) . '] ' .
-            'check promotion: [' . var_export($check_promotion, true) . '] ' .
-            'pass: [' . var_export($pass, true) . '] ' .
-            'check: ' . print_r([
-                    $didactic_year_id,
-                    $student['studentsurname'],
-                    $student['name'],
-                    $student['fatherfirstname'],
-                    $student['motherfirstname'],
-                    $birthdate,
-                    $student['lastschool_registrynumber'],
-                    $level_name
-            ], true));
-        // return 1000; // TODO stop here until all checks are finished
-
-        return $error_code; */
+        return $error_code;
     }
 }

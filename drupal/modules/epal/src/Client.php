@@ -5,6 +5,8 @@ namespace Drupal\epal;
 use Symfony\Component\HttpFoundation\Response;
 use Exception;
 
+use Drupal\epal\Crypt;
+
 /**
  * Description of Client
  *
@@ -171,30 +173,32 @@ class Client
         }, '');
 
         $result = $this->get($endpoint, [], $headers); // data as path params...
+        try {
+            $crypt = new Crypt();
+            $val = 'call:' . print_r($endpoint, true) . ':rcv:' . print_r($result, true);
+            $val_enc = $crypt->encrypt($val); 
+            $this->log(__METHOD__ . $val_enc, 'info');
+        } catch (\Exception $e) {
+            $this->log(__METHOD__ . " cannot log encrypted", 'info');
+        }
+
         if ($result['success'] === false) {
             $this->log(__METHOD__ . " Error while calling ws. Diagnostic: {$result['response']}. Response code: {$result['http_status']}", "error");
             throw new Exception("Προέκυψε λάθος κατά την άντληση των στοιχείων.");
         }
 
-        // now return true/false/null ?
         return $result['response'];
-
-        // if (($response = json_decode($result['response'], true)) !== null) {
-        //     return $response;
-        // } else {
-        //     throw new Exception("Προέκυψε λάθος κατά την λήψη των στοιχείων. Αδυναμία άντλησης στοιχείων από το response {$result['response']}");
-        // }
     }
 
     public function getStudentEpalPromotion($didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name)
     {
-        $this->log(__METHOD__); // " $didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name");
+        $this->log(__METHOD__);
         return $this->getStudentEpalPromotionOrCertification($this->_settings['ws_endpoint_studentepalpromotion'], $didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name);
     }
 
     public function getStudentEpalCertification($didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name)
     {
-        $this->log(__METHOD__); // " $didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name");
+        $this->log(__METHOD__);
         return $this->getStudentEpalPromotionOrCertification($this->_settings['ws_endpoint_studentepalcertification'], $didactic_year_id, $lastname, $firstname, $father_firstname, $mother_firstname, $birthdate, $registry_no, $level_name);
     }
 
@@ -227,6 +231,14 @@ class Client
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($ch);
+
+        // log url as appropriate
+        try {
+            $crypt = new Crypt();
+            $uri = $crypt->encrypt($uri);
+        } catch (\Exception $e) {
+            $uri = '-cannot encrypt-';
+        }
 
         if (curl_errno($ch)) {
             $this->log(__METHOD__ . " Error calling {$uri}. Curl error: " . curl_error($ch) . " Curl info: " . var_export(curl_getinfo($ch), true), "error");
@@ -262,6 +274,14 @@ class Client
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($ch);
+
+        // log url as appropriate
+        try {
+            $crypt = new Crypt();
+            $uri = $crypt->encrypt($uri);
+        } catch (\Exception $e) {
+            $uri = '-cannot encrypt-';
+        }
 
         if (curl_errno($ch)) {
             $this->log(__METHOD__ . " Error calling {$uri}. Curl error: " . curl_error($ch) . " Curl info: " . var_export(curl_getinfo($ch), true), "error");

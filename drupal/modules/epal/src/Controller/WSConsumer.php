@@ -118,10 +118,4 @@ class WSConsumer extends ControllerBase
         return $randomString;
     }
 
-    // private function respondWithStatus($arr, $s)
-    // {
-    //     $res = new JsonResponse($arr);
-    //     $res->setStatusCode($s);
-    //     return $res;
-    // }
 }

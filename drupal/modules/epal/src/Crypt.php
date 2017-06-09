@@ -11,7 +11,7 @@ class Crypt
 
     private $fname; // store
 
-    public function __construct($fname)
+    public function __construct($fname = null)
     {
         if (is_string($fname)) {
             $this->fname = $fname;

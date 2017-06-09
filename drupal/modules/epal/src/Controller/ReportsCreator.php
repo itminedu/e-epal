@@ -24,10 +24,10 @@ use Drupal\Core\TypedData\Plugin\DataType\TimeStamp;
 
 use Drupal\Core\Language\LanguageManagerInterface;
 
-define("ERROR_DB", -1);
-define("NO_CLASS_LIMIT_DOWN", -2);
-define("SMALL_CLASS", 1);
-define("NON_SMALL_CLASS", 2);
+define("ERR_DB", -1);
+define("NO_CLASS_LIM_DOWN", -2);
+define("SMALL_CLS", 1);
+define("NON_SMALL_CLS", 2);
 
 class ReportsCreator extends ControllerBase {
 
@@ -603,8 +603,8 @@ class ReportsCreator extends ControllerBase {
 					for ($j = 0; $j < sizeof($schoolNameColumn); $j++)	{
 
 						//αν έγινε αίτημα για εμφάνιση ολιγομελών και είναι το τρέχον τμήμα ολιγομελές
-						if ( ($finalized === "1") ||  ($finalized === "0" && $smallClass[$j] === SMALL_CLASS
-										&&  $schoolSectionColumn[$j] !== "Β τάξη" && $schoolSectionColumn[$j] !== "Γ τάξη" &&  $schoolSectionColumn[$j] !== "Δ τάξη"  ) )	
+						if ( ($finalized === "1") ||  ($finalized === "0" && $smallClass[$j] === SMALL_CLS
+										&&  $schoolSectionColumn[$j] !== "Β τάξη" && $schoolSectionColumn[$j] !== "Γ τάξη" &&  $schoolSectionColumn[$j] !== "Δ τάξη"  ) )
 
 								array_push($list,(object) array(
 									'name' => $schoolNameColumn[$j],
@@ -644,16 +644,16 @@ class ReportsCreator extends ControllerBase {
 
 			$limitDown = $this->retrieveLimitDown($classId, $regionId);
 
-			if ($limitDown === NO_CLASS_LIMIT_DOWN)
-				return NO_CLASS_LIMIT_DOWN;
-			else if ($limitDown === ERROR_DB)
-				return ERROR_DB;
+			if ($limitDown === NO_CLASS_LIM_DOWN)
+				return NO_CLASS_LIM_DOWN;
+			else if ($limitDown === ERR_DB)
+				return ERR_DB;
 
 			$numStudents = (int) $numStud;
 			if ( ($numStudents < $limitDown) /*&& ($numStudents > 0)*/ )
-				return SMALL_CLASS;
+				return SMALL_CLS;
 			else
-				return NON_SMALL_CLASS;
+				return NON_SMALL_CLS;
 
 		}
 
@@ -671,12 +671,12 @@ class ReportsCreator extends ControllerBase {
 					return $classLimit->limit_down;
 				}
 				else {
-					return NO_CLASS_LIMIT_DOWN;
+					return NO_CLASS_LIM_DOWN;
 				}
 			}	//end try
 			catch (\Exception $e) {
 				$this->logger->warning($e->getMessage());
-				return ERROR_DB;
+				return ERR_DB;
 			}
 
 		}	//end function

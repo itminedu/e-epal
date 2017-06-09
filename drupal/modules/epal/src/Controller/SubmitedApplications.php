@@ -9,19 +9,36 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+
+use Drupal\epal\Crypt;
+
 class SubmitedApplications extends ControllerBase
 {
     protected $entityTypeManager;
+    protected $logger;
 
+    /*
     public function __construct(EntityTypeManagerInterface $entityTypeManager)
     {
         $this->entityTypeManager = $entityTypeManager;
+
     }
+    */
+
+    public function __construct(
+  		EntityTypeManagerInterface $entityTypeManager,
+  		LoggerChannelFactoryInterface $loggerChannel)
+  		{
+  			$this->entityTypeManager = $entityTypeManager;
+  			$this->logger = $loggerChannel->get('epal');
+      }
 
     public static function create(ContainerInterface $container)
     {
         return new static(
-            $container->get('entity_type.manager')
+            $container->get('entity_type.manager'),
+            $container->get('logger.factory')
         );
     }
 
@@ -38,16 +55,36 @@ class SubmitedApplications extends ControllerBase
             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
             $i = 0;
             if ($epalStudents) {
-                 $list = array();
+
+                $crypt = new Crypt();
+
+                $list = array();
                 foreach ($epalStudents as $object) {
 
                     $indexid = intval($object -> id())-1;
+
+                    try  {
+                      $name_decoded = $crypt->decrypt($object->name->value);
+                      $studentsurname_decoded = $crypt->decrypt($object->studentsurname->value);
+                    }
+                    catch (\Exception $e) {
+                        unset($crypt);
+                        $this->logger->warning($e->getMessage());
+                        return $this->respondWithStatus([
+                          "message" => t("An unexpected error occured during DECODING data in getSubmittedApplications Method ")
+                        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    }
+
                     $list[] = array(
                             'id' => $indexid,
-                            'name' => $object -> name ->value,
-                            'studentsurname' => $object -> studentsurname ->value);
+                            //'name' => $object -> name ->value,
+                            'name' => $name_decoded,
+                            //'studentsurname' => $object -> studentsurname ->value);
+                            'studentsurname' => $studentsurname_decoded );
                     $i++;
                 }
+
+                unset($crypt);
 
                 return $this->respondWithStatus(
                         $list
@@ -105,31 +142,74 @@ class SubmitedApplications extends ControllerBase
                         if ($course)
                             $courseName = $this->entityTypeManager->getStorage('eepal_specialty')->load($course->coursefield_id->target_id)->name->value;
                     }
+
+
+                    $crypt = new Crypt();
+                    try  {
+                      $name_decoded = $crypt->decrypt($object->name->value);
+                      $studentsurname_decoded = $crypt->decrypt($object->studentsurname->value);
+                      $fatherfirstname_decoded = $crypt->decrypt($object->fatherfirstname->value);
+                      $motherfirstname_decoded = $crypt->decrypt($object->motherfirstname->value);
+                      $regionaddress_decoded = $crypt->decrypt($object->regionaddress->value);
+                      $regiontk_decoded = $crypt->decrypt($object->regiontk->value);
+                      $regionarea_decoded = $crypt->decrypt($object->regionarea->value);
+                      $certificatetype_decoded = $crypt->decrypt($object->certificatetype->value);
+                      $relationtostudent_decoded = $crypt->decrypt($object->relationtostudent->value);
+                      $telnum_decoded = $crypt->decrypt($object->telnum->value);
+                      $guardian_name_decoded = $crypt->decrypt($object->guardian_name->value);
+                      $guardian_surname_decoded = $crypt->decrypt($object->guardian_surname->value);
+                      $guardian_fathername_decoded = $crypt->decrypt($object->guardian_fathername->value);
+                      $guardian_mothername_decoded = $crypt->decrypt($object->guardian_mothername->value);
+                    }
+                    catch (\Exception $e) {
+                        //print_r($e->getMessage());
+                        unset($crypt);
+                  			$this->logger->warning($e->getMessage());
+                  			return $this->respondWithStatus([
+                            "message" => t("An unexpected error occured during DECODING data in getStudentApplications Method ")
+                  			     ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    }
+                    unset($crypt);
+
                     $list[] = array(
                             'applicationId' => $object->id(),
-                            'name' => $object -> name ->value,
-                            'studentsurname' => $object -> studentsurname ->value,
-                            'fatherfirstname' => $object -> fatherfirstname ->value,
+                            //'name' => $object -> name ->value,
+                            'name' => $name_decoded,
+                            //'studentsurname' => $object -> studentsurname ->value,
+                            'studentsurname' => $studentsurname_decoded,
+                            //'fatherfirstname' => $object -> fatherfirstname ->value,
+                            'fatherfirstname' => $fatherfirstname_decoded,
                             'fathersurname' =>$object -> fathersurname ->value,
-                            'motherfirstname' => $object -> motherfirstname ->value,
+                            //'motherfirstname' => $object -> motherfirstname ->value,
+                            'motherfirstname' => $motherfirstname_decoded,
                             'mothersurname' =>$object -> mothersurname ->value,
-                            'guardian_name' =>$object -> guardian_name ->value,
-                            'guardian_surname' =>$object -> guardian_surname ->value,
-                            'guardian_fathername' =>$object -> guardian_fathername ->value,
-                            'guardian_mothername' =>$object -> guardian_mothername ->value,
+                            //'guardian_name' =>$object -> guardian_name ->value,
+                            'guardian_name' =>$guardian_name_decoded,
+                            //'guardian_surname' =>$object -> guardian_surname ->value,
+                            'guardian_surname' => $guardian_surname_decoded,
+                            //'guardian_fathername' =>$object -> guardian_fathername ->value,
+                            'guardian_fathername' =>$guardian_fathername_decoded,
+                            //'guardian_mothername' =>$object -> guardian_mothername ->value,
+                            'guardian_mothername' =>$guardian_mothername_decoded,
                             'lastschool_schoolname' =>$object -> lastschool_schoolname ->value,
                             'lastschool_schoolyear' =>$object -> lastschool_schoolyear ->value,
                             'lastschool_class' =>$object -> lastschool_class ->value,
                             'currentclass' =>$object -> currentclass ->value,
                             'currentsector' =>$sectorName,
                             'currentcourse' =>$courseName,
-                            'regionaddress' =>$object -> regionaddress ->value,
-                            'regiontk' =>$object -> regiontk ->value,
-                            'regionarea' =>$object -> regionarea ->value,
-                            'certificatetype' =>$object -> certificatetype ->value,
+                            //'regionaddress' =>$object -> regionaddress ->value,
+                            'regionaddress' =>$regionaddress_decoded,
+                            //'regiontk' =>$object -> regiontk ->value,
+                            'regiontk' =>$regiontk_decoded,
+                            //'regionarea' =>$object -> regionarea ->value,
+                            'regionarea' =>$regionarea_decoded,
+                            //'certificatetype' =>$object -> certificatetype ->value,
+                            'certificatetype' => $certificatetype_decoded,
                             'graduation_year' =>$object -> graduation_year ->value,
-                            'telnum' =>$object -> telnum ->value,
-                            'relationtostudent' =>$object -> relationtostudent ->value,
+                            //'telnum' =>$object -> telnum ->value,
+                            'telnum' =>$telnum_decoded,
+                            //'relationtostudent' =>$object -> relationtostudent ->value,
+                            'relationtostudent' => $relationtostudent_decoded,
                             'birthdate' => substr($object->birthdate->value, 8, 2) . '/' . substr($object->birthdate->value, 6, 2) . '/' . substr($object->birthdate->value, 0, 4),
                             'created' => date('d/m/Y H:i', $object -> created ->value),
 

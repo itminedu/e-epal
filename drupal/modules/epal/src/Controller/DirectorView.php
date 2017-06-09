@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
+use Drupal\epal\Crypt;
+
 class DirectorView extends ControllerBase
 {
     protected $entityTypeManager;
@@ -236,37 +238,67 @@ class DirectorView extends ControllerBase
                                             $courseName = $this->entityTypeManager->getStorage('eepal_specialty')->load($course->coursefield_id->target_id)->name->value;
                                     }
                                     $newstatus = $checkstudentstatus->directorconfirm->value;
+
+                                    $crypt = new Crypt();
+                                    try  {
+                                      $name_decoded = $crypt->decrypt($epalStudent->name->value);
+                                      $studentsurname_decoded = $crypt->decrypt($epalStudent->studentsurname->value);
+                                      $fatherfirstname_decoded = $crypt->decrypt($epalStudent->fatherfirstname->value);
+                                      $motherfirstname_decoded = $crypt->decrypt($epalStudent->motherfirstname->value);
+                                      $regionaddress_decoded = $crypt->decrypt($epalStudent->regionaddress->value);
+                                      $regiontk_decoded = $crypt->decrypt($epalStudent->regiontk->value);
+                                      $regionarea_decoded = $crypt->decrypt($epalStudent->regionarea->value);
+                                      $certificatetype_decoded = $crypt->decrypt($epalStudent->certificatetype->value);
+                                      $relationtostudent_decoded = $crypt->decrypt($epalStudent->relationtostudent->value);
+                                      $telnum_decoded = $crypt->decrypt($epalStudent->telnum->value);
+                                      $guardian_name_decoded = $crypt->decrypt($epalStudent->guardian_name->value);
+                                      $guardian_surname_decoded = $crypt->decrypt($epalStudent->guardian_surname->value);
+                                      $guardian_fathername_decoded = $crypt->decrypt($epalStudent->guardian_fathername->value);
+                                      $guardian_mothername_decoded = $crypt->decrypt($epalStudent->guardian_mothername->value);
+                                    }
+                                    catch (\Exception $e) {
+                                        //print_r($e->getMessage());
+                                        unset($crypt);
+                                        $this->logger->warning($e->getMessage());
+                                        return $this->respondWithStatus([
+                                            "message" => t("An unexpected error occured during DECODING data in getStudentPerSchool Method ")
+                                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                                    }
+                                    unset($crypt);
+
                                     $list[] = array(
                                     'i' => $i,
                                     'id' => $epalStudent->id(),
-                                    'name' => $epalStudent->name->value,
-                                    'studentsurname' => $epalStudent->studentsurname->value,
-                                    'fatherfirstname' => $epalStudent->fatherfirstname->value,
+                                    'name' => $name_decoded,
+                                    'studentsurname' => $studentsurname_decoded,
+                                    'fatherfirstname' => $fatherfirstname_decoded,
                                     'fathersurname' => $epalStudent->fathersurname->value,
-                                    'motherfirstname' => $epalStudent->motherfirstname->value,
+                                    'motherfirstname' => $motherfirstname_decoded,
                                     'mothersurname' => $epalStudent->mothersurname->value,
-                                    'guardian_name' => $epalStudent->guardian_name->value,
-                                    'guardian_surname' => $epalStudent->guardian_surname->value,
-                                    'guardian_fathername' => $epalStudent->guardian_fathername->value,
-                                    'guardian_mothername' => $epalStudent->guardian_mothername->value,
+                                    'guardian_name' =>$guardian_name_decoded,
+                                    'guardian_surname' => $guardian_surname_decoded,
+                                    'guardian_fathername' =>$guardian_fathername_decoded,
+                                    'guardian_mothername' =>$guardian_mothername_decoded,
                                     'lastschool_schoolname' => $epalStudent->lastschool_schoolname->value,
                                     'lastschool_schoolyear' => $epalStudent->lastschool_schoolyear->value,
                                     'lastschool_class' => $epalStudent->currentclass->value,
                                     'currentclass' =>$epalStudent -> currentclass ->value,
                                     'currentsector' =>$sectorName,
                                     'currentcourse' =>$courseName,
-                                    'regionaddress' => $epalStudent->regionaddress->value,
-                                    'regiontk' => $epalStudent->regiontk->value,
-                                    'regionarea' => $epalStudent->regionarea->value,
-                                    'certificatetype' => $epalStudent->certificatetype->value,
+                                    'regionaddress' =>$regionaddress_decoded,
+                                    'regiontk' =>$regiontk_decoded,
+                                    'regionarea' =>$regionarea_decoded,
+                                    'certificatetype' => $certificatetype_decoded,
                                     'graduation_year' => $epalStudent->graduation_year->value,
-                                    'telnum' => $epalStudent->telnum->value,
-                                    'relationtostudent' => $epalStudent->relationtostudent->value,
-                                    'birthdate' => substr($epalStudent->birthdate->value, 8, 10) . '/' . substr($epalStudent->birthdate->value, 6, 8) . '/' . substr($epalStudent->birthdate->value, 0, 4),
+                                    'telnum' =>$telnum_decoded,
+                                    'relationtostudent' => $relationtostudent_decoded,
+                                    //'birthdate' => substr($epalStudent->birthdate->value, 8, 10) . '/' . substr($epalStudent->birthdate->value, 6, 8) . '/' . substr($epalStudent->birthdate->value, 0, 4),
+                                    'birthdate' => date("d-m-Y", strtotime($epalStudent->birthdate->value)),
                                     'checkstatus' => $newstatus[0][value],
                                     'created' => date('d/m/Y H:i', $epalStudent -> created ->value),
 
                                     );
+
                                 }
                                 ++$i;
                             }

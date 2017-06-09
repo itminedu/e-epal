@@ -28,25 +28,34 @@ import {
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
 
-       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω'λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο αριθμό,
+     
+       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο σύμβολο,
        επιλέξτε τη νέα δυναμική και πατήστε το σύμβολο <i>ok</i>. Προσοχή! Κανένα τμήμα δεν πρέπει να έχει δυναμική 0.</p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
       <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
                 <div class="row">
                 <div class="col-md-5">
-                   <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === 0" >{{CapacityPerCourses$.taxi}}&nbsp; <b></b></h5>
+                   <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === null" >{{CapacityPerCourses$.taxi}}&nbsp; <b></b></h5>
                  </div>
-                 <div class="col-md-4" col-md-offset-2>
-                   <label *ngIf="!isEdit" (click)="isEdit=true" (click)="setActive(i)"> {{CapacityPerCourses$.capacity}} </label>
+                 <div class="col-md-4" col-md-offset-1>
+                  <label style="font-weight:bold!important" *ngIf="!isEdit || CapacityPerCourses$.globalindex !== courseActive" > {{CapacityPerCourses$.capacity}} </label>
+
+                   <i *ngIf="!isEdit || CapacityPerCourses$.globalindex !== courseActive" (click)= "modifycapc(i,$event)" class="fa fa-pencil isclickable pull-right" style="font-size: 1.5em;"></i>
+                 
                    <input *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive"
-                     id="{{CapacityPerCourses$.globalindex}}" type="number"
-                   name="{{CapacityPerCourses$.globalindex}}" value ={{CapacityPerCourses$.capacity}}
-                   (change)="handleChange($event)">
+
+                     id="{{CapacityPerCourses$.globalindex}}" type="number" 
+                   name="{{CapacityPerCourses$.globalindex}}" value ={{CapacityPerCourses$.capacity}}               (change)="handleChange($event)">
                    </div>
-                 <div class="col-md-1">
+                   
+                 <div class="col-md-1"> 
+            <i *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive" (click)= "isEdit = false" class="fa fa-ban isclickable" style="font-size: 1.5em;"></i>
+            </div>
+            <div class="col-md-2"> 
+
             <button *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive" type="button" class="btn-primary pull-right"
-             (click)="isEdit=false" (click) ="saveCapacity(CapacityPerCourses$.newspecialit, CapacityPerCourses$.newsector, CapacityPerCourses$.class, CapacityPerCourses$.capacity)">
+             (click)="isEdit=false" (click) ="saveCapacity(CapacityPerCourses$.newspecialit, CapacityPerCourses$.newsector, CapacityPerCourses$.class, CapacityPerCourses$.capacity, CapacityPerCourses$.globalindex )">
                <i class="fa fa-check" aria-hidden="true"></i>
              </button>
              </div>
@@ -177,7 +186,8 @@ import {
         this.newvalue = e.target['value'];
     }
 
-   saveCapacity(spec,sect,taxi,oldvalue){
+   saveCapacity(spec,sect,taxi,oldvalue,ind){
+    
 
      console.log(taxi, sect, spec);
      console.log(this.newvalue,"newvalue", oldvalue);
@@ -190,19 +200,18 @@ import {
           else
           {
           this.showLoader.next(true);
-         this.saveCapacitySub = this._hds.saveCapacity(taxi, sect, spec, this.newvalue).subscribe(data => {
-                 this.showLoader.next(false);
 
-                this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CapacityPerCourse$.next(x);
-                  },
-                  error => {
-                      this.CapacityPerCourse$.next([{}]);
-                      console.log("Error Getting Capacity perSchool");
-                  },
-                  () => console.log("Getting School "));
+      
+          let std = this.CapacityPerCourse$.getValue();
+          std[ind].capacity = this.newvalue;
+          this.saveCapacitySub = this._hds.saveCapacity(taxi, sect, spec, this.newvalue).subscribe(data => {
+                this.showLoader.next(false);
+                this.CapacityPerCourse$.next(std);
+                 
                  },
                 error => {
+                    std[ind].capacity = oldvalue;
+                    this.CapacityPerCourse$.next(std);
 
                     console.log("Error Saving Capacity");
                 },
@@ -214,6 +223,11 @@ import {
              }
 
            }
+           else
+           {
+             if (oldvalue === null)
+             this.showModal("#checksaved");
+           }
         }
 
 
@@ -224,5 +238,11 @@ import {
     }
 
 
-
+modifycapc(ind, e:Event)
+{
+  this.isEdit=true;
+  this.setActive(ind);
+  this.handleChange(e);
+}
+ 
 }

@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer } from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
-import {Observable} from "rxjs/Observable";
-import {Http, Headers, RequestOptions} from '@angular/http';
+import { Observable } from "rxjs/Observable";
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
-import {Router, ActivatedRoute, Params} from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 
@@ -217,7 +217,7 @@ import {
     private selectionCClass: BehaviorSubject<boolean>;
     private limitsSub: Subscription;
     private limits$: BehaviorSubject<any>;
-    private SchoolId ;
+    private SchoolId;
     private currentclass: Number;
     private saved: Array<number> = new Array();
     private limitdown = 0;
@@ -282,29 +282,29 @@ import {
     ngOnInit() {
 
 
-    this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].type, "schoolid!");
-                   this.SchoolId = x[0].type;
-                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
-                       this.selectiontype.next(false);
-                   }
+        this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
+            this.School$.next(x);
+            console.log(x[0].type, "schoolid!");
+            this.SchoolId = x[0].type;
+            if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ') {
+                this.selectiontype.next(false);
+            }
 
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
+        },
+            error => {
+                this.School$.next([{}]);
+                console.log("Error Getting School");
+            },
+            () => console.log("Getting School "));
 
 
-        }
+    }
 
 
     verifyclass(txop) {
-      this.limitdown = 0;
-      this.limitup = 5;
-      console.log(this.SchoolId,"schoolida");
+        this.limitdown = 0;
+        this.limitup = 5;
+        console.log(this.SchoolId, "schoolida");
         this.pageno = 1;
         this.retrievedStudent.next(false);
         if (txop.value === "1") {
@@ -327,7 +327,7 @@ import {
         }
         else if (txop.value === "3" || txop.value === "4") {
             var sectorint = +this.formGroup.value.tomeas;
-           if (this.formGroup.value.tomeas != '') {
+            if (this.formGroup.value.tomeas != '') {
                 var sectorint = +this.formGroup.value.tomeas;
 
                 this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(data => {
@@ -355,7 +355,7 @@ import {
 
 
     checkbclass(tmop, txop) {
-      console.log(this.SchoolId,"schoolidn");
+        console.log(this.SchoolId, "schoolidn");
         this.pageno = 1;
         this.retrievedStudent.next(false);
         var sectorint = +this.formGroup.value.tomeas;
@@ -376,95 +376,88 @@ import {
 
     findstudent(txop, pageno) {
 
-
-        var sectorint = +this.formGroup.value.tomeas;
+        let sectorint = +this.formGroup.value.tomeas;
         this.currentclass = +txop.value;
 
         this.formGroup.get('pageno').setValue(this.pageno);
         if (this.pageno == 1) {
 
             console.log("mphkepage = 1");
-            this.StudentsSizeSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, 0, 0).subscribe(x => {
-                this.StudentsSize$.next(x);
-                this.totallimit = x.id;
+            this.StudentsSizeSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, 0, 0)
+                .subscribe(x => {
+                    this.StudentsSize$.next(x);
+                    this.totallimit = x.id;
 
-            this.limitsSub = this._hds.getlimitsofcourse(this.currentclass).subscribe(data => {
-            this.limits$.next(data);
-            console.log(this.totallimit, data[0].limitdown, "oria");
-             this.tot_pages = x.id / 5;
-                if (x.id % 5 > 0) {
-                    this.tot_pages = (x.id - (x.id % 5)) / 5 + 1;
-                }
-                console.log(this.tot_pages,"totpages")
-                if (isNaN(this.tot_pages)){
-                  this.retrievedStudent.next(false);
-                  this.tot_pages = 0;
-                }
-            if ( (x.id < data[0].limitdown) || (isNaN(this.tot_pages)))
-            {
-              console.log("mphkeprwto!")
-                  this.retrievedStudent.next(false);
-                  this.tot_pages = 0;
-                  this.formGroup.get('maxpage').setValue(this.tot_pages);
-                  //this.outoflimits.next(true);
-            }
-            else
-            {
-               // this.outoflimits.next(false);
+                    this.limitsSub = this._hds.getlimitsofcourse(this.currentclass).subscribe(data => {
+                        this.limits$.next(data);
+                        console.log(this.totallimit, data[0].limitdown, "oria");
+                        this.tot_pages = Math.floor(x.id / 5);
+                        if (x.id % 5 > 0) {
+                            // this.tot_pages = (x.id - (x.id % 5)) / 5 + 1;
+                            this.tot_pages += 1;
+                        }
+                        console.log(this.tot_pages, "totpages")
+                        if (isNaN(this.tot_pages)) {
+                            this.retrievedStudent.next(false);
+                            this.tot_pages = 0;
+                        }
+                        if ((x.id < parseInt(data[0].limitdown)) || (isNaN(this.tot_pages))) {
+                            console.log("mphkeprwto!")
+                            this.retrievedStudent.next(false);
+                            this.tot_pages = 0;
+                            this.formGroup.get('maxpage').setValue(this.tot_pages);
+                            //this.outoflimits.next(true);
+                        } else {
+                            // this.outoflimits.next(false);
+                            this.formGroup.get('maxpage').setValue(this.tot_pages);
+                            console.log(this.tot_pages, "mazeuw mathites");
+                            this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup)
+                                .subscribe(data => {
+                                    this.StudentInfo$.next(data);
+                                    console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
+                                    this.retrievedStudent.next(true);
+                                },
+                                error => {
+                                    this.StudentInfo$.next([{}]);
+                                    console.log("Error Getting Students");
+                                },
+                                () => console.log("Getting Students")
+                                );
+                        }
+                    },
+                        error => {
+                            this.limits$.next([{}]);
+                            console.log("Error Getting limits");
+                        },
+                        () => console.log("Getting limits")
+                    );
 
-                this.formGroup.get('maxpage').setValue(this.tot_pages);
-                console.log(this.tot_pages,"mazeuw mathites");
-                this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
-                this.StudentInfo$.next(data);
-
-                console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
-                this.retrievedStudent.next(true);
-
-            },
-            error => {
-                this.StudentInfo$.next([{}]);
-                console.log("Error Getting Students");
-            },
-            () => console.log("Getting Students"));
-
-
-
-            }
-
-              },
-            error => {
-                this.limits$.next([{}]);
-                console.log("Error Getting limits");
-            },
-            () => console.log("Getting limits"));
-
-            });
+                });
 
         }
-        else{
-              console.log("eisai edw", this.tot_pages);
+        else {
+            console.log("eisai edw", this.tot_pages);
 
 
-              if (this.tot_pages == 0 ){
-                  console.log("mphke1", this.formGroup.value.maxpage, this.tot_pages);
-                  this.retrievedStudent.next(false);
-                }
-             else
-              {
-                console.log(this.tot_pages,"mazeuw mathites");
+            if (this.tot_pages == 0) {
+                console.log("mphke1", this.formGroup.value.maxpage, this.tot_pages);
+                this.retrievedStudent.next(false);
+            }
+            else {
+                console.log(this.tot_pages, "mazeuw mathites");
                 this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
-                this.StudentInfo$.next(data);
+                    this.StudentInfo$.next(data);
 
-                console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
-                this.retrievedStudent.next(true);
+                    console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
+                    this.retrievedStudent.next(true);
 
-            },
-            error => {
-                this.StudentInfo$.next([{}]);
-                console.log("Error Getting Students");
-            },
-            () => console.log("Getting Students"));
-          }
+                },
+                    error => {
+                        this.StudentInfo$.next([{}]);
+                        console.log("Error Getting Students");
+                    },
+                    () => console.log("Getting Students"));
+            }
         }
 
     }
@@ -492,7 +485,7 @@ import {
 
     confirmStudent(txop) {
 
-      this.SavedStudentsSub = this._hds.saveConfirmStudents(this.saved, this.type).subscribe(data => {
+        this.SavedStudentsSub = this._hds.saveConfirmStudents(this.saved, this.type).subscribe(data => {
             this.SavedStudents$.next(data);
 
         },
@@ -501,9 +494,9 @@ import {
                 console.log("Error saving Students");
             },
             () => {
-              console.log("saved Students");
-            this.findstudent(txop, this.pageno);
-          });
+                console.log("saved Students");
+                this.findstudent(txop, this.pageno);
+            });
 
 
 

@@ -98,7 +98,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         <div *ngIf="studentDataField$.lastschool_class === 3"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Γ'</p></div>
         <div *ngIf="studentDataField$.lastschool_class === 4"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Δ'</p></div>
 
-        <div><label for="relationtostudent">Η αίτηση γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
+        <div><label for="relationtostudent">Η δήλωση προτίμησης γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
         <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
     </div>
     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
@@ -353,43 +353,48 @@ import { HelperDataService } from '../../services/helper-data-service';
                         this._rsa.initRegionSchools();
                         this._csa.initSectorCourses();
                         this._sdfa.initStudentDataFields();
-                        mTitle = "Υποβολή Αίτησης Εγγραφής";
-                        mText = "Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Αίτησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας.";
+                        mTitle = "Υποβολή Δήλωσης Προτίμησης";
+                        mText = "Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας.";
                         mHeader = "modal-header-success";
                         break;
                     case 1001:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Δεν έχετε αποδεχθεί τους όρους χρήσης";
                         mHeader = "modal-header-danger";
                         break;
                     case 1002:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Ελέξτε τη φόρμα σας. Υπάρχουν λάθη - ελλείψεις που δεν επιτρέπουν την υποβολή.";
                         mHeader = "modal-header-danger";
                         break;
                     case 1003:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Ελέξτε τη φόρμα σας. Η ημερομηνία γέννησης δεν είναι έγκυρη.";
+                        mHeader = "modal-header-danger";
+                        break;
+                    case 3002:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Το σύστημα δεν δέχεται υποβολή δηλώσεων αυτή την περίοδο.";
                         mHeader = "modal-header-danger";
                         break;
                     case 8000:
                     case 8001:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Προέκυψε σφάλμα κατά τη διάρκεια ελέγχου των στοιχείων φοίτησης σας. Παρακαλώ δοκιμάστε ξανά ή προσπαθήστε αργότερα. Εάν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.";
                         mHeader = "modal-header-danger";
                         break;
                     case 8002:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Τα στοιχεία φοίτησης που υποβάλλατε δεν επικυρώθηκαν. Παρακαλώ ελέγξτε τη φόρμα σας και προσπαθήστε ξανά. Εάν το θέμα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.";
                         mHeader = "modal-header-danger";
                         break;
                     case 8003:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Τα στοιχεία φοίτησης που υποβάλλατε δεν είναι έγκυρα. Παρακαλώ ελέγξτε τη φόρμα σας και προσπαθήστε ξανά. Εάν το θέμα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.";
                         mHeader = "modal-header-danger";
                         break;
                     default:
-                        mTitle = "Αποτυχία Υποβολής Αίτησης";
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Ελέξτε τη φόρμα σας. Υπάρχουν λάθη - ελλείψεις που δεν επιτρέπουν την υποβολή.";
                         mHeader = "modal-header-danger";
                 }
@@ -402,8 +407,8 @@ import { HelperDataService } from '../../services/helper-data-service';
             error => {
                 (<any>$('.loading')).remove();
                 this.modalHeader.next("modal-header-danger");
-                this.modalTitle.next("Υποβολή Αίτησης Εγγραφής");
-                this.modalText.next("Η υποβολή της αίτησής σας απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.");
+                this.modalTitle.next("Υποβολή Δήλωσης Προτίμησης");
+                this.modalText.next("Η υποβολή της δήλωσης προτίμησης απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.");
                 this.showModal();
                 this.showLoader.next(false);
                 console.log("Error HTTP POST Service")

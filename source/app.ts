@@ -31,7 +31,9 @@ import {HelperDataService} from './services/helper-data-service';
 import {LoaderService} from './services/Spinner.service';
 import {AuthService} from './services/auth.service';
 import SchoolAuthGuard from './guards/school.auth.guard';
+import SchoolStudentsLockedGuard from './guards/school.students.locked.guard';
 import StudentAuthGuard from './guards/student.auth.guard';
+import StudentLockGuard from './guards/student.lock.guard';
 import RegionEduAuthGuard from './guards/regionedu.auth.guard';
 import EduAdminAuthGuard from './guards/eduadmin.auth.guard';
 import MinistryAuthGuard from './guards/ministry.auth.guard';
@@ -85,7 +87,9 @@ class MyLocalization extends NgLocalization {
     LoaderService,
     AuthService,
     SchoolAuthGuard,
+    SchoolStudentsLockedGuard,
     StudentAuthGuard,
+    StudentLockGuard,
     RegionEduAuthGuard,
     EduAdminAuthGuard,
     MinistryAuthGuard

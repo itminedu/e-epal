@@ -5,6 +5,7 @@ import {
 
 import {CamelCasePipe} from '../pipes/camelcase';
 import {RemoveSpaces} from '../pipes/removespaces';
+import Info from '../components/student-application-form/info';
 import ParentForm from '../components/student-application-form/parent.form';
 import StudentApplicationMain from '../components/student-application-form/application.form.main';
 import StudentsList from '../components/students/students-list';
@@ -36,7 +37,9 @@ import ReportNoCapacity from '../components/minister/report-no-capacity';
 import InformStudents from '../components/minister/minister-informstudents';
 import MinisterSettings from '../components/minister/minister-settings';
 import SchoolAuthGuard from '../guards/school.auth.guard';
+import SchoolStudentsLockedGuard from '../guards/school.students.locked.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
+import StudentLockGuard from '../guards/student.lock.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
 import  EduAdminAuthGuard from  '../guards/eduadmin.auth.guard';
 
@@ -45,33 +48,34 @@ import Breadcrumbs from '../components/main/breadcrumbs';
 
 export const MainRoutes: Routes = [
   { path: '', component: Home },
+  { path: 'info', component: Info, canActivate: [StudentAuthGuard] },
   { path: 'logout', component: Home },
   { path: 'school', component: SchoolHome },
   { path: 'school/logout', component: SchoolHome },
   { path: 'ministry', component: MinistryHome },
   { path: 'ministry/logout', component: MinistryHome },
 //  { path: 'breadcrumbs', component: Breadcrumbs },
-  { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard] },
-  { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard] },
+  { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard, StudentLockGuard] },
 //  { path: 'students-list', component: StudentsList },
-  { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard] },
-  { path: 'intro-statement', component: Disclaimer, canActivate: [StudentAuthGuard] },
-  { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard] },
-  { path: 'sector-fields-select', component: SectorFieldsSelect, canActivate: [StudentAuthGuard] },
-  { path: 'region-schools-select', component: RegionSchoolsSelect, canActivate: [StudentAuthGuard] },
-  { path: 'sectorcourses-fields-select', component: SectorCoursesSelect, canActivate: [StudentAuthGuard] },
-  { path: 'application-preview', component: ApplicationPreview, canActivate: [StudentAuthGuard] },
-  { path: 'schools-order-select', component: SchoolsOrderSelect, canActivate: [StudentAuthGuard] },
-  { path: 'application-submit', component: ApplicationSubmit, canActivate: [StudentAuthGuard] },
-  { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard] },
-  { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard] },
-  { path: 'post-submit', component: AfterSubmit, canActivate: [StudentAuthGuard] },
-  { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard] },
+  { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'intro-statement', component: Disclaimer, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'sector-fields-select', component: SectorFieldsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'region-schools-select', component: RegionSchoolsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'sectorcourses-fields-select', component: SectorCoursesSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'application-preview', component: ApplicationPreview, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'schools-order-select', component: SchoolsOrderSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'application-submit', component: ApplicationSubmit, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'post-submit', component: AfterSubmit, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard, SchoolStudentsLockedGuard] },
   { path: 'school/director-buttons', component: DirectorButtons, canActivate: [SchoolAuthGuard]  },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
   { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
-  { path: 'ministry/minister-reports', component: MinisterReports },
-  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat  },
+  { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-general/:reportId', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-informstudents', component: InformStudents, canActivate: [MinistryAuthGuard]  },
@@ -94,6 +98,7 @@ export const MainDeclarations = [
   RegionSchoolsSelect,
   SectorCoursesSelect,
   ParentForm,
+  Info,
   StudentApplicationMain,
   ApplicationPreview,
   SchoolsOrderSelect,

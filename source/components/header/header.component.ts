@@ -18,8 +18,8 @@ import { CriteriaActions } from "../../actions/criteria.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
 
 @Component({
-  selector: "reg-header",
-  templateUrl: "header.component.html"
+    selector: "reg-header",
+    templateUrl: "header.component.html"
 })
 export default class HeaderComponent implements OnInit, OnDestroy {
     private authToken: string;
@@ -32,28 +32,28 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
 
-    constructor( private _ata: LoginInfoActions,
-                private _hds: HelperDataService,
-                private _csa: SectorCoursesActions,
-                private _sfa: SectorFieldsActions,
-                private _rsa: RegionSchoolsActions,
-                private _eca: EpalClassesActions,
-                private _sdfa: StudentDataFieldsActions,
-                private _cria: CriteriaActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router
-                ) {
+    constructor(private _ata: LoginInfoActions,
+        private _hds: HelperDataService,
+        private _csa: SectorCoursesActions,
+        private _sfa: SectorFieldsActions,
+        private _rsa: RegionSchoolsActions,
+        private _eca: EpalClassesActions,
+        private _sdfa: StudentDataFieldsActions,
+        private _cria: CriteriaActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router
+    ) {
 
-                        this.authToken = "";
-                        this.authRole = "";
-                        this.cuName = "";
-                        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-                        this.showLoader$ = new BehaviorSubject(false);
-                        this.modalTitle =  new BehaviorSubject("");
-                        this.modalText =  new BehaviorSubject("");
-                        this.modalHeader =  new BehaviorSubject("");
+        this.authToken = "";
+        this.authRole = "";
+        this.cuName = "";
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.showLoader$ = new BehaviorSubject(false);
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
 
-        };
+    };
 
     ngOnInit() {
         (<any>$("#headerNotice")).appendTo("body");
@@ -86,19 +86,19 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                 // this.router.navigate(['/school']);
                 this.authToken = "";
                 this.authRole = "";
-                window.location.assign((<any> data).next);
+                window.location.assign((<any>data).next);
             }
             else if (this.authRole === PDE_ROLE) {
                 // this.router.navigate(["/school"]);
                 this.authToken = "";
                 this.authRole = "";
-                window.location.assign((<any> data).next);
+                window.location.assign((<any>data).next);
             }
             else if (this.authRole === DIDE_ROLE) {
                 // this.router.navigate(["/school"]);
                 this.authToken = "";
                 this.authRole = "";
-                window.location.assign((<any> data).next);
+                window.location.assign((<any>data).next);
             }
             else if (this.authRole === STUDENT_ROLE) {
                 this._eca.initEpalClasses();
@@ -119,6 +119,24 @@ export default class HeaderComponent implements OnInit, OnDestroy {
             this.showLoader$.next(false);
             console.log(err);
         });
+    }
+
+    goHome() {
+        if (this.authRole === SCHOOL_ROLE) {
+            this.router.navigate(['/school']);
+        }
+        else if (this.authRole === PDE_ROLE) {
+            this.router.navigate(["/school"]);
+        }
+        else if (this.authRole === DIDE_ROLE) {
+            this.router.navigate(["/school"]);
+        }
+        else if (this.authRole === STUDENT_ROLE) {
+            this.router.navigate([""]);
+        }
+        else if (this.authRole === MINISTRY_ROLE) {
+            this.router.navigate(["/ministry"]);
+        }
     }
 
     public showModal(): void {

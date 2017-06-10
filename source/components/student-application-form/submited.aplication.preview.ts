@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
-//let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -19,15 +18,21 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
          <div class="row">
              <breadcrumbs></breadcrumbs>
         </div>
-        <br/>
-            Έχει υποβληθεί αίτηση για εγγραφή στην Επαγγελματική Εκπαίδευση των παρακάτω ατόμων:
+
+            <div *ngIf="(SubmitedApplic$ | async).length > 0" class="row" style="margin: 10px 2px 10px 2px;">
+                Έχει υποβληθεί δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος των παρακάτω ατόμων:
+            </div>
+            <div *ngIf="(SubmitedApplic$ | async).length === 0" class="row" style="margin: 10px 2px 10px 2px;">
+                Δεν έχετε ακόμη υποβάλλει δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος
+            </div>
 
 
-              <div class="row list-group-item" style="margin: 0px 2px 0px 2px; background-color: #ccc;">
+              <div *ngIf="(SubmitedApplic$ | async).length > 0" class="row list-group-item" style="margin: 0px 2px 0px 2px; background-color: #ccc;">
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Όνομα</div>
               </div>
 
+              <div *ngIf="(SubmitedApplic$ | async).length > 0">
                <div class="row list-group-item isclickable"  style="margin: 0px 2px 0px 2px;"
                [class.oddout]="isOdd"
                [class.evenout]="isEven"
@@ -41,7 +46,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 10px 10px 10px 10px;">
 
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                      <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Αίτησης</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Δήλωσης Προτίμησης ΕΠΑΛ</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.applicationId}}</div>
                       <div class="col-md-3" style="font-size: 0.8em;">Υποβλήθηκε</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.created}}</div>
@@ -145,6 +150,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                     </div>
                 </div>
 
+              </div>
               </div>
               </div>
 

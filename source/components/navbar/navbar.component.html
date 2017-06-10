@@ -14,12 +14,12 @@
      <div class="row">
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
          <li *ngIf="authRole=='student'"class="nav-item" >
-             <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες αιτήσεις</b></a>
+             <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες δηλώσεις</b></a>
          </li>
       </div>
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
      <li *ngIf="authRole=='director'" class="nav-item" >
-           <a class="nav-link" [routerLink]="['/school/director-view']" [routerLinkActive]="['active']"><b>Επιλεχθέντες Μαθητές</b></a>
+           <a class="nav-link" [routerLink]="['/school/director-view']" [routerLinkActive]="['active']"><b>Δηλώσεις Μαθητών στο ΕΠΑΛ</b></a>
      </li>
      </div>
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">

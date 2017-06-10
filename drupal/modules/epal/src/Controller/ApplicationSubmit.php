@@ -79,6 +79,19 @@ class ApplicationSubmit extends ControllerBase
     				], Response::HTTP_BAD_REQUEST);
     		}
 
+            $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+                return $this->respondWithStatus([
+                        "error_code" => 3001
+                    ], Response::HTTP_FORBIDDEN);
+            }
+            if ($epalConfig->lock_application->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
+
         $crypt = new Crypt();
         try  {
           $name_encoded = $crypt->encrypt($applicationForm[0]['name']);

@@ -28,7 +28,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
 
             <div *ngIf="!authToken" class="col-md-8 offset-md-4">
                 <button type="submit" class="btn-primary btn-lg" (click)="form.submit()">
-                Είσοδος μέσω TaxisNet<span class="glyphicon glyphicon-menu-right"></span>
+                Είσοδος μέσω TaxisNet
                 </button>
             </div>
             </div>
@@ -64,23 +64,19 @@ export default class Home implements OnInit {
     };
 
     ngOnInit() {
-/*        this.authToken = this.getCookie('auth_token');
-        this.authRole = this.getCookie('auth_role');
-        console.log(this.authToken);
-        console.log(this.authRole);
-        if (this.authToken && this.authRole) {
-            this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
-            this.removeCookie('auth_token');
-            this.removeCookie('auth_role');
-        } */
 
         this.loginInfo$ = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE)
-                        this.router.navigate(['/parent-form']);
+                    if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE) {
+                        if (loginInfoToken.lock_application === 1)
+                            this.router.navigate(['/info']);
+                        else {
+                            this.router.navigate(['/parent-form']);
+                        }
+                    }
                     return loginInfoToken;
                 }, {});
             }
@@ -93,8 +89,6 @@ export default class Home implements OnInit {
             if (params) {
                 this.authToken = params['auth_token'];
                 this.authRole = params['auth_role'];
-//                console.log(this.authToken);
-//                console.log(this.authRole);
             }
 
             if (this.authToken && this.authRole)

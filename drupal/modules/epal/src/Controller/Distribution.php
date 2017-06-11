@@ -157,7 +157,7 @@ class Distribution extends ControllerBase {
 
 			while ($this->choice_id <= $numDistributions)	 {
 
-				//υπολογισμός πλήθους non-finalized αιτήσεων για να καθοριστεί ο αριθμός των fetches που θα κάνουμε με συγκεκριμένο sizeOfBlock
+				//υπολογισμός πλήθους non-finalized δηλώσεων για να καθοριστεί ο αριθμός των fetches που θα κάνουμε με συγκεκριμένο sizeOfBlock
 				if ($this->choice_id === 1)	{
 					$sCon = $this->connection->select('epal_student', 'eStudent')
 																		->fields('eStudent', array('id'));

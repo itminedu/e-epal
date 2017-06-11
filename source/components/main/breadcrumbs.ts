@@ -7,14 +7,14 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'breadcrumbs',
     template: `
-          <div [hidden]="currentUrl !== '/epal-class-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Τάξης </p></div>
-    			<div [hidden]="currentUrl !== '/sector-fields-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Τoμέα</p></div>
-    			<div [hidden]="currentUrl !== '/region-schools-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Σχολείου ανα Περιφερειακή Διεύθυνση</p></div>
-    			<div [hidden]="currentUrl !== '/sectorcourses-fields-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Επιλογή Ειδικότητας ανα τoμέα</p></div>
-    			<div [hidden]="currentUrl !== '/schools-order-select'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Σειρά Προτίμησης Επιλεχθέντων Σχολείων</p></div>
-    			<div [hidden]="currentUrl !== '/student-application-form-main'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Προσωπικά Στοιχεία</p></div>
-	 			  <div [hidden]="currentUrl !== '/application-submit'" class="col-sm-12"><p class="crumb" >Νέα Αίτηση -> Προεπισκόπη αίτησης</p></div>
-	 			  <div [hidden]="currentUrl !== '/submited-preview'" class="col-sm-12"><p class="crumb" > Υποβληθείσες αιτήσεις</p></div>
+          <div [hidden]="currentUrl !== '/epal-class-select'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Επιλογή Τάξης </p></div>
+    			<div [hidden]="currentUrl !== '/sector-fields-select'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Επιλογή Τoμέα</p></div>
+    			<div [hidden]="currentUrl !== '/region-schools-select'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Επιλογή Σχολείου ανα Περιφερειακή Διεύθυνση</p></div>
+    			<div [hidden]="currentUrl !== '/sectorcourses-fields-select'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Επιλογή Ειδικότητας ανα τoμέα</p></div>
+    			<div [hidden]="currentUrl !== '/schools-order-select'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Σειρά Προτίμησης Επιλεχθέντων Σχολείων</p></div>
+    			<div [hidden]="currentUrl !== '/student-application-form-main'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Προσωπικά Στοιχεία</p></div>
+	 			  <div [hidden]="currentUrl !== '/application-submit'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Προεπισκόπηση Δήλωσης Προτίμησης</p></div>
+	 			  <div [hidden]="currentUrl !== '/submited-preview'" class="col-sm-12"><p class="crumb" > Υποβληθείσες Δηλώσεις Προτίμησης</p></div>
 
           <div [hidden]="currentUrl !== '/ministry'" class="col-sm-12"><p class="crumb" > Διαχειριστής Υπουργείου Παιδείας -> Σύνδεση</p></div>
 

@@ -198,7 +198,7 @@ import {
         // if (this.studentDataGroup.invalid || this.studentCriteriaGroup.invalid) {
         if (this.studentDataGroup.invalid || this.invalidFormData()) {
             this.modalHeader.next("modal-header-danger");
-            this.modalTitle.next("Η αίτηση δεν είναι πλήρης");
+            this.modalTitle.next("Η δήλωση προτίμησης δεν είναι πλήρης");
             if (this.invalidFormData())
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Το σχολείο τελευταίας φοίτησης πρέπει να αναζητηθεί και να επιλεχθεί από τα αποτελέσματα της αναζήτησης.");
             else
@@ -240,7 +240,7 @@ import {
             return {
                 date: {
                     year: d ? parseInt(d.substr(0,4)) : 0,
-                    month: d ? parseInt(d.substr(6,8)) : 0,
+                    month: d ? parseInt(d.substr(5,7)) : 0,
                     day: d ? parseInt(d.substr(8,10)) : 0
                 }
             };

@@ -94,12 +94,12 @@ class ReportsCreator extends ControllerBase {
 								], Response::HTTP_FORBIDDEN);
 				}
 
-				//υπολογισμός αριθμού αιτήσεων
+				//υπολογισμός αριθμού δηλώσεων
 				$sCon = $this->connection->select('epal_student', 'eStudent')
 																	->fields('eStudent', array('id'));
 				$numTotal = $sCon->countQuery()->execute()->fetchField();
 
-				//υπολογισμός αριθμού αιτήσεων που ικανοποιήθηκαν στην i προτίμηση
+				//υπολογισμός αριθμού δηλώσεων που ικανοποιήθηκαν στην i προτίμηση
 				$numData = array();
 				for ($i=0; $i < 3; $i++)	{
 					$sCon = $this->connection->select('epal_student_class', 'eStudent')
@@ -109,7 +109,7 @@ class ReportsCreator extends ControllerBase {
 					array_push($numData, $sCon->countQuery()->execute()->fetchField());
 				}
 
-				// υπολογισμός αριθμού αιτήσεων που ΔΕΝ ικανοποιήθηκαν
+				// υπολογισμός αριθμού δηλώσεων που ΔΕΝ ικανοποιήθηκαν
 				//Σημείωση: υπολογισμός με queries στη βάση
 				$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																	->fields('eStudent', array('student_id'));
@@ -122,7 +122,7 @@ class ReportsCreator extends ControllerBase {
 																	->condition('eStudent.id', $studentIds, 'NOT IN');
 				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
 
-				//υπολογισμός αριθμού αιτήσεων που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα
+				//υπολογισμός αριθμού δηλώσεων που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα
 				$numInSmallClasses = 0;
 				$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																		->fields('eStudent', array('id'))
@@ -132,7 +132,7 @@ class ReportsCreator extends ControllerBase {
 
 				 $list = array();
 
-				 array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numTotal));
+				 array_push($list,(object) array('name' => "Αριθμός Δηλώσεων Προτίμησης", 'numStudents' => $numTotal));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση", 'numStudents' => $numData[0]));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση", 'numStudents' => $numData[1]));
 				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση", 'numStudents' => $numData[2]));

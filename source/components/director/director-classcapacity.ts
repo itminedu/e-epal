@@ -33,7 +33,7 @@ import {
        επιλέξτε τη νέα δυναμική και πατήστε το σύμβολο <i>ok</i>. Προσοχή! Κανένα τμήμα δεν πρέπει να έχει δυναμική 0.</p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
       <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
-                <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
+                <li class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
                 <div class="row">
                 <div class="col-md-5">
                    <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === null" >{{CapacityPerCourses$.taxi}}&nbsp; <b></b></h5>
@@ -212,7 +212,7 @@ import {
                 error => {
                     std[ind].capacity = oldvalue;
                     this.CapacityPerCourse$.next(std);
-
+                    this.showLoader.next(false);
                     console.log("Error Saving Capacity");
                 },
                 () =>{

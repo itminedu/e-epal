@@ -103,7 +103,7 @@ epal.confirmstudents:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.studentperschool:
-  path: '/epal/studentperschool/{selectId}/{classId}/{limitdown}/{limitup}'
+  path: '/epal/studentperschool/{classId}/{sector}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

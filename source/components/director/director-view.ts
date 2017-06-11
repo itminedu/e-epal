@@ -1,14 +1,18 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Renderer } from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
-import { Observable } from "rxjs/Observable";
-import { Http, Headers, RequestOptions } from '@angular/http';
+import {Observable} from "rxjs/Observable";
+import {Http, Headers, RequestOptions} from '@angular/http';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params } from '@angular/router';
+import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
+import { VALID_CAPACITY_PATTERN} from '../../constants';
+import {maxValue} from '../../constants';
+import {minValue} from '../../constants';
+
 
 import {
     FormBuilder,
@@ -18,59 +22,52 @@ import {
     Validators,
 } from '@angular/forms';
 @Component({
-    selector: 'director-view',
+    selector: 'director-classcapacity',
     template: `
+    <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
-  <form [formGroup]="formGroup">
+    <form [formGroup]="formGroup">
 
+       
+       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας. Κάντε κλίκ σε κάθε τμήμα για να δείτε 
+       τους μαθητές που κατανεμίθηκαν μετά απο ηλεκτρονική δήλωση προτίμησης τους στο σχολείο σας. Προσοχή! κάποια τμήματα τα βλέπετε με κόκκινο χρώμα. Τους μαθητές των 
+       τμημάτων αυτών δεν μπορείτε ακόμα να τους εγγράψετε επισήμως στο σχολείο σας. Εκκρεμμεί η έγκριση λειτουργίας των τμημάτων αυτών. </p>
+      <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
+      <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
+                <li class="list-group-item isclickable" (click)="setActive(i)" 
+                (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)" 
+                [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown" 
+                [class.oddout]="isOdd" [class.evenout]="isEven"  [class.selectedout]="courseActive === i" >
+                    <h5 >{{CoursesPerSchools$.taxi}}&nbsp; <b></b></h5>
+                </li>
 
-      <label for="taxi">Τάξη</label><br/>
-      <div class="form-group">
-            <select #txoption  class="form-control" (change)="verifyclass(txoption)" formControlName="taxi">
-              <option value="1" >Α' Λυκείου</option>
-              <option value="2" >Β' Λυκείου</option>
-              <option value="3" >Γ' Λυκείου</option>
-              <option *ngIf="(selectiontype | async)" value="4" >Δ' Λυκείου</option>
-            </select>
-      </div>
-      <div class="form-group">
-            <select #tmop class="form-control" *ngIf="(selectionBClass | async)" (change)="checkbclass(tmop,txoption)" formControlName="tomeas">
-              <option *ngFor="let SectorSelection$  of StudentSelected$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.sector_id}} </option>
-            </select>
-      </div>
-      <div class="form-group">
-            <select #spop class="form-control" *ngIf="(selectionCClass | async)" (change) ="checkcclass()" formControlName="specialit">
-              <option *ngFor="let SpecialSelection$  of StudentSelectedSpecial$ | async; let i=index" [value] = "SpecialSelection$.id"> {{SpecialSelection$.specialty_id}} </option>
-            </select>
-      </div>
-             <button type="button" class="btn-primary btn-sm pull-right" (click)="findstudent(txoption,1)">
-                Αναζήτηση
-             </button>
-             <br>
-             <br>
-              <div *ngIf="(retrievedStudent | async)">
-                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let i=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable" [class.oddout]="isOdd" [class.evenout]="isEven" (click)="setActiveUser(StudentDetails$.i)"
-                  [class.selectedappout]="userActive === StudentDetails$.i" [class.confirmed]="StudentDetails$.checkstatus === '1'"
-                  [class.notconfirmed]="StudentDetails$.checkstatus === '0'" [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')" style="margin: 0px 2px 0px 2px;">
-                  <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{StudentDetails$.studentsurname}}</div>
-                  <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{StudentDetails$.name}}</div>
+               <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
+                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"  
+                 [class.selectedappout]="StudentActive === j" 
+                 [class.confirmed]="StudentDetails$.checkstatus === '1'"
+                 [class.notconfirmed]="StudentDetails$.checkstatus === '0'" 
+                 [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')"
+                 [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
+                    <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
+                    <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)">{{StudentDetails$.name}}</div>
+                    <div [hidden]="StudentActive !== j" class="col-md-2" style="color: black;"  *ngIf = "opened == true"> <span aria-hidden="true"><i class="fa fa-close"  (click) ="setActiveStudentnew(j)"></i></span>  </div>
 
-                <div style="width: 100%; color: #000000;">
-                    <div [hidden]="userActive !== StudentDetails$.i"  style="margin: 20px 10px 10px 10px;">
+                    <div style="width: 100%; color: #000000;">
+                    <div [hidden]="StudentActive !== j"  style="margin: 20px 10px 10px 10px;">
 
                      <p style="margin-top: 20px; line-height: 2em;"> Παρακαλούμε, αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
 
                      <div class="row" style="margin-bottom: 20px;">
                      <div class="col-md-6">
                       <strong><label>Επιβεβαίωση Εγγραφής:</label> </strong>
-                      <select #cb name="{{StudentDetails$.id}}" (change)="updateCheckedOptions(StudentDetails$.id, cb)" >
+                      <select #cb name="{{StudentDetails$.id}}" >
                           <option value="1" [selected]="StudentDetails$.checkstatus === '1' ">Ναι</option>
                           <option value="2" [selected]="StudentDetails$.checkstatus === '0' ">Όχι</option>
                           <option value="3" [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'"></option>
                       </select>
                       </div>
                       <div class="col-md-6">
-                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(txoption)">
+                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(StudentDetails$.id, cb, j)">
                            Επιβεβαίωση Εγγραφής
                        </button>
                      </div>
@@ -156,391 +153,273 @@ import {
 
                  </div>
                  </div>
-             </div>
-             </div>
-          <br>
-          <br>
-          <div *ngIf="(retrievedStudent | async)">
-         <div class="form-group" class="row">
-          Βρίσκεστε στη σελίδα:
-          <div class="col-1">
-           <input #pageno type="text" class="form-control" placeholder=".col-1" formControlName="pageno">
+
+
+                 </div>
+               </div>
+       </div>
+      </form>
+      </div>
+
+
+  <div id="checksaved" (onHidden)="onHidden('#checksaved')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-warning">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Η επιλογή σας έχει αποθηκευτεί</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#checksaved')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
           </div>
-           απο
-           <div class="col-1">
-           <input #maxpage type="text" class="form-control" placeholder=".col-1" formControlName="maxpage">
-           </div>
-         </div>
+          <div class="modal-body">
+            <p>Η επιλογή σας έχει αποθηκευτεί</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-             <br>
-             <nav aria-label="pagination">
-              <ul class="pagination justify-content-center">
-                <li class="page-item " >
-                  <button class="page-link" (click)="prevpage(txoption)">Προηγούμενη</button>
-                </li>
-                <li class="page-item">
-                  <button class="page-link" (click) ="nextpage(txoption,maxpage) ">Επόμενη</button>
-                </li>
-              </ul>
 
-            </nav>
-            </div>
+<div id="dangermodal" (onHidden)="onHidden('#dangermodal')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Η επιλογή σας δεν έχει αποθηκευτεί</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#dangermodal')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Παρακαλώ προσπαθήστε ξανα!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            </form>
-            </div>
+
+    <div id="emptyselection" (onHidden)="onHidden('#emptyselection')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Δεν υπάρχουν μαθητές</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#emptyselection')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Δεν υπάρχουν μαθητές με δήλωση προτίμησης το συγκεκριμένο τμήμα του σχολείου σας!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
    `
 })
 
-
-@Injectable() export default class DirectorView implements OnInit, OnDestroy {
+@Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
     public formGroup: FormGroup;
-    private StudentSelected$: BehaviorSubject<any>;
-    private StudentSelectedSub: Subscription;
-    private School$: BehaviorSubject<any>;
-    private SchoolSub: Subscription;
+
+    private CoursesPerSchool$: BehaviorSubject<any>;
+    private CoursesPerSchoolSub: Subscription;
     private StudentInfo$: BehaviorSubject<any>;
     private StudentInfoSub: Subscription;
-    private StudentsSize$: BehaviorSubject<any>;
+    private retrievedStudent: BehaviorSubject<boolean>;
     private SavedStudentsSub: Subscription;
     private SavedStudents$: BehaviorSubject<any>;
-    private StudentsSizeSub: Subscription;
-    private StudentSelectedSpecial$: BehaviorSubject<any>;
-    private StudentSelectedSpecialSub: Subscription;
-    private SubmitedDetails$: BehaviorSubject<any>;
-    private SubmitedDetailsSub: Subscription;
-    private retrievedStudent: BehaviorSubject<boolean>;
-    private selectionBClass: BehaviorSubject<boolean>;
+    private courseActive = <number>-1;
+    private StudentActive = <number>-1;
+    private showLoader: BehaviorSubject<boolean>;
+    private School$: BehaviorSubject<any>;
+    private SchoolSub: Subscription;
     private selectiontype: BehaviorSubject<boolean>;
-    private selectionCClass: BehaviorSubject<boolean>;
-    private limitsSub: Subscription;
-    private limits$: BehaviorSubject<any>;
     private SchoolId;
-    private currentclass: Number;
-    private saved: Array<number> = new Array();
-    private limitdown = 0;
-    private limitup = 5;
-    private pageno = 1;
-    public totallimit;
-    private userActive = <number>-1;
-    private type: Number;
-    public tot_pages: number;
+    private opened;
+    
 
-
-    @ViewChild('fileInput') fileInput: ElementRef;
 
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private renderer: Renderer) {
-        this.StudentSelected$ = new BehaviorSubject([{}]);
-        this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-        this.StudentInfo$ = new BehaviorSubject([{}]);
-        this.StudentsSize$ = new BehaviorSubject({});
-        this.SavedStudents$ = new BehaviorSubject({});
-        this.SubmitedDetails$ = new BehaviorSubject([{}]);
-        this.limits$ = new BehaviorSubject([{}]);
-        this.retrievedStudent = new BehaviorSubject(false);
-        this.selectionBClass = new BehaviorSubject(false);
-        this.selectionCClass = new BehaviorSubject(false);
-        //this.outoflimits = new BehaviorSubject(false);
+        private router: Router) {
+
+        this.CoursesPerSchool$ = new BehaviorSubject([{}]);
+        this.showLoader = new BehaviorSubject(false);
         this.School$ = new BehaviorSubject([{}]);
         this.selectiontype = new BehaviorSubject(true);
-
-
+        this.StudentInfo$ = new BehaviorSubject([{}]);
+        this.retrievedStudent = new BehaviorSubject(false);
+        this.SavedStudents$ = new BehaviorSubject({});
+        this.opened = false;
         this.formGroup = this.fb.group({
-            tomeas: ['', []],
-            taxi: ['', []],
-            specialit: ['', []],
-            maxpage: [{ value: '', disabled: true }, []],
-            pageno: [{ value: '', disabled: true }, []],
-        });
+
+             });
+
+    }
+
+
+
+   public showModal(popupMsgId):void {
+        console.log("about to show modal");
+      
+        (<any>$(popupMsgId)).modal('show');
+    }
+
+    public hideModal(popupMsgId):void {
+       
+        (<any>$(popupMsgId)).modal('hide');
+    }
+
+    public onHidden(popupMsgId):void {
 
     }
 
 
     ngOnDestroy() {
-        if (this.StudentSelectedSub)
-            this.StudentSelectedSub.unsubscribe();
-        if (this.StudentSelectedSpecialSub)
-            this.StudentSelectedSpecialSub.unsubscribe();
-        if (this.selectionBClass)
-            this.selectionBClass.unsubscribe();
-        if (this.selectionCClass)
-            this.selectionCClass.unsubscribe();
-        if (this.retrievedStudent)
-            this.retrievedStudent.unsubscribe();
-        if (this.SubmitedDetailsSub)
-            this.SubmitedDetailsSub.unsubscribe();
 
     }
-
 
     ngOnInit() {
+                 (<any>$('#checksaved')).appendTo("body");
+                  (<any>$('#dangermodal')).appendTo("body");
+                  (<any>$('#emptyselection')).appendTo("body");
+                  
+                  this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
+                  this.School$.next(x);
+                  console.log(x[0].type, "schoolid!");
+                   this.SchoolId = x[0].type;
+                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
+                       this.selectiontype.next(false);
+                   }
+
+                  },
+                  error => {
+                      this.School$.next([{}]);
+                      console.log("Error Getting School");
+                  },
+                  () => console.log("Getting School "));
 
 
-        this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-            this.School$.next(x);
-            console.log(x[0].type, "schoolid!");
-            this.SchoolId = x[0].type;
-            if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ') {
-                this.selectiontype.next(false);
-            }
+                  this.showLoader.next(true);
+                  this.CoursesPerSchoolSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+                  this.CoursesPerSchool$.next(x);
+                  this.showLoader.next(false);
 
-        },
+                  },
+                  error => {
+                      this.CoursesPerSchool$.next([{}]);
+                      console.log("Error Getting courses perSchool");
+                      this.showLoader.next(false);
+                  },
+                  () => console.log("Getting School "));
+
+
+
+
+
+    }
+
+
+   findstudent(taxi,sector,special) {
+     this.showLoader.next(true);
+       this.retrievedStudent.next(false);
+      this.StudentInfoSub = this._hds.getStudentPerSchool(taxi,sector,special)
+      .subscribe(data => {
+            this.StudentInfo$.next(data);
+            this.retrievedStudent.next(true);
+            this.showLoader.next(false);
+                },
             error => {
-                this.School$.next([{}]);
-                console.log("Error Getting School");
-            },
-            () => console.log("Getting School "));
-
-
-    }
-
-
-    verifyclass(txop) {
-        this.limitdown = 0;
-        this.limitup = 5;
-        console.log(this.SchoolId, "schoolida");
-        this.pageno = 1;
-        this.retrievedStudent.next(false);
-        if (txop.value === "1") {
-            this.selectionBClass.next(false);
-            this.selectionCClass.next(false);
-
-        }
-        else if (txop.value === "2") {
-            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(data => {
-                this.selectionBClass.next(true);
-                this.selectionCClass.next(false);
-                this.StudentSelected$.next(data);
-
-            },
-                error => {
-                    this.StudentSelected$.next([{}]);
-                    console.log("Error Getting StudentSelectedSpecial");
-                },
-                () => console.log("Getting StudentSelectedSpecial"));
-        }
-        else if (txop.value === "3" || txop.value === "4") {
-            var sectorint = +this.formGroup.value.tomeas;
-            if (this.formGroup.value.tomeas != '') {
-                var sectorint = +this.formGroup.value.tomeas;
-
-                this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(data => {
-                    this.StudentSelectedSpecial$.next(data);
-                },
-                    error => {
-                        this.StudentSelectedSpecial$.next([{}]);
-                        console.log("Error Getting StudentSelectedSpecial");
+               this.StudentInfo$.next([{}]);
+               console.log("Error Getting Students");
+               this.showLoader.next(false);
+               this.showModal("#emptyselection");
                     },
-                    () => console.log("Getting StudentSelectedSpecial"));
-            }
-
-            this.StudentSelectedSub = this._hds.getSectorPerSchool().subscribe(data => {
-                this.StudentSelected$.next(data);
-                this.selectionBClass.next(true);
-                this.selectionCClass.next(true);
-            },
-                error => {
-                    this.StudentSelected$.next([{}]);
-                    console.log("Error Getting StudentSelected");
-                },
-                () => console.log("Getting StudentSelected"));
-        }
-    }
-
-
-    checkbclass(tmop, txop) {
-        console.log(this.SchoolId, "schoolidn");
-        this.pageno = 1;
-        this.retrievedStudent.next(false);
-        var sectorint = +this.formGroup.value.tomeas;
-        console.log(sectorint, "tomeas");
-        if (txop.value === "3" || txop.value === "4") {
-            //            this.StudentSelectedSpecial$ = new BehaviorSubject([{}]);
-            this.StudentSelectedSpecialSub = this._hds.getSpecialityPerSchool(sectorint).subscribe(data => {
-                this.StudentSelectedSpecial$.next(data);
-
-            },
-                error => {
-                    this.StudentSelectedSpecial$.next([{}]);
-                    console.log("Error Getting StudentSelectedSpecial");
-                },
-                () => console.log("Getting StudentSelectedSpecial"));
-        }
-    }
-
-    findstudent(txop, pageno) {
-
-        let sectorint = +this.formGroup.value.tomeas;
-        this.currentclass = +txop.value;
-
-        this.formGroup.get('pageno').setValue(this.pageno);
-        if (this.pageno == 1) {
-
-            console.log("mphkepage = 1");
-            this.StudentsSizeSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, 0, 0)
-                .subscribe(x => {
-                    this.StudentsSize$.next(x);
-                    this.totallimit = x.id;
-
-                    this.limitsSub = this._hds.getlimitsofcourse(this.currentclass).subscribe(data => {
-                        this.limits$.next(data);
-                        console.log(this.totallimit, data[0].limitdown, "oria");
-                        this.tot_pages = Math.floor(x.id / 5);
-                        if (x.id % 5 > 0) {
-                            // this.tot_pages = (x.id - (x.id % 5)) / 5 + 1;
-                            this.tot_pages += 1;
-                        }
-                        console.log(this.tot_pages, "totpages")
-                        if (isNaN(this.tot_pages)) {
-                            this.retrievedStudent.next(false);
-                            this.tot_pages = 0;
-                        }
-                        if ((x.id < parseInt(data[0].limitdown)) || (isNaN(this.tot_pages))) {
-                            console.log("mphkeprwto!")
-                            this.retrievedStudent.next(false);
-                            this.tot_pages = 0;
-                            this.formGroup.get('maxpage').setValue(this.tot_pages);
-                            //this.outoflimits.next(true);
-                        } else {
-                            // this.outoflimits.next(false);
-                            this.formGroup.get('maxpage').setValue(this.tot_pages);
-                            console.log(this.tot_pages, "mazeuw mathites");
-                            this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup)
-                                .subscribe(data => {
-                                    this.StudentInfo$.next(data);
-                                    console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
-                                    this.retrievedStudent.next(true);
-                                },
-                                error => {
-                                    this.StudentInfo$.next([{}]);
-                                    console.log("Error Getting Students");
-                                },
-                                () => console.log("Getting Students")
-                                );
-                        }
-                    },
-                        error => {
-                            this.limits$.next([{}]);
-                            console.log("Error Getting limits");
-                        },
-                        () => console.log("Getting limits")
-                    );
-
-                });
-
-        }
-        else {
-            console.log("eisai edw", this.tot_pages);
-
-
-            if (this.tot_pages == 0) {
-                console.log("mphke1", this.formGroup.value.maxpage, this.tot_pages);
-                this.retrievedStudent.next(false);
-            }
-            else {
-                console.log(this.tot_pages, "mazeuw mathites");
-                this.StudentInfoSub = this._hds.getStudentPerSchool(sectorint, this.currentclass, this.limitdown, this.limitup).subscribe(data => {
-                    this.StudentInfo$.next(data);
-
-                    console.log("tot.pages", this.formGroup.value.maxpage, "max1", this.tot_pages);
-                    this.retrievedStudent.next(true);
-
-                },
-                    error => {
-                        this.StudentInfo$.next([{}]);
-                        console.log("Error Getting Students");
-                    },
-                    () => console.log("Getting Students"));
-            }
-        }
+              () => console.log("Getting Students"));
 
     }
 
-    updateCheckedOptions(id, cbvalue) {
-        let i = 0;
 
-        if (cbvalue.value === '1') {
-            this.saved[i] = id;
-            this.type = 1;
-
-        }
-        else if (cbvalue.value === '2') {
-            this.saved[i] = id;
-            this.type = 2;
-
-            console.log("not confirmed")
-        }
-        else if (cbvalue.value === '3') {
-
-        }
+  setActive(ind) {
+      this.StudentActive = -1;
+      if (this.courseActive == ind)
+      {
+        ind = -1;
+      }
+      this.courseActive = ind;
+      console.log(this.courseActive, ind, "ind");
     }
 
+setActiveStudent(ind)
+{
+      this.opened = true;
+      if (this.StudentActive == ind)
+      {
+        ind = -1;
+      }
+      this.StudentActive = ind;
+      console.log(this.courseActive, ind, "ind");
+}
+
+setActiveStudentnew(ind)
+{
+      this.opened = false;
+      if (this.StudentActive == ind)
+      {
+        ind = -1;
+      }
+      this.StudentActive = ind;
+      console.log(this.courseActive, ind, "ind");
+}
 
 
-    confirmStudent(txop) {
 
-        this.SavedStudentsSub = this._hds.saveConfirmStudents(this.saved, this.type).subscribe(data => {
+  confirmStudent(student, cb, ind) {
+      var rtype;
+        if (cb.value == 1)
+          rtype = '1';
+        if (cb.value == 2)
+          rtype = '0';
+        if (cb.value == 3)
+          rtype = null;
+        var type = cb.value;
+        console.log(type, "aaa");
+        this.showLoader.next(true);
+
+          let std = this.StudentInfo$.getValue();
+          std[ind].checkstatus = rtype;
+
+        this.SavedStudentsSub = this._hds.saveConfirmStudents(student, type).subscribe(data => {
             this.SavedStudents$.next(data);
+            this.StudentInfo$.next(std);
+            this.showLoader.next(false);
 
         },
             error => {
                 this.SavedStudents$.next([{}]);
                 console.log("Error saving Students");
+                this.showLoader.next(false);
+                this.showModal("#dangermodal");
             },
             () => {
                 console.log("saved Students");
-                this.findstudent(txop, this.pageno);
-            });
+                this.showModal("#checksaved");
+               });
 
 
 
     }
-
-    checkcclass() {
-        this.pageno = 1;
-        this.retrievedStudent.next(false);
-    }
-
-    nextpage(txop, maxpage) {
-        console.log(maxpage.value);
-        if (this.pageno < maxpage.value) {
-            this.pageno = this.pageno + 1;
-            this.limitdown = (this.pageno - 1) * 5;
-            this.limitup = this.pageno * 5;
-            this.findstudent(txop, this.pageno)
-        }
-    }
-
-    prevpage(txop) {
-        console.log(this.pageno, "pageno");
-        if (this.pageno > 1) {
-            this.pageno = this.pageno - 1;
-            this.limitdown = (this.pageno - 1) * 5;
-            this.limitup = this.pageno * 5;
-            this.findstudent(txop, this.pageno)
-        }
-
-    }
-
-
-
-    setActiveUser(ind) {
-        ind = +ind;
-        console.log(this.userActive, "RA", ind);
-        if (ind === this.userActive) {
-            ind = -1;
-        }
-        ind--;
-        this.userActive = ind + 1;
-
-
-    }
-
-
+ 
 }

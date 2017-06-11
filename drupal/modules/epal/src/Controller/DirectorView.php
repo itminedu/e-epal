@@ -159,77 +159,84 @@ class DirectorView extends ControllerBase
         }
     }
 
-    public function getStudentPerSchool(Request $request, $selectId, $classId, $limitdown, $limitup)
+    public function getStudentPerSchool(Request $request, $classId, $sector, $specialit)
     {
         try {
-            $authToken = $request->headers->get('PHP_AUTH_USER');
+        $authToken = $request->headers->get('PHP_AUTH_USER');
 
-            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-            $user = reset($users);
-            if ($user) {
-                $epalId = $user->init->value;
-                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $epalId));
-                $school = reset($schools);
-                if (!$school) {
-                    $this->logger->warning('no access to this school='.$user->id());
-                    return $this->respondWithStatus([
-                        "message" => "No access to this school"
-                    ], Response::HTTP_FORBIDDEN);
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if ($user) 
+        {
+            $epalId = $user->init->value;
+            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $epalId));
+            $school = reset($schools);
+            if (!$school)
+            {
+                $this->logger->warning('no access to this school='.$user->id());
+                $response = new Response();
+                $response->setContent('No access to this school');
+                $response->setStatusCode(Response::HTTP_FORBIDDEN);
+                $response->headers->set('Content-Type', 'application/json');
+
+                return $response;
+            }
+
+            $userRoles = $user->getRoles();
+            $userRole = '';
+            foreach ($userRoles as $tmpRole)
+            {
+                if ($tmpRole === 'epal')
+                {
+                    $userRole = $tmpRole;
                 }
-
-                $userRoles = $user->getRoles();
-                $userRole = '';
-                foreach ($userRoles as $tmpRole) {
-                    if ($tmpRole === 'epal') {
-                        $userRole = $tmpRole;
-                    }
-                }
-                if ($userRole === '') {
-                    return $this->respondWithStatus([
-                        'error_code' => 4003,
-                    ], Response::HTTP_FORBIDDEN);
-                } elseif ($userRole === 'epal') {
-                    if ($classId == 1) {
-                        $selectId = -1;
-                    }
-                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $epalId, 'specialization_id' => $selectId, 'currentclass' => $classId));
-
-                    if ($studentPerSchool) {
-                        $list = array();
-                        if ($limitdown == $limitup && $limitup == 0) {
-                            $list = array(
-                                'id' => sizeof($studentPerSchool),
-                                'up' => $limitup,
-                                'down' => $limitdown,
-                            );
-                        } else {
-                            $i = 0;
-                            foreach ($studentPerSchool as $object) {
-                                $studentId = $object->id();
-                                $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $studentId));
-                                $epalStudent = reset($epalStudents);
-
-                                if ($epalStudent) {
+            }
+            if ($userRole === '') 
+            {
+                return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+            }
+            elseif ($userRole === 'epal')
+            {
+                    $selectIdNew = $selectId;
+                    if ($classId == 1) 
+                        $selectIdNew = -1;
+                    elseif ($classId == 2)
+                        $selectIdNew = $sector;
+                    else
+                        $selectIdNew = $specialit;
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId));
+            }
+            $i = 0;
+            if ($studentPerSchool)
+            {
+                $list = array();
+                foreach ($studentPerSchool as $object)
+                {
+                            $studentId = $object->id();
+                            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $studentId));
+                            $epalStudent = reset($epalStudents);
+                            if ($epalStudents) 
+                            {
                                     $studentIdNew = $epalStudent->id();
                                     $checkstatus = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $studentIdNew));
                                     $checkstudentstatus = reset($checkstatus);
-                                    if ($i >= $limitdown && $i < $limitup) {
-                                        $sectorName = '';
-                                        $courseName = '';
-                                        if ($epalStudent->currentclass->value === '2') {
-                                            $sectors = $this->entityTypeManager->getStorage('epal_student_sector_field')->loadByProperties(array('student_id' => $studentIdNew));
-                                            $sector = reset($sectors);
-                                            if ($sector) {
-                                                $sectorName = $this->entityTypeManager->getStorage('eepal_sectors')->load($sector->sectorfield_id->target_id)->name->value;
-                                            }
-                                        } elseif ($epalStudent->currentclass->value === '3' || $epalStudent->currentclass->value === '4') {
-                                            $courses = $this->entityTypeManager->getStorage('epal_student_course_field')->loadByProperties(array('student_id' => $studentIdNew));
-                                            $course = reset($courses);
-                                            if ($course) {
-                                                $courseName = $this->entityTypeManager->getStorage('eepal_specialty')->load($course->coursefield_id->target_id)->name->value;
-                                            }
-                                        }
-                                        $newstatus = $checkstudentstatus->directorconfirm->value;
+                                    $sectorName = '';
+                                    $courseName = '';
+                                    if ($epalStudent->currentclass->value === '2') {
+                                        $sectors = $this->entityTypeManager->getStorage('epal_student_sector_field')->loadByProperties(array('student_id' => $studentIdNew));
+                                        $sector = reset($sectors);
+                                        if ($sector)
+                                            $sectorName = $this->entityTypeManager->getStorage('eepal_sectors')->load($sector->sectorfield_id->target_id)->name->value;
+                                    }
+                                    else if ($epalStudent->currentclass->value === '3' || $epalStudent->currentclass->value === '4') {
+                                        $courses = $this->entityTypeManager->getStorage('epal_student_course_field')->loadByProperties(array('student_id' => $studentIdNew));
+                                        $course = reset($courses);
+                                        if ($course)
+                                            $courseName = $this->entityTypeManager->getStorage('eepal_specialty')->load($course->coursefield_id->target_id)->name->value;
+                                    }
+
 
                                         $crypt = new Crypt();
                                         try {
@@ -247,20 +254,7 @@ class DirectorView extends ControllerBase
                                             $guardian_surname_decoded = $crypt->decrypt($epalStudent->guardian_surname->value);
                                             $guardian_fathername_decoded = $crypt->decrypt($epalStudent->guardian_fathername->value);
                                             $guardian_mothername_decoded = $crypt->decrypt($epalStudent->guardian_mothername->value);
-                                            // $name_decoded = $epalStudent->name->value;
-                                            // $studentsurname_decoded = $epalStudent->studentsurname->value;
-                                            // $fatherfirstname_decoded = $epalStudent->fatherfirstname->value;
-                                            // $motherfirstname_decoded = $epalStudent->motherfirstname->value;
-                                            // $regionaddress_decoded = $epalStudent->regionaddress->value;
-                                            // $regiontk_decoded = $epalStudent->regiontk->value;
-                                            // $regionarea_decoded = $epalStudent->regionarea->value;
-                                            // $certificatetype_decoded = $epalStudent->certificatetype->value;
-                                            // $relationtostudent_decoded = $epalStudent->relationtostudent->value;
-                                            // $telnum_decoded = $epalStudent->telnum->value;
-                                            // $guardian_name_decoded = $epalStudent->guardian_name->value;
-                                            // $guardian_surname_decoded = $epalStudent->guardian_surname->value;
-                                            // $guardian_fathername_decoded = $epalStudent->guardian_fathername->value;
-                                            // $guardian_mothername_decoded = $epalStudent->guardian_mothername->value;
+                                           
                                         } catch (\Exception $e) {
                                             $this->logger->warning(__METHOD__ . ' Decrypt error: ' . $e->getMessage());
                                             return $this->respondWithStatus([
@@ -268,82 +262,62 @@ class DirectorView extends ControllerBase
                                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
                                         }
 
-                                        $list[] = array(
-                                            'i' => $i,
-                                            'id' => $epalStudent->id(),
-                                            'name' => $name_decoded,
-                                            'studentsurname' => $studentsurname_decoded,
-                                            'fatherfirstname' => $fatherfirstname_decoded,
-                                            'fathersurname' => $epalStudent->fathersurname->value,
-                                            'motherfirstname' => $motherfirstname_decoded,
-                                            'mothersurname' => $epalStudent->mothersurname->value,
-                                            'guardian_name' => $guardian_name_decoded,
-                                            'guardian_surname' => $guardian_surname_decoded,
-                                            'guardian_fathername' => $guardian_fathername_decoded,
-                                            'guardian_mothername' => $guardian_mothername_decoded,
-                                            'lastschool_schoolname' => $epalStudent->lastschool_schoolname->value,
-                                            'lastschool_schoolyear' => $epalStudent->lastschool_schoolyear->value,
-                                            'lastschool_class' => $epalStudent->currentclass->value,
-                                            'currentclass' => $epalStudent->currentclass->value,
-                                            'currentsector' => $sectorName,
-                                            'currentcourse' => $courseName,
-                                            'regionaddress' => $regionaddress_decoded,
-                                            'regiontk' => $regiontk_decoded,
-                                            'regionarea' => $regionarea_decoded,
-                                            'certificatetype' => $certificatetype_decoded,
-                                            'graduation_year' => $epalStudent->graduation_year->value,
-                                            'telnum' => $telnum_decoded,
-                                            'relationtostudent' => $relationtostudent_decoded,
-                                            //'birthdate' => substr($epalStudent->birthdate->value, 8, 10) . '/' . substr($epalStudent->birthdate->value, 6, 8) . '/' . substr($epalStudent->birthdate->value, 0, 4),
-                                            'birthdate' => date("d-m-Y", strtotime($epalStudent->birthdate->value)),
-                                            'checkstatus' => $newstatus[0][value],
-                                            'created' => date('d/m/Y H:i', $epalStudent->created->value)
-                                        );
-                                    }
-                                    ++$i;
+
+                                    $list[] = array(
+                                    'id' => $epalStudent->id(),
+                                    'name' => $name_decoded,
+                                    'studentsurname' => $studentsurname_decoded,
+                                    'fatherfirstname' => $fatherfirstname_decoded,
+                                    'motherfirstname' => $motherfirstname_decoded,
+                                    'guardian_name' => $guardian_name_decoded,
+                                    'guardian_surname' => $guardian_surname_decoded,
+                                    'guardian_fathername' => $guardian_fathername_decoded,
+                                    'guardian_mothername' => $guardian_mothername_decoded,
+                                    'lastschool_schoolname' => $epalStudent->lastschool_schoolname->value,
+                                    'lastschool_schoolyear' => $epalStudent->lastschool_schoolyear->value,
+                                    'lastschool_class' => $epalStudent->lastschool_class->value,
+                                    'currentclass' =>$epalStudent -> currentclass ->value,
+                                    'currentsector' =>$sectorName,
+                                    'currentcourse' =>$courseName,
+                                    'regionaddress' => $regionaddress_decoded,
+                                    'regiontk' => $regiontk_decoded,
+                                    'regionarea' => $regionarea_decoded,
+                                    'certificatetype' => $certificatetype_decoded,
+                                    'graduation_year' => $epalStudent->graduation_year->value,
+                                    'telnum' => $telnum_decoded,
+                                    'relationtostudent' => $relationtostudent_decoded,
+                                    //'birthdate' => substr($epalStudent->birthdate->value, 8, 10) . '/' . substr($epalStudent->birthdate->value, 6, 8) . '/' . substr($epalStudent->birthdate->value, 0, 4),
+                                    'birthdate' => date("d-m-Y", strtotime($epalStudent->birthdate->value)),
+                                    'checkstatus' => $checkstudentstatus -> directorconfirm ->value,
+                                    'created' => date('d/m/Y H:i', $epalStudent -> created ->value),
+                                    );
                                 }
-                            }
-                        }
-
-                        return $this->respondWithStatus(
-                            $list, Response::HTTP_OK);
-                    } else {
-                        if ($limitdown == $limitup && $limitup == 0) {
-                            $list = [
-                                'id' => sizeof($studentPerSchool),
-                                'up' => $limitup,
-                                'down' => $limitdown,
-                            ];
-                        } else {
-                            $list = [];
-                        }
-
-                        return $this->respondWithStatus($list, Response::HTTP_OK);
-                    }
-                } else {
-                    if ($limitdown == $limitup && $limitup == 0) {
-                        $list = [
-                            'id' => sizeof($studentPerSchool),
-                            'up' => $limitup,
-                            'down' => $limitdown,
-                        ];
-                    } else {
-                        $list = [];
-                    }
-
-                    return $this->respondWithStatus($list, Response::HTTP_OK);
+                                ++$i;
                 }
-            } else {
-                return $this->respondWithStatus([
-                    'message' => t('User not found!'),
+                return $this->respondWithStatus(
+                     $list, Response::HTTP_OK);
+            }
+            else
+            {
+               return $this->respondWithStatus([
+                    'message' => t('Students not found!'),
                 ], Response::HTTP_FORBIDDEN);
             }
-        } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+        }
+         else 
+        {
             return $this->respondWithStatus([
+                    'message' => t('User not found!'),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+    catch (\Exception $e)
+    {
+        $this->logger->warning($e->getMessage());
+        return $this->respondWithStatus([
                 'message' => t('Unexpected Error'),
             ], Response::HTTP_FORBIDDEN);
-        }
+    }
     }
 
     public function ConfirmStudents(Request $request)
@@ -376,28 +350,53 @@ class DirectorView extends ControllerBase
                     $postData = json_decode($content);
                     $arr = $postData->students;
                     $type = $postData->type;
-
-                    foreach ($arr as $value) {
-                        $valnew = intval($value);
+                    $valnew = intval($arr);
+                    $typen = intval($type);
                         $studentForConfirm = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('id' => $valnew));
                         $studentConfirm = reset($studentForConfirm);
                         if ($studentConfirm) {
-                            if ($type == 1) {
-                                $studentConfirm->set('directorconfirm', true);
+                            if ($typen === 1) {
+                                $studentConfirm->set('directorconfirm', 1);
+                                $studentConfirm->save();
+                                return $this->respondWithStatus([
+                                 'message' => t('saved')
+                            ,
+                            ], Response::HTTP_OK);
                             }
-                            if ($type == 2) {
-                                $studentConfirm->set('directorconfirm', false);
+                            elseif ($typen === 2) {
+                                $studentConfirm->set('directorconfirm', 0);
+                                $studentConfirm->save();
+                                return $this->respondWithStatus([
+                            'message' => t('saved')
+                            ,
+                            ], Response::HTTP_OK);
                             }
-                            if ($type == 3) {
+                            elseif ($typen === 3) {
                                 unset($studentConfirm->{directorconfirm});
+                                $studentConfirm->save();
+                                return $this->respondWithStatus([
+                            'message' => t('saved')
+                            ,
+                            ], Response::HTTP_OK);
                             }
-                            $studentConfirm->save();
-                        }
-                    }
+                            else
+                                 {
+                            return $this->respondWithStatus([
+                            'message' => t('Bad request'),
+                            ], Response::HTTP_FORBIDDEN);
+                            }
 
-                    return $this->respondWithStatus([
-                    'message' => t('saved'),
-                    ], Response::HTTP_OK);
+                            
+                        }
+                        else
+                        {
+                            return $this->respondWithStatus([
+                            'message' => t('Student not found'),
+                        ], Response::HTTP_FORBIDDEN);
+                        }
+                    
+
+                    
                 }
             } else {
                 return $this->respondWithStatus([
@@ -1027,6 +1026,7 @@ class DirectorView extends ControllerBase
 
                 return $response;
             }
+            $operation_shift = $school -> operation_shift -> value;
             $userRoles = $user->getRoles();
             $userRole = '';
             foreach ($userRoles as $tmpRole) {
@@ -1039,11 +1039,19 @@ class DirectorView extends ControllerBase
                              'error_code' => 4003,
                          ], Response::HTTP_FORBIDDEN);
             } elseif ($userRole === 'epal') {
+                $categ = $school->metathesis_region->value;
                 $list = array();
                 $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid));
                 $classcapacity = reset($CapacityPerClass);
 
                 if ($classcapacity) {
+                $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 1, 'category' => $categ));
+                $limitdown = reset($limit_down);
+                if ($limitdown) {
+                    $limit = $limitdown->limit_down->value;
+                }
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
+
                     $list[] = array(
                         'class' => 1,
                         'newsector' => 0,
@@ -1051,13 +1059,22 @@ class DirectorView extends ControllerBase
                         'taxi' => 'Ά Λυκείου',
                         'capacity' => $classcapacity->capacity_class_a->value,
                         'globalindex' => $i,
+                        'limitdown' => $limit,
+                        'size' => sizeof($studentPerSchool),
                        );
                 }
                 ++$i;
                 $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid));
                 if ($CourseB) {
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 2, 'category' => $categ));
+                    $limitdown = reset($limit_down);
+                    if ($limitdown) {
+                        $limit = $limitdown->limit_down->value;
+                    }
+
                     foreach ($CourseB as $object) {
                         $sectorid = $object->sector_id->entity->id();
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $sectorid));
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
@@ -1068,6 +1085,8 @@ class DirectorView extends ControllerBase
                                 'taxi' => 'Β Λυκείου  '.$object->sector_id->entity->get('name')->value,
                                 'capacity' => $classcapacity->capacity_class_sector->value,
                                 'globalindex' => $i,
+                                'limitdown' => $limit,
+                                'size' => sizeof($studentPerSchool),
                                 );
                         }
                         ++$i;
@@ -1075,8 +1094,15 @@ class DirectorView extends ControllerBase
                 }
                 $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid));
                 if ($CourseC) {
-                    foreach ($CourseC as $object) {
+                    $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 3, 'category' => $categ));
+                        $limitdown = reset($limit_down);
+                        if ($limitdown) {
+                            $limit = $limitdown->limit_down->value;
+                        }
+                        foreach ($CourseC as $object) {
+                        
                         $specialityid = $object->specialty_id->entity->id();
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
@@ -1087,15 +1113,24 @@ class DirectorView extends ControllerBase
                                     'taxi' => 'Γ Λυκείου  '.$object->specialty_id->entity->get('name')->value,
                                     'capacity' => $classcapacity->capacity_class_specialty->value,
                                     'globalindex' => $i,
+                                    'limitdown' => $limit,
+                                    'size' => sizeof($studentPerSchool),
                             );
                         }
                         ++$i;
                     }
                 }
 
-                if ($CourseC) {
+                if ($CourseC && $operation_shift != 'ΗΜΕΡΗΣΙΟ') {
+                        $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 4, 'category' => $categ));
+                        $limitdown = reset($limit_down);
+                        if ($limitdown) {
+                            $limit = $limitdown->limit_down->value;
+                        }
                     foreach ($CourseC as $object) {
+                        
                         $specialityid = $object->specialty_id->entity->id();
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
@@ -1106,6 +1141,8 @@ class DirectorView extends ControllerBase
                                     'taxi' => 'Δ Λυκείου  '.$object->specialty_id->entity->get('name')->value,
                                     'capacity' => $classcapacity->capacity_class_specialty_d->value,
                                     'globalindex' => $i,
+                                    'limitdown' => $limit,
+                                    'size' => sizeof($studentPerSchool),
 
                                     );
                         }

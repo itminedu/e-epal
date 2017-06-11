@@ -22,7 +22,7 @@ class DirectorView extends ControllerBase
         EntityTypeManagerInterface $entityTypeManager,
         LoggerChannelFactoryInterface $loggerChannel
     ) {
-    
+
         $this->entityTypeManager = $entityTypeManager;
         $this->logger = $loggerChannel->get('epal-school');
     }
@@ -163,6 +163,19 @@ class DirectorView extends ControllerBase
     {
         try {
             $authToken = $request->headers->get('PHP_AUTH_USER');
+
+            $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+                return $this->respondWithStatus([
+                        "error_code" => 3001
+                    ], Response::HTTP_FORBIDDEN);
+            }
+            if ($epalConfig->lock_students->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
 
             $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
             $user = reset($users);
@@ -419,6 +432,19 @@ class DirectorView extends ControllerBase
                 ], Response::HTTP_METHOD_NOT_ALLOWED);
         }
         $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+        $epalConfig = reset($epalConfigs);
+        if (!$epalConfig) {
+            return $this->respondWithStatus([
+                    "error_code" => 3001
+                ], Response::HTTP_FORBIDDEN);
+        }
+        if ($epalConfig->lock_capacity->value) {
+            return $this->respondWithStatus([
+                    "error_code" => 3002
+                ], Response::HTTP_FORBIDDEN);
+        }
 
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);

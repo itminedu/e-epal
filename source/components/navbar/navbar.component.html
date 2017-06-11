@@ -17,12 +17,12 @@
              <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες δηλώσεις</b></a>
          </li>
       </div>
-      <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+      <div *ngIf="(loginInfo$ | async).size > 0 && !(lockStudents | async)" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
      <li *ngIf="authRole=='director'" class="nav-item" >
            <a class="nav-link" [routerLink]="['/school/director-view']" [routerLinkActive]="['active']"><b>Δηλώσεις Μαθητών στο ΕΠΑΛ</b></a>
      </li>
      </div>
-      <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+      <div *ngIf="(loginInfo$ | async).size > 0 && !(lockCapacity | async)" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
          <li *ngIf="authRole=='director'" class="nav-item" >
              <a class="nav-link" [routerLink]="['/school/director-classcapacity']" [routerLinkActive]="['active']"><b>Δυναμική Σχολείου</b></a>
         </li>

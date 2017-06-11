@@ -38,6 +38,7 @@ import InformStudents from '../components/minister/minister-informstudents';
 import MinisterSettings from '../components/minister/minister-settings';
 import SchoolAuthGuard from '../guards/school.auth.guard';
 import SchoolStudentsLockedGuard from '../guards/school.students.locked.guard';
+import SchoolCapacityLockedGuard from '../guards/school.capacity.locked.guard';
 import StudentAuthGuard from '../guards/student.auth.guard';
 import StudentLockGuard from '../guards/student.lock.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
@@ -72,7 +73,7 @@ export const MainRoutes: Routes = [
   { path: 'post-submit', component: AfterSubmit, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard, SchoolStudentsLockedGuard] },
   { path: 'school/director-buttons', component: DirectorButtons, canActivate: [SchoolAuthGuard]  },
-  { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard] },
+  { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard, SchoolCapacityLockedGuard] },
   { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [MinistryAuthGuard]  },

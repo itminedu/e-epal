@@ -286,7 +286,7 @@ class ApplicationSubmit extends ControllerBase
         // - check certification if last passed class is gym
         // - check promotion if last passed class is not gym
 
-        $check_certification = true;
+/*        $check_certification = true;
         $check_promotion = true;
         if (intval($student['lastschool_unittypeid']) == self::UNIT_TYPE_GYM) {
             $check_promotion = false;
@@ -335,7 +335,7 @@ class ApplicationSubmit extends ControllerBase
                 $pass = false;
                 $error_code = 8000;
             }
-        }
+        } */
 
         return $error_code;
     }

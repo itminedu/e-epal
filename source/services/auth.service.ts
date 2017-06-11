@@ -96,4 +96,30 @@ export class AuthService {
         });
     }
 
+    isCapacityLocked(role) {
+        return new Promise((resolve, reject) => {
+            this._ngRedux.select(state => {
+                return state.loginInfo;
+            }).subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        if ((loginInfoToken.lock_capacity && loginInfoToken.lock_capacity === 1 && loginInfoToken.auth_role === role)) {
+                            resolve(true);
+                        }
+                        else {
+                            resolve(false);
+                        }
+                        return loginInfoToken;
+                    }, {});
+                } else
+                    resolve(false);
+            },
+                error => {
+                    console.log("Error Getting Auth Data");
+                    reject("Error Getting Auth Data");
+                },
+                () => console.log("Getting Auth Data"));
+        });
+    }
+
 }

@@ -44,6 +44,31 @@ class SubmitedApplications extends ControllerBase
         );
     }
 
+    public function deleteApplication(Request $request) {
+
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+            $userid = $epalUser->id();
+
+            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
+            $epalStudent = reset($epalStudents);
+            if ($epalStudent) {
+
+            } else {
+                return $this->respondWithStatus([
+                    'message' => t('EPAL user not found'),
+                ], Response::HTTP_FORBIDDEN);
+            }
+        } else {
+            return $this->respondWithStatus([
+                'message' => t('User not found'),
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+    }
+
     public function getSubmittedApplications(Request $request)
     {
         $authToken = $request->headers->get('PHP_AUTH_USER');

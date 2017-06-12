@@ -154,6 +154,31 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
+    deleteApplication(appId) {
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        //        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/application/delete`, { applicationId: appId }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(<any>data);
+                },
+                error => {
+                    console.log("Error Removing Application");
+                    reject("Error Removing Application");
+                },
+                () => console.log("Removing Application"));
+        });
+    }
+
     getCourseFields() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {

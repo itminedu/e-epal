@@ -29,7 +29,8 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
               <div *ngIf="(SubmitedApplic$ | async).length > 0" class="row list-group-item" style="margin: 0px 2px 0px 2px; background-color: #ccc;">
                   <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επώνυμο</div>
-                  <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Όνομα</div>
+                  <div class="col-md-5" style="font-size: 1em; font-weight: bold;">Όνομα</div>
+                  <div class="col-md-1" style="font-size: 1em; font-weight: bold;">&nbsp;</div>
               </div>
 
               <div *ngIf="(SubmitedApplic$ | async).length > 0">
@@ -40,7 +41,8 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                [class.selectedappout]="userActive === UserData$.id"
                *ngFor="let UserData$  of SubmitedApplic$ | async; let i=index; let isOdd=odd; let isEven=even"  >
                     <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.studentsurname}}</div>
-                    <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{UserData$.name}}</div>
+                    <div class="col-md-5" style="font-size: 0.8em; font-weight: bold;">{{UserData$.name}}</div>
+                    <div class="col-md-1" style="font-size: 1em; font-weight: bold;"><i class="fa fa-trash isclickable" (click)="deleteApplication(UserData$.id)"></i></div>
 
                     <div style="width: 100%">
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== userActive" style="margin: 10px 10px 10px 10px;">
@@ -273,6 +275,10 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
     createPdfServerSide() {
         //this._hds.createPdfServerSide(this.authToken, this.role, this.userActive +1 );
         this._hds.createPdfServerSide(this.userActive + 1);
+
+    }
+
+    deleteApplication(appId: number) : void {
 
     }
 

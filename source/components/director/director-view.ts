@@ -242,10 +242,6 @@ import {
     private courseActive = <number>-1;
     private StudentActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
-    private School$: BehaviorSubject<any>;
-    private SchoolSub: Subscription;
-    private selectiontype: BehaviorSubject<boolean>;
-    private SchoolId;
     private opened;
     
 
@@ -257,8 +253,6 @@ import {
 
         this.CoursesPerSchool$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
-        this.School$ = new BehaviorSubject([{}]);
-        this.selectiontype = new BehaviorSubject(true);
         this.StudentInfo$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.SavedStudents$ = new BehaviorSubject({});
@@ -295,25 +289,8 @@ import {
                  (<any>$('#checksaved')).appendTo("body");
                   (<any>$('#dangermodal')).appendTo("body");
                   (<any>$('#emptyselection')).appendTo("body");
-                  
-                  this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].type, "schoolid!");
-                   this.SchoolId = x[0].type;
-                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
-                       this.selectiontype.next(false);
-                   }
-
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
-
-
                   this.showLoader.next(true);
-                  this.CoursesPerSchoolSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+                  this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
                   this.CoursesPerSchool$.next(x);
                   this.showLoader.next(false);
 

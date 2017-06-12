@@ -19,30 +19,32 @@ import {
 @Component({
     selector: 'eduadmin-view',
     template: `
-            <h4> Αριθμός Μαθητών ανα τμήμα σχολείου!!! </h4>
-            <div class = "loading" *ngIf="(SchoolsPerPerf$ | async).size === 0">
+      <div class = "loading" *ngIf="(showLoader | async) === true"></div>
+      <div style="min-height: 500px;">
+        <form [formGroup]="formGroup">
+         <p style="margin-top: 20px; line-height: 2em;">Στην παρακάτω λίστα βλέπετε τα σχολεία ευθύνης σας.
+         </p>
+            <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα. </b>
             </div>
-            <ul class="list-group main-view">
-              <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
-                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
-                     <h5> {{SchoolNames$.name}}</h5>
-                  </li>
-                <div class = "loading" *ngIf="(CoursesPerPerf$ | async).size === 0">
+                <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
+                      <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)"
+                       [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd"
+                        [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
+                            <div class="col-md-12" style="font-size: 0.8em; font-weight: bold;" >{{SchoolNames$.name}}</div>
+                      </li>
+                    
+                      <div class = "row" *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even"  
+                       [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)"
+                       [class.selectedappout]="regionActive === j"  
+                       [hidden]="SchoolNames$.id !== regionActive" style="margin: 0px 2px 0px 2px;">
+                          <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;" >{{CoursesNames$.name}}</div>
+                          <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;" >{{CoursesNames$.size}}</div>
+                       </div>
+              
+                    
                 </div>
-                 <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" [hidden]="SchoolNames$.id !== regionActive" >
-                    <div> {{CoursesNames$.name}}</div> <div class= "aastyle"><strong>Αριθμός Μαθητών:</strong>{{CoursesNames$.size}} </div>
-
-                 </div>
-             </div>
-
-             </ul>
-
-             <div class="col-md-6">
-                <button type="button" class="btn-primary btn-lg pull-right" (click)="navigateToApplication()" >
-                <i class="fa fa-forward"></i>
-                </button>
-            </div>
-
+        </form>
+     </div>
 
    `
 })
@@ -58,6 +60,7 @@ import {
     private CoursesPerPerfSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
+    private showLoader: BehaviorSubject<boolean>;
     public perfecture ;
     private regionActive = <number>-1;
     private School$: BehaviorSubject<any>;
@@ -74,6 +77,7 @@ import {
         this.CoursesPerPerf$ = new BehaviorSubject([{}]);
         this.StudentsSize$ = new BehaviorSubject({});
         this.School$ = new BehaviorSubject([{}]);
+        this.showLoader = new BehaviorSubject(false);
         this.formGroup = this.fb.group({
         });
 
@@ -84,12 +88,11 @@ import {
 
     ngOnInit() {
 
-      this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].id, "perfectureID");
-                   this.perfecture = x[0].id;
+                
+                   this.showLoader.next(true);
                    this.SchoolPerPerfSub = this._hds.getSchools().subscribe(data => {
                        this.SchoolsPerPerf$.next(data);
+                       this.showLoader.next(false);
                    },
                        error => {
                            this.SchoolsPerPerf$.next([{}]);
@@ -97,45 +100,13 @@ import {
                        },
                        () => console.log("Getting Schools"));
 
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
+                 
 
 
 
     }
 
 
-     setActiveRegion(ind) {
-
-      if (ind === this.regionActive)
-        ind = -1;
-
-      this.regionActive = ind;
-      this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
-            this.CoursesPerPerf$.next(data);
-        },
-            error => {
-                this.CoursesPerPerf$.next([{}]);
-                console.log("Error Getting Courses");
-            },
-            () => console.log("Getting Courses Per Perf"));
-
-
-
-    }
-
-
-    navigateToApplication()
-    {
-
-     var id: string= String(this.regionActive);
-     this.router.navigate(['', {ids:id}]);
-
-    }
 
     calccolor(size, limit)
     {
@@ -145,5 +116,36 @@ import {
       else
         return false;
     }
+
+
+
+
+    setActiveRegion(ind) {
+      console.log(ind, this.regionActive,"ind");
+      if (ind === this.regionActive){
+        ind = -1;
+        this.regionActive = ind; 
+      }
+      
+    else
+      {
+       this.regionActive = ind; 
+      this.showLoader.next(true);
+      this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
+            this.CoursesPerPerf$.next(data);
+            this.showLoader.next(false);
+        },
+            error => {
+                this.CoursesPerPerf$.next([{}]);
+                console.log("Error Getting Courses");
+                this.showLoader.next(false);
+            },
+            () => console.log("Getting Courses Per Perf"));
+      }
+      this.regionActive = ind;  
+
+
+    }
+
 
 }

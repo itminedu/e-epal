@@ -78,22 +78,6 @@ epal.allocation:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
     _user_is_logged_in: 'TRUE'
-epal.sectorperschool:
-  path: '/epal/sectorperschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSectorsPerSchool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.specialityperschool:
-  path: '/epal/specialityperschool/{sectorId}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSpecialPerSchool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
 epal.confirmstudents:
   path: '/epal/confirmstudent'
   options:
@@ -237,45 +221,13 @@ epal.coursesperschools:
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
-    _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE' 
 epal.critirioschosen:
   path: '/epal/critiriachosen/{studentId}/{type}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.findcapacity:
-  path: '/epal/findcapacity/{taxi}/{tomeas}/{specialit}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.findschoolid:
-  path: '/epal/getschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.gettypeofschool:
-  path: '/epal/gettypeofschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.getlimitspercourse:
-  path: '/epal/getlimitspercourse/{classid}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getlimitsperCourse'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.findcapacityperschool:
@@ -318,3 +270,14 @@ epal.svc.getstudentcertification:
     _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalCertification'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.findcoursesperschool:
+  path: '/epal/findcoursesperschool'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+
+

@@ -272,8 +272,8 @@ import {
 
 
    public showModal(popupMsgId):void {
-        console.log("about to show modal");
-      
+        console.log("about to show modal", popupMsgId);
+        
         (<any>$(popupMsgId)).modal('show');
     }
 

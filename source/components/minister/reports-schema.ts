@@ -24,6 +24,20 @@ export class reportsSchema  {
     }
   };
   */
+  ReportUsersSchema = {
+    actions: false,
+    noDataMessage: 'Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης',
+    columns: {
+      name: {
+        title: 'Περιγραφή',
+        filter: false
+      },
+      numStudents: {
+        title: 'Αριθμός',
+        filter: false
+      }
+    }
+  };
 
 genReportSchema = {
   actions: false,

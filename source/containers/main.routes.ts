@@ -33,6 +33,7 @@ import MinisterView from '../components/minister/minister-view';
 import MinisterReports from '../components/minister/minister-reports';
 import ReportAllStat from '../components/minister/report-all-stat';
 import ReportGeneral from '../components/minister/report-general';
+import ReportUsers from '../components/minister/report-users';
 import ReportNoCapacity from '../components/minister/report-no-capacity';
 import InformStudents from '../components/minister/minister-informstudents';
 import MinisterSettings from '../components/minister/minister-settings';
@@ -75,9 +76,10 @@ export const MainRoutes: Routes = [
   { path: 'school/director-buttons', component: DirectorButtons, canActivate: [SchoolAuthGuard]  },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard, SchoolCapacityLockedGuard] },
   { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
-  { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [MinistryAuthGuard]  },
-  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/minister-reports', component: MinisterReports },
+  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat },
   { path: 'ministry/report-general/:reportId', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-users/:reportId', component: ReportUsers, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-informstudents', component: InformStudents, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-settings', component: MinisterSettings, canActivate: [MinistryAuthGuard] },
@@ -113,6 +115,7 @@ export const MainDeclarations = [
   MinisterReports,
   ReportAllStat,
   ReportGeneral,
+  ReportUsers,
   ReportNoCapacity,
   InformStudents,
   MinisterSettings,

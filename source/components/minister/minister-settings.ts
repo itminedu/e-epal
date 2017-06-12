@@ -96,6 +96,17 @@ import {
           </div>
           <br>
 
+          <div class="row">
+            <div class="col-md-1 ">
+              <input type="checkbox" [checked]="secondPeriodEnabled" formControlName="secondPeriodEnabled"
+              (click)="toggleSecondPeriod()" >
+            </div>
+            <div class="col-md-9">
+              <label for="secondPeriodEnabled">Ενεργοποίηση δεύτερης περιόδου αιτήσεων </label>
+            </div>
+          </div>
+          <br>
+
           <button type="submit" class="btn btn-md pull-right"  (click)="storeSettings()" >
               Εφαρμογή
           </button>
@@ -122,6 +133,7 @@ import {
     private directorViewDisabled: boolean;
     private applicantsLoginDisabled: boolean;
     private applicantsResultsDisabled: boolean;
+    private secondPeriodEnabled: boolean;
     private dataRetrieved: number;
 
     private minedu_userName: string;
@@ -137,6 +149,7 @@ import {
               directorViewDisabled: ['', []],
               applicantsLoginDisabled: ['', []],
               applicantsResultsDisabled: ['', []],
+              secondPeriodEnabled: ['', []],
           });
 
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -214,6 +227,7 @@ import {
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
            this.applicantsLoginDisabled = Boolean(Number(this.settings$.value['applicantsLoginDisabled']));
            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
+           this.secondPeriodEnabled = Boolean(Number(this.settings$.value['secondPeriodEnabled']));
 
            this.dataRetrieved = 1;
          }
@@ -226,7 +240,7 @@ import {
       this.dataRetrieved = -1;
 
       this.settingsSub = this._hds.storeAdminSettings(this.minedu_userName, this.minedu_userPassword,
-              this.capacityDisabled, this.directorViewDisabled, this.applicantsLoginDisabled, this.applicantsResultsDisabled )
+              this.capacityDisabled, this.directorViewDisabled, this.applicantsLoginDisabled, this.applicantsResultsDisabled, this.secondPeriodEnabled )
         .subscribe(data => {
            this.settings$.next(data);
            //this.data = data;
@@ -279,6 +293,12 @@ import {
     toggleApplicantsResults() {
 
       this.applicantsResultsDisabled = !this.applicantsResultsDisabled;
+
+    }
+
+    toggleSecondPeriod() {
+
+      this.secondPeriodEnabled = !this.secondPeriodEnabled;
 
     }
 

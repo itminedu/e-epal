@@ -75,17 +75,33 @@ class PDFCreator extends ControllerBase {
 			 $authToken = $request->headers->get('PHP_AUTH_USER');
 			 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
 			 $user = reset($users);
-			 /*
-			 return $this->respondWithStatus([
-							 'message' => t("User:") . $authToken,
-					 ], Response::HTTP_FORBIDDEN);
-			 */
-
 			 if (!$user) {
 					 return $this->respondWithStatus([
 									 'message' => t("User not found"),
 							 ], Response::HTTP_FORBIDDEN);
 			 }
+
+			 //test
+			 /*
+			return $this->respondWithStatus([
+							'message' => t("User:") . $authToken,
+					], Response::HTTP_FORBIDDEN);
+			*/
+
+			 //New epal-user validation
+			 $authToken = $request->headers->get('PHP_AUTH_USER');
+			 $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+			 $epalUser = reset($epalUsers);
+			 if ($epalUser) {
+					 $userid = $epalUser->id();
+					 $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
+					   if (!$epalStudents) {
+							 return $this->respondWithStatus([
+											'message' => t("EPAL User not found"),
+									], Response::HTTP_FORBIDDEN);
+						 }
+			 }
+			 //end New User validation
 
 			 //user role validation
 
@@ -531,9 +547,8 @@ private function createSchoolChoices($student)	{
 	 $this->pdf->Cell($width, $height, $this->prepareString('Σειρά προτίμησης'), 0, 0,  'L');
 	 $this->pdf->multiCell($width, $height, $this->prepareString('ΕΠΑΛ επιλογής'), 0, 'L');
 
-	 //$this->pdf->Ln();
-	 //$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
 
+	 /*
 	 $epalSchools = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id'=> $student->id->value));
 	 foreach ($epalSchools as $epalSchool)	{
 
@@ -545,26 +560,21 @@ private function createSchoolChoices($student)	{
 
 		 $this->pdf->Cell($width, $height, $this->prepareString($epalSchool->choice_no->value), 0, 0,  'C');
 		 $this->pdf->multiCell(4*width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
-		 //$this->pdf->Ln();
 
+	 }
+	 */
 
+	 for ($i = 0; $i < 3; $i++)	{
+		 $epalSchools = $this->entityTypeManager->getStorage('epal_student_epal_chosen')->loadByProperties(array('student_id'=> $student->id->value, 'choice_no'=> $i+1 ));
+		 if ($epalSchools)	{
+			 $epalSchool = reset($epalSchools);
+			 $epalSchoolNames = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id'=> $epalSchool->epal_id->getString()));
+			 $epalSchoolName = reset($epalSchoolNames);
 
-
-		 //....
-		 /*
-		 $this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
- 		$this->pdf->Cell($width, $height, $this->prepareString('Όνομα μαθητή:'), 0, 'L');
- 		$x=$this->pdf->GetX(); $y=$this->pdf->GetY();
- 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
- 		$this->pdf->multiCell($width, $height, $this->prepareString($student->name->value), 0, 'L');
-
- 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
- 		$this->pdf->SetXY($x+$width,$y);
- 		$this->pdf->Cell($width, $height, $this->prepareString('Επώνυμο μαθητή:'), 0, 'L');
- 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
- 		$this->pdf->multiCell($width, $height, $this->prepareString($student->studentsurname->value), 0, 'L');
-		*/
-
+			 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
+			 $this->pdf->Cell($width, $height, $this->prepareString($epalSchool->choice_no->value), 0, 0,  'C');
+			 $this->pdf->multiCell(4*width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
+		 }
 	 }
 
 }

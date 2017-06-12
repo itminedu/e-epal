@@ -131,6 +131,7 @@ class ApplicationSubmit extends ControllerBase
         				], Response::HTTP_FORBIDDEN);
         		}
 
+          $second_period = $this->retrievePeriod();
 
 			    $student = array(
                 'langcode' => 'el',
@@ -170,7 +171,9 @@ class ApplicationSubmit extends ControllerBase
                 'guardian_mothername' => $guardian_mothername_encoded,
                 'agreement' => $applicationForm[0]['disclaimer_checked'],
                 'relationtostudent' => $relationtostudent_encoded,
-                'telnum' => $telnum_encoded
+                'telnum' => $telnum_encoded,
+
+                'second_period' => $second_period,
                     );
 
             if (($errorCode = $this->validateStudent($student)) > 0) {
@@ -253,12 +256,28 @@ class ApplicationSubmit extends ControllerBase
         return $res;
     }
 
+
+    private function retrievePeriod() {
+
+      $config_storage = $this->entityTypeManager->getStorage('epal_config');
+      $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
+      $epalConfig = reset($epalConfigs);
+      if (!$epalConfig)
+         return 0;
+      else
+         $secondPeriodEnabled = $epalConfig->activate_second_period->getString();
+
+      return $secondPeriodEnabled;
+
+    }
+
     /**
      *
      * @return int error code ελέγχου; 0 εάν ο έλεγχος επιτύχει, μη μηδενικό εάν αποτύχει:
      *  1001 δεν επιλέχθηκε το πλαίσιο συμφωνης γνώμης
      *  1002 λανθασμένο τελευταίο έτος φοίτησης
      *  1003 λανθασμένη ημερομηνία
+     *  1004-> 1023: λανθασμένα πεδία αίτησης
      *  8000 μη αναμενόμενο λάθος
      *  8001 δικτυακό λάθος κλήσης υπηρεσίας επιβεβαίωσης στοιχείων
      *  8002 τα στοιχεία φοίτησης δεν επικυρώθηκαν
@@ -280,6 +299,67 @@ class ApplicationSubmit extends ControllerBase
             return 1003;
         }
         $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
+
+        if (!$student["name"]) {
+            return 1004;
+        }
+        if (!$student["studentsurname"]) {
+            return 1005;
+        }
+        if (!$student["fatherfirstname"]) {
+            return 1006;
+        }
+        if (!$student["motherfirstname"]) {
+            return 1007;
+        }
+        if (!$student["regionaddress"]) {
+            return 1008;
+        }
+        if (!$student["regiontk"]) {
+            return 1009;
+        }
+        if (!$student["regionarea"]) {
+            return 1010;
+        }
+        if (!$student["certificatetype"]) {
+            return 1011;
+        }
+        if (!$student["graduation_year"]) {
+            return 1012;
+        }
+        if (!$student["currentclass"] || ($student["currentclass"] !== "1" && $student["currentclass"] !== "2" && $student["currentclass"] !== "3" && $student["currentclass"] !== "4") ) {
+            return 1013;
+        }
+        if (!$student["relationtostudent"]) {
+            return 1014;
+        }
+        if (!$student["telnum"]) {
+            return 1015;
+        }
+        if (!$student["guardian_name"]) {
+            return 1016;
+        }
+        if (!$student["guardian_surname"]) {
+            return 1017;
+        }
+        if (!$student["guardian_fathername"]) {
+            return 1018;
+        }
+        if (!$student["guardian_mothername"]) {
+            return 1019;
+        }
+        if (!$student["lastschool_registrynumber"]) {
+            return 1020;
+        }
+        if (!$student["lastschool_unittypeid"]) {
+            return 1021;
+        }
+        if (!$student["lastschool_schoolname"]) {
+            return 1022;
+        }
+        if (!$student["lastschool_class"]) {
+            return 1023;
+        }
 
         // check as per specs:
         // - can't check certification prior to 2014, pass through

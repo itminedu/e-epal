@@ -33,7 +33,7 @@ import {
        επιλέξτε τη νέα δυναμική και πατήστε το σύμβολο <i>ok</i>. Προσοχή! Κανένα τμήμα δεν πρέπει να έχει δυναμική 0.</p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
       <div *ngFor="let CapacityPerCourses$  of CapacityPerCourse$ | async; let i=index; let isOdd=odd; let isEven=even" >
-                <li *ngIf="(!(selectiontype | async) && (CapacityPerCourses$.class < 4)) ||((selectiontype | async) && (CapacityPerCourses$.class < 5))" class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
+                <li class="list-group-item " [class.oddout]="isOdd" [class.evenout]="isEven" >
                 <div class="row">
                 <div class="col-md-5">
                    <h5 [class.changelistcolor]= "CapacityPerCourses$.capacity === null" >{{CapacityPerCourses$.taxi}}&nbsp; <b></b></h5>
@@ -67,13 +67,13 @@ import {
     </div>
 
 
-  <div id="checksaved" (onHidden)="onHidden('#checksaved')"
+  <div id="checksaved1" (onHidden)="onHidden('#checksaved1')"
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
             <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Πρέπει να συπληρώσετε σωστά τη δυναμική</h3>
-            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#checksaved')">
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#checksaved1')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
@@ -127,7 +127,7 @@ import {
 
 
    public showModal(popupMsgId):void {
-        console.log("about to show modal");
+        console.log("about to show modal",popupMsgId);
         //(<any>$('#distributionWaitingNotice')).modal('show');
         (<any>$(popupMsgId)).modal('show');
     }
@@ -147,7 +147,7 @@ import {
     }
 
     ngOnInit() {
-                 (<any>$('#checksaved')).appendTo("body");
+                 (<any>$('#checksaved1')).appendTo("body");
                   this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);
                   console.log(x[0].type, "schoolid!");
@@ -195,7 +195,7 @@ import {
          {
           if (this.newvalue <=0 || this.newvalue >10)
           {
-              this.showModal("#checksaved");
+              this.showModal("#checksaved1");
           }
           else
           {
@@ -212,7 +212,7 @@ import {
                 error => {
                     std[ind].capacity = oldvalue;
                     this.CapacityPerCourse$.next(std);
-
+                    this.showLoader.next(false);
                     console.log("Error Saving Capacity");
                 },
                 () =>{
@@ -226,7 +226,7 @@ import {
            else
            {
              if (oldvalue === null)
-             this.showModal("#checksaved");
+             this.showModal("#checksaved1");
            }
         }
 

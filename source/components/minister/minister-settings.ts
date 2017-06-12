@@ -80,7 +80,7 @@ import {
               (click)="toggleApplicantsLogin()" >
             </div>
             <div class="col-md-9">
-              <label for="applicantsLoginDisabled">Απενεργοποίηση δυνατότητας αίτησης μαθητών</label>
+              <label for="applicantsLoginDisabled">Απενεργοποίηση δυνατότητας υποβολής δήλωσης προτίμησης ΕΠΑΛ</label>
             </div>
           </div>
           <br>

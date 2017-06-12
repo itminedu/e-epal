@@ -267,30 +267,19 @@ class InformUnlocatedStudents extends ControllerBase {
 														. " δεν ικανοποιήθηκε. Παρακαλώ επικοινωνήστε άμεσα τηλεφωνικά με τη Διεύθυνση Δευτεροβάθμιας Εκπαίδευσης / Τμήμα Επαγγελματικής Εκπαίδευσης."
  														. "\r\n\r\n Ομάδα Διαχείρισης της εφαρμογής e-epal."
 														. "\r\n Προσοχή: το μήνυμα που διαβάζετε είναι αυτοματοποιημένο. Παρακαλώ μην απαντάτε σε αυτό το μήνυμα.." ;//e-mail body" ;//e-mail body
-																//add new lines with SENDER name  - check it
-				//$params['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ');
-
-				//$this->logger->warning($params['message']);
-
-				//$langcode = $user->getPreferredLangcode();
 				$send = true;
 
 				$mail_sent = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
-				//$mail_sent = 1;
 
 				if ($mail_sent) {
-						//$this->logger->info("Το mail στάλθηκε με επιτυχία");
 						return 1;
 				}
 				else {
-						//$this->logger->info("Αποτυχία αποστολής mail.");
 						return 0;
 				}
 		}
 
 		public function sendMailToLocatedStudents(Request $request) {
-
-			//$msg = "test";
 
 			try {
 				 if (!$request->isMethod('GET')) {

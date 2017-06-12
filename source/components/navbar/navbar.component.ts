@@ -17,6 +17,8 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 @Injectable() export default class NavbarComponent implements OnInit, OnDestroy{
     private authToken: string;
     private authRole: string;
+    private lockCapacity: BehaviorSubject<boolean>;
+    private lockStudents: BehaviorSubject<boolean>;
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
  	public cuser :any;
@@ -26,6 +28,8 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
 
                         this.authToken = '';
                         this.authRole = '';
+                        this.lockCapacity = new BehaviorSubject(true);
+                        this.lockStudents = new BehaviorSubject(true);
                         this.cuName = '';
                         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
@@ -37,6 +41,14 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
+                    if (loginInfoToken.lock_capacity === 1)
+                        this.lockCapacity.next(true);
+                    else
+                        this.lockCapacity.next(false);
+                    if (loginInfoToken.lock_students === 1)
+                        this.lockStudents.next(true);
+                    else
+                        this.lockStudents.next(false);
                     this.cuName = loginInfoToken.cu_name;
                     return loginInfoToken;
                 }, {})

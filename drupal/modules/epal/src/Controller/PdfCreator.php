@@ -174,9 +174,9 @@ class PDFCreator extends ControllerBase {
 	private function createHeader($student)	{
 
 		$this->pdf->SetFont($this->fontBold, '', 16);
-		$this->pdf->MultiCell(0, 8, $this->prepareString('Ηλεκτρονική Αίτηση Εγγραφής Μαθητή σε ΕΠΑΛ'), 0, 'C');
+		$this->pdf->MultiCell(0, 8, $this->prepareString('Ηλεκτρονική Δήλωση Προτίμησης ΕΠΑΛ'), 0, 'C');
 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeHeader);
-		$this->pdf->MultiCell(0, 8, $this->prepareString('με αριθμό αίτησης: ' . $student->id->value . ' / ' .  date('d-m-y (ώρα: H:i:s)',  $student->created->value)), 0, 'C');
+		$this->pdf->MultiCell(0, 8, $this->prepareString('με αριθμό δήλωσης: ' . $student->id->value . ' / ' .  date('d-m-y (ώρα: H:i:s)',  $student->created->value)), 0, 'C');
 		$this->pdf->Ln();
 
 	}
@@ -391,7 +391,7 @@ class PDFCreator extends ControllerBase {
 		$this->pdf->Ln();
 
 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
-		$this->pdf->Cell($width+15, $height, $this->prepareString('Αίτηση από:'), 0, 'L');
+		$this->pdf->Cell($width+15, $height, $this->prepareString('Δήλωση από:'), 0, 'L');
 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		//$this->pdf->Cell($width, $height, $this->prepareString($student->relationtostudent->value), 0, 'L');
 		$this->pdf->Cell($width, $height, $this->prepareString($relationtostudent_decoded), 0, 'L');

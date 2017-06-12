@@ -280,6 +280,26 @@ class EpalConfig extends ContentEntityBase implements EpalConfigInterface {
           ->setDisplayConfigurable('form', TRUE)
           ->setDisplayConfigurable('view', TRUE);
 
+          $fields['activate_second_period'] = BaseFieldDefinition::create('boolean')
+              ->setLabel(t('Activate second periods of applications'))
+              ->setDescription(t('Activate second periods of applications.'))
+              ->setSettings(array(
+                'text_processing' => 0,
+              ))
+              ->setRequired(FALSE)
+              ->setDefaultValue(FALSE)
+              ->setDisplayOptions('view', array(
+                'label' => 'above',
+                'type' => 'boolean',
+                'weight' => -4,
+              ))
+              ->setDisplayOptions('form', array(
+                'type' => 'boolean',
+                'weight' => -4,
+              ))
+              ->setDisplayConfigurable('form', TRUE)
+              ->setDisplayConfigurable('view', TRUE);
+
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Epal config is published.'))

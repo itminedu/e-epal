@@ -1034,6 +1034,26 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
         ->setDisplayConfigurable('form', true)
         ->setDisplayConfigurable('view', true);
 
+      $fields['second_period'] = BaseFieldDefinition::create('boolean')
+        ->setLabel(t('Δεύτερη περίοδος αιτήσεων'))
+        ->setDescription(t('Δεύτερη περίοδος αιτήσεων.'))
+        ->setSettings(array(
+          'text_processing' => 0,
+        ))
+        ->setRequired(false)
+        ->setDefaultValue(false)
+        ->setDisplayOptions('view', array(
+          'label' => 'above',
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayOptions('form', array(
+          'type' => 'boolean',
+          'weight' => -4,
+        ))
+        ->setDisplayConfigurable('form', true)
+        ->setDisplayConfigurable('view', true);
+
       $fields['guardian_name'] = BaseFieldDefinition::create('string')
             ->setLabel(t('Όνομα κηδεμόνα'))
             ->setDescription(t('Δώσε το όνομα κηδεμόνα.'))
@@ -1217,6 +1237,8 @@ class EpalStudent extends ContentEntityBase implements EpalStudentInterface
                                     ))
                                     ->setDisplayConfigurable('form', true)
                                     ->setDisplayConfigurable('view', true);
+
+
 
       $fields['status'] = BaseFieldDefinition::create('boolean')
           ->setLabel(t('Publishing status'))

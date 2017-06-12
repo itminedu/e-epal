@@ -558,10 +558,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
 
-    getStudentPerSchool(SelectId, classId, limitdown, limitup) {
-
-        let SelectIdNew = SelectId.toString();
-
+    getStudentPerSchool(classId, sector, specialit) {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -573,13 +570,14 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperschool/` + SelectIdNew + "/" + classId + "/" + limitdown + "/" + limitup, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/studentperschool/` + classId + "/" + sector + "/" + specialit, options)
             .map(response => response.json());
     }
 
 
 
     saveConfirmStudents(students, type) {
+        console.log(students, type, "confirm");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;

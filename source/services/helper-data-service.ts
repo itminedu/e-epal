@@ -802,7 +802,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             .map(response => response.json());
     }
 
-    storeAdminSettings(username, userpassword, capac, dirview, applogin, appresults) {
+    storeAdminSettings(username, userpassword, capac, dirview, applogin, appresults, secondperiod) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -812,7 +812,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return this.http.get(`${AppSettings.API_ENDPOINT}/ministry/store-settings/` +
-            Number(capac) + "/" + Number(dirview) + "/" + Number(applogin) + "/" + Number(appresults), options)
+            Number(capac) + "/" + Number(dirview) + "/" + Number(applogin) + "/" + Number(appresults) + "/" + Number(secondperiod), options)
             .map(response => response.json());
     }
 

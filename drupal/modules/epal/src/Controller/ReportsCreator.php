@@ -61,6 +61,71 @@ class ReportsCreator extends ControllerBase {
     }
 
 
+
+		public function makeReportUsers(Request $request) {
+
+				try  {
+					if (!$request->isMethod('GET')) {
+						 return $this->respondWithStatus([
+								"message" => t("Method Not Allowed")
+								 ], Response::HTTP_METHOD_NOT_ALLOWED);
+					}
+
+					//user validation
+					$authToken = $request->headers->get('PHP_AUTH_USER');
+					$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+					$user = reset($users);
+					if (!$user) {
+							return $this->respondWithStatus([
+											'message' => t("User not found"),
+									], Response::HTTP_FORBIDDEN);
+					}
+
+					//user role validation
+					$roles = $user->getRoles();
+					$validRole = false;
+					foreach ($roles as $role)
+						if ($role === "ministry") {
+							$validRole = true;
+							break;
+						}
+					if (!$validRole) {
+							return $this->respondWithStatus([
+											'message' => t("User Invalid Role"),
+									], Response::HTTP_FORBIDDEN);
+					}
+
+					//υπολογισμός αριθμού δηλώσεων
+					$sCon = $this->connection->select('epal_student', 'eStudent')
+																		->fields('eStudent', array('id'));
+					$numApplications = $sCon->countQuery()->execute()->fetchField();
+
+					//υπολογισμός αριθμού χρηστών
+					$sCon = $this->connection->select('epal_users', 'eUser')
+																		->fields('eUser', array('id'));
+					$numUsers = $sCon->countQuery()->execute()->fetchField();
+
+					$list = array();
+					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numApplications));
+					array_push($list,(object) array('name' => "Αριθμός Εγγεγραμένων Χρηστών", 'numStudents' => $numUsers));
+
+
+					 return $this->respondWithStatus(
+									 $list
+							 , Response::HTTP_OK);
+				}	 //end try
+
+				catch (\Exception $e) {
+					$this->logger->warning($e->getMessage());
+					return $this->respondWithStatus([
+								"message" => t("An unexpected problem occured during makegGeneralReport Method")
+							], Response::HTTP_INTERNAL_SERVER_ERROR);
+				}
+
+			}
+
+
+
 	public function makegGeneralReport(Request $request) {
 
 			try  {

@@ -134,6 +134,14 @@ epal.ministry.log_out_go:
     _controller: '\Drupal\epal\Controller\MinistryLogin::logoutGo'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.ministry.report_users:
+  path: '/ministry/report-users'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportUsers'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.ministry.general_report:
   path: '/ministry/general-report'
   options:
@@ -207,7 +215,7 @@ epal.ministry.retrievesettings:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.storesettings:
-  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}/{applicantsResultsDisabled}'
+  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}/{applicantsResultsDisabled}/{secondPeriodEnabled}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:

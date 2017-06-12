@@ -642,7 +642,11 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword);
         let options = new RequestOptions({ headers: headers });
 
-        if (routepath == "/ministry/general-report/") {
+        if (routepath == "/ministry/report-users/") {
+            return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath, options)
+                .map(response => response.json());
+        }
+        else if (routepath == "/ministry/general-report/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath, options)
                 .map(response => response.json());
         }

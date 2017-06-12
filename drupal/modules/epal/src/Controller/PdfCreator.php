@@ -75,17 +75,33 @@ class PDFCreator extends ControllerBase {
 			 $authToken = $request->headers->get('PHP_AUTH_USER');
 			 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
 			 $user = reset($users);
-			 /*
-			 return $this->respondWithStatus([
-							 'message' => t("User:") . $authToken,
-					 ], Response::HTTP_FORBIDDEN);
-			 */
-
 			 if (!$user) {
 					 return $this->respondWithStatus([
 									 'message' => t("User not found"),
 							 ], Response::HTTP_FORBIDDEN);
 			 }
+
+			 //test
+			 /*
+			return $this->respondWithStatus([
+							'message' => t("User:") . $authToken,
+					], Response::HTTP_FORBIDDEN);
+			*/
+
+			 //New epal-user validation
+			 $authToken = $request->headers->get('PHP_AUTH_USER');
+			 $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+			 $epalUser = reset($epalUsers);
+			 if ($epalUser) {
+					 $userid = $epalUser->id();
+					 $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
+					   if (!$epalStudents) {
+							 return $this->respondWithStatus([
+											'message' => t("EPAL User not found"),
+									], Response::HTTP_FORBIDDEN);
+						 }
+			 }
+			 //end New User validation
 
 			 //user role validation
 

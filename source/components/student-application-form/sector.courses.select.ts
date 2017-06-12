@@ -22,6 +22,24 @@ import {AppSettings} from '../../app.settings';
 @Component({
     selector: 'sectorcourses-fields-select',
     template: `
+    <div id="sectorCourseNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header {{modalHeader | async}}">
+              <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>{{ modalText | async }}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideModal()">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
              <breadcrumbs></breadcrumbs>
     </div>
@@ -30,7 +48,7 @@ import {AppSettings} from '../../app.settings';
        <h4> Επιλογή Ειδικότητας</h4>
       <form [formGroup]="formGroup">
         <div formArrayName="formArray">
-        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την ειδικότητα που θα παρακολουθήσει ο μαθητής στην Επαγγελματική Εκπαίδευση με βάση τον τομέα που έχει ολοκληρώσει και στη συνέχεια επιλέξτε <i>Συνέχεια</i>.</p>
+        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την ειδικότητα στην οποία θα φοιτήσει ο μαθητής στην Επαγγελματική Εκπαίδευση. Έπειτα επιλέξτε <i>Συνέχεια</i>.</p>
             <ul class="list-group">
             <div *ngFor="let sector$ of sectors$ | async; let i=index; let isOdd=odd; let isEven=even">
                 <li class="list-group-item isclickable" (click)="setActiveSector(i)"  [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="sectorActive === i">
@@ -60,7 +78,7 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToSchools()" (click)="navigateToSchools()" [disabled]="idx === -1" >
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToSchools()" >
                 <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -76,6 +94,10 @@ import {AppSettings} from '../../app.settings';
     private sectorActive = <number>-1;
     private idx = <number>-1;
     private sectorsList: Array<boolean> = new Array();
+    private modalTitle: BehaviorSubject<string>;
+    private modalText: BehaviorSubject<string>;
+    private modalHeader: BehaviorSubject<string>;
+    public isModalShown: BehaviorSubject<boolean>;
 
     constructor(private fb: FormBuilder,
                 private _sca: SectorCoursesActions,
@@ -88,9 +110,14 @@ import {AppSettings} from '../../app.settings';
         this.formGroup = this.fb.group({
             formArray: this.rss
         });
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
+        this.isModalShown = new BehaviorSubject(false);
     };
 
     ngOnInit() {
+        (<any>$('#sectorCourseNotice')).appendTo("body");
         this._sca.getSectorCourses(false);
         let ids = 0;
         this.sectorsSub = this._ngRedux.select(state => {
@@ -118,8 +145,22 @@ import {AppSettings} from '../../app.settings';
     }
 
     ngOnDestroy() {
+        (<any>$('#sectorCourseNotice')).remove();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
         this.sectors$.unsubscribe();
+    }
+
+    public showModal(): void {
+        (<any>$('#sectorCourseNotice')).modal('show');
+    }
+
+    public hideModal(): void {
+        (<any>$('#sectorCourseNotice')).modal('hide');
+
+    }
+
+    public onHidden(): void {
+        this.isModalShown.next(false);
     }
 
     setActiveSector(ind) {
@@ -136,7 +177,14 @@ import {AppSettings} from '../../app.settings';
 
     navigateToSchools() {
 
-        this.router.navigate(['/region-schools-select']);
+        if (this.idx === -1) {
+            this.modalTitle.next("Δεν επιλέχθηκε ειδικότητα");
+            this.modalText.next("Παρακαλούμε να επιλέξετε πρώτα ειδικότητα φοίτησης του μαθητή για το νέο σχολικό έτος");
+            this.modalHeader.next("modal-header-danger");
+            this.showModal();
+        } else {
+            this.router.navigate(['/region-schools-select']);
+        }
     }
 
     updateCheckedOptions(globalIndex, cb){

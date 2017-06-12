@@ -22,7 +22,7 @@ class DirectorView extends ControllerBase
         EntityTypeManagerInterface $entityTypeManager,
         LoggerChannelFactoryInterface $loggerChannel
     ) {
-    
+
         $this->entityTypeManager = $entityTypeManager;
         $this->logger = $loggerChannel->get('epal-school');
     }
@@ -162,25 +162,35 @@ class DirectorView extends ControllerBase
     public function getStudentPerSchool(Request $request, $classId, $sector, $specialit)
     {
         try {
-        $authToken = $request->headers->get('PHP_AUTH_USER');
 
-        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-        $user = reset($users);
-        if ($user) 
-        {
-            $epalId = $user->init->value;
-            $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $epalId));
-            $school = reset($schools);
-            if (!$school)
-            {
-                $this->logger->warning('no access to this school='.$user->id());
-                $response = new Response();
-                $response->setContent('No access to this school');
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json');
+            $authToken = $request->headers->get('PHP_AUTH_USER');
 
-                return $response;
+            $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+                return $this->respondWithStatus([
+                        "error_code" => 3001
+                    ], Response::HTTP_FORBIDDEN);
             }
+            if ($epalConfig->lock_students->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
+
+            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+            $user = reset($users);
+            if ($user) {
+                $epalId = $user->init->value;
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $epalId));
+                $school = reset($schools);
+                if (!$school) {
+                    $this->logger->warning('no access to this school='.$user->id());
+                    return $this->respondWithStatus([
+                        "message" => "No access to this school"
+                    ], Response::HTTP_FORBIDDEN);
+                }
+
 
             $userRoles = $user->getRoles();
             $userRole = '';
@@ -418,6 +428,19 @@ class DirectorView extends ControllerBase
                 ], Response::HTTP_METHOD_NOT_ALLOWED);
         }
         $authToken = $request->headers->get('PHP_AUTH_USER');
+
+        $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+        $epalConfig = reset($epalConfigs);
+        if (!$epalConfig) {
+            return $this->respondWithStatus([
+                    "error_code" => 3001
+                ], Response::HTTP_FORBIDDEN);
+        }
+        if ($epalConfig->lock_capacity->value) {
+            return $this->respondWithStatus([
+                    "error_code" => 3002
+                ], Response::HTTP_FORBIDDEN);
+        }
 
         $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
         $user = reset($users);

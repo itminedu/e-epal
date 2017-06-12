@@ -1,36 +1,44 @@
 <div class="loading" *ngIf="(showLoader$ | async) === true"></div>
 <div id="headerNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header {{modalHeader | async}}">
-        <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header {{modalHeader | async}}">
+                <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
           <span aria-hidden="true"><i class="fa fa-times"></i></span>
         </button>
-      </div>
-      <div class="modal-body">
-        <p>{{ modalText | async }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
-      </div>
+            </div>
+            <div class="modal-body">
+                <p>{{ modalText | async }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <div class="header-wrapper">
-  <header id="navbar" role="banner" class="navbar navbar-default">
-    <div *ngIf="(loginInfo$ | async).size > 0">
-      <ul class="navbar-nav">
-        <div *ngIf="(loginInfo$ | async).cu_name !== ''">
-          <div class="row">
-            <div class="offset-md-8 col-md-4 pull-right">
-              <span class="username">{{ cuName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-              <span class="signout isclickable" (click)="signOut()" style="color:#CC3300;">Αποσύνδεση&nbsp;&nbsp;</span>
-              <i class="fa fa-sign-out isclickable" (click)="signOut()"></i>
+    <header id="navbar" role="banner" class="navbar navbar-default">
+        <div class="container">
+            <div *ngIf="(loginInfo$ | async).size > 0">
+                <ul class="navbar-nav">
+                    <div *ngIf="(loginInfo$ | async).cu_name !== ''">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <i class="fa fa-home isclickable" (click)="goHome()"></i>
+                                <span class="signout isclickable" (click)="goHome()" style="color:#CC3300;">&nbsp;&nbsp;Αρχική</span>
+
+                            </div>
+                            <div class="col-md-6">&nbsp;</div>
+                            <div class="col-md-4" style="text-align: right">
+                                <span class="username" style="text-align: right">{{ cuName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                <span class="signout isclickable" style="text-align: right" (click)="signOut()" style="color:#CC3300;">Αποσύνδεση&nbsp;&nbsp;</span>
+                                <i class="fa fa-sign-out isclickable" style="text-align: right" (click)="signOut()"></i>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
             </div>
-          </div>
         </div>
-      </ul>
-    </div>
-  </header>
+    </header>
 </div>

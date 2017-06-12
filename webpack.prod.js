@@ -7,6 +7,9 @@ const DashboardPlugin = require('webpack-dashboard/plugin');
 const autoprefixer = require('autoprefixer');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
+// const BabiliPlugin = require('babili-webpack-plugin');
+// const ClosureCompilerPlugin = require('webpack-closure-compiler');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   stats: {
@@ -19,14 +22,14 @@ module.exports = {
     vendor: [
       'core-js',
       'reflect-metadata',
-      'zone.js/dist/zone',
       '@angular/platform-browser-dynamic',
       '@angular/core',
       '@angular/common',
       '@angular/router',
       '@angular/http',
       'jquery',
-      'bootstrap-loader'
+      'bootstrap-loader',
+     'zone.js/dist/zone'
   ],
   },
 
@@ -57,8 +60,22 @@ module.exports = {
   },
 
   plugins: [
+/*      new ClosureCompilerPlugin({
+          compiler: {
+            language_in: 'ECMASCRIPT6',
+            language_out: 'ECMASCRIPT5',
+            compilation_level: 'ADVANCED',
+            warning_level: 'VERBOSE',
+          },
+          concurrency: 3,
+      }), */
+      new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production')
+  }),
       new WebpackCleanupPlugin(),
-    new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].bundle.js'),
+      new UglifyJSPlugin({mangle: false}),
+//      new BabiliPlugin(),
+//    new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].bundle.js'),
 //    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new ProvidePlugin({
         jQuery: 'jquery',
@@ -107,13 +124,5 @@ module.exports = {
     ],
     noParse: [ /zone\.js\/dist\/.+/, /angular2\/bundles\/.+/ ]
   },
-
-  devServer: {
-    inline: true,
-    colors: true,
-    contentBase: './dist',
-    publicPath: '/'
-  }
-
 
 }

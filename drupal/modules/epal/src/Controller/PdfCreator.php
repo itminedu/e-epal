@@ -88,7 +88,8 @@ class PDFCreator extends ControllerBase {
 					], Response::HTTP_FORBIDDEN);
 			*/
 
-			 //New epal-user validation
+			 //Epal-user validation
+
 			 $authToken = $request->headers->get('PHP_AUTH_USER');
 			 $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
 			 $epalUser = reset($epalUsers);
@@ -101,7 +102,6 @@ class PDFCreator extends ControllerBase {
 									], Response::HTTP_FORBIDDEN);
 						 }
 			 }
-			 //end New User validation
 
 			 //user role validation
 
@@ -297,7 +297,7 @@ class PDFCreator extends ControllerBase {
 			$studentsurname_decoded = $this->crypt->decrypt($student->studentsurname->value);
 			$fatherfirstname_decoded = $this->crypt->decrypt($student->fatherfirstname->value);
 			$motherfirstname_decoded = $this->crypt->decrypt($student->motherfirstname->value);
-			$certificatetype_decoded = $this->crypt->decrypt($student->certificatetype->value);
+			//$certificatetype_decoded = $this->crypt->decrypt($student->certificatetype->value);
 			$relationtostudent_decoded = $this->crypt->decrypt($student->relationtostudent->value);
 			$telnum_decoded = $this->crypt->decrypt($student->telnum->value);
 		}
@@ -375,18 +375,21 @@ class PDFCreator extends ControllerBase {
 
 		$this->pdf->Ln();
 
+		/*
 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Τύπος απολυτηρίου:'), 0, 'L');
 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
-		//$this->pdf->Cell($width, $height, $this->prepareString($student->certificatetype->value), 0, 'L');
 		$this->pdf->Cell($width, $height, $this->prepareString($certificatetype_decoded), 0, 'L');
 		$this->pdf->Ln();
+		*/
 
+		/*
 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Έτος κτήσης απολυτηρίου:'), 0, 'L');
 		$this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width, $height, $this->prepareString($student->graduation_year->value), 0, 'L');
 		$this->pdf->Ln();
+		*/
 
 		$this->pdf->SetFont($this->fontLight, '', $this->fontSizeRegular);
 		$this->pdf->Cell($width+15, $height, $this->prepareString('Σχολείο τελευταίας φοίτησης:'), 0, 'L');

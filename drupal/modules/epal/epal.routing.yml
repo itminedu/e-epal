@@ -78,6 +78,14 @@ epal.allocation:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.allocation_second:
+  path: '/epal/distribution-secondperiod'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\Distribution::locateSecondPeriodStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.sectorperschool:
   path: '/epal/sectorperschool'
   options:

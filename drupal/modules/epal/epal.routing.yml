@@ -111,7 +111,7 @@ epal.confirmstudents:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.studentperschool:
-  path: '/epal/studentperschool/{selectId}/{classId}/{limitdown}/{limitup}'
+  path: '/epal/studentperschool/{classId}/{sector}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
@@ -254,38 +254,6 @@ epal.critirioschosen:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
   requirements:
     _user_is_logged_in: 'TRUE'
-epal.findcapacity:
-  path: '/epal/findcapacity/{taxi}/{tomeas}/{specialit}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.findschoolid:
-  path: '/epal/getschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.gettypeofschool:
-  path: '/epal/gettypeofschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.getlimitspercourse:
-  path: '/epal/getlimitspercourse/{classid}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getlimitsperCourse'
-  requirements:
-    _user_is_logged_in: 'TRUE'
 epal.findcapacityperschool:
   path: '/epal/findcapacityperschool'
   options:
@@ -324,5 +292,13 @@ epal.svc.getstudentcertification:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalCertification'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.findcoursesperschool:
+  path: '/epal/findcoursesperschool'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'

@@ -101,7 +101,7 @@ class ApplicationSubmit extends ControllerBase
           $regionaddress_encoded = $crypt->encrypt($applicationForm[0]['regionaddress']);
           $regiontk_encoded = $crypt->encrypt($applicationForm[0]['regiontk']);
           $regionarea_encoded = $crypt->encrypt($applicationForm[0]['regionarea']);
-          $certificatetype_encoded = $crypt->encrypt($applicationForm[0]['certificatetype']);
+          //$certificatetype_encoded = $crypt->encrypt($applicationForm[0]['certificatetype']);
           $relationtostudent_encoded = $crypt->encrypt($applicationForm[0]['relationtostudent']);
           $telnum_encoded = $crypt->encrypt($applicationForm[0]['telnum']);
           $guardian_name_encoded = $crypt->encrypt($applicationForm[0]['cu_name']);
@@ -157,8 +157,8 @@ class ApplicationSubmit extends ControllerBase
                 'regionaddress' => $regionaddress_encoded,
                 'regionarea' => $regionarea_encoded,
                 'regiontk' => $regiontk_encoded,
-                'certificatetype' => $certificatetype_encoded,
-        				'graduation_year' => $applicationForm[0]['graduation_year'],
+                //'certificatetype' => $certificatetype_encoded,
+        				//'graduation_year' => $applicationForm[0]['graduation_year'],
                 'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
                 'lastschool_unittypeid' => $applicationForm[0]['lastschool_unittypeid'],
                 'lastschool_schoolname' => $applicationForm[0]['lastschool_schoolname'],
@@ -299,6 +299,8 @@ class ApplicationSubmit extends ControllerBase
             (checkdate($date_parts[1], $date_parts[2], $date_parts[0]) !== true)) {
             return 1003;
         }
+        if (intval($date_parts[0]) >= 2003)
+            return 1003;
         $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
 
         if (!$student["name"]) {
@@ -322,12 +324,14 @@ class ApplicationSubmit extends ControllerBase
         if (!$student["regionarea"]) {
             return 1010;
         }
+        /*
         if (!$student["certificatetype"]) {
             return 1011;
         }
         if (!$student["graduation_year"]) {
             return 1012;
         }
+        */
         if (!$student["currentclass"] || ($student["currentclass"] !== "1" && $student["currentclass"] !== "2" && $student["currentclass"] !== "3" && $student["currentclass"] !== "4") ) {
             return 1013;
         }

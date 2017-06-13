@@ -86,6 +86,14 @@ epal.allocation:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.allocation_second:
+  path: '/epal/distribution-secondperiod'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\Distribution::locateSecondPeriodStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.confirmstudents:
   path: '/epal/confirmstudent'
   options:
@@ -229,7 +237,7 @@ epal.coursesperschools:
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
-    _user_is_logged_in: 'TRUE' 
+    _user_is_logged_in: 'TRUE'
 epal.critirioschosen:
   path: '/epal/critiriachosen/{studentId}/{type}'
   options:
@@ -286,6 +294,3 @@ epal.findcoursesperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-
-
-

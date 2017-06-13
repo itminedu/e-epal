@@ -623,6 +623,29 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
+    makeDistributionSecondPeriod(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword);
+        let options = new RequestOptions({ headers: headers });
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { username: username, userpassword: userpassword }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistributionSecondPeriod");
+                },
+                () => console.log(""));
+        });
+
+    }
+
 
     makeReport(username, userpassword, routepath, regionsel, adminsel, schsel, clsel, secsel, coursel, distribfinal) {
 

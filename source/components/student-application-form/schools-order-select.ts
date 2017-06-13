@@ -17,11 +17,11 @@ import {AppSettings} from '../../app.settings';
     </div>
     <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
     </div>
-
+    <h4> Σειρά προτίμησης</h4>
     <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
     πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας επιστρέφοντας στην προηγούμενη οθόνη από το αριστερό βέλος κάτω αριστερά.</p>
-    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length > 1" >Έχετε επιλέξει {{(selectedSchools$ | async).length}} σχολεία.
-    Καθορίστε εδώ την επιθυμητή σειρά προτίμησης των σχολείων πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
+    <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length > 1" >
+    Σε περίπτωση που έχετε επιλέξει πρισσότερα απο ένα σχολεία, καθορίστε εδώ την επιθυμητη σειρά προτίμησησς πατώντας τα αντίστοιχα βέλη δεξιά από τα ονόματα των σχολείων.
     Αν συμφωνείτε με την υπάρχουσα σειρά προτίμησης, πατήστε <i>Συνέχεια</i>.</p>
 
             <ul class="list-group main-view" style="margin-top: 50px; margin-bottom: 50px;">

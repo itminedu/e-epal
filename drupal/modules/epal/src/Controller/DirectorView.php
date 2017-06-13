@@ -94,7 +94,7 @@ class DirectorView extends ControllerBase
                         $selectIdNew = $sector;
                     else
                         $selectIdNew = $specialit;
-                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId));
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $epalId, 'specialization_id' => $selectIdNew, 'currentclass' => $classId));
             }
             $i = 0;
             if ($studentPerSchool)
@@ -102,7 +102,7 @@ class DirectorView extends ControllerBase
                 $list = array();
                 foreach ($studentPerSchool as $object)
                 {
-                            $studentId = $object->id();
+                            $studentId = intval($object->student_id ->getString());
                             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $studentId));
                             $epalStudent = reset($epalStudents);
                             if ($epalStudents) 
@@ -178,6 +178,7 @@ class DirectorView extends ControllerBase
                                     'birthdate' => date("d-m-Y", strtotime($epalStudent->birthdate->value)),
                                     'checkstatus' => $checkstudentstatus -> directorconfirm ->value,
                                     'created' => date('d/m/Y H:i', $epalStudent -> created ->value),
+
                                     );
                                 }
                                 ++$i;
@@ -508,7 +509,7 @@ class DirectorView extends ControllerBase
                 if ($limitdown) {
                     $limit = $limitdown->limit_down->value;
                 }
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
                 $list = array();
                 foreach ($CourseA as $object) {
                     $list[] = array(
@@ -532,7 +533,7 @@ class DirectorView extends ControllerBase
 
                 foreach ($CourseB as $object) {
                     $sectorid = $object->sector_id->entity->id();
-                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
                     $list[] = array(
                             'id' => $object->sector_id->entity->id(),
                             'name' => 'Β Λυκείου  '.$object->sector_id->entity->get('name')->value,
@@ -554,7 +555,7 @@ class DirectorView extends ControllerBase
 
                 foreach ($CourseC as $object) {
                     $specialityid = $object->specialty_id->entity->id();
-                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
 
                     $list[] = array(
                             'id' => $object->specialty_id->entity->id(),
@@ -598,7 +599,7 @@ class DirectorView extends ControllerBase
             if ($limitdown) {
                 $limit = $limitdown->limit_down->value;
             }
-            $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
+            $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
 
                     //foreach ($CourseA as $object) {
             if (sizeof($studentPerSchool) < $limit) {
@@ -617,7 +618,7 @@ class DirectorView extends ControllerBase
 
             foreach ($CourseB as $object) {
                 $sectorid = $object->sector_id->entity->id();
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
                 if (sizeof($studentPerSchool) < $limit) {
                     return false;
                     exit;
@@ -634,7 +635,7 @@ class DirectorView extends ControllerBase
 
             foreach ($CourseC as $object) {
                 $specialityid = $object->specialty_id->entity->id();
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
 
                 if (sizeof($studentPerSchool) < $limit) {
                     return false;
@@ -820,7 +821,7 @@ class DirectorView extends ControllerBase
                 if ($limitdown) {
                     $limit = $limitdown->limit_down->value;
                 }
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
+                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
 
                     $list[] = array(
                         'class' => 1,
@@ -843,7 +844,7 @@ class DirectorView extends ControllerBase
 
                     foreach ($CourseB as $object) {
                         $sectorid = $object->sector_id->entity->id();
-                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
                         
                        
                             $list[] = array(
@@ -869,7 +870,7 @@ class DirectorView extends ControllerBase
                         foreach ($CourseC as $object) {
                         
                         $specialityid = $object->specialty_id->entity->id();
-                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
                         
                             $list[] = array(
                                 'class' => 3,
@@ -894,7 +895,7 @@ class DirectorView extends ControllerBase
                     foreach ($CourseC as $object) {
                         
                         $specialityid = $object->specialty_id->entity->id();
-                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('currentepal' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
+                        $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
                         
                             $list[] = array(
                                     'class' => 4,

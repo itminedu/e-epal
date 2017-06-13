@@ -43,7 +43,8 @@ import {AppSettings} from '../../app.settings';
     </div>
     <h4> Επιλογή Τάξης </h4>
     <form [formGroup]="formGroup">
-           <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την τάξη στην οποία θα φοιτήσει ο μαθητής στην Επαγγελματική Εκπαίδευση το νέο σχολικό έτος και έπειτα επιλέξτε <i>Συνέχεια</i>.</p>
+           <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε την τάξη φοίτησης του μαθητή
+            στην Επαγγελματική Εκπαίδευση κατά το σχολικό έτος 2017-18 και έπειτα επιλέξτε <i>Συνέχεια</i>.</p>
            <div *ngFor="let epalclass$ of epalclasses$ | async;"> </div>
             <div class="form-group" style= "margin-top: 50px; margin-bottom: 100px;">
               <label for="name"></label><br/>

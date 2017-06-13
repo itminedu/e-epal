@@ -47,7 +47,6 @@ import {
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private schoolyears: string[];
-    private graduationyears: string[];
 
     private rss = new FormArray([]);
 
@@ -85,7 +84,6 @@ import {
                 private router: Router,
                 private http: Http) {
         this.populateSchoolyears();
-        this.populateGraduationyears();
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.modalTitle =  new BehaviorSubject("");
         this.modalText =  new BehaviorSubject("");
@@ -94,31 +92,20 @@ import {
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
         this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
         this.studentDataGroup = this.fb.group({
-//            epaluser_id: [,[]],
-
             name: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentsurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             studentbirthdate: ['', [Validators.required]],
-            //studentbirthdate: ['', [Validators.pattern(VALID_DATE_PATTERN),Validators.required]],
             fatherfirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             motherfirstname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
             regionaddress: ['', [Validators.pattern(VALID_ADDRESS_PATTERN),Validators.required]],
             regiontk: ['', [Validators.pattern(VALID_ADDRESSTK_PATTERN),Validators.required]],
             regionarea: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-            certificatetype: ['', this.checkChoice],
             relationtostudent: ['', this.checkChoice],
             telnum:  ['', [Validators.pattern(VALID_TELEPHONE_PATTERN),Validators.required]],
-            graduation_year: ['', this.checkChoice],
             lastschool_schoolname: ['', [Validators.required]],
             lastschool_schoolyear: ['', this.checkChoice],
             lastschool_class: ['', this.checkChoice],
         });
-
-
-/*        this.studentCriteriaGroup = this.fb.group({
-            formArray: this.rss,
-        }); */
-
     };
 
     ngOnInit() {
@@ -145,8 +132,6 @@ import {
                     this.studentDataGroup.controls['regionaddress'].setValue(studentDataField.regionaddress);
                     this.studentDataGroup.controls['regiontk'].setValue(studentDataField.regiontk);
                     this.studentDataGroup.controls['regionarea'].setValue(studentDataField.regionarea);
-                    this.studentDataGroup.controls['certificatetype'].setValue(studentDataField.certificatetype);
-                    this.studentDataGroup.controls['graduation_year'].setValue(studentDataField.graduation_year);
                     this.studentDataGroup.controls['lastschool_schoolname'].setValue(studentDataField.lastschool_schoolname);
                     this.studentDataGroup.controls['lastschool_schoolyear'].setValue(studentDataField.lastschool_schoolyear);
                     this.studentDataGroup.controls['lastschool_class'].setValue(studentDataField.lastschool_class);
@@ -159,47 +144,28 @@ import {
             return state.studentDataFields;
         }).subscribe(this.studentDataFields$);
 
-
-
-/*        this._sdfb.getCriteria(true);
-        this.criteriaSub = this._ngRedux.select(state => {
-            if (state.criter.size > 0) {
-                state.criter.reduce(({}, criteria) => {
-                    //this.studentCriteriaGroup.setValue(criteria);
-
-                      //if (criteria.selected === true && (criteria.name === "Εισόδημα" ))  {
-                      //  this.selectionIncomeId = Number(criteria.id);
-                      //}
-                      this.rss.push( new FormControl(criteria.selected, []));
-                    return criteria;
-                }, {});
-            }
-            return state.criter;
-        }).subscribe(this.criteria$); */
-
     };
 
     ngOnDestroy() {
         (<any>$('#applicationFormNotice')).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-//        if (this.criteriaSub) this.criteriaSub.unsubscribe();
         if (this.studentDataFields$) this.studentDataFields$.unsubscribe();
-//        if (this.criteria$) this.criteria$.unsubscribe();
         if (this.loginInfo$) this.loginInfo$.unsubscribe();
     }
 
     navigateBack() {
         this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-//        this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
         this.router.navigate(['/schools-order-select']);
     }
 
     submitSelected() {
-        // if (this.studentDataGroup.invalid || this.studentCriteriaGroup.invalid) {
-        if (this.studentDataGroup.invalid || this.invalidFormData()) {
+        let invalidFlag = 0;
+        if (this.studentDataGroup.invalid || (invalidFlag = this.invalidFormData()) > 0) {
             this.modalHeader.next("modal-header-danger");
             this.modalTitle.next("Η δήλωση προτίμησης δεν είναι πλήρης");
-            if (this.invalidFormData())
+            if (invalidFlag === 1 || invalidFlag === 2)
+                this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Η ημερομηνία γέννησης του μαθητή δεν είναι επιτρεπόμενη για μαθητή ΕΠΑΛ.");
+            else if (invalidFlag === 3)
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Το σχολείο τελευταίας φοίτησης πρέπει να αναζητηθεί και να επιλεχθεί από τα αποτελέσματα της αναζήτησης.");
             else
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*)");
@@ -207,17 +173,21 @@ import {
             this.showModal();
         } else {
             this._sdfa.saveStudentDataFields([this.studentDataGroup.value]);
-//            this._sdfb.saveCriteria([this.studentCriteriaGroup.value.formArray]);
             this.router.navigate(['/application-submit']);
         }
     }
 
-    private invalidFormData() : boolean {
+    private invalidFormData() : number {
 
+        let d = this.studentDataGroup.controls['studentbirthdate'].value;
+        if (!d || !d.date || !d.date.year)
+            return 1;
+        else if ((new Date().getFullYear()) - d.date.year < 15)
+            return 2;
         if (!this.studentDataGroup.controls['lastschool_schoolname'].value.registry_no)
-            return true;
+            return 3;
 
-        return false;
+        return 0;
     }
 
     checkcriteria(cb, mutual_disabled) {
@@ -259,14 +229,6 @@ import {
         }
     };
 
-    private populateGraduationyears(): void {
-        let endYear = new Date().getFullYear();
-        this.graduationyears = new Array();
-        for (let i=endYear; i>FIRST_SCHOOL_YEAR; i--) {
-            this.graduationyears.push(i + "");
-        }
-    };
-
     setDate() {
         let date = new Date();
         return { date: {
@@ -297,7 +259,6 @@ import {
     };
 
     lastSchoolValueChanged(e: any): void {
-//        console.log(this.studentDataGroup.controls['lastschool_schoolname'].value);
     };
 
 }

@@ -266,6 +266,7 @@ class ApplicationSubmit extends ControllerBase
      */
     private function validateStudent($student)
     {
+        $error_code = 0;
         if (!$student["agreement"]) {
             return 1001;
         }

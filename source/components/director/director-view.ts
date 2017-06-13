@@ -28,24 +28,24 @@ import {
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
 
-       
-       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας. Κάντε κλίκ σε κάθε τμήμα για να δείτε 
-       τους μαθητές που κατανεμίθηκαν μετά απο ηλεκτρονική δήλωση προτίμησης τους στο σχολείο σας. Προσοχή! κάποια τμήματα τα βλέπετε με κόκκινο χρώμα. Τους μαθητές των 
+
+       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας. Κάντε κλίκ σε κάθε τμήμα για να δείτε
+       τους μαθητές που κατανεμίθηκαν μετά απο ηλεκτρονική δήλωση προτίμησης τους στο σχολείο σας. Προσοχή! κάποια τμήματα τα βλέπετε με κόκκινο χρώμα. Τους μαθητές των
        τμημάτων αυτών δεν μπορείτε ακόμα να τους εγγράψετε επισήμως στο σχολείο σας. Εκκρεμμεί η έγκριση λειτουργίας των τμημάτων αυτών. </p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
-                <li class="list-group-item isclickable" (click)="setActive(i)" 
-                (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)" 
-                [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown" 
+                <li class="list-group-item isclickable" (click)="setActive(i)"
+                (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)"
+                [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown"
                 [class.oddout]="isOdd" [class.evenout]="isEven"  [class.selectedout]="courseActive === i" >
                     <h5 >{{CoursesPerSchools$.taxi}}&nbsp; <b></b></h5>
                 </li>
 
                <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
-                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"  
-                 [class.selectedappout]="StudentActive === j" 
+                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"
+                 [class.selectedappout]="StudentActive === j"
                  [class.confirmed]="StudentDetails$.checkstatus === '1'"
-                 [class.notconfirmed]="StudentDetails$.checkstatus === '0'" 
+                 [class.notconfirmed]="StudentDetails$.checkstatus === '0'"
                  [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')"
                  [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
                     <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
@@ -113,42 +113,37 @@ import {
                        </div>
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
-                           <div class="col-md-3" style="font-size: 0.8em;">Τύπος απολυτηρίου</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.certificatetype}}</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+
                        </div>
 
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-3" style="font-size: 0.8em;">Έτος κτήσης απολυτηρίου</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.graduation_year}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Σχολείο τελευταίας φοίτησης</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
+
                        </div>
 
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
-                       </div>
-
-                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
-                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Α</div>
-                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Β</div>
-                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
+                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
                        </div>
                        <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
-                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
                        </div>
                        <div *ngIf="StudentDetails$.currentclass === '3' || StudentDetails$.currentclass === '4'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
-                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
                        </div>
 
                  </div>
@@ -247,7 +242,7 @@ import {
     private selectiontype: BehaviorSubject<boolean>;
     private SchoolId;
     private opened;
-    
+
 
 
     constructor(private fb: FormBuilder,
@@ -273,12 +268,12 @@ import {
 
    public showModal(popupMsgId):void {
         console.log("about to show modal", popupMsgId);
-        
+
         (<any>$(popupMsgId)).modal('show');
     }
 
     public hideModal(popupMsgId):void {
-       
+
         (<any>$(popupMsgId)).modal('hide');
     }
 
@@ -295,7 +290,7 @@ import {
                  (<any>$('#checksaved')).appendTo("body");
                   (<any>$('#dangermodal')).appendTo("body");
                   (<any>$('#emptyselection')).appendTo("body");
-                  
+
                   this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
                   this.School$.next(x);
                   console.log(x[0].type, "schoolid!");
@@ -421,5 +416,5 @@ setActiveStudentnew(ind)
 
 
     }
- 
+
 }

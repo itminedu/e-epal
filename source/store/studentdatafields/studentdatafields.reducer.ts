@@ -11,7 +11,7 @@ export function studentDataFieldsReducer(state: IStudentDataFields = STUDENT_DAT
 
         action.payload.studentDataFields.forEach(studentDataField => {
             let transformedDate = "";
-            if (studentDataField.studentbirthdate.date) {
+            if (studentDataField.studentbirthdate && studentDataField.studentbirthdate.date) {
                 transformedDate = studentDataField.studentbirthdate.date.year + "-";
                 transformedDate += studentDataField.studentbirthdate.date.month < 10 ? "0" + studentDataField.studentbirthdate.date.month + "-" : studentDataField.studentbirthdate.date.month + "-";
                 transformedDate += studentDataField.studentbirthdate.date.day < 10 ? "0" + studentDataField.studentbirthdate.date.day : studentDataField.studentbirthdate.date.day;

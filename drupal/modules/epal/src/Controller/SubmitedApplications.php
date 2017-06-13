@@ -44,29 +44,84 @@ class SubmitedApplications extends ControllerBase
         );
     }
 
-    public function deleteApplication(Request $request) {
+    public function deleteApplication(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            return $this->respondWithStatus([
+                    "error_code" => 2001
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+
+        $content = $request->getContent();
+
+        $applicationId = 0;
+        if (!empty($content)) {
+            $postArr = json_decode($content, TRUE);
+            $applicationId = $postArr['applicationId'];
+        }
+        else {
+            return $this->respondWithStatus([
+                    "error_code" => 5002
+                ], Response::HTTP_BAD_REQUEST);
+        }
+
 
         $authToken = $request->headers->get('PHP_AUTH_USER');
-        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
-        $epalUser = reset($epalUsers);
-        if ($epalUser) {
-            $userid = $epalUser->id();
+        $transaction = $this->connection->startTransaction();
+        try {
+            $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+            $epalUser = reset($epalUsers);
+            if ($epalUser) {
+                $userid = $epalUser->id();
 
-            $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
-            $epalStudent = reset($epalStudents);
-            if ($epalStudent) {
+                $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid, 'id' => $applicationId));
+                $epalStudent = reset($epalStudents);
 
+
+                if ($epalStudent) {
+                    $epalStudentClasses = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $applicationId));
+                    $epalStudentClass = reset($epalStudentClasses);
+                    if ($epalStudentClass) {
+                        return $this->respondWithStatus([
+                                "error_code" => 3002
+                            ], Response::HTTP_FORBIDDEN);
+                    }
+
+                    $delQuery = $this->connection->delete('epal_student_epal_chosen');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_sector_field');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_course_field');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_class');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $epalStudent->delete();
+                    return $this->respondWithStatus([
+                      'error_code' => 0,
+                  ], Response::HTTP_OK);
+
+                } else {
+                    return $this->respondWithStatus([
+                    'message' => t('EPAL student not found'),
+                ], Response::HTTP_FORBIDDEN);
+                }
             } else {
                 return $this->respondWithStatus([
-                    'message' => t('EPAL user not found'),
+                'message' => t('EPAL user not found'),
                 ], Response::HTTP_FORBIDDEN);
             }
-        } else {
-            return $this->respondWithStatus([
-                'message' => t('User not found'),
-                ], Response::HTTP_FORBIDDEN);
-            }
+        } catch (\Exception $e) {
+            $this->logger->warning($e->getMessage());
+            $transaction->rollback();
 
+            return $this->respondWithStatus([
+                'error_code' => 5001,
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function getSubmittedApplications(Request $request)
@@ -79,13 +134,21 @@ class SubmitedApplications extends ControllerBase
 
             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid));
             $i = 0;
+            $list = array();
             if ($epalStudents) {
                 $crypt = new Crypt();
 
-                $list = array();
-                foreach ($epalStudents as $object) {
-                    $indexid = intval($object->id()) - 1;
 
+                foreach ($epalStudents as $object) {
+                    $canDelete = 0;
+                    $epalStudentClasses = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $object->id()));
+                    $epalStudentClass = reset($epalStudentClasses);
+                    if ($epalStudentClass) {
+                        $canDelete = 0;
+                    }
+                    else {
+                        $canDelete = 1;
+                    }
                     try {
                         $name_decoded = $crypt->decrypt($object->name->value);
                         $studentsurname_decoded = $crypt->decrypt($object->studentsurname->value);
@@ -99,11 +162,12 @@ class SubmitedApplications extends ControllerBase
                     }
 
                     $list[] = array(
-                            'id' => $indexid,
+                            'id' => $object->id(),
                             //'name' => $object -> name ->value,
                             'name' => $name_decoded,
                             //'studentsurname' => $object -> studentsurname ->value);
-                            'studentsurname' => $studentsurname_decoded, );
+                            'studentsurname' => $studentsurname_decoded,
+                            'candelete' => $canDelete, );
                     ++$i;
                 }
 
@@ -112,9 +176,8 @@ class SubmitedApplications extends ControllerBase
                 return $this->respondWithStatus(
                         $list, Response::HTTP_OK);
             } else {
-                return $this->respondWithStatus([
-                    'message' => t('EPAL user not found'),
-                ], Response::HTTP_FORBIDDEN);
+                return $this->respondWithStatus(
+                        $list, Response::HTTP_OK);
             }
         } else {
             return $this->respondWithStatus([

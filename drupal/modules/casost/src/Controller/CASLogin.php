@@ -188,9 +188,11 @@ class CASLogin extends ControllerBase
 
 
             phpCAS::trace($umdobject);
-            phpCAS::trace($physicaldeliveryofficename);
-            $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
+//            phpCAS::trace($physicaldeliveryofficename);
+    //        $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
             $gsnunitcode = substr($gsnunitcodedn, strpos($gsnunitcodedn, ";") + 1);
+    //        $gsnunitcode = $filterAttribute('edupersonorgunitdn:gsnunitcode');
+            phpCAS::trace("$gsnunitcode=");
             phpCAS::trace($gsnunitcode);
 
 /* check if myschool account */

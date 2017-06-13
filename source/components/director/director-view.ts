@@ -29,9 +29,9 @@ import {
     <form [formGroup]="formGroup">
 
        
-       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας. Κάντε κλίκ σε κάθε τμήμα για να δείτε 
-       τους μαθητές που κατανεμίθηκαν μετά απο ηλεκτρονική δήλωση προτίμησης τους στο σχολείο σας. Προσοχή! κάποια τμήματα τα βλέπετε με κόκκινο χρώμα. Τους μαθητές των 
-       τμημάτων αυτών δεν μπορείτε ακόμα να τους εγγράψετε επισήμως στο σχολείο σας. Εκκρεμμεί η έγκριση λειτουργίας των τμημάτων αυτών. </p>
+       <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
+       <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
+
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li class="list-group-item isclickable" (click)="setActive(i)" 

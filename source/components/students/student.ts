@@ -10,7 +10,6 @@ export class Student {
         public regionaddress: string,
         public regiontk: string,
         public regionarea: string,
-        public certificatetype: string,
         public relationtostudent: string,
         public studentamka: string,
         public currentclass: string,

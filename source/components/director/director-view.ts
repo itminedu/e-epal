@@ -28,24 +28,23 @@ import {
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
 
-       
        <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
 
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
-                <li class="list-group-item isclickable" (click)="setActive(i)" 
-                (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)" 
-                [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown" 
+                <li class="list-group-item isclickable" (click)="setActive(i)"
+                (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)"
+                [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown"
                 [class.oddout]="isOdd" [class.evenout]="isEven"  [class.selectedout]="courseActive === i" >
                     <h5 >{{CoursesPerSchools$.taxi}}&nbsp; <b></b></h5>
                 </li>
 
                <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
-                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"  
-                 [class.selectedappout]="StudentActive === j" 
+                 <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"
+                 [class.selectedappout]="StudentActive === j"
                  [class.confirmed]="StudentDetails$.checkstatus === '1'"
-                 [class.notconfirmed]="StudentDetails$.checkstatus === '0'" 
+                 [class.notconfirmed]="StudentDetails$.checkstatus === '0'"
                  [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')"
                  [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
                     <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
@@ -113,42 +112,37 @@ import {
                        </div>
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
-                           <div class="col-md-3" style="font-size: 0.8em;">Τύπος απολυτηρίου</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.certificatetype}}</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+
                        </div>
 
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-3" style="font-size: 0.8em;">Έτος κτήσης απολυτηρίου</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.graduation_year}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Σχολείο τελευταίας φοίτησης</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
+
                        </div>
 
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
-                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
                            <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
-                       </div>
-
-                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
-                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Α</div>
-                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Β</div>
-                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-6" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
+                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
                        </div>
                        <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
-                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
                        </div>
                        <div *ngIf="StudentDetails$.currentclass === '3' || StudentDetails$.currentclass === '4'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                           <div class="col-md-6" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
-                           <div class="col-md-6" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Ειδικότητα φοίτησης για το νέο σχολικό έτος</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentcourse}}</div>
                        </div>
 
                  </div>
@@ -243,7 +237,7 @@ import {
     private StudentActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
     private opened;
-    
+
 
 
     constructor(private fb: FormBuilder,
@@ -259,24 +253,24 @@ import {
         this.opened = false;
         this.formGroup = this.fb.group({
 
-             });
+        });
 
     }
 
 
 
-   public showModal(popupMsgId):void {
+    public showModal(popupMsgId): void {
         console.log("about to show modal", popupMsgId);
-        
+
         (<any>$(popupMsgId)).modal('show');
     }
 
-    public hideModal(popupMsgId):void {
-       
+    public hideModal(popupMsgId): void {
+
         (<any>$(popupMsgId)).modal('hide');
     }
 
-    public onHidden(popupMsgId):void {
+    public onHidden(popupMsgId): void {
 
     }
 
@@ -286,97 +280,88 @@ import {
     }
 
     ngOnInit() {
-                 (<any>$('#checksaved')).appendTo("body");
-                  (<any>$('#dangermodal')).appendTo("body");
-                  (<any>$('#emptyselection')).appendTo("body");
-                  this.showLoader.next(true);
-                  this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
-                  this.CoursesPerSchool$.next(x);
-                  this.showLoader.next(false);
-
-                  },
-                  error => {
-                      this.CoursesPerSchool$.next([{}]);
-                      console.log("Error Getting courses perSchool");
-                      this.showLoader.next(false);
-                  },
-                  () => console.log("Getting School "));
-
-
-
-
-
-    }
-
-
-   findstudent(taxi,sector,special) {
-     this.showLoader.next(true);
-       this.retrievedStudent.next(false);
-      this.StudentInfoSub = this._hds.getStudentPerSchool(taxi,sector,special)
-      .subscribe(data => {
-            this.StudentInfo$.next(data);
-            this.retrievedStudent.next(true);
+        (<any>$('#checksaved')).appendTo("body");
+        (<any>$('#dangermodal')).appendTo("body");
+        (<any>$('#emptyselection')).appendTo("body");
+        this.showLoader.next(true);
+        this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
+            this.CoursesPerSchool$.next(x);
             this.showLoader.next(false);
-                },
+
+        },
             error => {
-               this.StudentInfo$.next([{}]);
-               console.log("Error Getting Students");
-               this.showLoader.next(false);
-               this.showModal("#emptyselection");
-                    },
-              () => console.log("Getting Students"));
+                this.CoursesPerSchool$.next([{}]);
+                console.log("Error Getting courses perSchool");
+                this.showLoader.next(false);
+            },
+            () => console.log("Getting School "));
 
     }
 
 
-  setActive(ind) {
-      this.StudentActive = -1;
-      if (this.courseActive == ind)
-      {
-        ind = -1;
-      }
-      this.courseActive = ind;
-      console.log(this.courseActive, ind, "ind");
+    findstudent(taxi, sector, special) {
+        this.showLoader.next(true);
+        this.retrievedStudent.next(false);
+        this.StudentInfoSub = this._hds.getStudentPerSchool(taxi, sector, special)
+            .subscribe(data => {
+                this.StudentInfo$.next(data);
+                this.retrievedStudent.next(true);
+                this.showLoader.next(false);
+            },
+            error => {
+                this.StudentInfo$.next([{}]);
+                console.log("Error Getting Students");
+                this.showLoader.next(false);
+                this.showModal("#emptyselection");
+            },
+            () => console.log("Getting Students"));
+
     }
 
-setActiveStudent(ind)
-{
-      this.opened = true;
-      if (this.StudentActive == ind)
-      {
-        ind = -1;
-      }
-      this.StudentActive = ind;
-      console.log(this.courseActive, ind, "ind");
-}
 
-setActiveStudentnew(ind)
-{
-      this.opened = false;
-      if (this.StudentActive == ind)
-      {
-        ind = -1;
-      }
-      this.StudentActive = ind;
-      console.log(this.courseActive, ind, "ind");
-}
+    setActive(ind) {
+        this.StudentActive = -1;
+        if (this.courseActive == ind) {
+            ind = -1;
+        }
+        this.courseActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
+
+    setActiveStudent(ind) {
+        this.opened = true;
+        if (this.StudentActive == ind) {
+            ind = -1;
+        }
+        this.StudentActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
+
+    setActiveStudentnew(ind) {
+        this.opened = false;
+        if (this.StudentActive == ind) {
+            ind = -1;
+        }
+        this.StudentActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
 
 
 
-  confirmStudent(student, cb, ind) {
-      var rtype;
+    confirmStudent(student, cb, ind) {
+        var rtype;
         if (cb.value == 1)
-          rtype = '1';
+            rtype = '1';
         if (cb.value == 2)
-          rtype = '0';
+            rtype = '0';
         if (cb.value == 3)
-          rtype = null;
+            rtype = null;
         var type = cb.value;
         console.log(type, "aaa");
         this.showLoader.next(true);
 
-          let std = this.StudentInfo$.getValue();
-          std[ind].checkstatus = rtype;
+        let std = this.StudentInfo$.getValue();
+        std[ind].checkstatus = rtype;
 
         this.SavedStudentsSub = this._hds.saveConfirmStudents(student, type).subscribe(data => {
             this.SavedStudents$.next(data);
@@ -393,10 +378,8 @@ setActiveStudentnew(ind)
             () => {
                 console.log("saved Students");
                 this.showModal("#checksaved");
-               });
-
-
+            });
 
     }
- 
+
 }

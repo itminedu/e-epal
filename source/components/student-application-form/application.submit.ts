@@ -88,8 +88,6 @@ import { HelperDataService } from '../../services/helper-data-service';
         <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
         <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
 
-        <div><label for="certificatetype">Τύπος απολυτηρίου</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.certificatetype}} </p></div>
-        <div><label for="graduation_year">Έτος κτήσης απολυτηρίου</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.graduation_year}} </p></div>
         <div><label for="lastschool_schoolname">Σχολείο τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolname.name}} </p></div>
         <div><label for="lastschool_schoolyear">Σχολικό έτος τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolyear}} </p></div>
 
@@ -284,14 +282,14 @@ import { HelperDataService } from '../../services/helper-data-service';
         aitisiObj[0].regionaddress = std.regionaddress;
         aitisiObj[0].regionarea = std.regionarea;
         aitisiObj[0].regiontk = std.regiontk;
-        aitisiObj[0].certificatetype = std.certificatetype;
+        aitisiObj[0].certificatetype = '';
         //          aitisiObj[0].graduation_year = std.graduation_year;
         //          aitisiObj[0].lastschool_registrynumber = std.lastschool_registrynumber;
         //          aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
         //          aitisiObj[0].lastschool_class = std.lastschool_class;
         //          aitisiObj[0].currentepal = std.currentepal;
 
-        aitisiObj[0].graduation_year = std.graduation_year;
+        aitisiObj[0].graduation_year = 0;
         aitisiObj[0].lastschool_registrynumber = std.lastschool_schoolname.registry_no;
         aitisiObj[0].lastschool_schoolname = std.lastschool_schoolname.name;
         aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;

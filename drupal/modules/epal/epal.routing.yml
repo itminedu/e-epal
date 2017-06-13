@@ -46,6 +46,14 @@ epal.submitedapplications:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.application_delete:
+  path: '/epal/application/delete'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::deleteApplication'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.studentapplication:
   path: '/epal/student/{studentId}'
   options:

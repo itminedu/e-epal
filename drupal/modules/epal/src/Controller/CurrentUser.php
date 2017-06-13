@@ -291,18 +291,27 @@ class CurrentUser extends ControllerBase
                 $epalUser->set('mothername', $postData->userProfile->userMothername);
                 $epalUser->set('fathername', $postData->userProfile->userFathername);
                 $epalUser->save();
+                $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
+                if ($user) {
+                    $user->set('mail', $postData->userProfile->userEmail);
+                    $user->save();
+                } else {
+                    return $this->respondWithStatus([
+                        'error_code' => '1001',
+                    ], Response::HTTP_FORBIDDEN);
+                }
                 return $this->respondWithStatus([
-                    'message' => t("profile saved"),
+                    'error_code' => '0',
                 ], Response::HTTP_OK);
             } else {
                 return $this->respondWithStatus([
-                    'message' => t("post with no data"),
+                    'error_code' => '1002',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
         } else {
             return $this->respondWithStatus([
-                    'message' => t("EPAL user not found"),
+                    'error_code' => '1003',
                 ], Response::HTTP_FORBIDDEN);
         }
     }

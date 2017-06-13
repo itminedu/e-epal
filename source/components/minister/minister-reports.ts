@@ -61,6 +61,13 @@ import { API_ENDPOINT } from '../../app.settings';
           <br><br>
         </div>
         -->
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(0)"  >
+          <i class="fa fa-file-text"></i>
+              Αριθμός Αιτήσεων / Εγγεγραμμένων Χρηστών
+          </button>
+          <br><br>
+        </div>
 
         <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)"  >
@@ -167,6 +174,8 @@ import { API_ENDPOINT } from '../../app.settings';
 
     nav_to_reportpath(repId) {
 
+      if (repId == 0)
+        this.router.navigate(['/ministry/report-users', repId]);
       if (repId == 1)
         this.router.navigate(['/ministry/report-general', repId]);
       else if (repId == 2 || repId == 3 || repId == 5)

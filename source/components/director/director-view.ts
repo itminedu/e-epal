@@ -28,10 +28,9 @@ import {
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
 
+       <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
+       <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
 
-       <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας. Κάντε κλίκ σε κάθε τμήμα για να δείτε
-       τους μαθητές που κατανεμίθηκαν μετά απο ηλεκτρονική δήλωση προτίμησης τους στο σχολείο σας. Προσοχή! κάποια τμήματα τα βλέπετε με κόκκινο χρώμα. Τους μαθητές των
-       τμημάτων αυτών δεν μπορείτε ακόμα να τους εγγράψετε επισήμως στο σχολείο σας. Εκκρεμμεί η έγκριση λειτουργίας των τμημάτων αυτών. </p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li class="list-group-item isclickable" (click)="setActive(i)"
@@ -237,10 +236,6 @@ import {
     private courseActive = <number>-1;
     private StudentActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
-    private School$: BehaviorSubject<any>;
-    private SchoolSub: Subscription;
-    private selectiontype: BehaviorSubject<boolean>;
-    private SchoolId;
     private opened;
 
 
@@ -252,32 +247,30 @@ import {
 
         this.CoursesPerSchool$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
-        this.School$ = new BehaviorSubject([{}]);
-        this.selectiontype = new BehaviorSubject(true);
         this.StudentInfo$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.SavedStudents$ = new BehaviorSubject({});
         this.opened = false;
         this.formGroup = this.fb.group({
 
-             });
+        });
 
     }
 
 
 
-   public showModal(popupMsgId):void {
+    public showModal(popupMsgId): void {
         console.log("about to show modal", popupMsgId);
 
         (<any>$(popupMsgId)).modal('show');
     }
 
-    public hideModal(popupMsgId):void {
+    public hideModal(popupMsgId): void {
 
         (<any>$(popupMsgId)).modal('hide');
     }
 
-    public onHidden(popupMsgId):void {
+    public onHidden(popupMsgId): void {
 
     }
 
@@ -287,114 +280,88 @@ import {
     }
 
     ngOnInit() {
-                 (<any>$('#checksaved')).appendTo("body");
-                  (<any>$('#dangermodal')).appendTo("body");
-                  (<any>$('#emptyselection')).appendTo("body");
-
-                  this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].type, "schoolid!");
-                   this.SchoolId = x[0].type;
-                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
-                       this.selectiontype.next(false);
-                   }
-
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
-
-
-                  this.showLoader.next(true);
-                  this.CoursesPerSchoolSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CoursesPerSchool$.next(x);
-                  this.showLoader.next(false);
-
-                  },
-                  error => {
-                      this.CoursesPerSchool$.next([{}]);
-                      console.log("Error Getting courses perSchool");
-                      this.showLoader.next(false);
-                  },
-                  () => console.log("Getting School "));
-
-
-
-
-
-    }
-
-
-   findstudent(taxi,sector,special) {
-     this.showLoader.next(true);
-       this.retrievedStudent.next(false);
-      this.StudentInfoSub = this._hds.getStudentPerSchool(taxi,sector,special)
-      .subscribe(data => {
-            this.StudentInfo$.next(data);
-            this.retrievedStudent.next(true);
+        (<any>$('#checksaved')).appendTo("body");
+        (<any>$('#dangermodal')).appendTo("body");
+        (<any>$('#emptyselection')).appendTo("body");
+        this.showLoader.next(true);
+        this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
+            this.CoursesPerSchool$.next(x);
             this.showLoader.next(false);
-                },
+
+        },
             error => {
-               this.StudentInfo$.next([{}]);
-               console.log("Error Getting Students");
-               this.showLoader.next(false);
-               this.showModal("#emptyselection");
-                    },
-              () => console.log("Getting Students"));
+                this.CoursesPerSchool$.next([{}]);
+                console.log("Error Getting courses perSchool");
+                this.showLoader.next(false);
+            },
+            () => console.log("Getting School "));
 
     }
 
 
-  setActive(ind) {
-      this.StudentActive = -1;
-      if (this.courseActive == ind)
-      {
-        ind = -1;
-      }
-      this.courseActive = ind;
-      console.log(this.courseActive, ind, "ind");
+    findstudent(taxi, sector, special) {
+        this.showLoader.next(true);
+        this.retrievedStudent.next(false);
+        this.StudentInfoSub = this._hds.getStudentPerSchool(taxi, sector, special)
+            .subscribe(data => {
+                this.StudentInfo$.next(data);
+                this.retrievedStudent.next(true);
+                this.showLoader.next(false);
+            },
+            error => {
+                this.StudentInfo$.next([{}]);
+                console.log("Error Getting Students");
+                this.showLoader.next(false);
+                this.showModal("#emptyselection");
+            },
+            () => console.log("Getting Students"));
+
     }
 
-setActiveStudent(ind)
-{
-      this.opened = true;
-      if (this.StudentActive == ind)
-      {
-        ind = -1;
-      }
-      this.StudentActive = ind;
-      console.log(this.courseActive, ind, "ind");
-}
 
-setActiveStudentnew(ind)
-{
-      this.opened = false;
-      if (this.StudentActive == ind)
-      {
-        ind = -1;
-      }
-      this.StudentActive = ind;
-      console.log(this.courseActive, ind, "ind");
-}
+    setActive(ind) {
+        this.StudentActive = -1;
+        if (this.courseActive == ind) {
+            ind = -1;
+        }
+        this.courseActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
+
+    setActiveStudent(ind) {
+        this.opened = true;
+        if (this.StudentActive == ind) {
+            ind = -1;
+        }
+        this.StudentActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
+
+    setActiveStudentnew(ind) {
+        this.opened = false;
+        if (this.StudentActive == ind) {
+            ind = -1;
+        }
+        this.StudentActive = ind;
+        console.log(this.courseActive, ind, "ind");
+    }
 
 
 
-  confirmStudent(student, cb, ind) {
-      var rtype;
+    confirmStudent(student, cb, ind) {
+        var rtype;
         if (cb.value == 1)
-          rtype = '1';
+            rtype = '1';
         if (cb.value == 2)
-          rtype = '0';
+            rtype = '0';
         if (cb.value == 3)
-          rtype = null;
+            rtype = null;
         var type = cb.value;
         console.log(type, "aaa");
         this.showLoader.next(true);
 
-          let std = this.StudentInfo$.getValue();
-          std[ind].checkstatus = rtype;
+        let std = this.StudentInfo$.getValue();
+        std[ind].checkstatus = rtype;
 
         this.SavedStudentsSub = this._hds.saveConfirmStudents(student, type).subscribe(data => {
             this.SavedStudents$.next(data);
@@ -411,9 +378,7 @@ setActiveStudentnew(ind)
             () => {
                 console.log("saved Students");
                 this.showModal("#checksaved");
-               });
-
-
+            });
 
     }
 

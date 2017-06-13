@@ -101,10 +101,8 @@ import {
     private isEdit: boolean;
     private courseActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
-    private School$: BehaviorSubject<any>;
-    private SchoolSub: Subscription;
-    private selectiontype: BehaviorSubject<boolean>;
-    private SchoolId;
+    
+    
 
 
 
@@ -116,8 +114,7 @@ import {
         this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.isEdit = false;
-        this.School$ = new BehaviorSubject([{}]);
-        this.selectiontype = new BehaviorSubject(true);
+              
         this.formGroup = this.fb.group({
 
              });
@@ -148,20 +145,7 @@ import {
 
     ngOnInit() {
                  (<any>$('#checksaved1')).appendTo("body");
-                  this.SchoolSub = this._hds.gettypeofschool().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].type, "schoolid!");
-                   this.SchoolId = x[0].type;
-                   if (this.SchoolId == 'ΗΜΕΡΗΣΙΟ'){
-                       this.selectiontype.next(false);
-                   }
-
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
+                  
 
 
 

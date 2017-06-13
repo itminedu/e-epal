@@ -99,6 +99,7 @@ class MinisterSettings extends ControllerBase {
 	 				$directorViewDisabled = $epalConfig->lock_school_students_view->getString();
 	 				$applicantsLoginDisabled = $epalConfig->lock_application->getString();
 					$applicantsResultsDisabled = $epalConfig->lock_results->getString();
+					$secondPeriodEnabled = $epalConfig->activate_second_period->getString();
 	 		 }
 	 		 $config_storage->resetCache();
 
@@ -109,6 +110,7 @@ class MinisterSettings extends ControllerBase {
 					'directorViewDisabled' => $directorViewDisabled,
 					'applicantsLoginDisabled' => $applicantsLoginDisabled,
 					'applicantsResultsDisabled' => $applicantsResultsDisabled,
+					'secondPeriodEnabled' => $secondPeriodEnabled,
 			], Response::HTTP_OK);
 
 		}	//end try
@@ -125,7 +127,7 @@ class MinisterSettings extends ControllerBase {
 }
 
 
-public function storeSettings(Request $request, $capacityDisabled, $directorViewDisabled, $applicantsLoginDisabled, $applicantsResultsDisabled ) {
+public function storeSettings(Request $request, $capacityDisabled, $directorViewDisabled, $applicantsLoginDisabled, $applicantsResultsDisabled, $secondPeriodEnabled ) {
 
 	try {
 		 if (!$request->isMethod('GET')) {
@@ -171,6 +173,8 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 					$epalConfig->set('lock_school_students_view', $directorViewDisabled);
 					$epalConfig->set('lock_application', $applicantsLoginDisabled);
 					$epalConfig->set('lock_results', $applicantsResultsDisabled);
+					$epalConfig->set('activate_second_period', $secondPeriodEnabled);
+
 					$epalConfig->save();
  		 }
  		 $config_storage->resetCache();
@@ -182,6 +186,7 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 				'directorViewDisabled' => $directorViewDisabled,
 				'applicantsLoginDisabled' => $applicantsLoginDisabled,
 				'applicantsResultsDisabled' => $applicantsResultsDisabled,
+				'secondPeriodEnabled' => $secondPeriodEnabled,
 		], Response::HTTP_OK);
 
 	}	//end try
@@ -196,8 +201,6 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 
 
 }
-
-
 
 
 	private function respondWithStatus($arr, $s) {

@@ -35,8 +35,8 @@ class DirectorView extends ControllerBase
         );
     }
 
-    
-    
+
+
     public function getStudentPerSchool(Request $request, $classId, $sector, $specialit)
     {
         try {
@@ -79,7 +79,7 @@ class DirectorView extends ControllerBase
                     $userRole = $tmpRole;
                 }
             }
-            if ($userRole === '') 
+            if ($userRole === '')
             {
                 return $this->respondWithStatus([
                              'error_code' => 4003,
@@ -88,7 +88,7 @@ class DirectorView extends ControllerBase
             elseif ($userRole === 'epal')
             {
                     $selectIdNew = $selectId;
-                    if ($classId == 1) 
+                    if ($classId == 1)
                         $selectIdNew = -1;
                     elseif ($classId == 2)
                         $selectIdNew = $sector;
@@ -105,7 +105,7 @@ class DirectorView extends ControllerBase
                             $studentId = intval($object->student_id ->getString());
                             $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $studentId));
                             $epalStudent = reset($epalStudents);
-                            if ($epalStudents) 
+                            if ($epalStudents)
                             {
                                     $studentIdNew = $epalStudent->id();
                                     $checkstatus = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $studentIdNew));
@@ -142,7 +142,7 @@ class DirectorView extends ControllerBase
                                             $guardian_surname_decoded = $crypt->decrypt($epalStudent->guardian_surname->value);
                                             $guardian_fathername_decoded = $crypt->decrypt($epalStudent->guardian_fathername->value);
                                             $guardian_mothername_decoded = $crypt->decrypt($epalStudent->guardian_mothername->value);
-                                           
+
                                         } catch (\Exception $e) {
                                             $this->logger->warning(__METHOD__ . ' Decrypt error: ' . $e->getMessage());
                                             return $this->respondWithStatus([
@@ -193,7 +193,7 @@ class DirectorView extends ControllerBase
                 ], Response::HTTP_FORBIDDEN);
             }
         }
-         else 
+         else
         {
             return $this->respondWithStatus([
                     'message' => t('User not found!'),
@@ -278,7 +278,7 @@ class DirectorView extends ControllerBase
                             ], Response::HTTP_FORBIDDEN);
                             }
 
-                            
+
                         }
                         else
                         {
@@ -286,9 +286,9 @@ class DirectorView extends ControllerBase
                             'message' => t('Student not found'),
                         ], Response::HTTP_FORBIDDEN);
                         }
-                    
 
-                    
+
+
                 }
             } else {
                 return $this->respondWithStatus([
@@ -433,6 +433,7 @@ class DirectorView extends ControllerBase
                     $userRole = $tmpRole;
                 }
             }
+            $this->logger->warning('userRole='.$userRole);
             if ($userRole === '') {
                 return $this->respondWithStatus([
                              'error_code' => 4003,
@@ -647,7 +648,7 @@ class DirectorView extends ControllerBase
         return true;
     }
 
-    
+
     public function FindCapacityPerSchool(Request $request)
     {
         $i = 0;
@@ -687,7 +688,7 @@ class DirectorView extends ControllerBase
                 $classcapacity = reset($CourseA);
 
                 if ($classcapacity) {
-                
+
 
                     $list[] = array(
                         'class' => 1,
@@ -696,17 +697,17 @@ class DirectorView extends ControllerBase
                         'taxi' => 'Ά Λυκείου',
                         'capacity' => $classcapacity->capacity_class_a->value,
                         'globalindex' => $i,
-                       
+
                        );
                 }
                 ++$i;
                 $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid));
                 if ($CourseB) {
-                    
+
 
                     foreach ($CourseB as $object) {
                         $sectorid = $object->sector_id->entity->id();
-                        
+
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'sector_id' => $sectorid));
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
@@ -724,9 +725,9 @@ class DirectorView extends ControllerBase
                 }
                 $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid));
                 if ($CourseC) {
-                    
+
                         foreach ($CourseC as $object) {
-                        
+
                         $specialityid = $object->specialty_id->entity->id();
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
                         $classcapacity = reset($CapacityPerClass);
@@ -738,7 +739,7 @@ class DirectorView extends ControllerBase
                                     'taxi' => 'Γ Λυκείου  '.$object->specialty_id->entity->get('name')->value,
                                     'capacity' => $classcapacity->capacity_class_specialty->value,
                                     'globalindex' => $i,
-                                    
+
                             );
                         }
                         ++$i;
@@ -746,11 +747,11 @@ class DirectorView extends ControllerBase
                 }
 
                 if ($CourseC && $operation_shift != 'ΗΜΕΡΗΣΙΟ') {
-                       
+
                     foreach ($CourseC as $object) {
-                        
+
                         $specialityid = $object->specialty_id->entity->id();
-                        
+
                         $CapacityPerClass = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid, 'specialty_id' => $specialityid));
                         $classcapacity = reset($CapacityPerClass);
                         if ($classcapacity) {
@@ -776,7 +777,7 @@ class DirectorView extends ControllerBase
                 ], Response::HTTP_FORBIDDEN);
         }
     }
-    
+
 
     public function FindCoursesPerSchool(Request $request)
     {
@@ -814,7 +815,7 @@ class DirectorView extends ControllerBase
                 $categ = $school->metathesis_region->value;
                 $list = array();
                 $CourseA = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid));
-               
+
                 if ($CourseA) {
                 $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 1, 'category' => $categ));
                 $limitdown = reset($limit_down);
@@ -845,8 +846,8 @@ class DirectorView extends ControllerBase
                     foreach ($CourseB as $object) {
                         $sectorid = $object->sector_id->entity->id();
                         $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
-                        
-                       
+
+
                             $list[] = array(
                                 'class' => 2,
                                 'newsector' => $object->sector_id->entity->id(),
@@ -856,7 +857,7 @@ class DirectorView extends ControllerBase
                                 'limitdown' => $limit,
                                 'size' => sizeof($studentPerSchool),
                                 );
-                        
+
                         ++$i;
                     }
                 }
@@ -868,10 +869,10 @@ class DirectorView extends ControllerBase
                             $limit = $limitdown->limit_down->value;
                         }
                         foreach ($CourseC as $object) {
-                        
+
                         $specialityid = $object->specialty_id->entity->id();
                         $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
-                        
+
                             $list[] = array(
                                 'class' => 3,
                                     'newsector' => 0,
@@ -881,7 +882,7 @@ class DirectorView extends ControllerBase
                                     'limitdown' => $limit,
                                     'size' => sizeof($studentPerSchool),
                             );
-                      
+
                         ++$i;
                     }
                 }
@@ -893,10 +894,10 @@ class DirectorView extends ControllerBase
                             $limit = $limitdown->limit_down->value;
                         }
                     foreach ($CourseC as $object) {
-                        
+
                         $specialityid = $object->specialty_id->entity->id();
                         $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
-                        
+
                             $list[] = array(
                                     'class' => 4,
                                     'newsector' => 0,
@@ -907,7 +908,7 @@ class DirectorView extends ControllerBase
                                     'size' => sizeof($studentPerSchool),
 
                                     );
-                        
+
                         ++$i;
                     }
                 }

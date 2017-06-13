@@ -69,7 +69,7 @@ export const MainRoutes: Routes = [
   { path: 'application-preview', component: ApplicationPreview, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'schools-order-select', component: SchoolsOrderSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'application-submit', component: ApplicationSubmit, canActivate: [StudentAuthGuard, StudentLockGuard] },
-  { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'submited-preview', component: SubmitedPreview, canActivate: [StudentAuthGuard] },
   { path: 'submited-person', component: SubmitedPerson, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'post-submit', component: AfterSubmit, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'school/director-view', component: DirectorView, canActivate: [SchoolAuthGuard, SchoolStudentsLockedGuard] },

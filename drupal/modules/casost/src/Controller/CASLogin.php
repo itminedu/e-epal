@@ -191,7 +191,7 @@ class CASLogin extends ControllerBase
 //            phpCAS::trace($physicaldeliveryofficename);
     //        $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
             $gsnunitcode = substr($gsnunitcodedn, strpos($gsnunitcodedn, ";") + 1);
-    //        $gsnunitcode = $filterAttribute('edupersonorgunitdn:gsnunitcode');
+            $gsnunitcode = $filterAttribute('edupersonorgunitdn:gsnunitcode');
             phpCAS::trace("$gsnunitcode=");
             phpCAS::trace($gsnunitcode);
 
@@ -276,6 +276,7 @@ class CASLogin extends ControllerBase
             if ($user) {
                 $user->setPassword($epalToken);
                 $user->setUsername($epalToken);
+                $user->set('init', $userAssigned["id"]);
                 $user->save();
             }
 

@@ -226,7 +226,6 @@ class SubmitedApplications extends ControllerBase
                         $regionaddress_decoded = $crypt->decrypt($object->regionaddress->value);
                         $regiontk_decoded = $crypt->decrypt($object->regiontk->value);
                         $regionarea_decoded = $crypt->decrypt($object->regionarea->value);
-                        $certificatetype_decoded = $crypt->decrypt($object->certificatetype->value);
                         $relationtostudent_decoded = $crypt->decrypt($object->relationtostudent->value);
                         $telnum_decoded = $crypt->decrypt($object->telnum->value);
                         $guardian_name_decoded = $crypt->decrypt($object->guardian_name->value);
@@ -277,8 +276,6 @@ class SubmitedApplications extends ControllerBase
                             //'regionarea' =>$object -> regionarea ->value,
                             'regionarea' => $regionarea_decoded,
                             //'certificatetype' =>$object -> certificatetype ->value,
-                            'certificatetype' => $certificatetype_decoded,
-                            'graduation_year' => $object->graduation_year->value,
                             //'telnum' =>$object -> telnum ->value,
                             'telnum' => $telnum_decoded,
                             //'relationtostudent' =>$object -> relationtostudent ->value,

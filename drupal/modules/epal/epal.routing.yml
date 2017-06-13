@@ -86,22 +86,6 @@ epal.allocation_second:
     _controller: '\Drupal\epal\Controller\Distribution::locateSecondPeriodStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
-epal.sectorperschool:
-  path: '/epal/sectorperschool'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSectorsPerSchool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-epal.specialityperschool:
-  path: '/epal/specialityperschool/{sectorId}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSpecialPerSchool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
 epal.confirmstudents:
   path: '/epal/confirmstudent'
   options:

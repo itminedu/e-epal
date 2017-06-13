@@ -576,7 +576,7 @@ private function createSchoolChoices($student)	{
 
 			 $this->pdf->SetFont($this->fontBold, '', $this->fontSizeRegular);
 			 $this->pdf->Cell($width, $height, $this->prepareString($epalSchool->choice_no->value), 0, 0,  'C');
-			 $this->pdf->multiCell(4*width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
+			 $this->pdf->multiCell(4*$width, $height, $this->prepareString($epalSchoolName->name->value), 0, 'L');
 		 }
 	 }
 

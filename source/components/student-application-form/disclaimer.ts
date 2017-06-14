@@ -43,8 +43,9 @@ import {
 
     <div *ngIf="(loginInfo$ | async).size !== 0">
 
-    <p align="left"><strong></strong><strong>Όροι και Προϋποθέσεις Συμμετοχής στην Ηλεκτρονική Υπηρεσία</strong></p>
 
+    <p align="left"><strong>Όροι και Προϋποθέσεις Συμμετοχής στην Ηλεκτρονική Υπηρεσία</strong></p>
+    
 
 <p>Παρακαλώ, πριν προχωρήσετε στην υποβολή της Ηλεκτρονικής Δήλωσης Προτίμησης για την εγγραφή στα ΕΠΑΛ, διαβάστε με προσοχή και ενημερωθείτε
 για τις προϋποθέσεις και τις επιλογές που έχετε προκειμένου να αποκτήσετε απολυτήριο τίτλο και πτυχίο ή μόνο πτυχίο της ειδικότητας που επιθυμείτε.</p>
@@ -52,8 +53,19 @@ import {
 <p>Επίσης πρέπει να γνωρίζετε ότι η Ηλεκτρονική Δήλωση Προτίμησης υπέχει θέση Υπ. Δήλωσης του ν. 1599/1986 (Α ́ 75) και οφείλετε τα στοιχεία που καταχωρίζετε σε αυτή να είναι αληθή.</p>
 
 
-<form novalidate [formGroup]="formGroup" #form>
+      <form novalidate [formGroup]="formGroup" #form>  
+        <p align="left"><strong> Διάφορα Έγγραφα  </strong></p>        
+        <li class="list-group-item isclickable oddout" >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/egkyklios.pdf" target="_blank">Η με αρ.πρωτ. 89047/ΓΔ4/26-05-2017 Εγκύκλιος του Υ.Π.Π.Ε.Θ.</a>
+        </li>
+        <li class="list-group-item isclickable evenout"  >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/infos.pdf" target="_blank">Ενημερωτικά Στοιχεία</a>
+        </li>
 
+
+
+        <br>
+        <br>
           <div class="row">
             <div class="col-md-1 ">
               <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >

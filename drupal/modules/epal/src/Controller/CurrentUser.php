@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\epal\Crypt;
 
 class CurrentUser extends ControllerBase
 {
@@ -84,16 +85,45 @@ class CurrentUser extends ControllerBase
         $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
         $epalUser = reset($epalUsers);
         if ($epalUser) {
+
+            $crypt = new Crypt();
+            try  {
+              $name_decoded = $crypt->decrypt($epalUser->name->value);
+              $surname_decoded = $crypt->decrypt($epalUser->surname->value);
+              $fathername_decoded = $crypt->decrypt($epalUser->fathername->value);
+              $mothername_decoded = $crypt->decrypt($epalUser->mothername->value);
+            }
+            catch (\Exception $e) {
+                unset($crypt);
+                $this->logger->warning($e->getMessage());
+                return $this->respondWithStatus([
+                    "error_code" => 5001
+                  ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            unset($crypt);
+
+            /*
             $userName = $epalUser->name->value;
             $userSurname = $epalUser->surname->value;
             $userFathername = $epalUser->fathername->value;
             $userMothername = $epalUser->mothername->value;
+            */
+            $userName = $name_decoded;
+            $userSurname = $surname_decoded ;
+            $userFathername = $fathername_decoded;
+            $userMothername =$mothername_decoded;
+
             $userEmail = $user->mail->value;
             return $this->respondWithStatus([
-                    'cu_name' => mb_substr($epalUser->name->value,0,4,'UTF-8') !== "####" ? $epalUser->name->value : '',
-                    'cu_surname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
-                    'cu_fathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
-                    'cu_mothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+                    //'cu_name' => mb_substr($epalUser->name->value,0,4,'UTF-8') !== "####" ? $epalUser->name->value : '',
+                    //'cu_surname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
+                    //'cu_fathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
+                    //'cu_mothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+                    'cu_name' => mb_substr($userName,0,4,'UTF-8') !== "####" ? $userName : '',
+                    'cu_surname' => mb_substr($userSurname,0,4,'UTF-8') !== "####" ? $userSurname : '',
+                    'cu_fathername' => mb_substr($userFathername,0,4,'UTF-8') !== "####" ? $userFathername : '',
+                    'cu_mothername' => mb_substr($userMothername,0,4,'UTF-8') !== "####" ? $userMothername : '',
+
                     'cu_email' => mb_substr($user->mail->value,0,4,'UTF-8') !== "####" ? $user->mail->value : '',
                     'minedu_username' => '',
                     'minedu_userpassword' => '',
@@ -119,16 +149,39 @@ class CurrentUser extends ControllerBase
         if ($epalUser) {
             $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
             if ($user) {
-                $userName = $epalUser->name->value;
-                $userSurname = $epalUser->surname->value;
-                $userFathername = $epalUser->fathername->value;
-                $userMothername = $epalUser->mothername->value;
+
+                $crypt = new Crypt();
+                try  {
+                  $userName = $crypt->decrypt($epalUser->name->value);
+                  $userSurname = $crypt->decrypt($epalUser->surname->value);
+                  $userFathername = $crypt->decrypt($epalUser->fathername->value);
+                  $userMothername = $crypt->decrypt($epalUser->mothername->value);
+                }
+                catch (\Exception $e) {
+                    unset($crypt);
+                    $this->logger->warning($e->getMessage());
+                    return $this->respondWithStatus([
+                        "error_code" => 5001
+                      ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+                unset($crypt);
+
+                //$userName = $epalUser->name->value;
+                //$userSurname = $epalUser->surname->value;
+                //$userFathername = $epalUser->fathername->value;
+                //$userMothername = $epalUser->mothername->value;
                 $userEmail = $user->mail->value;
                 return $this->respondWithStatus([
-                    'userName' => mb_substr($epalUser->name->value,0,4,'UTF-8') !== "####" ? $epalUser->name->value : '',
-                    'userSurname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
-                    'userFathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
-                    'userMothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+                    //'userName' => mb_substr($epalUser->name->value,0,4,'UTF-8') !== "####" ? $epalUser->name->value : '',
+                    //'userSurname' => mb_substr($epalUser->surname->value,0,4,'UTF-8') !== "####" ? $epalUser->surname->value : '',
+                    //'userFathername' => mb_substr($epalUser->fathername->value,0,4,'UTF-8') !== "####" ? $epalUser->fathername->value : '',
+                    //'userMothername' => mb_substr($epalUser->mothername->value,0,4,'UTF-8') !== "####" ? $epalUser->mothername->value : '',
+
+                    'userName' => mb_substr($userName,0,4,'UTF-8') !== "####" ? $userName : '',
+                    'userSurname' => mb_substr($userSurname,0,4,'UTF-8') !== "####" ? $userSurname : '',
+                    'userFathername' => mb_substr($userFathername,0,4,'UTF-8') !== "####" ? $userFathername : '',
+                    'userMothername' => mb_substr($userMothername,0,4,'UTF-8') !== "####" ? $userMothername : '',
+
                     'userEmail' => mb_substr($user->mail->value,0,4,'UTF-8') !== "####" ? $user->mail->value : '',
                     'verificationCodeVerified' => $epalUser->verificationcodeverified->value,
                 ], Response::HTTP_OK);
@@ -286,23 +339,56 @@ class CurrentUser extends ControllerBase
             $postData = null;
             if ($content = $request->getContent()) {
                 $postData = json_decode($content);
+
+                $crypt = new Crypt();
+                try  {
+                  $name_encoded = $crypt->encrypt($postData->userProfile->userName);
+                  $surname_encoded = $crypt->encrypt($postData->userProfile->userSurname);
+                  $fathername_encoded = $crypt->encrypt($postData->userProfile->userMothername);
+                  $mothername_encoded = $crypt->encrypt($postData->userProfile->userFathername);
+                }
+                catch (\Exception $e) {
+                    unset($crypt);
+                    $this->logger->warning($e->getMessage());
+                    return $this->respondWithStatus([
+                        "error_code" => 5001
+                      ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+                unset($crypt);
+
+                /*
                 $epalUser->set('name', $postData->userProfile->userName);
                 $epalUser->set('surname', $postData->userProfile->userSurname);
                 $epalUser->set('mothername', $postData->userProfile->userMothername);
                 $epalUser->set('fathername', $postData->userProfile->userFathername);
+                */
+                $epalUser->set('name', $name_encoded);
+                $epalUser->set('surname', $surname_encoded);
+                $epalUser->set('mothername', $fathername_encoded);
+                $epalUser->set('fathername', $mothername_encoded);
+
                 $epalUser->save();
+                $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
+                if ($user) {
+                    $user->set('mail', $postData->userProfile->userEmail);
+                    $user->save();
+                } else {
+                    return $this->respondWithStatus([
+                        'error_code' => '1001',
+                    ], Response::HTTP_FORBIDDEN);
+                }
                 return $this->respondWithStatus([
-                    'message' => t("profile saved"),
+                    'error_code' => '0',
                 ], Response::HTTP_OK);
             } else {
                 return $this->respondWithStatus([
-                    'message' => t("post with no data"),
+                    'error_code' => '1002',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
         } else {
             return $this->respondWithStatus([
-                    'message' => t("EPAL user not found"),
+                    'error_code' => '1003',
                 ], Response::HTTP_FORBIDDEN);
         }
     }

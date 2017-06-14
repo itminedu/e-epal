@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy,ElementRef, ViewChild} from "@angular/core";
-let jsPDF = require('jspdf');
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
@@ -12,10 +11,6 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-//import * as html2canvas from "html2canvas"
-
-
-
 
 @Component({
     selector: 'submited-student',
@@ -37,7 +32,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 </div>
 
             </div>
-            <button type="button" (click)="createPdf()">Εξαγωγή σε PDF</button>
+            <button type="button" (click)="createPdfServerSide()">Εξαγωγή σε PDF</button>
    `
 })
 
@@ -84,16 +79,10 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             this.route.params.subscribe(params => {this.StudentId = params['id'];});
     }
 
-    createPdf()
+    createPdfServerSide()
     {
-        
-       html2canvas(document.getElementById("target")).then(function(canvas)
-        {
-            var img = canvas.toDataURL();
-            var doc = new jsPDF('p', 'mm');
-            doc.addImage(img, 'PNG', 10, 10);
-            doc.save('applications.pdf');
-        });
+        this._hds.createPdfServerSide(this.StudentId);
+
     }
 
 

@@ -56,12 +56,13 @@ import {AppSettings} from '../../app.settings';
         </div>
       </div>
 
+<div style="min-height: 500px;">
       <h4> Επιλογή Σχολείου</h4>
        <form [formGroup]="formGroup">
         <div formArrayName="formArray">
-        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε <strong>τρία </strong> ΕΠΑΛ στα οποία θα ήθελε να φοιτήσει ο μαθητής. Επιλέξτε πρώτα την Περιφερειακή Διεύθυνση που ανήκει το κάθε σχολείο της επιλογής σας, επιλέξτε τα σχολεία και στη συνέχεια επιλέξτε <i>Συνέχεια</i>.
-        Μπορείτε να επιλέξετε σχολεία που ανήκουν σε περισσότερες απο μια Περιφερειακές Διευθύνσεις. <strong> Προσοχή!</strong> Σε ειδικές περιπτώσεις απομακρυσμένων σχολείων,  ή
-        σε περίπτωση που επιλέξετε σχολείο που ανήκει σε Περιφερειακή Διεύθυνση Εκπαίδευσης που διαθέτει λιγότερα από τρία σχολεία, μπορείτε να επιλέξετε και λιγότερα απο τρία σχολεία.</p>
+        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλώ επιλέξτε εως τρία ΕΠΑΛ στα οποία επιθυμεί να φοιτήσει ο μαθητής.
+         Επιλέξτε πρώτα την Περιφερειακή Διεύθυνση στην οποία ανήκει το σχολείο της επιλογής σας,στη συνέχεια τα σχολεία και τέλος πατήστε <i>Συνέχεια</i>.
+        Μπορείτε να επιλέξετε απο ένα εως τρία σχολεία που δύναται να ανήκουν σε περισσότερες απο μια Περιφερειακές Διευθύνσεις.</p>
             <ul class="list-group main-view">
             <div *ngFor="let region$ of regions$ | async; let i=index; let isOdd=odd; let isEven=even"  >
                 <li class="list-group-item isclickable" (click)="setActiveRegion(i)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === i">
@@ -108,6 +109,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
     </form>
+    </div>
   `
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
@@ -322,20 +324,23 @@ import {AppSettings} from '../../app.settings';
     }
 
     navigateToApplication() {
-        //[disabled] = " ( (selectionLimitOptional  | async) === false && (classNight  | async) === false  && (numSelected | async) < (selectionLimit | async) )
-          //                || ( (numSelected | async) === 0)"
-        if ( (this.selectionLimitOptional.value === false && this.classNight.value === false && this.numSelected.value < this.selectionLimit.value )
-              || (this.numSelected.value === 0) )    {
+      //  if ( (this.selectionLimitOptional.value === false /*&& this.classNight.value === false */  && this.numSelected.value < this.selectionLimit.value )
+      //        || (this.numSelected.value === 0) )    {
+
+      if ( this.numSelected.value === 0)     {
 
           //this.modalHeader = "modal-header-success";
-          this.modalHeader.next("modal-header-success");
+          this.modalHeader.next("modal-header-danger");
           this.modalTitle.next("Επιλογή αριθμού σχολείων");
           if (this.numSelected.value === 0)
             this.modalText.next("Δεν έχετε επιλέξει κανένα σχολείο!");
+          /*
           else
             this.modalText.next("Παρακαλώ επιλέξτε ΤΡΙΑ σχολεία. "
                               + "Μπορείτε να επιλέξετε ή να αφαιρέσετε μια επιλογή, κάνωντας κλικ στο αντίστοιχο κουτάκι που βρίσκεται μπροστά στο όνομα κάθε σχολείου. "
                               + "Θα έχετε τη δυνατότητα να καθορίσετε την επιθυμητή σειρά προτίμησής των επιλεγμένων σχολείων στην επόμενη οθόνη.");
+            */
+
           this.showModal();
         }
         else

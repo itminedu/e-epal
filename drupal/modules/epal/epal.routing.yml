@@ -38,7 +38,7 @@ epal.current_user:
     _controller: '\Drupal\epal\Controller\CurrentUser::getLoginInfo'
   requirements:
     _user_is_logged_in: 'TRUE'
-submitedapplications:
+epal.submitedapplications:
   path: '/epal/subapplic'
   options:
     _auth: [ 'basic_auth' ]
@@ -46,7 +46,15 @@ submitedapplications:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
-studentapplication:
+epal.application_delete:
+  path: '/epal/application/delete'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::deleteApplication'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.studentapplication:
   path: '/epal/student/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
@@ -54,7 +62,7 @@ studentapplication:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getStudentApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
-epalchosen:
+epal.epalchosen:
   path: '/epal/epalchosen/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
@@ -73,28 +81,20 @@ epal.application_submit:
 epal.allocation:
   path: '/epal/distribution'
   options:
-      _auth: [ 'basic_auth' ]
+    _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
   requirements:
     _user_is_logged_in: 'TRUE'
-sectorperschool:
-  path: '/epal/sectorperSchool'
+epal.allocation_second:
+  path: '/epal/distribution-secondperiod'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSectorsPerSchool'
+    _controller: '\Drupal\epal\Controller\Distribution::locateSecondPeriodStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
-specialityperschool:
-  path: '/epal/specialityperSchool/{sectorId}'
-  options:
-    _auth: [ 'basic_auth' ]
-  defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSpecialPerSchool'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-confirmstudents:
+epal.confirmstudents:
   path: '/epal/confirmstudent'
   options:
     _auth: [ 'basic_auth' ]
@@ -102,15 +102,15 @@ confirmstudents:
     _controller: '\Drupal\epal\Controller\DirectorView::ConfirmStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
-studentperschool:
-  path: '/epal/studentperSchool/{selectId}/{classId}/{limitdown}/{limitup}'
+epal.studentperschool:
+  path: '/epal/studentperschool/{classId}/{sector}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getStudentPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-savecapacity:
+epal.savecapacity:
   path: '/epal/savecapacity/{taxi}/{tomeas}/{specialit}'
   options:
     _auth: [ 'basic_auth' ]
@@ -125,7 +125,7 @@ epal.ministry.log_in_go:
   defaults:
     _controller: '\Drupal\epal\Controller\MinistryLogin::loginGo'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.log_out_go:
   path: '/ministry/logout'
   options:
@@ -133,7 +133,15 @@ epal.ministry.log_out_go:
   defaults:
     _controller: '\Drupal\epal\Controller\MinistryLogin::logoutGo'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
+epal.ministry.report_users:
+  path: '/ministry/report-users'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportUsers'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.ministry.general_report:
   path: '/ministry/general-report'
   options:
@@ -141,7 +149,7 @@ epal.ministry.general_report:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makegGeneralReport'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-completeness:
   path: '/ministry/report-completeness/{regionId}/{adminId}/{schId}'
   options:
@@ -149,15 +157,15 @@ epal.ministry.report-completeness:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportCompleteness'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-all-stat:
-  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}'
+  path: '/ministry/report-all-stat/{regionId}/{adminId}/{schId}/{classId}/{sectorId}/{courseId}/{finalized}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportAllStat'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.report-no-capacity:
   path: '/ministry/report-no-capacity/{capacityEnabled}'
   options:
@@ -165,7 +173,7 @@ epal.ministry.report-no-capacity:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::makeReportNoCapacity'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.retrieve-registry-id:
   path: '/ministry/retrieve-registry-id'
   options:
@@ -173,15 +181,31 @@ epal.ministry.retrieve-registry-id:
   defaults:
     _controller: '\Drupal\epal\Controller\ReportsCreator::retrieveUserRegistryNo'
   requirements:
-      _user_is_logged_in: 'TRUE'
-epal.ministry.massive_mail:
-  path: '/ministry/send-massive-mail'
+    _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail_unallocated:
+  path: '/ministry/send-unallocated-massive-mail'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToStudents'
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudents'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail_unallocated_smallclass:
+  path: '/ministry/send-unallocated-sc-massive-mail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudentsSC'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.ministry.massive_mail_located:
+  path: '/ministry/send-located-massive-mail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToLocatedStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.ministry.retrievesettings:
   path: '/ministry/retrieve-settings'
   options:
@@ -189,32 +213,32 @@ epal.ministry.retrievesettings:
   defaults:
     _controller: '\Drupal\epal\Controller\MinisterSettings::retrieveSettings'
   requirements:
-      _user_is_logged_in: 'TRUE'
+    _user_is_logged_in: 'TRUE'
 epal.ministry.storesettings:
-  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}'
+  path: '/ministry/store-settings/{capacityDisabled}/{directorViewDisabled}/{applicantsLoginDisabled}/{applicantsResultsDisabled}/{secondPeriodEnabled}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\MinisterSettings::storeSettings'
   requirements:
-      _user_is_logged_in: 'TRUE'
-regionview:
-  path: '/epal/ScoolperPerf/{perfectureId}'
+    _user_is_logged_in: 'TRUE'
+epal.perfectureschools:
+  path: '/epal/schools-per-perf'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolsPerPerfetcure'
+    _controller: '\Drupal\epal\Controller\DirectorView::getSchools'
   requirements:
     _user_is_logged_in: 'TRUE'
-coursesperschools:
-  path: '/epal/CoursesperSch/{schoolid}'
+epal.coursesperschools:
+  path: '/epal/coursespersch/{schoolid}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-critirioschosen:
+epal.critirioschosen:
   path: '/epal/critiriachosen/{studentId}/{type}'
   options:
     _auth: [ 'basic_auth' ]
@@ -222,29 +246,51 @@ critirioschosen:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getCritiria'
   requirements:
     _user_is_logged_in: 'TRUE'
-findcapacity:
-  path: '/epal/findCapacity/{taxi}/{tomeas}/{specialit}'
+epal.findcapacityperschool:
+  path: '/epal/findcapacityperschool'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::findCapacity'
+    _controller: '\Drupal\epal\Controller\DirectorView::FindCapacityPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-findschoolid:
-  path: '/epal/getschool'
+epal.applicant.creationpdf:
+  path: '/epal/pdf-application/{studentId}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::getSchoolID'
+    _controller: '\Drupal\epal\Controller\PdfCreator::createApplicantPDF'
   requirements:
     _user_is_logged_in: 'TRUE'
-gettypeofschool:
-  path: '/epal/gettypeofschool'
+epal.svc.getdidacticyears:
+  path: '/epal/get-didactic-years'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\DirectorView::gettypeofschool'
+    _controller: '\Drupal\epal\Controller\WSConsumer::getAllDidactiYear'
   requirements:
     _user_is_logged_in: 'TRUE'
-
-    
+epal.svc.getstudentpromotion:
+  path: '/epal/get-student-promotion/{didactic_year_id}/{lastname}/{firstname}/{father_firstname}/{mother_firstname}/{birthdate}/{registry_no}/{level_name}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalPromotion'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.svc.getstudentcertification:
+  path: '/epal/get-student-certification/{didactic_year_id}/{lastname}/{firstname}/{father_firstname}/{mother_firstname}/{birthdate}/{registry_no}/{level_name}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\WSConsumer::getStudentEpalCertification'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.findcoursesperschool:
+  path: '/epal/findcoursesperschool'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'

@@ -43,12 +43,17 @@ function epal_mail($key, &$message, $params) {
     switch ($key) {
       case 'send_verification_code':
         $message['from'] = \Drupal::config('system.site')->get('mail');
-        $message['subject'] = t('Σύστημα υποβολής αιτήσεων εγγραφής σε ΕΠΑΛ: Επιβεβαίωση e-mail', $options);
+        $message['subject'] = t('Σύστημα υποβολής ηλεκτρονικών δηλώσεων προτίμησης ΕΠΑΛ για το νέο σχολικό έτος: Επιβεβαίωση e-mail', $options);
         $message['body'][] = $params['message'];
         break;
-      case 'massive_mail':
+      case 'massive_mail_unallocated':
         $message['from'] = \Drupal::config('system.site')->get('mail');
-        $message['subject'] = t('Μη ικανοποίηση ηλεκτρονικής αίτησης για εγγραφή σε ΕΠΑΛ', $options);
+        $message['subject'] = t('Μη ικανοποίηση ηλεκτρονικής δήλωσης προτίμησης ΕΠΑΛ', $options);
+        $message['body'][] = $params['message'];
+        break;
+      case 'massive_mail_located':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Ικανοποίηση ηλεκτρονικής δήλωσης προτίμησης ΕΠΑΛ', $options);
         $message['body'][] = $params['message'];
         break;
     }

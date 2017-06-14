@@ -23,7 +23,7 @@ import {
 
             <ul class="list-group main-view">
               <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even"  >
-                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === true" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
+                  <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)" [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
                      <h5> {{SchoolNames$.name}}</h5>
                   </li>
                  <div *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" [hidden]="SchoolNames$.id !== regionActive" >
@@ -55,7 +55,7 @@ import {
     private CoursesPerPerfSub: Subscription;
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
-    public perfecture ;
+    public perfecture;
     private regionActive = <number>-1;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;
@@ -63,9 +63,9 @@ import {
 
 
     constructor(private fb: FormBuilder,
-      private router: Router,
-      private _hds: HelperDataService,
-      ) {
+        private router: Router,
+        private _hds: HelperDataService,
+    ) {
         this.SchoolsPerPerf$ = new BehaviorSubject([{}]);
         this.LimitPerCateg$ = new BehaviorSubject([{}]);
         this.CoursesPerPerf$ = new BehaviorSubject([{}]);
@@ -77,70 +77,50 @@ import {
     }
 
     ngOnDestroy() {
-      }
+    }
 
     ngOnInit() {
 
-      this.SchoolSub = this._hds.getSchoolId().subscribe(x => {
-                  this.School$.next(x);
-                  console.log(x[0].id, "perfectureID");
-                   this.perfecture = x[0].id;
-                   this.SchoolPerPerfSub = this._hds.getSchoolPerPerfecture().subscribe(data => {
-                       this.SchoolsPerPerf$.next(data);
-                   },
-                       error => {
-                           this.SchoolsPerPerf$.next([{}]);
-                           console.log("Error Getting Schools");
-                       },
-                       () => console.log("Getting Schools"));
-
-                  },
-                  error => {
-                      this.School$.next([{}]);
-                      console.log("Error Getting School");
-                  },
-                  () => console.log("Getting School "));
-
-
+        this.SchoolPerPerfSub = this._hds.getSchools().subscribe(data => {
+            this.SchoolsPerPerf$.next(data);
+        },
+            error => {
+                this.SchoolsPerPerf$.next([{}]);
+                console.log("Error Getting Schools");
+            });
 
     }
 
+    setActiveRegion(ind) {
 
-     setActiveRegion(ind) {
+        if (ind === this.regionActive)
+            ind = -1;
 
-      if (ind === this.regionActive)
-        ind = -1;
-
-      this.regionActive = ind;
-      this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
+        this.regionActive = ind;
+        this.CoursesPerPerfSub = this._hds.getCoursePerPerfecture(this.regionActive).subscribe(data => {
             this.CoursesPerPerf$.next(data);
         },
             error => {
                 this.CoursesPerPerf$.next([{}]);
                 console.log("Error Getting Courses");
-            },
-            () => console.log("Getting Courses Per Perf"));
-
-
+            });
 
     }
 
 
-    navigateToApplication()
-    {
+    navigateToApplication() {
 
-     var id: string= String(this.regionActive);
-     this.router.navigate(['', {ids:id}]);
+        var id: string = String(this.regionActive);
+        this.router.navigate(['', { ids: id }]);
 
     }
 
-    calccolor(size, limit)
-    {
+    calccolor(size, limit) {
 
-      if (size < limit)
-        return true;
-      else
-        return false;
+        if (size < limit)
+            return true;
+        else
+            return false;
     }
 
 }

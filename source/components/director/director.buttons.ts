@@ -7,7 +7,7 @@ import {OnInit, Component, Injectable} from '@angular/core';
            <div class="row" style="margin-top: 130px; margin-bottom: 200px;">
                <div class="col-md-3 offset-md-3">
                 <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px;" (click)="navigatedirector()">
-                Αιτηθέντες<br />Μαθητές
+                Δηλώσεις<br />Μαθητών
                 </button>
                 </div>
                 <div class="col-md-6">

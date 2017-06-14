@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const autoprefixer = require('autoprefixer');
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
+const WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 
 module.exports = {
   stats: {
@@ -29,21 +30,25 @@ module.exports = {
   ],
   },
 
-//  output: {
-//    path: path.resolve(__dirname, 'dist'),
-//    filename: '[name].[hash].bundle.js',
-//    publicPath: "/",
-//    sourceMapFilename: '[name].[hash].bundle.js.map',
-//    chunkFilename: '[id].chunk.js'
-//  },
-
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'eepal.1.0.bundle.js',
+    filename: '[name].[hash].bundle.js',
     publicPath: "",
-    sourceMapFilename: 'eepal.1.0.bundle.js.map',
-    chunkFilename: '1.0.chunk.js'
+    sourceMapFilename: '[name].[hash].bundle.js.map',
+    chunkFilename: '[id].chunk.js'
   },
+
+//  output: {
+//    path: root('build'),
+//    filename: '[name].js',
+//    sourceMapFilename: '[name].js.map',
+//    chunkFilename: '[id].chunk.js'
+//    path: path.resolve(__dirname, 'dist'),
+//    filename: 'eepal.1.0.bundle.js',
+//    publicPath: "",
+//    sourceMapFilename: 'eepal.1.0.bundle.js.map',
+//    chunkFilename: '1.0.chunk.js'
+//  },
 
   devtool: 'source-map',
 
@@ -52,8 +57,9 @@ module.exports = {
   },
 
   plugins: [
-//    new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].bundle.js'),
-    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
+      new WebpackCleanupPlugin(),
+    new webpack.optimize.CommonsChunkPlugin('vendor', '[name].[hash].bundle.js'),
+//    new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js'),
     new ProvidePlugin({
         jQuery: 'jquery',
         $: 'jquery',
@@ -109,5 +115,5 @@ module.exports = {
     publicPath: '/'
   }
 
-  
+
 }

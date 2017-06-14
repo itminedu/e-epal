@@ -123,44 +123,6 @@ class CASLogin extends ControllerBase
             }
             $attributes = phpCAS::getAttributes();
 
-/* 
-            $isAllowed = true;
-            $att1 = $attributes[$this->allowed1];
-            $att2 = $attributes[$this->allowed2];
-            if (!isset($att1) || !isset($att2)) {
-                $isAllowed = false;
-            }
-            if (!is_array($attributes[$this->allowed1])) {
-                $attributes[$this->allowed1] = [$attributes[$this->allowed1]];
-            }
-            if (!is_array($attributes[$this->allowed2])) {
-                $attributes[$this->allowed2] = [$attributes[$this->allowed2]];
-            }
-            $found1 = false;
-            foreach ($attributes[$this->allowed1] as $value) {
-                if (1 === preg_match($this->allowed1Value, $value)) {
-                    $found1 = true;
-                }
-            }
-            $found2 = false;
-            foreach ($attributes[$this->allowed2] as $value) {
-                if (1 === preg_match($this->allowed2Value, $value)) {
-                    $found2 = true;
-                }
-            }
-            if (!$found1 || !$found2) {
-                $isAllowed = false;
-            } 
-            
-            if (!$isAllowed) {
-                $response = new Response();
-                $response->setContent(t('Access is allowed only to official school accounts'));
-                $response->setStatusCode(Response::HTTP_FORBIDDEN);
-                $response->headers->set('Content-Type', 'application/json;charset=UTF-8');
-                return $response;
-            }
-*/
-
             $CASUser = phpCAS::getUser();
 
             $this->logger->warning($CASUser);
@@ -173,25 +135,23 @@ class CASLogin extends ControllerBase
             };
 
             $umdobject = $filterAttribute("umdobject");
-            $physicaldeliveryofficename = $filterAttribute("physicaldeliveryofficename");
-
-
-/****** the following is for production : Χρήση μόνο από ΕΠΙΣΗΜΟΥΣ ΛΟΓΑΡΙΑΣΜΟΥΣ ***************************/
-/*
-            if (!$umdobject || $umdobject !== "Account") {
-                return $this->redirectForbidden($configRowName, '5002');
-            }
-            if (!$physicaldeliveryofficename || preg_replace('/\s+/', '', $physicaldeliveryofficename) !== 'ΕΠΙΣΗΜΟΣΛΟΓΑΡΙΑΣΜΟΣ') {
-                return $this->redirectForbidden($configRowName, '5003');
-            }
-*/
 
             phpCAS::trace($umdobject);
-            phpCAS::trace($physicaldeliveryofficename);
-            $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
+//            phpCAS::trace($physicaldeliveryofficename);
+    //        $gsnunitcodedn = $filterAttribute('edupersonorgunitdn:gsnunitcode:extended');
             $gsnunitcode = substr($gsnunitcodedn, strpos($gsnunitcodedn, ";") + 1);
-            phpCAS::trace($gsnunitcode);
+            $gsnunitcode = $filterAttribute('edupersonorgunitdn:gsnunitcode');
+/* check if myschool account */
+            if (!$umdobject || $umdobject !== "ISaccount") {
+                return $this->redirectForbidden($configRowName, '5002');
+            }
+            if (!$gsnunitcode || $gsnunitcode !== $CASUser) {
+                return $this->redirectForbidden($configRowName, '5003');
+            }
+/* end of checking myschool account */
+
             $userAssigned = $this->assignRoleToUser($gsnunitcode);
+
             if (sizeof($userAssigned) === 0) {
                 return $this->redirectForbidden($configRowName, '5004');
             }
@@ -259,6 +219,7 @@ class CASLogin extends ControllerBase
             if ($user) {
                 $user->setPassword($epalToken);
                 $user->setUsername($epalToken);
+                $user->set('init', $userAssigned["id"]);
                 $user->save();
             }
 

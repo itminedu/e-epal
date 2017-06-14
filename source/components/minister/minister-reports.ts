@@ -32,6 +32,8 @@ import { API_ENDPOINT } from '../../app.settings';
         <h5> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">
+
+        <!--
           <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide'" >
           <i class="fa fa-file-text"></i>
               Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
@@ -47,12 +49,62 @@ import { API_ENDPOINT } from '../../app.settings';
               Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ
           </button>
           <br><br>
-          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)" [hidden]="minedu_userName == ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide' " >
+          <i class="fa fa-file-text"></i>
+              Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων
+          </button>
+          <br><br>
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)" [hidden]="minedu_userName == '' || userRole == 'pde' || userRole == 'dide' " >
+          <i class="fa fa-file-text"></i>
+              Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)
+          </button>
+          <br><br>
+        </div>
+        -->
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(0)"  >
+          <i class="fa fa-file-text"></i>
+              Αριθμός Αιτήσεων / Εγγεγραμμένων Χρηστών
+          </button>
+          <br><br>
+        </div>
+
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(1)"  >
+          <i class="fa fa-file-text"></i>
+              Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(2)"  >
+          <i class="fa fa-file-text"></i>
+              Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != ''" >
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(3)"  >
+          <i class="fa fa-file-text"></i>
+              Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ
+          </button>
+          <br><br>
+        </div>
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(4)"  >
           <i class="fa fa-file-text"></i>
               Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων
           </button>
           <br><br>
         </div>
+        <div *ngIf = "minedu_userName != '' && userRole != 'pde' && userRole != 'dide'">
+          <button type="button" class="btn btn-alert"  (click)="nav_to_reportpath(5)"  >
+          <i class="fa fa-file-text"></i>
+              Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)
+          </button>
+          <br><br>
+        </div>
+      </div>
 
     </div>
 
@@ -76,59 +128,58 @@ import { API_ENDPOINT } from '../../app.settings';
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          this.formGroup = this.fb.group({
-              region: ['', []],
-              adminarea: ['', []],
-              schoollist: ['', []],
-          });
+        this.formGroup = this.fb.group({
+            region: ['', []],
+            adminarea: ['', []],
+            schoollist: ['', []],
+        });
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.minedu_userName = '';
-          this.userRole = MINISTRY_ROLE;
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.minedu_userName = '';
+        this.userRole = MINISTRY_ROLE;
 
     }
 
     ngOnInit() {
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                this.minedu_userName = loginInfoToken.minedu_username;
-                this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                console.log("Role:");
-                console.log(loginInfoToken.auth_role);
-                if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE)  {
-                    console.log("inside..");
-                    this.userRole = loginInfoToken.auth_role;
-                    this.minedu_userName = loginInfoToken.auth_token;
-                    this.minedu_userPassword = loginInfoToken.auth_token;
-                }
-                return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.minedu_userName = loginInfoToken.minedu_username;
+                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE) {
+                        this.userRole = loginInfoToken.auth_role;
+                        this.minedu_userName = loginInfoToken.auth_token;
+                        this.minedu_userPassword = loginInfoToken.auth_token;
+                    }
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
 
     }
 
     ngOnDestroy() {
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        if (this.loginInfo$)
+            this.loginInfo$.unsubscribe();
     }
 
 
     nav_to_reportpath(repId) {
 
-      if (repId == 1)
-        this.router.navigate(['/ministry/report-general', repId]);
-      else if (repId == 2 || repId == 3)
-        this.router.navigate(['/ministry/report-all-stat', repId]);
-      else if (repId == 4)
-        this.router.navigate(['/ministry/report-no-capacity', repId]);
+        if (repId == 0)
+            this.router.navigate(['/ministry/report-users', repId]);
+        if (repId == 1)
+            this.router.navigate(['/ministry/report-general', repId]);
+        else if (repId == 2 || repId == 3 || repId == 5)
+            this.router.navigate(['/ministry/report-all-stat', repId]);
+        else if (repId == 4)
+            this.router.navigate(['/ministry/report-no-capacity', repId]);
 
     }
-
-
 
 }

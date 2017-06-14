@@ -528,6 +528,27 @@ class EepalSchool extends ContentEntityBase implements EepalSchoolInterface {
          ->setDisplayConfigurable('form', TRUE)
          ->setDisplayConfigurable('view', TRUE);
 
+         $fields['students_added_class_a'] = BaseFieldDefinition::create('integer')
+           ->setLabel(t('Επιπλέον αριθμός μαθητών για εγγραφή'))
+           ->setDescription(t('Δώσε τον επιπλέον αριθμό μαθητών για εγγραφή.'))
+           ->setSettings(array(
+                'max_length' => 2,
+                'text_processing' => 0,
+              ))
+           ->setRequired(false)
+           ->setDefaultValue(0)
+           ->setDisplayOptions('view', array(
+                'label' => 'above',
+                'type' => 'integer',
+                'weight' => -4,
+              ))
+           ->setDisplayOptions('form', array(
+                'type' => 'integer',
+                'weight' => -4,
+              ))
+           ->setDisplayConfigurable('form', TRUE)
+           ->setDisplayConfigurable('view', TRUE);
+
      $fields['special_case'] = BaseFieldDefinition::create('boolean')
          ->setLabel(t('Ειδική περίπτωση'))
          ->setDescription(t('Ειδική περίπτωση όσον αφορά τον αριθμό επιλογών.'))

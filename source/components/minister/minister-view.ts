@@ -82,6 +82,13 @@ import { API_ENDPOINT } from '../../app.settings';
               Εκτέλεση  Κατανομής  Μαθητών<span class="glyphicon glyphicon-menu-right"></span>
           </button>
         </div>
+        <br>
+
+        <div class="col-md-6">
+          <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistributionSecondPeriod()" [disabled] = "!secondPeriodEnabled" >
+              Τοποθέτηση Μαθητών Β' Περιόδου<span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        </div>
 
     </div>
 
@@ -96,7 +103,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private settings$: BehaviorSubject<any>;
-    loginInfoSub: Subscription;
+    private loginInfoSub: Subscription;
     private settingsSub: Subscription;
 
     private apiEndPoint = API_ENDPOINT;
@@ -105,36 +112,26 @@ import { API_ENDPOINT } from '../../app.settings';
     private distStatus = "READY";
     private capacityDisabled: boolean;
     private directorViewDisabled: boolean;
+    private applicantsResultsDisabled: boolean;
+    private secondPeriodEnabled: boolean;
 
-    constructor(/*private fb: FormBuilder,*/
-      //  private _ata: LoginInfoActions,
+    constructor(
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router) {
-
-          //this.formGroup = this.fb.group({
-
-          //});
-
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
           this.modalTitle =  new BehaviorSubject("");
           this.modalText =  new BehaviorSubject("");
           this.modalHeader =  new BehaviorSubject("");
           this.settings$ = new BehaviorSubject([{}]);
-
     }
 
-
-
     public showModal(popupMsgId):void {
-        console.log("about to show modal");
-        //(<any>$('#distributionWaitingNotice')).modal('show');
         (<any>$(popupMsgId)).modal('show');
     }
 
     public hideModal(popupMsgId):void {
-        //(<any>$('#distributionWaitingNotice')).modal('hide');
         (<any>$(popupMsgId)).modal('hide');
     }
 
@@ -142,43 +139,22 @@ import { API_ENDPOINT } from '../../app.settings';
 
     }
 
-
-    /*
-    public showModal():void {
-        console.log("about to show modal");
-        (<any>$('#distributionSentNotice')).modal('show');
-    }
-
-    public hideModal():void {
-        (<any>$('#distributionSentNotice')).modal('hide');
-    }
-
-    public onHidden():void {
-        //this.isModalShown.next(false);
-    }
-    */
-
-
     ngOnDestroy() {
-
       (<any>$('#distributionWaitingNotice')).remove();
       (<any>$('#distributionNotice')).remove();
-      //(<any>$('#distributionFailureNotice')).remove();
-      //(<any>$('#distributionSentNotice')).remove();
       if (this.loginInfoSub)
         this.loginInfoSub.unsubscribe();
       if (this.settingsSub)
         this.settingsSub.unsubscribe();
+      if (this.loginInfo$)
+        this.loginInfo$.unsubscribe();
+      if (this.settings$)
+        this.settings$.unsubscribe();
     }
 
     ngOnInit() {
-
       (<any>$('#distributionWaitingNotice')).appendTo("body");
       (<any>$('#distributionNotice')).appendTo("body");
-      //(<any>$('#distributionFailureNotice')).appendTo("body");
-      //(<any>$('#distributionSentNotice')).appendTo("body");
-
-
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -197,14 +173,9 @@ import { API_ENDPOINT } from '../../app.settings';
 
     runDistribution() {
       this.distStatus = "STARTED";
-
       this.showModal("#distributionWaitingNotice");
-
       this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
-
       .then(msg => {
-          //console.log("Nikos2");
-
           this.modalTitle.next("Κατανομή Μαθητών");
           this.modalText.next("Η κατανομή ολοκληρώθηκε με επιτυχία!");
           this.modalHeader.next("modal-header-success");
@@ -213,9 +184,8 @@ import { API_ENDPOINT } from '../../app.settings';
           if (this.distStatus !== "ERROR")
             this.distStatus = "FINISHED";
       })
-      .catch(err => {console.log(err);
-          //console.log("Nikos1");
-          //console.log(err);
+      .catch(err => {
+          console.log(err);
           this.distStatus = "ERROR";
 
           this.modalTitle.next("Κατανομή Μαθητών");
@@ -225,27 +195,43 @@ import { API_ENDPOINT } from '../../app.settings';
         });
     }
 
+    runDistributionSecondPeriod() {
+
+      this.distStatus = "STARTED";
+
+      this.showModal("#distributionWaitingNotice");
+
+      this._hds.makeDistributionSecondPeriod(this.minedu_userName, this.minedu_userPassword)
+      .then(msg => {
+          this.modalTitle.next("Τοποθέτηση Μαθητών 2ης Περιόδου Αιτήσεων");
+          this.modalText.next("Η τοποθέτηση μαθητών της δεύτερης περιόδου αιτήσεων ολοκληρώθηκε με επιτυχία!");
+          this.modalHeader.next("modal-header-success");
+          this.showModal("#distributionNotice");
+
+          if (this.distStatus !== "ERROR")
+            this.distStatus = "FINISHED";
+      })
+      .catch(err => {
+          console.log(err);
+          this.distStatus = "ERROR";
+
+          this.modalTitle.next("Τοποθέτηση Μαθητών 2ης Περιόδου Αιτήσεων");
+          this.modalText.next("Αποτυχία τοποθέτησης. Προσπαθήστε ξανά. Σε περίπτωση που το πρόβλημα παραμένει, παρακαλώ επικοινωνήστε με το διαχειριστή του συστήματος.");
+          this.modalHeader.next("modal-header-danger");
+          this.showModal("#distributionNotice");
+        });
+
+    }
 
     retrieveSettings()  {
 
-      //this.dataRetrieved = -1;
-
       this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
            this.settings$.next(data);
-       },
-         error => {
-           this.settings$.next([{}]);
-           //this.dataRetrieved = 0;
-           console.log("Error Getting MinisterRetrieveSettings");
-         },
-         () => {
-           console.log("Success Getting MinisterRetrieveSettings");
-
            this.capacityDisabled = Boolean(Number(this.settings$.value['capacityDisabled']));
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
+           this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
-           console.log("Debugging..");
-           console.log(this.capacityDisabled);
+           this.secondPeriodEnabled = Boolean(Number(this.settings$.value['secondPeriodEnabled']));
 
            if (this.capacityDisabled == false) {
              this.modalTitle.next("Κατανομή Μαθητών");
@@ -261,14 +247,18 @@ import { API_ENDPOINT } from '../../app.settings';
              this.modalHeader.next("modal-header-warning");
              this.showModal("#distributionNotice");
            }
-
-
-           //this.dataRetrieved = 1;
-         }
-       )
-
+           else if (this.applicantsResultsDisabled == false) {
+             this.modalTitle.next("Κατανομή Μαθητών");
+             this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να εκτελέσετε την κατανομή, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΑΠΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
+                                 ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές.") );
+             this.modalHeader.next("modal-header-warning");
+             this.showModal("#distributionNotice");
+           }
+       },
+         error => {
+           this.settings$.next([{}]);
+           console.log("Error Getting MinisterRetrieveSettings");
+       });
     }
-
-
 
 }

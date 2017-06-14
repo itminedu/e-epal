@@ -5,24 +5,22 @@
   <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="logo navbar-brand" href="#" title="Αρχική">
-          <img src="../myschool/assets/images/myschool_logo.png" alt="Αρχική" />
-  </a>
+   <img src="../myschool/assets/images/myschool_logo.png" />
    <div class="collapse navbar-collapse flex-row-reverse" id="navbarNav">
       <div *ngIf="(loginInfo$ | async).size > 0">
      <ul class="navbar-nav">
      <div class="row">
       <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
          <li *ngIf="authRole=='student'"class="nav-item" >
-             <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες αιτήσεις</b></a>
+             <a class="nav-link" [routerLink]="['/submited-preview']" [routerLinkActive]="['active']"><b>Υποβληθείσες δηλώσεις</b></a>
          </li>
       </div>
-      <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+      <div *ngIf="(loginInfo$ | async).size > 0 && !(lockStudents | async)" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
      <li *ngIf="authRole=='director'" class="nav-item" >
-           <a class="nav-link" [routerLink]="['/school/director-view']" [routerLinkActive]="['active']"><b>Επιλεχθέντες Μαθητές</b></a>
+           <a class="nav-link" [routerLink]="['/school/director-view']" [routerLinkActive]="['active']"><b>Δηλώσεις Μαθητών στο ΕΠΑΛ</b></a>
      </li>
      </div>
-      <div *ngIf="(loginInfo$ | async).size > 0" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
+      <div *ngIf="(loginInfo$ | async).size > 0 && !(lockCapacity | async)" class="nav-item" [ngClass]="{active: path=='submited-preview'}">
          <li *ngIf="authRole=='director'" class="nav-item" >
              <a class="nav-link" [routerLink]="['/school/director-classcapacity']" [routerLinkActive]="['active']"><b>Δυναμική Σχολείου</b></a>
         </li>

@@ -7,6 +7,7 @@ import { NgReduxModule, DevToolsExtension, NgRedux } from 'ng2-redux';
 import {BrowserModule} from '@angular/platform-browser';
 import { CookieModule } from 'ngx-cookie';
 import { MyDatePickerModule } from 'mydatepicker';
+import { NguiAutoCompleteModule } from '@ngui/auto-complete';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -22,7 +23,6 @@ import {
 } from '@angular/common';
 
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
 import Main from './containers/main';
 import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from './app.routes';
 
@@ -31,7 +31,11 @@ import {HelperDataService} from './services/helper-data-service';
 import {LoaderService} from './services/Spinner.service';
 import {AuthService} from './services/auth.service';
 import SchoolAuthGuard from './guards/school.auth.guard';
+import SchoolStudentsLockedGuard from './guards/school.students.locked.guard';
+import SchoolCapacityLockedGuard from './guards/school.capacity.locked.guard';
 import StudentAuthGuard from './guards/student.auth.guard';
+import ReportsAuthGuard from './guards/reports.auth.guard';
+import StudentLockGuard from './guards/student.lock.guard';
 import RegionEduAuthGuard from './guards/regionedu.auth.guard';
 import EduAdminAuthGuard from './guards/eduadmin.auth.guard';
 import MinistryAuthGuard from './guards/ministry.auth.guard';
@@ -60,6 +64,7 @@ class MyLocalization extends NgLocalization {
     BrowserModule,
     MyDatePickerModule,
     FormsModule,
+    NguiAutoCompleteModule,
     RouterModule,
     ReactiveFormsModule,
     APP_ROUTER_PROVIDERS,
@@ -84,14 +89,17 @@ class MyLocalization extends NgLocalization {
     LoaderService,
     AuthService,
     SchoolAuthGuard,
+    SchoolStudentsLockedGuard,
+    SchoolCapacityLockedGuard,
     StudentAuthGuard,
+    StudentLockGuard,
     RegionEduAuthGuard,
     EduAdminAuthGuard,
-    MinistryAuthGuard
-
+    MinistryAuthGuard,
+    ReportsAuthGuard
   ]
 })
 class AppModule {}
 
-// enableProdMode();
+enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);

@@ -176,6 +176,9 @@
 .selectedout {
     background-color: #fd9665;
 }
+.selectedappout {
+    background-color: #a38d82;
+}
 
 .changecolor
 {
@@ -311,4 +314,16 @@ overflow-x: scroll;
 }
 .signout {
     font-size: 0.8em;
+}
+
+label {
+    font-weight: bold;
+    color: #777777;
+    font-size: 0.9em;
+    padding-bottom: 2px;
+    margin-bottom: 0px;
+}
+
+.ng2-smart-pagination { 
+    display: inline-flex !important;
 }

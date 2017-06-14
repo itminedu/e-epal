@@ -1,0 +1,6 @@
+
+ws_endpoint: 'https://the.url'
+ws_username: 'username'
+ws_password: 'password'
+verbose: true
+NO_SAFE_CURL: false

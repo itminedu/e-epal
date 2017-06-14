@@ -87,7 +87,7 @@ class MinisterSettings extends ControllerBase {
 
 			 //minister settings retrieve
 			 $config_storage = $this->entityTypeManager->getStorage('epal_config');
-	 		 $epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+	 		 $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
 	 		 $epalConfig = reset($epalConfigs);
 	 		 if (!$epalConfig) {
 	 				return $this->respondWithStatus([
@@ -98,6 +98,8 @@ class MinisterSettings extends ControllerBase {
 	 				$capacityDisabled = $epalConfig->lock_school_capacity->getString();
 	 				$directorViewDisabled = $epalConfig->lock_school_students_view->getString();
 	 				$applicantsLoginDisabled = $epalConfig->lock_application->getString();
+					$applicantsResultsDisabled = $epalConfig->lock_results->getString();
+					$secondPeriodEnabled = $epalConfig->activate_second_period->getString();
 	 		 }
 	 		 $config_storage->resetCache();
 
@@ -107,6 +109,8 @@ class MinisterSettings extends ControllerBase {
 					'capacityDisabled' => $capacityDisabled,
 					'directorViewDisabled' => $directorViewDisabled,
 					'applicantsLoginDisabled' => $applicantsLoginDisabled,
+					'applicantsResultsDisabled' => $applicantsResultsDisabled,
+					'secondPeriodEnabled' => $secondPeriodEnabled,
 			], Response::HTTP_OK);
 
 		}	//end try
@@ -123,7 +127,7 @@ class MinisterSettings extends ControllerBase {
 }
 
 
-public function storeSettings(Request $request, $capacityDisabled, $directorViewDisabled, $applicantsLoginDisabled ) {
+public function storeSettings(Request $request, $capacityDisabled, $directorViewDisabled, $applicantsLoginDisabled, $applicantsResultsDisabled, $secondPeriodEnabled ) {
 
 	try {
 		 if (!$request->isMethod('GET')) {
@@ -157,7 +161,7 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 		 }
 
 		 $config_storage = $this->entityTypeManager->getStorage('epal_config');
- 		 $epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+ 		 $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
  		 $epalConfig = reset($epalConfigs);
  		 if (!$epalConfig) {
  				return $this->respondWithStatus([
@@ -168,6 +172,9 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
  				  $epalConfig->set('lock_school_capacity', $capacityDisabled);
 					$epalConfig->set('lock_school_students_view', $directorViewDisabled);
 					$epalConfig->set('lock_application', $applicantsLoginDisabled);
+					$epalConfig->set('lock_results', $applicantsResultsDisabled);
+					$epalConfig->set('activate_second_period', $secondPeriodEnabled);
+
 					$epalConfig->save();
  		 }
  		 $config_storage->resetCache();
@@ -178,6 +185,8 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 				'capacityDisabled' => $capacityDisabled,
 				'directorViewDisabled' => $directorViewDisabled,
 				'applicantsLoginDisabled' => $applicantsLoginDisabled,
+				'applicantsResultsDisabled' => $applicantsResultsDisabled,
+				'secondPeriodEnabled' => $secondPeriodEnabled,
 		], Response::HTTP_OK);
 
 	}	//end try
@@ -192,8 +201,6 @@ public function storeSettings(Request $request, $capacityDisabled, $directorView
 
 
 }
-
-
 
 
 	private function respondWithStatus($arr, $s) {

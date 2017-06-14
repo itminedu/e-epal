@@ -44,32 +44,14 @@ import {
     <div *ngIf="(loginInfo$ | async).size !== 0">
 
     <p align="left"><strong></strong><strong>Όροι και Προϋποθέσεις Συμμετοχής στην Ηλεκτρονική Υπηρεσία</strong></p>
-    
 
-<p>Παρακαλώ, πριν προχωρήσετε στην υποβολή της Ηλεκτρονικής Δήλωσης Προτίμησης για την εγγραφή στα ΕΠΑΛ, διαβάστε με προσοχή και ενημερωθείτε 
+
+<p>Παρακαλώ, πριν προχωρήσετε στην υποβολή της Ηλεκτρονικής Δήλωσης Προτίμησης για την εγγραφή στα ΕΠΑΛ, διαβάστε με προσοχή και ενημερωθείτε
 για τις προϋποθέσεις και τις επιλογές που έχετε προκειμένου να αποκτήσετε απολυτήριο τίτλο και πτυχίο ή μόνο πτυχίο της ειδικότητας που επιθυμείτε.</p>
 
 <p>Επίσης πρέπει να γνωρίζετε ότι η Ηλεκτρονική Δήλωση Προτίμησης υπέχει θέση Υπ. Δήλωσης του ν. 1599/1986 (Α ́ 75) και οφείλετε τα στοιχεία που καταχωρίζετε σε αυτή να είναι αληθή.</p>
-          
 
 
-
-        <form [formGroup]="formGroup"  #form>
-
-        <ul>
-        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        </ul>
 
 
           <div class="row">

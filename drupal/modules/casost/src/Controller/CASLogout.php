@@ -44,7 +44,7 @@ class CASLogout extends ControllerBase
         Connection $connection,
         LoggerChannelFactoryInterface $loggerChannel
     ) {
-    
+
         $this->entityTypeManager = $entityTypeManager;
         $this->entity_query = $entity_query;
         $this->connection = $connection;
@@ -117,10 +117,6 @@ class CASLogout extends ControllerBase
             $user->setPassword(uniqid('pw'));
             $user->save();
 
-            // $response = new Response();
-            // $response->setContent("{\"message\": \"Server logout successful\",\"next\": \"{$this->logoutRedirectUrl}\"}");
-            // $response->setStatusCode(Response::HTTP_OK);
-            // $response->headers->set('Content-Type', 'application/json');
 
             $response = (new JsonResponse([
                 "message" => "Server logout successful",
@@ -130,9 +126,6 @@ class CASLogout extends ControllerBase
             session_unset();
             session_destroy();
             \Drupal::service('page_cache_kill_switch')->trigger();
-            // phpCAS::logout(array('service' => 'http://eduslim2.minedu.gov.gr/dist/#/school'));
-            // phpCAS::logoutWithRedirectService('http://eduslim2.minedu.gov.gr/dist/#/school');
-            // phpCAS::handleLogoutRequests();
 
             session_start();
             return $response;
@@ -176,6 +169,7 @@ class CASLogout extends ControllerBase
 
             $response = new Response();
             $response->setContent("{\"message\": \"Server logout continue\",\"next\": \"{$this->logoutRedirectUrl}\"}");
+
             $response->setStatusCode(Response::HTTP_OK);
             $response->headers->set('Content-Type', 'application/json');
 

@@ -395,7 +395,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setLabel(t('Όνομα χρήστη'))
       ->setDescription(t('Δώσε το όνομα χρήστη'))
       ->setSettings(array(
-        'max_length' => 80,
+        'max_length' => 1000,
         'text_processing' => 0,
       ))
 	  ->setRequired(true)
@@ -416,7 +416,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setLabel(t('Επώνυμο χρήστη'))
       ->setDescription(t('Δώσε το επώνυμο του χρήστη.'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 1000,
         'text_processing' => 0,
       ))
 	  ->setRequired(true)
@@ -437,7 +437,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setLabel(t('Όνομα πατέρα χρήστη'))
       ->setDescription(t('Δώσε το όνομα του πατέρα του χρήστη.'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 1000,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')
@@ -457,7 +457,7 @@ class EpalUsers extends ContentEntityBase implements EpalUsersInterface {
       ->setLabel(t('Όνομα μητέρας χρήστη'))
       ->setDescription(t('Δώσε το όνομα της μητέρας χρήστη.'))
       ->setSettings(array(
-        'max_length' => 50,
+        'max_length' => 1000,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')

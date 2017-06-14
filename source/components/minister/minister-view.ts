@@ -82,6 +82,13 @@ import { API_ENDPOINT } from '../../app.settings';
               Εκτέλεση  Κατανομής  Μαθητών<span class="glyphicon glyphicon-menu-right"></span>
           </button>
         </div>
+        <br>
+
+        <div class="col-md-6">
+          <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistributionSecondPeriod()" [disabled] = "!secondPeriodEnabled" >
+              Τοποθέτηση Μαθητών Β' Περιόδου<span class="glyphicon glyphicon-menu-right"></span>
+          </button>
+        </div>
 
     </div>
 
@@ -106,6 +113,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private capacityDisabled: boolean;
     private directorViewDisabled: boolean;
     private applicantsResultsDisabled: boolean;
+    private secondPeriodEnabled: boolean;
 
     constructor(/*private fb: FormBuilder,*/
       //  private _ata: LoginInfoActions,
@@ -225,6 +233,33 @@ import { API_ENDPOINT } from '../../app.settings';
         });
     }
 
+    runDistributionSecondPeriod() {
+
+      this.distStatus = "STARTED";
+
+      this.showModal("#distributionWaitingNotice");
+
+      this._hds.makeDistributionSecondPeriod(this.minedu_userName, this.minedu_userPassword)
+      .then(msg => {
+          this.modalTitle.next("Τοποθέτηση Μαθητών 2ης Περιόδου Αιτήσεων");
+          this.modalText.next("Η τοποθέτηση μαθητών της δεύτερης περιόδου αιτήσεων ολοκληρώθηκε με επιτυχία!");
+          this.modalHeader.next("modal-header-success");
+          this.showModal("#distributionNotice");
+
+          if (this.distStatus !== "ERROR")
+            this.distStatus = "FINISHED";
+      })
+      .catch(err => {console.log(err);
+          this.distStatus = "ERROR";
+
+          this.modalTitle.next("Τοποθέτηση Μαθητών 2ης Περιόδου Αιτήσεων");
+          this.modalText.next("Αποτυχία τοποθέτησης. Προσπαθήστε ξανά. Σε περίπτωση που το πρόβλημα παραμένει, παρακαλώ επικοινωνήστε με το διαχειριστή του συστήματος.");
+          this.modalHeader.next("modal-header-danger");
+          this.showModal("#distributionNotice");
+        });
+
+    }
+
 
     retrieveSettings()  {
 
@@ -245,8 +280,10 @@ import { API_ENDPOINT } from '../../app.settings';
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
-           console.log("Debugging..");
-           console.log(this.capacityDisabled);
+           this.secondPeriodEnabled = Boolean(Number(this.settings$.value['secondPeriodEnabled']));
+
+           console.log("Nikos");
+           console.log( this.secondPeriodEnabled);
 
            if (this.capacityDisabled == false) {
              this.modalTitle.next("Κατανομή Μαθητών");

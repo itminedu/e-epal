@@ -154,6 +154,31 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
+    deleteApplication(appId) {
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        //        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/application/delete`, { applicationId: appId }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(<any>data);
+                },
+                error => {
+                    console.log("Error Removing Application");
+                    reject("Error Removing Application");
+                },
+                () => console.log("Removing Application"));
+        });
+    }
+
     getCourseFields() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -592,6 +617,29 @@ export class HelperDataService implements OnInit, OnDestroy {
                 },
                 error => {
                     reject("Error POST in makeDistribution");
+                },
+                () => console.log(""));
+        });
+
+    }
+
+    makeDistributionSecondPeriod(username, userpassword) {
+
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+
+        this.createMinistryAuthorizationHeader(headers, username, userpassword);
+        let options = new RequestOptions({ headers: headers });
+
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { username: username, userpassword: userpassword }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    reject("Error POST in makeDistributionSecondPeriod");
                 },
                 () => console.log(""));
         });

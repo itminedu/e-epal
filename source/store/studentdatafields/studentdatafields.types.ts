@@ -1,19 +1,5 @@
 import { List } from 'immutable';
 
-/*
-export interface IStudentDataField {
-  studentFirstname: string;
-  studentSurname: string;
-  guardianFirstname: string;
-  guardianSurname: string;
-  studentAmka: string;
-  regionAddress: string;
-  regionTK: string;
-  regionArea: string;
-  certificateType: string;
-  relationToStudent: string;
-}
-*/
 export interface IStudentDataField {
   epaluser_id: number;
   name: string;
@@ -27,8 +13,6 @@ export interface IStudentDataField {
   regionaddress: string;
   regiontk: string;
   regionarea: string;
-  certificatetype: string;
-  graduation_year: number;
   lastschool_schoolname: any;
   lastschool_schoolyear: string;
   lastschool_class: string;

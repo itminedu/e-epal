@@ -17,7 +17,7 @@ import {Router} from "@angular/router";
     <div *ngIf="(loginInfo$ | async).size !== 0" style="margin-top: 30px; min-height: 500px;">
         <br/><br/>
         <p align="left"><strong>Ηλεκτρονικές δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος</strong></p>
-        <p align="left">Η υπηρεσία υποβολής δήλωσης προτίμησης δεν είναι διαθέσιμη αυτή την περίοδο. Αν έχετε υποβάλλει ήδη δήλωση μπορείτε να την δείτε και να την εκτυπώσετε σε μορφή PDF από την επιλογή "Υποβληθείσες Δηλώσεις επάνω δεξιά"</p>
+        <p align="left">Η υπηρεσία υποβολής δήλωσης προτίμησης δεν είναι διαθέσιμη αυτή την περίοδο. Αν έχετε υποβάλλει ήδη δήλωση μπορείτε να την δείτε και να την εκτυπώσετε σε μορφή PDF από την επιλογή "Υποβληθείσες Δηλώσεις" επάνω δεξιά</p>
         <div class="row" style="margin-top: 40px;">
         <div class="col-md-9 offset-md-3">
             <button class="btn-primary btn-lg isclickable" style="width: 12em;" (click)="signOut()">

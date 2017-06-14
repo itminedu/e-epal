@@ -276,7 +276,7 @@ class Distribution extends ControllerBase {
 			$this->logger->warning($e->getMessage());
 			$transaction->rollback();
 			return $this->respondWithStatus([
-					"message" => t("An unexpected problem occured")
+					"message" => t("An unexpected problem occured in createDistribution Method")
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
@@ -346,6 +346,8 @@ class Distribution extends ControllerBase {
 
 
 					$timestamp = strtotime(date("Y-m-d"));
+
+
 					$this->connection->insert('epal_student_class')->fields(
 						array('id' => $this->globalCounterId++,
 							'uuid' => \Drupal::service('uuid')->generate(),
@@ -356,13 +358,14 @@ class Distribution extends ControllerBase {
 							'currentclass' => $epalStudent->currentclass,
 							'currentepal' => $epalStudent->currentepal,
 							'specialization_id' => $specialization_id,
-							'points' => $epalStudent->points,
+							//'points' => $epalStudent->points,
 							'distribution_id' => $choice_id,
 							'finalized' => 1,
 							'status' => 1,
 							'created' => $timestamp,
 							'changed' => $timestamp,)
 					)->execute();
+
 
 			} //end if
 
@@ -792,6 +795,128 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 			return ERROR_DB;
 		}
 		return SUCCESS;
+
+	}
+
+
+
+	public function locateSecondPeriodStudents(Request $request) {
+
+		//POST method is checked
+		if (!$request->isMethod('POST')) {
+			return $this->respondWithStatus([
+					"message" => t("Method Not Allowed")
+				], Response::HTTP_METHOD_NOT_ALLOWED);
+    }
+
+		//user validation
+		$authToken = $request->headers->get('PHP_AUTH_USER');
+		$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+		$user = reset($users);
+		if (!$user) {
+				return $this->respondWithStatus([
+								'message' => t("User not found"),
+						], Response::HTTP_FORBIDDEN);
+		}
+
+		//user role validation
+		$roles = $user->getRoles();
+		$validRole = false;
+		foreach ($roles as $role)
+			if ($role === "ministry") {
+				$validRole = true;
+				break;
+			}
+		if (!$validRole) {
+				return $this->respondWithStatus([
+								'message' => t("User Invalid Role"),
+						], Response::HTTP_FORBIDDEN);
+		}
+
+
+		//check where distribution can be done now
+		$secondPeriodEnabled = "0";
+
+		$config_storage = $this->entityTypeManager->getStorage('epal_config');
+		$epalConfigs = $config_storage->loadByProperties(array('id' => 1));
+		$epalConfig = reset($epalConfigs);
+		if (!$epalConfig) {
+			 return $this->respondWithStatus([
+							 'message' => t("EpalConfig Enity not found"),
+					 ], Response::HTTP_FORBIDDEN);
+		}
+		else {
+			 $secondPeriodEnabled = $epalConfig->activate_second_period->getString();
+		}
+		if ($secondPeriodEnabled === "0" )  {
+			 return $this->respondWithStatus([
+							 'message' => t("secondPeriodEnabled setting is false"),
+					 ], Response::HTTP_FORBIDDEN);
+		}
+
+
+		try  {
+
+			$sCon = $this->connection->select('epal_student', 'eStudent')
+																->fields('eStudent', array('id', 'currentclass', 'currentepal'))
+																->condition('eStudent.second_period', 1 , '=');
+			$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+			//$this->globalCounterId = 10000;
+			$this->globalCounterId = $this->retrieveLastStudentId() + 1;
+
+			if ($this->locateStudent(1, $epalStudents) === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in locateStudent function")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			if ($this->findSmallClasses() === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in findSmallClasses function AFTER locateSecondPeriodStudents!")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			//αν αποτύχει, δεν γίνεται rollback. --> Λύση: διαγρα΄φή των όποιων αποτελεσμάτων ;;
+
+
+
+
+		}
+		catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return $this->respondWithStatus([
+					"message" => t("An unexpected problem occured in locateSecondPeriodStudents Method")
+				], Response::HTTP_INTERNAL_SERVER_ERROR);
+		}
+
+		$postData = null;
+		if ($content = $request->getContent()) {
+				$postData = json_decode($content);
+				return $this->respondWithStatus([
+						'message' => "locateSecondPeriodStudents has made successfully",
+				], Response::HTTP_OK);
+			}
+			else {
+				return $this->respondWithStatus([
+						'message' => t("post with no data"),
+				], Response::HTTP_BAD_REQUEST);
+			}
+
+
+
+
+	}
+
+	private function retrieveLastStudentId()	{
+
+		$sCon = $this->connection->select('epal_student', 'eStudent')
+															->fields('eStudent', array('id'));
+	  $sCon->orderBy('eStudent.id','desc');
+		$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+		if ($epalStudents)	{
+			$epalStrudent = reset($epalStudents);
+			return $epalStrudent->id;
+		}
+		return 0;
 
 	}
 

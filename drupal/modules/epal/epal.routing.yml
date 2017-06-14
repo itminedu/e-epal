@@ -46,6 +46,14 @@ epal.submitedapplications:
     _controller: '\Drupal\epal\Controller\SubmitedApplications::getSubmittedApplications'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.application_delete:
+  path: '/epal/application/delete'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::deleteApplication'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.studentapplication:
   path: '/epal/student/{studentId}'
   options:
@@ -76,6 +84,14 @@ epal.allocation:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\Distribution::createDistribution'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.allocation_second:
+  path: '/epal/distribution-secondperiod'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\Distribution::locateSecondPeriodStudents'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.confirmstudents:
@@ -221,7 +237,7 @@ epal.coursesperschools:
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::getCoursesPerSchool'
   requirements:
-    _user_is_logged_in: 'TRUE' 
+    _user_is_logged_in: 'TRUE'
 epal.critirioschosen:
   path: '/epal/critiriachosen/{studentId}/{type}'
   options:
@@ -278,6 +294,3 @@ epal.findcoursesperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
-
-
-

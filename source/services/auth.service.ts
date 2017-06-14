@@ -39,8 +39,7 @@ export class AuthService {
                 error => {
                     console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
-                },
-                () => console.log("Getting Auth Data"));
+                });
         });
     }
 
@@ -67,8 +66,7 @@ export class AuthService {
                 error => {
                     console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
-                },
-                () => console.log("Getting Auth Data"));
+                });
         });
     }
 
@@ -93,8 +91,7 @@ export class AuthService {
                 error => {
                     console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
-                },
-                () => console.log("Getting Auth Data"));
+                });
         });
     }
 
@@ -119,8 +116,7 @@ export class AuthService {
                 error => {
                     console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
-                },
-                () => console.log("Getting Auth Data"));
+                });
         });
     }
 
@@ -145,8 +141,7 @@ export class AuthService {
                 error => {
                     console.log("Error Getting Auth Data");
                     reject("Error Getting Auth Data");
-                },
-                () => console.log("Getting Auth Data"));
+                });
         });
     }
 

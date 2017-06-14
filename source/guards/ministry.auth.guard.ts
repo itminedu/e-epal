@@ -12,9 +12,7 @@ export default class MinistryAuthGuard implements CanActivate {
   canActivate() {
     return this.authService.isLoggedIn(MINISTRY_ROLE).then(loggedIn => {
         if (!loggedIn) {
-            console.log("I am IN!");
             this.router.navigate(['/ministry/logout']);
-            //this.router.navigate(['/ministy/minister-settings']);
         }
         return loggedIn;
     }).catch(err => {

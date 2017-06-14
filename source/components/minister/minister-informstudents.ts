@@ -71,9 +71,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private settings$: BehaviorSubject<any>;
     loginInfoSub: Subscription;
     private settingsSub: Subscription;
-    private numSuccessMails:number;
-    private numFailMails:number;
-    private successSending:number;
+    private numSuccessMails: number;
+    private numFailMails: number;
+    private successSending: number;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -85,133 +85,118 @@ import { API_ENDPOINT } from '../../app.settings';
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.modalTitle =  new BehaviorSubject("");
-          this.modalText =  new BehaviorSubject("");
-          this.modalHeader =  new BehaviorSubject("");
-          this.settings$ = new BehaviorSubject([{}]);
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
+        this.settings$ = new BehaviorSubject([{}]);
 
     }
 
     ngOnInit() {
 
-      (<any>$('#emaiSentNotice')).appendTo("body");
+        (<any>$('#emaiSentNotice')).appendTo("body");
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                this.minedu_userName = loginInfoToken.minedu_username;
-                this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.minedu_userName = loginInfoToken.minedu_username;
+                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
 
-      this.numSuccessMails = 0;
-      this.numFailMails = 0;
-      this.successSending = -1;
+        this.numSuccessMails = 0;
+        this.numFailMails = 0;
+        this.successSending = -1;
 
-      this.retrieveSettings();
+        this.retrieveSettings();
 
     }
 
     ngOnDestroy() {
 
-      (<any>$('#emaiSentNotice')).remove();
+        (<any>$('#emaiSentNotice')).remove();
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
-      if (this.loginInfo$)
-        this.loginInfo$.unsubscribe();
-      if (this.settingsSub)
-        this.settingsSub.unsubscribe();
-      if (this.loginInfo$)
-        this.loginInfo$.unsubscribe();
-      if (this.settings$)
-        this.settings$.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        if (this.loginInfo$)
+            this.loginInfo$.unsubscribe();
+        if (this.settingsSub)
+            this.settingsSub.unsubscribe();
+        if (this.loginInfo$)
+            this.loginInfo$.unsubscribe();
+        if (this.settings$)
+            this.settings$.unsubscribe();
 
 
     }
 
-    public showModal():void {
-        console.log("about to show modal");
+    public showModal(): void {
         (<any>$('#emaiSentNotice')).modal('show');
     }
 
-    public hideModal():void {
+    public hideModal(): void {
         (<any>$('#emaiSentNotice')).modal('hide');
     }
 
-    public onHidden():void {
+    public onHidden(): void {
         //this.isModalShown.next(false);
     }
 
     informUnlocatedStudents(unallocated) {
 
-      this.successSending = -2;
-      this.numSuccessMails = 0;
-      this.numFailMails = 0;
+        this.successSending = -2;
+        this.numSuccessMails = 0;
+        this.numFailMails = 0;
 
-      this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword, unallocated).subscribe(data => {
-          this.numSuccessMails = data.num_success_mail;
-          this.numFailMails = data.num_fail_mail;
-          //console.log("HERE!");
-          //console.log(this.numSuccessMails);
-      },
-        error => {
-          console.log("Error");
-          this.successSending = 0;
+        this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword, unallocated).subscribe(data => {
+            this.numSuccessMails = data.num_success_mail;
+            this.numFailMails = data.num_fail_mail;
+            this.successSending = 1;
 
-          this.modalTitle.next("Κατανομή Μαθητών");
-          this.modalText.next("Αποτυχία αποστολής e-mails!");
-          this.modalHeader.next("modal-header-warning");
-          this.showModal();
+            this.modalHeader.next("modal-header-success");
+            this.modalTitle.next("Κατανομή Μαθητών");
+            let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
+            if (this.numFailMails != 0) {
+                this.modalHeader.next("modal-header-warning");
+                txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
+            }
+            this.modalText.next(txtModal);
+            this.showModal();
         },
-        () => {
-          console.log("Επιτυχής αποστολή e-mails!");
-          this.successSending = 1;
+            error => {
+                console.log("Error");
+                this.successSending = 0;
 
-          this.modalHeader.next("modal-header-success");
-          this.modalTitle.next("Κατανομή Μαθητών");
-          let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
-          if (this.numFailMails != 0) {
-            this.modalHeader.next("modal-header-warning");
-            txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
-          }
-          this.modalText.next(txtModal);
-          this.showModal();
-        }
-      )
+                this.modalTitle.next("Κατανομή Μαθητών");
+                this.modalText.next("Αποτυχία αποστολής e-mails!");
+                this.modalHeader.next("modal-header-warning");
+                this.showModal();
+            });
 
     }
 
+    retrieveSettings() {
 
-    retrieveSettings()  {
+        this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+            this.settings$.next(data);
+            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
-      this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
-           this.settings$.next(data);
-       },
-         error => {
-           this.settings$.next([{}]);
-           console.log("Error Getting MinisterRetrieveSettings");
-         },
-         () => {
-           console.log("Success Getting MinisterRetrieveSettings");
-
-           this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
-
-           if (this.applicantsResultsDisabled == false) {
-             this.modalTitle.next("Κατανομή Μαθητών");
-             this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
-                                 ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές.") );
-             this.modalHeader.next("modal-header-warning");
-             this.showModal();
-           }
-         }
-       )
-
+            if (this.applicantsResultsDisabled == false) {
+                this.modalTitle.next("Κατανομή Μαθητών");
+                this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
+                    ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές."));
+                this.modalHeader.next("modal-header-warning");
+                this.showModal();
+            }
+        },
+            error => {
+                this.settings$.next([{}]);
+                console.log("Error Getting MinisterRetrieveSettings");
+            });
     }
-
 
 }

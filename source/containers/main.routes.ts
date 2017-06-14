@@ -8,7 +8,6 @@ import {RemoveSpaces} from '../pipes/removespaces';
 import Info from '../components/student-application-form/info';
 import ParentForm from '../components/student-application-form/parent.form';
 import StudentApplicationMain from '../components/student-application-form/application.form.main';
-import StudentsList from '../components/students/students-list';
 import Home from '../components/home';
 import SchoolHome from '../components/school.home';
 import MinistryHome from '../components/ministry.home';
@@ -60,7 +59,6 @@ export const MainRoutes: Routes = [
 //  { path: 'breadcrumbs', component: Breadcrumbs },
   { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard, StudentLockGuard] },
-//  { path: 'students-list', component: StudentsList },
   { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'intro-statement', component: Disclaimer, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
@@ -91,7 +89,6 @@ export const MainRoutes: Routes = [
 export const MainDeclarations = [
   CamelCasePipe,
   RemoveSpaces,
-  StudentsList,
   Home,
   SchoolHome,
   MinistryHome,

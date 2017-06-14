@@ -93,9 +93,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private enableCapacityFilter: boolean;
 
     private source: LocalDataSource;
-    columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
+    columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new  reportsSchema();
+    private reportSchema = new reportsSchema();
     private csvObj = new csvCreator();
 
     private chartObj = new chartCreator();
@@ -109,116 +109,107 @@ import { API_ENDPOINT } from '../../app.settings';
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          this.formGroup = this.fb.group({
+        this.formGroup = this.fb.group({
             capacityEnabled: ['', []],
-          });
+        });
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.generalReport$ = new BehaviorSubject([{}]);
-          this.minedu_userName = '';
-          this.validCreator = -1;
-          this.enableCapacityFilter = false;
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.generalReport$ = new BehaviorSubject([{}]);
+        this.minedu_userName = '';
+        this.validCreator = -1;
+        this.enableCapacityFilter = false;
 
     }
 
     ngOnInit() {
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                this.minedu_userName = loginInfoToken.minedu_username;
-                this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.minedu_userName = loginInfoToken.minedu_username;
+                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
 
-      this.routerSub = this.activatedRoute.params.subscribe(params => {
-      this.reportId = +params['reportId'];
+        this.routerSub = this.activatedRoute.params.subscribe(params => {
+            this.reportId = +params['reportId'];
 
-     });
+        });
 
     }
 
     ngOnDestroy() {
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
-      if (this.generalReportSub)
-          this.generalReportSub.unsubscribe();
-          if (this.loginInfo$)
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        if (this.generalReportSub)
+            this.generalReportSub.unsubscribe();
+        if (this.loginInfo$)
             this.loginInfo$.unsubscribe();
-          if (this.generalReport$)
-              this.generalReport$.unsubscribe();
+        if (this.generalReport$)
+            this.generalReport$.unsubscribe();
 
     }
 
 
-createReport() {
+    createReport() {
+        this.validCreator = 0;
 
-  console.log("capacityFilter:");
-  console.log(this.enableCapacityFilter);
+        let route;
+        if (this.reportId === 4) {
+            route = "/ministry/report-no-capacity/";
+            this.settings = this.reportSchema.reportNoCapacity;
+        }
+        else {
+            return;
+        }
 
-  this.validCreator = 0;
+        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, this.enableCapacityFilter, 0, 0, 0, 0, 0, 0).subscribe(data => {
+            this.generalReport$.next(data);
+            this.data = data;
+            this.validCreator = 1;
+            this.source = new LocalDataSource(this.data);
+            this.columnMap = new Map<string, TableColumn>();
 
-  let route;
-  if (this.reportId === 4)  {
-    route = "/ministry/report-no-capacity/";
-    this.settings = this.reportSchema.reportNoCapacity;
-  }
-  else  {
-    console.log("Route argument is not equal to report_id=4!")
-    return;
-  }
+            //pass parametes to csv class object
+            this.csvObj.columnMap = this.columnMap;
+            this.csvObj.source = this.source;
+            this.csvObj.settings = this.settings;
+            this.csvObj.prepareColumnMap();
+        },
+            error => {
+                this.generalReport$.next([{}]);
+                this.validCreator = -1;
+                console.log("Error Getting ReportNoCapacity");
+            });
 
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, this.enableCapacityFilter, 0, 0, 0, 0, 0, 0).subscribe(data => {
-      this.generalReport$.next(data);
-      this.data = data;
-  },
-    error => {
-      this.generalReport$.next([{}]);
-      this.validCreator = -1;
-      console.log("Error Getting ReportNoCapacity");
-    },
-    () => {
-      console.log("Success Getting ReportNoCapacity");
-      this.validCreator = 1;
-      this.source = new LocalDataSource(this.data);
-      this.columnMap = new Map<string,TableColumn>();
-
-      //pass parametes to csv class object
-      this.csvObj.columnMap = this.columnMap;
-      this.csvObj.source = this.source;
-      this.csvObj.settings = this.settings;
-      this.csvObj.prepareColumnMap();
     }
-  )
 
-}
+    toggleCapacityFilter() {
 
-toggleCapacityFilter()  {
+        this.enableCapacityFilter = !this.enableCapacityFilter;
 
-  this.enableCapacityFilter = !this.enableCapacityFilter;
+    }
 
-}
-
-navigateBack()  {
-  this.router.navigate(['/ministry/minister-reports']);
-}
+    navigateBack() {
+        this.router.navigate(['/ministry/minister-reports']);
+    }
 
 
-onSearch(query: string = '') {
+    onSearch(query: string = '') {
 
-  this.csvObj.onSearch(query);
-}
+        this.csvObj.onSearch(query);
+    }
 
 
-export2Csv()  {
+    export2Csv() {
 
-  this.csvObj.export2Csv();
+        this.csvObj.export2Csv();
 
-}
+    }
 
 
 }

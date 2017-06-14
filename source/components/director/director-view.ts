@@ -112,8 +112,9 @@ import {
                        </div>
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
-                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
-
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+                           <div class="col-md-3" style="font-size: 0.8em;">Τηλέφωνο Επικοινωνίας</div>
+                           <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.telnum}}</div>
                        </div>
 
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
@@ -121,20 +122,24 @@ import {
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolname}}</div>
                            <div class="col-md-3" style="font-size: 0.8em;">Σχολικό έτος τελευταίας φοίτησης</div>
                            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.lastschool_schoolyear}}</div>
-
                        </div>
-
                        <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                           <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                           <div class="col-md-3" style="font-size: 0.8em;">Δήλωση από:</div>
+                           <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.relationtostudent }}</div>
+                       </div>
+                       <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
-                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
-                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
-                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                           <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Α</div>
+                           <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Β</div>
+                           <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                           <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Δ</div>
                        </div>
                        <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-3" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
@@ -260,8 +265,6 @@ import {
 
 
     public showModal(popupMsgId): void {
-        console.log("about to show modal", popupMsgId);
-
         (<any>$(popupMsgId)).modal('show');
     }
 
@@ -293,8 +296,7 @@ import {
                 this.CoursesPerSchool$.next([{}]);
                 console.log("Error Getting courses perSchool");
                 this.showLoader.next(false);
-            },
-            () => console.log("Getting School "));
+            });
 
     }
 
@@ -313,8 +315,7 @@ import {
                 console.log("Error Getting Students");
                 this.showLoader.next(false);
                 this.showModal("#emptyselection");
-            },
-            () => console.log("Getting Students"));
+            });
 
     }
 
@@ -325,7 +326,6 @@ import {
             ind = -1;
         }
         this.courseActive = ind;
-        console.log(this.courseActive, ind, "ind");
     }
 
     setActiveStudent(ind) {
@@ -334,7 +334,6 @@ import {
             ind = -1;
         }
         this.StudentActive = ind;
-        console.log(this.courseActive, ind, "ind");
     }
 
     setActiveStudentnew(ind) {
@@ -343,7 +342,6 @@ import {
             ind = -1;
         }
         this.StudentActive = ind;
-        console.log(this.courseActive, ind, "ind");
     }
 
 
@@ -357,7 +355,6 @@ import {
         if (cb.value == 3)
             rtype = null;
         var type = cb.value;
-        console.log(type, "aaa");
         this.showLoader.next(true);
 
         let std = this.StudentInfo$.getValue();
@@ -367,19 +364,14 @@ import {
             this.SavedStudents$.next(data);
             this.StudentInfo$.next(std);
             this.showLoader.next(false);
-
+            this.showModal("#checksaved");
         },
             error => {
                 this.SavedStudents$.next([{}]);
                 console.log("Error saving Students");
                 this.showLoader.next(false);
                 this.showModal("#dangermodal");
-            },
-            () => {
-                console.log("saved Students");
-                this.showModal("#checksaved");
             });
-
     }
 
 }

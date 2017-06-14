@@ -272,7 +272,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         let epalObj: Array<StudentEpalChosen> = [];
 
         let std = this.studentDataFields$.getValue().get(0);
-        console.log(std);
+
         aitisiObj[0] = <any>{};
         aitisiObj[0].name = std.name;
         aitisiObj[0].studentsurname = std.studentsurname;
@@ -283,11 +283,6 @@ import { HelperDataService } from '../../services/helper-data-service';
         aitisiObj[0].regionarea = std.regionarea;
         aitisiObj[0].regiontk = std.regiontk;
         aitisiObj[0].certificatetype = '';
-        //          aitisiObj[0].graduation_year = std.graduation_year;
-        //          aitisiObj[0].lastschool_registrynumber = std.lastschool_registrynumber;
-        //          aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
-        //          aitisiObj[0].lastschool_class = std.lastschool_class;
-        //          aitisiObj[0].currentepal = std.currentepal;
 
         aitisiObj[0].graduation_year = 0;
         aitisiObj[0].lastschool_registrynumber = std.lastschool_schoolname.registry_no;
@@ -295,7 +290,6 @@ import { HelperDataService } from '../../services/helper-data-service';
         aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
         aitisiObj[0].lastschool_unittypeid = std.lastschool_schoolname.unit_type_id;
         aitisiObj[0].lastschool_class = std.lastschool_class;
-        //          aitisiObj[0].currentepal = 154;
 
         aitisiObj[0].relationtostudent = std.relationtostudent;
         aitisiObj[0].telnum = std.telnum;
@@ -401,6 +395,8 @@ import { HelperDataService } from '../../services/helper-data-service';
                 this.modalText.next(mText);
                 this.modalHeader.next(mHeader);
                 this.showModal();
+                (<any>$('.loading')).remove();
+                this.showLoader.next(false);
             },
             error => {
                 (<any>$('.loading')).remove();
@@ -410,14 +406,7 @@ import { HelperDataService } from '../../services/helper-data-service';
                 this.showModal();
                 this.showLoader.next(false);
                 console.log("Error HTTP POST Service")
-            },
-            () => {
-                console.log("write this message anyway");
-                (<any>$('.loading')).remove();
-                this.showLoader.next(false);
-            },
-
-        );
+            });
 
     }
 
@@ -426,7 +415,6 @@ import { HelperDataService } from '../../services/helper-data-service';
     }
 
     public hideModal(): void {
-        console.log("going to post-submit from hide()");
         (<any>$('#studentFormSentNotice')).modal('hide');
         if (this.modalHeader.getValue() === "modal-header-success") {
             this.router.navigate(['/post-submit']);
@@ -436,7 +424,6 @@ import { HelperDataService } from '../../services/helper-data-service';
 
     public onHidden(): void {
         this.isModalShown.next(false);
-        console.log("going to post-submit");
         this.router.navigate(['/post-submit']);
     }
 

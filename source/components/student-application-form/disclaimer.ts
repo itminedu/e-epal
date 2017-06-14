@@ -43,7 +43,7 @@ import {
 
     <div *ngIf="(loginInfo$ | async).size !== 0">
 
-    <p align="left"><strong></strong><strong>Όροι και Προϋποθέσεις Συμμετοχής στην Ηλεκτρονική Υπηρεσία</strong></p>
+    <p align="left"><strong>Όροι και Προϋποθέσεις Συμμετοχής στην Ηλεκτρονική Υπηρεσία</strong></p>
     
 
 <p>Παρακαλώ, πριν προχωρήσετε στην υποβολή της Ηλεκτρονικής Δήλωσης Προτίμησης για την εγγραφή στα ΕΠΑΛ, διαβάστε με προσοχή και ενημερωθείτε 
@@ -57,17 +57,16 @@ import {
         <form [formGroup]="formGroup"  #form>
 
         
-         Διάφορα Έγγραφα
-        <ul>
+        <p align="left"><strong> Διάφορα Έγγραφα  </strong></p>        
         <li class="list-group-item isclickable oddout" >
             <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/egkyklios.pdf" target="_blank">Η με αρ.πρωτ. 89047/ΓΔ4/26-05-2017 Εγκύκλιος του Υ.Π.Π.Ε.Θ.</a>
         </li>
         <li class="list-group-item isclickable evenout"  >
             <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/infos.pdf" target="_blank">Ενημερωτικά Στοιχεία</a>
         </li>
-        </ul>
 
-
+        <br>
+        <br>
           <div class="row">
             <div class="col-md-1 ">
               <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >

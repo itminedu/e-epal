@@ -13,6 +13,7 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\epal\Crypt;
 
 class OAuthLogin extends ControllerBase
 {
@@ -63,8 +64,30 @@ class OAuthLogin extends ControllerBase
         $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => $configRowName));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
-            $this->consumer_key = $ostauthConfig->consumer_key->value;
-            $this->consumer_secret = $ostauthConfig->consumer_secret->value;
+
+            $crypt = new Crypt();
+
+            try  {
+              $consumer_key_decoded = $crypt->decrypt($ostauthConfig->consumer_key->value);
+              $consumer_secret_decoded = $crypt->decrypt($ostauthConfig->consumer_secret->value);
+            }
+            catch (\Exception $e) {
+              unset($crypt);
+              $this->logger->notice('epalToken decoding false');
+              $response = new Response();
+              $response->setContent('internal_server_error');
+              $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+              $response->headers->set('Content-Type', 'application/json');
+              return $response;
+            }
+            unset($crypt);
+
+
+            //$this->consumer_key = $ostauthConfig->consumer_key->value;
+            //$this->consumer_secret = $ostauthConfig->consumer_secret->value;
+            $this->consumer_key = $consumer_key_decoded;
+            $this->consumer_secret = $consumer_secret_decoded;
+
             $this->request_token_url = $ostauthConfig->request_token_url->value;
             $this->user_authorization_url = $ostauthConfig->user_authorization_url->value;
             $this->access_token_url = $ostauthConfig->access_token_url->value;
@@ -75,7 +98,7 @@ class OAuthLogin extends ControllerBase
             $this->redirect_url = $ostauthConfig->redirect_url->value;
         } else {
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('forbidden1');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -83,15 +106,16 @@ class OAuthLogin extends ControllerBase
 
         try {
             $oauth = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_PLAINTEXT, OAUTH_AUTH_TYPE_URI);
+
             $oauth->enableDebug();
 
             $uniqid = uniqid('sid');
             $requestToken = $oauth->getRequestToken($this->request_token_url, $this->callback_url . '?sid_ost=' . $uniqid);
-                // store auth token
+              // store auth token
 
-//            $this->logger->warning($request->headers->get('referer'));
+              // $this->logger->warning($request->headers->get('referer'));
             $oauthostSession = $this->entityTypeManager()->getStorage('oauthost_session')->create(array(
-        //    'langcode' => $language_interface->getId(),
+              // 'langcode' => $language_interface->getId(),
               'langcode' => 'el',
               'user_id' => \Drupal::currentUser()->id(),
               'name' => $uniqid,
@@ -102,14 +126,16 @@ class OAuthLogin extends ControllerBase
               'request_token_secret' => $requestToken['oauth_token_secret'],
               'status' => 1
           ));
+
             $oauthostSession->save();
+
             header('Location: '.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
             $this->logger->warning('redirected to:'.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
             exit;
         } catch (OAuthException $e) {
             $this->logger->warning($e->getMessage());
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('forbidden2');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;

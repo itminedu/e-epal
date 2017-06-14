@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Drupal\epal\Crypt;
 require ('RedirectResponseWithCookieExt.php');
 
 class CBController extends ControllerBase
@@ -74,7 +75,7 @@ class CBController extends ControllerBase
             $configRowName = $this->oauthostSession->configrowname->value;
         } else {
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('forbidden1');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -82,8 +83,29 @@ class CBController extends ControllerBase
         $ostauthConfigs = $this->entityTypeManager->getStorage('oauthost_config')->loadByProperties(array('name' => $configRowName));
         $ostauthConfig = reset($ostauthConfigs);
         if ($ostauthConfig) {
-            $this->consumer_key = $ostauthConfig->consumer_key->value;
-            $this->consumer_secret = $ostauthConfig->consumer_secret->value;
+
+            $crypt = new Crypt();
+
+            try  {
+              $consumer_key_decoded = $crypt->decrypt($ostauthConfig->consumer_key->value);
+              $consumer_secret_decoded = $crypt->decrypt($ostauthConfig->consumer_secret->value);
+            }
+            catch (\Exception $e) {
+              unset($crypt);
+              $this->logger->notice('epalToken decoding false');
+              $response = new Response();
+              $response->setContent('internal_server_error');
+              $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+              $response->headers->set('Content-Type', 'application/json');
+              return $response;
+            }
+            unset($crypt);
+
+            $this->consumer_key = $consumer_key_decoded;
+            $this->consumer_secret = $consumer_secret_decoded;
+            //$this->consumer_key = $ostauthConfig->consumer_key->value;
+            //$this->consumer_secret = $ostauthConfig->consumer_secret->value;
+
             $this->request_token_url = $ostauthConfig->request_token_url->value;
             $this->user_authorization_url = $ostauthConfig->user_authorization_url->value;
             $this->access_token_url = $ostauthConfig->access_token_url->value;
@@ -94,7 +116,7 @@ class CBController extends ControllerBase
             $this->redirect_url = $ostauthConfig->redirect_url->value;
         } else {
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('forbidden2');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -120,7 +142,7 @@ class CBController extends ControllerBase
         } else {
             $this->logger->notice('epalToken false');
             $response = new Response();
-            $response->setContent('forbidden');
+            $response->setContent('forbidden3');
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $response->headers->set('Content-Type', 'application/json');
             return $response;
@@ -151,6 +173,7 @@ class CBController extends ControllerBase
             $epalUser = reset($epalUsers);
 
             $epalToken = md5(uniqid(mt_rand(), true));
+
             if ($epalUser) {
                 $user = $this->entityTypeManager->getStorage('user')->load($epalUser->user_id->target_id);
                 if ($user) {
@@ -169,7 +192,6 @@ class CBController extends ControllerBase
                 }
             }
             if ($epalUser === null || !$epalUser) {
-
                 //Create a User
                 $user = User::create();
                 //Mandatory settings
@@ -194,6 +216,22 @@ class CBController extends ControllerBase
                 $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('mail' => $unique_id));
                 $user = reset($users);
                 if ($user) {
+                    $crypt = new Crypt();
+                    try  {
+                      $name_encoded = $crypt->encrypt($unique_id);
+                    }
+                    catch (\Exception $e) {
+                      unset($crypt);
+                      $this->logger->notice('epalToken encoding false');
+                      $response = new Response();
+                      $response->setContent('internal_server_error');
+                      $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+                      $response->headers->set('Content-Type', 'application/json');
+                      return $response;
+                    }
+                    unset($crypt);
+
+
                     $epalUser = $this->entityTypeManager()->getStorage('epal_users')->create(array(
                         'langcode' => 'el',
                         'user_id' => $user->id(),
@@ -203,10 +241,15 @@ class CBController extends ControllerBase
 /*                        'name' => $taxis_userData['firstName'],
                         'surname' => $taxis_userData['surname'],
                         'fathername' => $taxis_userData['fathersName'], */
-                        'name' => $unique_id,
-                        'surname' => $unique_id,
-                        'fathername' => $unique_id,
-                        'mothername' => $unique_id,
+                        //'name' => $unique_id,
+                        //'surname' => $unique_id,
+                        //'fathername' => $unique_id,
+                        //'mothername' => $unique_id,
+                        'name' => $name_encoded,
+                        'surname' => $name_encoded,
+                        'fathername' => $name_encoded,
+                        'mothername' => $name_encoded,
+
                         'accesstoken' => $accessToken['oauth_token'],
                         'accesstoken_secret' => $accessToken['oauth_token_secret'],
                         'authtoken' => $epalToken,

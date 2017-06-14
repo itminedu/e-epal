@@ -93,9 +93,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private routerSub: any;
 
     private source: LocalDataSource;
-    columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
+    columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new  reportsSchema();
+    private reportSchema = new reportsSchema();
     private csvObj = new csvCreator();
 
     private chartObj = new chartCreator();
@@ -109,148 +109,144 @@ import { API_ENDPOINT } from '../../app.settings';
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          this.formGroup = this.fb.group({
-              region: ['', []],
-              adminarea: ['', []],
-              schoollist: ['', []],
-          });
+        this.formGroup = this.fb.group({
+            region: ['', []],
+            adminarea: ['', []],
+            schoollist: ['', []],
+        });
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.generalReport$ = new BehaviorSubject([{}]);
-          this.minedu_userName = '';
-          this.validCreator = -1;
-          this.createGraph = false;
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.generalReport$ = new BehaviorSubject([{}]);
+        this.minedu_userName = '';
+        this.validCreator = -1;
+        this.createGraph = false;
 
     }
 
     ngOnInit() {
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                this.minedu_userName = loginInfoToken.minedu_username;
-                this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.minedu_userName = loginInfoToken.minedu_username;
+                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
 
-      this.routerSub = this.activatedRoute.params.subscribe(params => {
-      this.reportId = +params['reportId'];
+        this.routerSub = this.activatedRoute.params.subscribe(params => {
+            this.reportId = +params['reportId'];
 
-     });
+        });
 
     }
 
     ngOnDestroy() {
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
-      if (this.generalReportSub)
-          this.generalReportSub.unsubscribe();
-          if (this.loginInfo$)
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        if (this.generalReportSub)
+            this.generalReportSub.unsubscribe();
+        if (this.loginInfo$)
             this.loginInfo$.unsubscribe();
-          if (this.generalReport$)
-              this.generalReport$.unsubscribe();
+        if (this.generalReport$)
+            this.generalReport$.unsubscribe();
 
     }
 
 
-createReport(regionSel) {
+    createReport(regionSel) {
 
-  this.validCreator = 0;
-  this.createGraph = false;
+        this.validCreator = 0;
+        this.createGraph = false;
 
-  let route;
-  if (this.reportId === 1)  {
-    route = "/ministry/general-report/";
-    this.settings = this.reportSchema.genReportSchema;
-  }
-  else if (this.reportId === 2)  {
-    route = "/ministry/report-completeness/";
-    this.settings = this.reportSchema.reportCompletenessSchema;
-  }
-  else if (this.reportId === 3)  {
-    route = "/ministry/report-all-stat/";
-    this.settings = this.reportSchema.reportAllStatSchema;
-  }
+        let route;
+        if (this.reportId === 1) {
+            route = "/ministry/general-report/";
+            this.settings = this.reportSchema.genReportSchema;
+        }
+        else if (this.reportId === 2) {
+            route = "/ministry/report-completeness/";
+            this.settings = this.reportSchema.reportCompletenessSchema;
+        }
+        else if (this.reportId === 3) {
+            route = "/ministry/report-all-stat/";
+            this.settings = this.reportSchema.reportAllStatSchema;
+        }
 
- let regSel = 0;
+        let regSel = 0;
 
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0,0, 0).subscribe(data => {
-      this.generalReport$.next(data);
-      this.data = data;
-  },
-    error => {
-      this.generalReport$.next([{}]);
-      this.validCreator = -1;
-      console.log("Error Getting generalReport");
-    },
-    () => {
-      console.log("Success Getting generalReport");
-      this.validCreator = 1;
-      this.source = new LocalDataSource(this.data);
-      this.columnMap = new Map<string,TableColumn>();
+        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0).subscribe(data => {
+            this.generalReport$.next(data);
+            this.data = data;
+            this.validCreator = 1;
+            this.source = new LocalDataSource(this.data);
+            this.columnMap = new Map<string, TableColumn>();
 
-      //pass parametes to csv class object
-      this.csvObj.columnMap = this.columnMap;
-      this.csvObj.source = this.source;
-      this.csvObj.settings = this.settings;
-      this.csvObj.prepareColumnMap();
+            //pass parametes to csv class object
+            this.csvObj.columnMap = this.columnMap;
+            this.csvObj.source = this.source;
+            this.csvObj.settings = this.settings;
+            this.csvObj.prepareColumnMap();
+        },
+            error => {
+                this.generalReport$.next([{}]);
+                this.validCreator = -1;
+                console.log("Error Getting generalReport");
+            });
+
     }
-  )
 
-}
-
-navigateBack()  {
-  this.router.navigate(['/ministry/minister-reports']);
-}
+    navigateBack() {
+        this.router.navigate(['/ministry/minister-reports']);
+    }
 
 
-onSearch(query: string = '') {
+    onSearch(query: string = '') {
 
-  this.csvObj.onSearch(query);
-}
-
-
-export2Csv()  {
-
-  this.csvObj.export2Csv();
-
-}
+        this.csvObj.onSearch(query);
+    }
 
 
-createDiagram() {
-  if (!this.createGraph)  {
-    this.generateGraphData();
-    this.chartObj.d3data = this.d3data;
-    this.chartObj.chartContainer = this.chartContainer;
-    this.chartObj.createChart();
-    this.chartObj.updateChart();
-    this.createGraph = true;
-  }
-}
+    export2Csv() {
 
-generateGraphData() {
+        this.csvObj.export2Csv();
 
-   this.d3data = [];
+    }
 
-   if (this.reportId === 1)  {
-     let labelsX = [];
-     labelsX.push("1η Προτίμηση");
-     labelsX.push("2η Προτίμηση");
-     labelsX.push("3η Προτίμηση");
-     labelsX.push("Μη τοποθετημένοι");
-     labelsX.push("Προσωρινά τοποθετημένοι σε ολιγομελή");
-     for (let i = 1; i <=  5; i++) {
-       this.d3data.push([
-         labelsX[i-1],
-         this.data[i].numStudents /   this.data[0].numStudents,
-       ]);
-     }
-   }
- }
+
+    createDiagram() {
+        if (!this.createGraph) {
+            this.generateGraphData();
+            this.chartObj.d3data = this.d3data;
+            this.chartObj.chartContainer = this.chartContainer;
+            this.chartObj.createChart();
+            this.chartObj.updateChart();
+            this.createGraph = true;
+        }
+    }
+
+    generateGraphData() {
+
+        this.d3data = [];
+
+        if (this.reportId === 1) {
+            let labelsX = [];
+            labelsX.push("1η Προτίμηση");
+            labelsX.push("2η Προτίμηση");
+            labelsX.push("3η Προτίμηση");
+            labelsX.push("Μη τοποθετημένοι");
+            labelsX.push("Προσωρινά τοποθετημένοι σε ολιγομελή");
+            for (let i = 1; i <= 5; i++) {
+                this.d3data.push([
+                    labelsX[i - 1],
+                    this.data[i].numStudents / this.data[0].numStudents,
+                ]);
+            }
+        }
+    }
 
 
 

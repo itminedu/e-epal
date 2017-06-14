@@ -6,7 +6,6 @@ import { ICourseField } from "../store/coursefields/coursefields.types";
 import { ISectorField } from "../store/sectorfields/sectorfields.types";
 import { IRegion, IRegions, IRegionSchool } from "../store/regionschools/regionschools.types";
 import { ISector, ISectors, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
-// import { IClassField } from "../store/classfields/classfields.types";
 import { AppSettings } from "../app.settings";
 import { NgRedux, select } from "ng2-redux";
 import { IAppState } from "../store/store";
@@ -41,7 +40,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    // console.log("INSIDE!");
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     return loginInfoToken;
@@ -100,8 +98,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error Sending Verification Code");
                     reject("Error Sending Verification Code");
-                },
-                () => console.log("Sending Verification Code"));
+                });
         });
     }
 
@@ -125,8 +122,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error Verifying Verification Code");
                     reject("Error Verifying Verification Code");
-                },
-                () => console.log("Verifying Verification Code"));
+                });
         });
     }
 
@@ -149,8 +145,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error Saving Profile");
                     reject("Error Saving Profile");
-                },
-                () => console.log("Saving Profile"));
+                });
         });
     }
 
@@ -174,8 +169,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error Removing Application");
                     reject("Error Removing Application");
-                },
-                () => console.log("Removing Application"));
+                });
         });
     }
 
@@ -199,8 +193,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("Course Fields Received"));
+                });
         });
     };
 
@@ -223,8 +216,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("Sector Fields Received"));
+                });
         });
     };
 
@@ -258,8 +250,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service in getRegionsWithSchools method");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("region schools service"));
+                });
         });
     };
 
@@ -282,8 +273,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("region schools service"));
+                });
         });
     };
 
@@ -350,8 +340,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("Sector Fields Received"));
+                });
         });
     };
 
@@ -370,7 +359,7 @@ export class HelperDataService implements OnInit, OnDestroy {
             this.http.get(`${AppSettings.API_ENDPOINT}/epal/curuser`, options)
                 .map(response => response.json())
                 .subscribe(data => {
-                    window.onbeforeunload = function (e) {
+                    window.onbeforeunload = function(e) {
                         let confirmationMessage = "\o/";
                         e.returnValue = confirmationMessage;
                         return confirmationMessage;
@@ -380,8 +369,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 error => {
                     console.log("Error HTTP GET Service");
                     reject("Error HTTP GET Service");
-                },
-                () => console.log("UserName Received"));
+                });
         });
     }
 
@@ -443,14 +431,13 @@ export class HelperDataService implements OnInit, OnDestroy {
                 .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
-                    window.onbeforeunload = function () { console.log("unloading") };
+                    window.onbeforeunload = function() { console.log("unloading") };
                     resolve(data);
                 },
                 error => {
                     console.log("Error Logout");
                     reject("Error Logout");
-                },
-                () => console.log("Logging out"));
+                });
         });
     }
 
@@ -463,14 +450,13 @@ export class HelperDataService implements OnInit, OnDestroy {
                 .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
-                    window.onbeforeunload = function () { console.log("unloading") };
+                    window.onbeforeunload = function() { console.log("unloading") };
                     resolve(data);
                 },
                 error => {
                     console.log("Error Logout");
                     reject("Error Logout");
-                },
-                () => console.log("Logging out"));
+                });
         });
     }
 
@@ -493,7 +479,6 @@ export class HelperDataService implements OnInit, OnDestroy {
     getStudentDetails(headerid) {
         let headerIdNew = headerid.toString();
         this.loginInfo$.getValue().forEach(loginInfoToken => {
-            console.log("Nai");
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
         });
@@ -523,7 +508,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    
+
 
 
     getStudentPerSchool(classId, sector, specialit) {
@@ -545,7 +530,6 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
     saveConfirmStudents(students, type) {
-        console.log(students, type, "confirm");
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -594,8 +578,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 },
                 error => {
                     reject("Error Sending Ministry Credentials");
-                },
-                () => console.log(""));
+                });
         });
 
     }
@@ -617,8 +600,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 },
                 error => {
                     reject("Error POST in makeDistribution");
-                },
-                () => console.log(""));
+                });
         });
 
     }
@@ -640,8 +622,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 },
                 error => {
                     reject("Error POST in makeDistributionSecondPeriod");
-                },
-                () => console.log(""));
+                });
         });
 
     }
@@ -694,9 +675,9 @@ export class HelperDataService implements OnInit, OnDestroy {
         let route = "";
         if (unallocated == 1)
             route = "ministry/send-unallocated-massive-mail";
-        else if(unallocated == 2)
+        else if (unallocated == 2)
             route = "ministry/send-unallocated-sc-massive-mail";
-        else if(unallocated == 3)
+        else if (unallocated == 3)
             route = "ministry/send-located-massive-mail";
 
         return this.http.get(`${AppSettings.API_ENDPOINT}/` + route, options)
@@ -878,7 +859,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
 
-    
+
     getSchoolId() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -895,9 +876,9 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    
 
-    
+
+
     FindCapacityPerSchool() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -977,121 +958,24 @@ export class HelperDataService implements OnInit, OnDestroy {
             .map(response => response.json());
     }
 
-createPdfServerSide_OLD(auth_token, role)  {
-
-  /*
-  this.loginInfo$.getValue().forEach(loginInfoToken => {
-      this.authToken = loginInfoToken.auth_token;
-      this.authRole = loginInfoToken.auth_role;
-      console.log("Θα μπει;");
-      console.log(this.authToken);
-  });
-  */
-
-  let headers = new Headers({
-      //"Content-Type": "application/json",
-      "Content-Type": "application/json",
-       //"Access-Control-Allow-Origin": "true",
-
-  });
-  //this.authToken = auth_token;
-  //this.authRole = role;
-  console.log("Αυτά είναι:");
-  console.log(this.authToken);
-  console.log(this.authRole);
-  this.createAuthorizationHeader(headers);
-  //let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.Blob }]);
-  let options = new RequestOptions({ headers: headers });
-
-  console.log("Nikos1");
-
-  //return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`, options)
-  //    .map(response => response.json());
-
-
-
-
-
-  return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/`,   options)
-
-    .map(response => response.json())
-    //.map(response => (response.blob())
-    //.map((res:Response) => res.blob())
-    //.map(response => (<Response>response).blob())
-    .subscribe(
-        data => {
-
-            console.log("Hello!");
-            console.log(data);
-            var blob = new Blob([data['pdfString']], {type: 'application/pdf'});
-            console.log(blob);
-            FileSaver.saveAs(blob, "appConfirmation.pdf");
-
-    },
-        err => console.error(err),
-    () => console.log('done')
-);
-
-
-
-  /*
-  return new Promise((resolve, reject) => {
-      this.http.post(`${AppSettings.API_ENDPOINT}/epal/pdf-application`, options)
-          //.map(response => response.json())
-          .subscribe(data => {
-              resolve(data);
-              console.log("Nik");
-
-              var blob = new Blob([data['_body']], {type: 'application/pdf'});
-              console.log(blob);
-              FileSaver.saveAs(blob, "appConfirmation.pdf");
-              //console.log(data['_body']);
-          },
-          error => {
-              reject("Error POST in createPdfServerSide");
-          },
-          () => console.log("Nikos!!!"));
-  });
-  */
-
-    }
-
-
-
-
-//createPdfServerSide(auth_token, role, headerid) {
-createPdfServerSide(headerid) {
+    createPdfServerSide(headerid) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
         });
-        //this.authToken = auth_token;
-        //this.authRole = role;
-
-        console.log("Ποια είναι;");
-        console.log(this.authToken);
-        console.log(this.authRole);
         this.createAuthorizationHeader(headers);
-        // let options = new RequestOptions([{ headers: headers }, { responseType: ResponseContentType.ArrayBuffer }]);
+
         let options = new RequestOptions({ headers: headers, responseType: ResponseContentType.Blob });
         let headerIdStr = headerid.toString();
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/` + headerIdStr, options)
-            .map( (res) => {
-                return new Blob([res['_body']], {type: "application/octet-stream" })
+            .map((res) => {
+                return new Blob([res['_body']], { type: "application/octet-stream" })
             })
             .subscribe(
-                data => {
-                    console.log(data);
-                    FileSaver.saveAs(data, "appConfirmation.pdf");
-                },
-                err => console.error(err),
-                () => console.log('PDF export completed')
-            );
-
-
+            data => {
+                FileSaver.saveAs(data, "appConfirmation.pdf");
+            },
+            err => console.error(err));
     }
-
-
-
 
 }

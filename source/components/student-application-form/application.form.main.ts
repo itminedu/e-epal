@@ -114,7 +114,6 @@ import {
         this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
-                    console.log(loginInfoToken.cu_name);
                     return loginInfoToken;
                 }, {});
             }

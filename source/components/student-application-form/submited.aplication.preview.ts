@@ -112,8 +112,9 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                   </div>
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Ημερομηνία Γέννησης</div>
-                      <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
-
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.birthdate}}</div>
+                      <div class="col-md-3" style="font-size: 0.8em;">Τηλέφωνο Επικοινωνίας</div>
+                      <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.telnum}}</div>
                   </div>
 
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
@@ -125,16 +126,26 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Τάξη τελευταίας φοίτησης</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                      <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
-                      <div class="col-md-3" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
-                      <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Α</div>
-                      <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Β</div>
-                      <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Γ</div>
-                      <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-3" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '1'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Α</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '2'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Β</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '3'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                      <div *ngIf="StudentDetails$.lastschool_class === '4'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Δ</div>
                   </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Δήλωση από:</div>
+                      <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{ StudentDetails$.relationtostudent }}</div>
+                  </div>
+                  <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center">Επιλεχθέντα Σχολεία</div>
+                  </div>
+                  <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                      <div class="col-md-3" style="font-size: 0.8em;">Τάξη φοίτησης για το νέο σχολικό έτος</div>
+                      <div *ngIf="StudentDetails$.currentclass === '1'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Α</div>
+                      <div *ngIf="StudentDetails$.currentclass === '2'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Β</div>
+                      <div *ngIf="StudentDetails$.currentclass === '3'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Γ</div>
+                      <div *ngIf="StudentDetails$.currentclass === '4'" class="col-md-9" style="font-size: 0.8em; font-weight: bold">Δ</div>
+                  </div>
+
                   <div *ngIf="StudentDetails$.currentclass === '2'" class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Τομέας φοίτησης για το νέο σχολικό έτος</div>
                       <div class="col-md-9" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.currentsector}}</div>
@@ -145,13 +156,13 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                   </div>
 
                     <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
-                        <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
                         <div class="col-md-6" style="font-size: 1em; font-weight: bold; text-align: center;">Σειρά Προτίμησης</div>
+                        <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
                     </div>
 
                     <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of EpalChosen$ | async; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== applicationIdActive">
-                        <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{epalChoices$.epal_id}}</div>
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{epalChoices$.choice_no}}</div>
+                        <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{epalChoices$.epal_id}}</div>
                     </div>
 
                     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
@@ -190,7 +201,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
     private modalHeader: BehaviorSubject<string>;
     private modalHeaderIcon: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
-    private applicationIdActive= <number>-1;
+    private applicationIdActive = <number>-1;
 
     public StudentId;
     private applicationId = <number>0;
@@ -250,12 +261,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 this.SubmitedApplic$.next([{}]);
                 this.showLoader$.next(false);
                 console.log("Error Getting Schools");
-            },
-            () => {
-                console.log("Getting Schools")
-                this.showLoader$.next(false);
             });
-
     }
 
 
@@ -275,10 +281,6 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 this.SubmitedDetails$.next([{}]);
                 console.log("Error Getting Schools");
                 this.showLoader$.next(false);
-            },
-            () => {
-                console.log("Getting Schools");
-                this.showLoader$.next(false);
             });
 
 
@@ -288,8 +290,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
             error => {
                 this.EpalChosen$.next([{}]);
                 console.log("Error Getting Schools");
-            },
-            () => console.log("Getting Schools"));
+            });
 
     }
 
@@ -297,8 +298,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         this._hds.createPdfServerSide(this.applicationIdActive);
     }
 
-    deleteApplication(appId: number) : void {
-        console.log(appId);
+    deleteApplication(appId: number): void {
         this.modalTitle.next("Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ");
         this.modalText.next("Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση");
         this.modalHeader.next("modal-header-danger");
@@ -307,7 +307,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         this.showModal();
     }
 
-    deleteApplicationDo() : void {
+    deleteApplicationDo(): void {
         this.hideModal();
         this.showLoader$.next(true);
         this._hds.deleteApplication(this.applicationId).then(data => {
@@ -322,14 +322,15 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                     this.SubmitedApplic$.next([{}]);
                     this.showLoader$.next(false);
                     console.log("Error Getting Schools");
-                },
-                () => {
-                    console.log("Getting Schools")
-                    this.showLoader$.next(false);
                 });
 
         }).catch(err => {
             this.showLoader$.next(false);
+            this.modalTitle.next("Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ");
+            this.modalText.next("Η δήλωσή σας δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή σας αυτή την περίοδο");
+            this.modalHeader.next("modal-header-danger");
+            this.modalHeaderIcon.next("fa-ban");
+            this.showModal();
             console.log(err);
         });
     }

@@ -70,9 +70,9 @@ import { API_ENDPOINT } from '../../app.settings';
     private routerSub: any;
 
     private source: LocalDataSource;
-    columnMap: Map<string,TableColumn> = new Map<string,TableColumn>();
+    columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new  reportsSchema();
+    private reportSchema = new reportsSchema();
     private csvObj = new csvCreator();
 
 
@@ -81,110 +81,85 @@ import { API_ENDPOINT } from '../../app.settings';
         private activatedRoute: ActivatedRoute,
         private router: Router) {
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.generalReport$ = new BehaviorSubject([{}]);
-          this.minedu_userName = '';
-          this.validCreator = -1;
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.generalReport$ = new BehaviorSubject([{}]);
+        this.minedu_userName = '';
+        this.validCreator = -1;
 
     }
 
     ngOnInit() {
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                this.minedu_userName = loginInfoToken.minedu_username;
-                this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                  return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
-
-      //this.routerSub = this.activatedRoute.params.subscribe(params => {
-      //this.reportId = +params['reportId'];
-
-     //});
-
+        this.loginInfoSub = this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    this.minedu_userName = loginInfoToken.minedu_username;
+                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    return loginInfoToken;
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
     }
 
     ngOnDestroy() {
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
-      if (this.generalReportSub)
-          this.generalReportSub.unsubscribe();
-          if (this.loginInfo$)
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+        if (this.generalReportSub)
+            this.generalReportSub.unsubscribe();
+        if (this.loginInfo$)
             this.loginInfo$.unsubscribe();
-          if (this.generalReport$)
-              this.generalReport$.unsubscribe();
+        if (this.generalReport$)
+            this.generalReport$.unsubscribe();
 
     }
 
 
-createReport() {
+    createReport() {
 
-  this.validCreator = 0;
+        this.validCreator = 0;
 
-  let route;
-  //if (this.reportId === 0)  {
-  route = "/ministry/report-users/";
-  this.settings = this.reportSchema.ReportUsersSchema;
-  //}
+        let route;
+        route = "/ministry/report-users/";
+        this.settings = this.reportSchema.ReportUsersSchema;
 
- this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0,0, 0).subscribe(data => {
-      this.generalReport$.next(data);
-      this.data = data;
-  },
-    error => {
-      this.generalReport$.next([{}]);
-      this.validCreator = -1;
-      console.log("Error Getting ReportUsers");
-    },
-    () => {
-      console.log("Success Getting ReportUsers");
-      this.validCreator = 1;
-      this.source = new LocalDataSource(this.data);
-      this.columnMap = new Map<string,TableColumn>();
+        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0).subscribe(data => {
+            this.generalReport$.next(data);
+            this.data = data;
+            this.validCreator = 1;
+            this.source = new LocalDataSource(this.data);
+            this.columnMap = new Map<string, TableColumn>();
 
-      //pass parametes to csv class object
-      this.csvObj.columnMap = this.columnMap;
-      this.csvObj.source = this.source;
-      this.csvObj.settings = this.settings;
-      this.csvObj.prepareColumnMap();
+            //pass parametes to csv class object
+            this.csvObj.columnMap = this.columnMap;
+            this.csvObj.source = this.source;
+            this.csvObj.settings = this.settings;
+            this.csvObj.prepareColumnMap();
+        },
+            error => {
+                this.generalReport$.next([{}]);
+                this.validCreator = -1;
+                console.log("Error Getting ReportUsers");
+            });
+
     }
-  )
 
-}
-
-navigateBack()  {
-  this.router.navigate(['/ministry/minister-reports']);
-}
+    navigateBack() {
+        this.router.navigate(['/ministry/minister-reports']);
+    }
 
 
-onSearch(query: string = '') {
+    onSearch(query: string = '') {
 
-  this.csvObj.onSearch(query);
-}
-
-
-export2Csv()  {
-
-  this.csvObj.export2Csv();
-
-}
+        this.csvObj.onSearch(query);
+    }
 
 
+    export2Csv() {
 
+        this.csvObj.export2Csv();
 
-
-
-
-
-
-
-
-
-
+    }
 
 }

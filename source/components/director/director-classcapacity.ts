@@ -28,7 +28,7 @@ import {
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
 
-     
+
        <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο σύμβολο,
        επιλέξτε τη νέα δυναμική και πατήστε το σύμβολο <i>ok</i>. Προσοχή! Κανένα τμήμα δεν πρέπει να έχει δυναμική 0.</p>
       <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Οι δηλώσεις σας </b></div>
@@ -42,17 +42,17 @@ import {
                   <label style="font-weight:bold!important" *ngIf="!isEdit || CapacityPerCourses$.globalindex !== courseActive" > {{CapacityPerCourses$.capacity}} </label>
 
                    <i *ngIf="!isEdit || CapacityPerCourses$.globalindex !== courseActive" (click)= "modifycapc(i,$event)" class="fa fa-pencil isclickable pull-right" style="font-size: 1.5em;"></i>
-                 
+
                    <input *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive"
 
-                     id="{{CapacityPerCourses$.globalindex}}" type="number" 
+                     id="{{CapacityPerCourses$.globalindex}}" type="number"
                    name="{{CapacityPerCourses$.globalindex}}" value ={{CapacityPerCourses$.capacity}}               (change)="handleChange($event)">
                    </div>
-                   
-                 <div class="col-md-1"> 
+
+                 <div class="col-md-1">
             <i *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive" (click)= "isEdit = false" class="fa fa-ban isclickable" style="font-size: 1.5em;"></i>
             </div>
-            <div class="col-md-2"> 
+            <div class="col-md-2">
 
             <button *ngIf="isEdit && CapacityPerCourses$.globalindex === courseActive" type="button" class="btn-primary pull-right"
              (click)="isEdit=false" (click) ="saveCapacity(CapacityPerCourses$.newspecialit, CapacityPerCourses$.newsector, CapacityPerCourses$.class, CapacityPerCourses$.capacity, CapacityPerCourses$.globalindex )">
@@ -97,12 +97,12 @@ import {
     private CapacityPerCourse$: BehaviorSubject<any>;
     private CapacityPerCourseSub: Subscription;
     private saveCapacitySub: Subscription;
-    private newvalue:number;
+    private newvalue: number;
     private isEdit: boolean;
     private courseActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
-    
-    
+
+
 
 
 
@@ -114,27 +114,25 @@ import {
         this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.isEdit = false;
-              
+
         this.formGroup = this.fb.group({
 
-             });
+        });
 
     }
 
 
 
-   public showModal(popupMsgId):void {
-        console.log("about to show modal",popupMsgId);
-        //(<any>$('#distributionWaitingNotice')).modal('show');
+    public showModal(popupMsgId): void {
         (<any>$(popupMsgId)).modal('show');
     }
 
-    public hideModal(popupMsgId):void {
+    public hideModal(popupMsgId): void {
         //(<any>$('#distributionWaitingNotice')).modal('hide');
         (<any>$(popupMsgId)).modal('hide');
     }
 
-    public onHidden(popupMsgId):void {
+    public onHidden(popupMsgId): void {
 
     }
 
@@ -144,89 +142,64 @@ import {
     }
 
     ngOnInit() {
-                 (<any>$('#checksaved1')).appendTo("body");
-                  
+        (<any>$('#checksaved1')).appendTo("body");
 
+        this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
+            this.CapacityPerCourse$.next(x);
 
-
-                  this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
-                  this.CapacityPerCourse$.next(x);
-
-                  },
-                  error => {
-                      this.CapacityPerCourse$.next([{}]);
-                      console.log("Error Getting Capacity perSchool");
-                  },
-                  () => console.log("Getting School "));
-
-
-
-
-
+        },
+            error => {
+                this.CapacityPerCourse$.next([{}]);
+                console.log("Error Getting Capacity perSchool");
+            });
     }
 
 
-    handleChange ( e: Event) {
+    handleChange(e: Event) {
         this.newvalue = e.target['value'];
     }
 
-   saveCapacity(spec,sect,taxi,oldvalue,ind){
-    
+    saveCapacity(spec, sect, taxi, oldvalue, ind) {
+        if (this.newvalue != null) {
+            if (this.newvalue <= 0 || this.newvalue > 10) {
+                this.showModal("#checksaved1");
+            }
+            else {
+                this.showLoader.next(true);
 
-     console.log(taxi, sect, spec);
-     console.log(this.newvalue,"newvalue", oldvalue);
-         if (this.newvalue!= null)
-         {
-          if (this.newvalue <=0 || this.newvalue >10)
-          {
-              this.showModal("#checksaved1");
-          }
-          else
-          {
-          this.showLoader.next(true);
 
-      
-          let std = this.CapacityPerCourse$.getValue();
-          std[ind].capacity = this.newvalue;
-          this.saveCapacitySub = this._hds.saveCapacity(taxi, sect, spec, this.newvalue).subscribe(data => {
-                this.showLoader.next(false);
-                this.CapacityPerCourse$.next(std);
-                 
-                 },
-                error => {
-                    std[ind].capacity = oldvalue;
-                    this.CapacityPerCourse$.next(std);
+                let std = this.CapacityPerCourse$.getValue();
+                std[ind].capacity = this.newvalue;
+                this.saveCapacitySub = this._hds.saveCapacity(taxi, sect, spec, this.newvalue).subscribe(data => {
                     this.showLoader.next(false);
-                    console.log("Error Saving Capacity");
+                    this.CapacityPerCourse$.next(std);
                 },
-                () =>{
-                 console.log("Saved Capacity");
+                    error => {
+                        std[ind].capacity = oldvalue;
+                        this.CapacityPerCourse$.next(std);
+                        this.showLoader.next(false);
+                        console.log("Error Saving Capacity");
                     });
 
+            }
 
-             }
-
-           }
-           else
-           {
-             if (oldvalue === null)
-             this.showModal("#checksaved1");
-           }
         }
-
-
-  setActive(ind) {
-
-      this.courseActive = ind;
-      console.log(this.courseActive, ind, "ind");
+        else {
+            if (oldvalue === null)
+                this.showModal("#checksaved1");
+        }
     }
 
 
-modifycapc(ind, e:Event)
-{
-  this.isEdit=true;
-  this.setActive(ind);
-  this.handleChange(e);
-}
- 
+    setActive(ind) {
+        this.courseActive = ind;
+    }
+
+
+    modifycapc(ind, e: Event) {
+        this.isEdit = true;
+        this.setActive(ind);
+        this.handleChange(e);
+    }
+
 }

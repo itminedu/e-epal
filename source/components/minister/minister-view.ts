@@ -103,7 +103,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private settings$: BehaviorSubject<any>;
-    loginInfoSub: Subscription;
+    private loginInfoSub: Subscription;
     private settingsSub: Subscription;
 
     private apiEndPoint = API_ENDPOINT;
@@ -115,35 +115,23 @@ import { API_ENDPOINT } from '../../app.settings';
     private applicantsResultsDisabled: boolean;
     private secondPeriodEnabled: boolean;
 
-    constructor(/*private fb: FormBuilder,*/
-      //  private _ata: LoginInfoActions,
+    constructor(
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router) {
-
-          //this.formGroup = this.fb.group({
-
-          //});
-
           this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
           this.modalTitle =  new BehaviorSubject("");
           this.modalText =  new BehaviorSubject("");
           this.modalHeader =  new BehaviorSubject("");
           this.settings$ = new BehaviorSubject([{}]);
-
     }
 
-
-
     public showModal(popupMsgId):void {
-        console.log("about to show modal");
-        //(<any>$('#distributionWaitingNotice')).modal('show');
         (<any>$(popupMsgId)).modal('show');
     }
 
     public hideModal(popupMsgId):void {
-        //(<any>$('#distributionWaitingNotice')).modal('hide');
         (<any>$(popupMsgId)).modal('hide');
     }
 
@@ -151,29 +139,9 @@ import { API_ENDPOINT } from '../../app.settings';
 
     }
 
-
-    /*
-    public showModal():void {
-        console.log("about to show modal");
-        (<any>$('#distributionSentNotice')).modal('show');
-    }
-
-    public hideModal():void {
-        (<any>$('#distributionSentNotice')).modal('hide');
-    }
-
-    public onHidden():void {
-        //this.isModalShown.next(false);
-    }
-    */
-
-
     ngOnDestroy() {
-
       (<any>$('#distributionWaitingNotice')).remove();
       (<any>$('#distributionNotice')).remove();
-      //(<any>$('#distributionFailureNotice')).remove();
-      //(<any>$('#distributionSentNotice')).remove();
       if (this.loginInfoSub)
         this.loginInfoSub.unsubscribe();
       if (this.settingsSub)
@@ -185,13 +153,8 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     ngOnInit() {
-
       (<any>$('#distributionWaitingNotice')).appendTo("body");
       (<any>$('#distributionNotice')).appendTo("body");
-      //(<any>$('#distributionFailureNotice')).appendTo("body");
-      //(<any>$('#distributionSentNotice')).appendTo("body");
-
-
       this.loginInfoSub = this._ngRedux.select(state => {
           if (state.loginInfo.size > 0) {
               state.loginInfo.reduce(({}, loginInfoToken) => {
@@ -210,9 +173,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
     runDistribution() {
       this.distStatus = "STARTED";
-
       this.showModal("#distributionWaitingNotice");
-
       this._hds.makeDistribution(this.minedu_userName, this.minedu_userPassword)
       .then(msg => {
           this.modalTitle.next("Κατανομή Μαθητών");
@@ -223,7 +184,8 @@ import { API_ENDPOINT } from '../../app.settings';
           if (this.distStatus !== "ERROR")
             this.distStatus = "FINISHED";
       })
-      .catch(err => {console.log(err);
+      .catch(err => {
+          console.log(err);
           this.distStatus = "ERROR";
 
           this.modalTitle.next("Κατανομή Μαθητών");
@@ -249,7 +211,8 @@ import { API_ENDPOINT } from '../../app.settings';
           if (this.distStatus !== "ERROR")
             this.distStatus = "FINISHED";
       })
-      .catch(err => {console.log(err);
+      .catch(err => {
+          console.log(err);
           this.distStatus = "ERROR";
 
           this.modalTitle.next("Τοποθέτηση Μαθητών 2ης Περιόδου Αιτήσεων");
@@ -260,30 +223,15 @@ import { API_ENDPOINT } from '../../app.settings';
 
     }
 
-
     retrieveSettings()  {
-
-      //this.dataRetrieved = -1;
 
       this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
            this.settings$.next(data);
-       },
-         error => {
-           this.settings$.next([{}]);
-           //this.dataRetrieved = 0;
-           console.log("Error Getting MinisterRetrieveSettings");
-         },
-         () => {
-           console.log("Success Getting MinisterRetrieveSettings");
-
            this.capacityDisabled = Boolean(Number(this.settings$.value['capacityDisabled']));
            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
            this.secondPeriodEnabled = Boolean(Number(this.settings$.value['secondPeriodEnabled']));
-
-           console.log("Nikos");
-           console.log( this.secondPeriodEnabled);
 
            if (this.capacityDisabled == false) {
              this.modalTitle.next("Κατανομή Μαθητών");
@@ -306,13 +254,11 @@ import { API_ENDPOINT } from '../../app.settings';
              this.modalHeader.next("modal-header-warning");
              this.showModal("#distributionNotice");
            }
-
-           //this.dataRetrieved = 1;
-         }
-       )
-
+       },
+         error => {
+           this.settings$.next([{}]);
+           console.log("Error Getting MinisterRetrieveSettings");
+       });
     }
-
-
 
 }

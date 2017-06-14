@@ -52,7 +52,26 @@ import {
 <p>Επίσης πρέπει να γνωρίζετε ότι η Ηλεκτρονική Δήλωση Προτίμησης υπέχει θέση Υπ. Δήλωσης του ν. 1599/1986 (Α ́ 75) και οφείλετε τα στοιχεία που καταχωρίζετε σε αυτή να είναι αληθή.</p>
           
 
+
+
         <form [formGroup]="formGroup"  #form>
+
+        <ul>
+        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
+            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        </li>
+        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
+            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        </li>
+        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
+            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        </li>
+        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
+            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        </li>
+        </ul>
+
+
           <div class="row">
             <div class="col-md-1 ">
               <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >

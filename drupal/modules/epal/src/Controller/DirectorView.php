@@ -446,10 +446,12 @@ class DirectorView extends ControllerBase
                 $SchoolCats = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid, 'edu_admin_id' => $newid));
             }
 
+
             $SchoolCat = reset($SchoolCats);
             if ($SchoolCat) {
                 $list = array();
                 $categ = $SchoolCat->metathesis_region->value;
+                $operation_shift = $SchoolCat -> operation_shift -> value;
             }
 
             $CourseA = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid));
@@ -520,6 +522,29 @@ class DirectorView extends ControllerBase
                           );
                 }
             }
+            if ($CourseC && $operation_shift != 'ΗΜΕΡΗΣΙΟ' ) {
+                $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 4, 'category' => $categ));
+                $limitdown = reset($limit_down);
+                if ($limitdown) {
+                    $limit = $limitdown->limit_down->value;
+                }
+
+                foreach ($CourseC as $object) {
+                    $specialityid = $object->specialty_id->entity->id();
+                    $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
+
+                    $list[] = array(
+                            'id' => $object->specialty_id->entity->id(),
+                            'name' => 'Δ Λυκείου  '.$object->specialty_id->entity->get('name')->value,
+                            'size' => sizeof($studentPerSchool),
+                            'categ' => $categ,
+                            'classes' => 4,
+                            'limitdown' => $limit,
+
+                          );
+                }
+            }
+
             if ($CourseA || $CourseB || $CourseC) {
                 return $this->respondWithStatus(
                                      $list, Response::HTTP_OK);

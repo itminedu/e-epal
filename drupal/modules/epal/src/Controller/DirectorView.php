@@ -501,7 +501,7 @@ class DirectorView extends ControllerBase
                 $list = array();
                 $categ = $SchoolCat->metathesis_region->value;
             }
-            $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $schoolid));
+            $CourseA = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $schoolid));
 
             if ($CourseA) {
                 $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 1, 'category' => $categ));

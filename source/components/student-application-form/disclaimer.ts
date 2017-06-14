@@ -56,18 +56,14 @@ import {
 
         <form [formGroup]="formGroup"  #form>
 
+        
+         Διάφορα Έγγραφα
         <ul>
-        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        <li class="list-group-item isclickable oddout" >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/egkyklios.pdf" target="_blank">Η με αρ.πρωτ. 89047/ΓΔ4/26-05-2017 Εγκύκλιος του Υ.Π.Π.Ε.Θ.</a>
         </li>
-        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        <li class="list-group-item isclickable"  [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
-        </li>
-        <li class="list-group-item isclickable" [class.oddout]="isOdd"  [class.evenout]="isEven"  >
-            <div class="col-md-12" style="font-size: 1em; font-weight: bold;" >alalalallalalala</div>
+        <li class="list-group-item isclickable evenout"  >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/infos.pdf" target="_blank">Ενημερωτικά Στοιχεία</a>
         </li>
         </ul>
 

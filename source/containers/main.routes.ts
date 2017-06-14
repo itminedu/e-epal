@@ -46,6 +46,7 @@ import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
 import  EduAdminAuthGuard from  '../guards/eduadmin.auth.guard';
 
 import MinistryAuthGuard from '../guards/ministry.auth.guard';
+import ReportsAuthGuard from '../guards/reports.auth.guard';
 import Breadcrumbs from '../components/main/breadcrumbs';
 
 export const MainRoutes: Routes = [
@@ -76,8 +77,8 @@ export const MainRoutes: Routes = [
   { path: 'school/director-buttons', component: DirectorButtons, canActivate: [SchoolAuthGuard]  },
   { path: 'school/director-classcapacity', component: DirectorClassCapacity, canActivate: [SchoolAuthGuard, SchoolCapacityLockedGuard] },
   { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
-  { path: 'ministry/minister-reports', component: MinisterReports },
-  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat },
+  { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [ReportsAuthGuard] },
+  { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [ReportsAuthGuard] },
   { path: 'ministry/report-general/:reportId', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-users/:reportId', component: ReportUsers, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity, canActivate: [MinistryAuthGuard]  },

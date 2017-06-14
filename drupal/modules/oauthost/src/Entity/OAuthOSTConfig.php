@@ -213,7 +213,7 @@ class OAuthOSTConfig extends ContentEntityBase implements OAuthOSTConfigInterfac
             ->setLabel(t('Consumer Key'))
             ->setDescription(t('The Consumer Key'))
             ->setSettings(array(
-                'max_length' => 200,
+                'max_length' => 2000,
                 'text_processing' => 0,
             ))
             ->setDefaultValue('')
@@ -233,7 +233,7 @@ class OAuthOSTConfig extends ContentEntityBase implements OAuthOSTConfigInterfac
             ->setLabel(t('Consumer Secret'))
             ->setDescription(t('The Consumer Secret'))
             ->setSettings(array(
-                'max_length' => 200,
+                'max_length' => 2000,
                 'text_processing' => 0,
             ))
             ->setDefaultValue('')

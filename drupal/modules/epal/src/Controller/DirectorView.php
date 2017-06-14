@@ -128,7 +128,7 @@ class DirectorView extends ControllerBase
                                 $regionaddress_decoded = $crypt->decrypt($epalStudent->regionaddress->value);
                                 $regiontk_decoded = $crypt->decrypt($epalStudent->regiontk->value);
                                 $regionarea_decoded = $crypt->decrypt($epalStudent->regionarea->value);
-                                $certificatetype_decoded = $crypt->decrypt($epalStudent->certificatetype->value);
+                                // $certificatetype_decoded = $crypt->decrypt($epalStudent->certificatetype->value); // obsolete
                                 $relationtostudent_decoded = $crypt->decrypt($epalStudent->relationtostudent->value);
                                 $telnum_decoded = $crypt->decrypt($epalStudent->telnum->value);
                                 $guardian_name_decoded = $crypt->decrypt($epalStudent->guardian_name->value);
@@ -162,7 +162,7 @@ class DirectorView extends ControllerBase
                                 'regionaddress' => $regionaddress_decoded,
                                 'regiontk' => $regiontk_decoded,
                                 'regionarea' => $regionarea_decoded,
-                                'certificatetype' => $certificatetype_decoded,
+                                'certificatetype' => '', // $certificatetype_decoded, // obsolete
                                 'graduation_year' => $epalStudent->graduation_year->value,
                                 'telnum' => $telnum_decoded,
                                 'relationtostudent' => $relationtostudent_decoded,

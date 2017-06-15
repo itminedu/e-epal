@@ -25,7 +25,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
         <ul class="list-group left-side-view" style="margin-bottom: 20px;">
                 <li class="list-group-item active">
-                    Τάξη εισαγωγής
+                    Τάξη φοίτησης στο νέο σχολικό έτος
                 </li>
                 <li class="list-group-item" *ngIf="epalclass$.name === '1'">
                     Α’ Λυκείου

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Injectable, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs/Rx';
-import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
+import { VALID_EMAIL_PATTERN, VALID_UCASE_NAMES_PATTERN } from '../../constants';
 import { HelperDataService } from '../../services/helper-data-service';
 import { LoginInfoActions } from '../../actions/logininfo.actions'
 
@@ -37,10 +37,10 @@ import {AppSettings} from '../../app.settings';
                 private rd: Renderer) {
             this.isModalShown = new BehaviorSubject(false);
             this.formGroup = this.fb.group({
-                 userName: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-                 userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-                 userFathername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-                 userMothername: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
+                 userName: ['', [Validators.pattern(VALID_UCASE_NAMES_PATTERN),Validators.required]],
+                 userSurname: ['', [Validators.pattern(VALID_UCASE_NAMES_PATTERN),Validators.required]],
+                 userFathername: ['', [Validators.pattern(VALID_UCASE_NAMES_PATTERN),Validators.required]],
+                 userMothername: ['', [Validators.pattern(VALID_UCASE_NAMES_PATTERN),Validators.required]],
                  userEmail: ['', [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
                  });
             this.epalUserData$ = new BehaviorSubject(<any>{userEmail: '', userName: '', userSurname: '', userFathername: '', userMothername: ''});

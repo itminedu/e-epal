@@ -166,6 +166,8 @@ import {
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Η ημερομηνία γέννησης του μαθητή δεν είναι επιτρεπόμενη για μαθητή ΕΠΑΛ.");
             else if (invalidFlag === 3)
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Το σχολείο τελευταίας φοίτησης πρέπει να αναζητηθεί και να επιλεχθεί από τα αποτελέσματα της αναζήτησης.");
+            else if (invalidFlag === 4)
+                this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*). Το τηλέφωνο επικοινωνίας πρέπει να είναι σταθερό τηλέφωνο και να αποτελείται από 10 ψηφία.");
             else
                 this.modalText.next("Πρέπει να συμπληρώσετε όλα τα πεδία που συνοδεύονται από (*)");
 
@@ -185,6 +187,8 @@ import {
             return 2;
         if (!this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no)
             return 3;
+        if (this.studentDataGroup.controls["telnum"].value.length !== 10 )
+            return 4;
 
         return 0;
     }

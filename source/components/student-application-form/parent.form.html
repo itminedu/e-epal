@@ -19,7 +19,7 @@
   </div>
 </div>
 <div style="min-height: 500px; margin-bottom: 30px;">
-    <p style="margin-top: 20px; line-height: 2em;"> <b> Στοιχεία γονέα-κηδεμόνα. Όλα τα πεδία που συνοδεύονται από (*) είναι απαραίτητο να συμπληρωθούν</b></p>
+    <p style="margin-top: 20px; line-height: 2em;"> <b> Στοιχεία γονέα-κηδεμόνα. Όλα τα πεδία που συνοδεύονται από (*) είναι απαραίτητο να συμπληρωθούν. Στα ονόματα επιτρέπονται μόνο κεφαλαία γράμματα.</b></p>
 <form [formGroup]="formGroup">
 
     <div class="form-group">
@@ -38,7 +38,7 @@
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
         <div class="alert alert-danger" *ngIf="formGroup.get('userName').hasError('pattern')">
-            Πληκτρολογήστε το όνομά σας!
+            Πληκτρολογήστε το όνομά σας με κεφαλαία γράμματα!
         </div>
     </div>
 
@@ -48,7 +48,7 @@
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
         <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').hasError('pattern')">
-            Πληκτρολογήστε το επώνυμό σας!
+            Πληκτρολογήστε το επώνυμό σας με κεφαλαία γράμματα!
         </div>
     </div>
 
@@ -58,7 +58,7 @@
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
         <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').hasError('pattern')">
-            Πληκτρολογήστε το όνομα του πατέρα σας!
+            Πληκτρολογήστε το όνομα του πατέρα σας με κεφαλαία γράμματα!
         </div>
     </div>
 
@@ -68,7 +68,7 @@
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
         <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').hasError('pattern')">
-            Πληκτρολογήστε το όνομα της μητέρας σας!
+            Πληκτρολογήστε το όνομα της μητέρας σας με κεφαλαία γράμματα!
         </div>
     </div>
 

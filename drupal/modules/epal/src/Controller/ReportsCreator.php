@@ -95,19 +95,35 @@ class ReportsCreator extends ControllerBase {
 									], Response::HTTP_FORBIDDEN);
 					}
 
-					//υπολογισμός αριθμού δηλώσεων
+					$list = array();
+
+					//υπολογισμός αριθμού αιτήσεων
 					$sCon = $this->connection->select('epal_student', 'eStudent')
 																		->fields('eStudent', array('id'));
 					$numApplications = $sCon->countQuery()->execute()->fetchField();
+					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
+
+					//υπολογισμός αριθμού αιτήσεων ανά τάξη
+					for ($i = 1; $i <= 4; $i++)	{
+						$sCon = $this->connection->select('epal_student', 'eStudent')
+																			->fields('eStudent', array('id'))
+																			->condition('eStudent.currentclass', strval($i) , '=');
+						$numApplications = $sCon->countQuery()->execute()->fetchField();
+						array_push($list,(object) array('name' => "Αριθμός Αιτήσεων για " . $i . "η Τάξη", 'numStudents' => $numApplications));
+					}
+
+					//υπολογισμός αριθμού αιτήσεων για δεύτερη περίοδο
+					$sCon = $this->connection->select('epal_student', 'eStudent')
+																		->fields('eStudent', array('id'))
+																		->condition('eStudent.second_period', 1 , '=');
+					$numApplications = $sCon->countQuery()->execute()->fetchField();
+					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων B' περιόδου", 'numStudents' => $numApplications));
 
 					//υπολογισμός αριθμού χρηστών
 					$sCon = $this->connection->select('epal_users', 'eUser')
 																		->fields('eUser', array('id'));
 					$numUsers = $sCon->countQuery()->execute()->fetchField();
-
-					$list = array();
-					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων", 'numStudents' => $numApplications));
-					array_push($list,(object) array('name' => "Αριθμός Εγγεγραμένων Χρηστών", 'numStudents' => $numUsers));
+					array_push($list,(object) array('name' => "Αριθμός Εγγεγραμένων Χρηστών με ρόλο Αιτούντα", 'numStudents' => $numUsers));
 
 
 					 return $this->respondWithStatus(

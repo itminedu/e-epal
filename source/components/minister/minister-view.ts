@@ -29,6 +29,7 @@ import { API_ENDPOINT } from '../../app.settings';
       class = "loading" *ngIf=" distStatus === 'STARTED'" >
     </div>
 
+    <div style="min-height: 400px;">
 
     <div id="distributionNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -78,7 +79,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
 
         <div class="col-md-6">
-          <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" [disabled] = "!capacityDisabled" >
+          <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="runDistribution()" [disabled] = "!capacityDisabled || secondPeriodEnabled" >
               Εκτέλεση  Κατανομής  Μαθητών<span class="glyphicon glyphicon-menu-right"></span>
           </button>
         </div>
@@ -89,6 +90,8 @@ import { API_ENDPOINT } from '../../app.settings';
               Τοποθέτηση Μαθητών Β' Περιόδου<span class="glyphicon glyphicon-menu-right"></span>
           </button>
         </div>
+
+    </div>
 
     </div>
 

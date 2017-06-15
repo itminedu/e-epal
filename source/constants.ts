@@ -44,7 +44,7 @@ export const VALID_UCASE_NAMES_PATTERN = '^[A-ZΑ-Ω -]*$';
 export const VALID_ADDRESS_PATTERN = '^[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ\/. -]*$';
 export const VALID_ADDRESSTK_PATTERN = '^[0-9]{1,5}$';
 export const VALID_DIGITS_PATTERN = '^[0-9]*$';
-export const VALID_TELEPHONE_PATTERN = '^2[0-9]{9}$';
+export const VALID_TELEPHONE_PATTERN = '^2[0-9]{0,10}$';
 export const VALID_YEAR_PATTERN = '^(19[6789][0-9]|20[0-1][0-9])$';
 export const VALID_CAPACITY_PATTERN = '[0-9]*$';
 

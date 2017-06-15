@@ -20,6 +20,8 @@ import { API_ENDPOINT } from '../../app.settings';
       class = "loading" *ngIf="successSending == -2" >
     </div>
 
+    <div style="min-height: 400px;">
+
     <div id="emaiSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -57,6 +59,8 @@ import { API_ENDPOINT } from '../../app.settings';
       <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(3)" [disabled] = "!applicantsResultsDisabled">
           Αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
       </button>
+    </div>
+
     </div>
 
    `

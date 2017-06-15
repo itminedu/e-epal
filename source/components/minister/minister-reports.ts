@@ -27,7 +27,9 @@ import { API_ENDPOINT } from '../../app.settings';
     //encapsulation: ViewEncapsulation.None,
     template: `
 
-  <div>
+
+
+  <div style="min-height: 500px; ">
 
         <h5> >Επιλογή Αναφοράς<br><br></h5>
 

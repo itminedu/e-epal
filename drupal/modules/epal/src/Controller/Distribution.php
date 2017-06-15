@@ -172,7 +172,8 @@ class Distribution extends ControllerBase {
 
 								//print_r("<br>FETCH: " .  $j);
 								$sCon = $this->connection->select('epal_student', 'eStudent')
-																					->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
+																					//->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
+																					->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
 																			    ->condition('eStudent.id', 1+ $sizeOfBlock*($j-1), '>=')
 																					->condition('eStudent.id', $j*$sizeOfBlock, '<=');
 								$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
@@ -190,7 +191,8 @@ class Distribution extends ControllerBase {
 
 								if (sizeof($this->pendingStudents) != 0)	{
 									$sCon = $this->connection->select('epal_student', 'eStudent')
-																						->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
+																						//->fields('eStudent', array('id', 'name', 'currentclass', 'currentepal', 'points'))
+																						->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
 																						->condition('eStudent.id', $this->pendingStudents, 'IN');
 									$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
@@ -361,6 +363,7 @@ class Distribution extends ControllerBase {
 							//'points' => $epalStudent->points,
 							'distribution_id' => $choice_id,
 							'finalized' => 1,
+							'second_period' => $epalStudent->second_period,
 							'status' => 1,
 							'created' => $timestamp,
 							'changed' => $timestamp,)
@@ -580,24 +583,11 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 						}
 					} //endif new limit
 					else { //$newlimit > 0
-						//NEW CODE LINES
 						if ($this->choice_id !== 1)
 								$this->removeFromPendingStudents($student->student_id);
 					}
-					//END NEW CODE LINES
 			 }	//endif currentepal
 		}	//end foreach
-
-		//NEW CODE LINES
-		/*
-		else {
-			foreach($students as $student)
-				if ($student->currentepal !== $student->epal_id)
-					if ($this->choice_id !== 1)
-							$this->removeFromPendingStudents($student->student_id);
-		}
-		*/
-		//END NEW CODE LINES
 
 
 		return SUCCESS;
@@ -701,8 +691,6 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 						//print_r("<br>");
 					}
 				}	//end if ΕΣΠΕΡΙΝΟ
-
-
 
 			} //end for each school/department
 
@@ -854,30 +842,48 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 					 ], Response::HTTP_FORBIDDEN);
 		}
 
-
 		try  {
 
+			if ( $this->initializeResultsInSecondPeriod() === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in initializeResultsInSecondPeriod function")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+
 			$sCon = $this->connection->select('epal_student', 'eStudent')
-																->fields('eStudent', array('id', 'currentclass', 'currentepal'))
+																->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
 																->condition('eStudent.second_period', 1 , '=');
 			$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-			//$this->globalCounterId = 10000;
+			//τοποθέτηση όλων των μαθητών Β' περιόδου στην πρώτη τους προτίμηση'
 			$this->globalCounterId = $this->retrieveLastStudentId() + 1;
-
 			if ($this->locateStudent(1, $epalStudents) === ERROR_DB)
 					return $this->respondWithStatus([
-							"message" => t("Unexpected Error in locateStudent function")
+							"message" => t("Unexpected Error in locateStudent function after calling locateSecondPeriodStudents method"),
+							"numOfDeletions" => $num
 						], Response::HTTP_INTERNAL_SERVER_ERROR);
 
-			if ($this->findSmallClasses() === ERROR_DB)
+
+			//επαναϋπολογισμός όλων των ολιγομελών τμημάτων (Προσοχή: αφορά ΟΛΟΥΣ τους μαθητές - κανονικής και Β΄ περιόδου)
+
+			//αρχικοποίηση flag finalize σε 1 για όλους
+			if ($this->setFinalize() === ERROR_DB)
+					return $this->respondWithStatus([
+							"message" => t("Unexpected Error in setFinalize function AFTER locateSecondPeriodStudents!")
+						], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+			//εύρεση ολιγομελών και καταχώρηση μαθητών σε αυτά με κατάλληλη ένδειξη (finalize=0)
+			if ($this->findSmallClasses() === ERROR_DB)	{
+
+					//αν αποτύχει, δεν γίνεται rollback. --> Λύση: διαγρα΄φή των όποιων αποτελεσμάτων
+					if ($this->initializeResultsInSecondPeriod() === ERROR_DB)
+							return $this->respondWithStatus([
+									"message" => t("Unexpected Error in initializeResults function AFTER findSmallClasses call Function")
+								], Response::HTTP_INTERNAL_SERVER_ERROR);
+
 					return $this->respondWithStatus([
 							"message" => t("Unexpected Error in findSmallClasses function AFTER locateSecondPeriodStudents!")
 						], Response::HTTP_INTERNAL_SERVER_ERROR);
-
-			//αν αποτύχει, δεν γίνεται rollback. --> Λύση: διαγρα΄φή των όποιων αποτελεσμάτων ;;
-
-
+					}
 
 
 		}
@@ -902,9 +908,44 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 			}
 
 
+	}
+	
 
+	private function setFinalize()	{
+
+		try  {
+			$query = $this->connection->update('epal_student_class');
+			$query->fields([
+				'finalized' => 1,
+			]);
+			$query->execute();
+		}
+		catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return ERROR_DB;
+		}
+		return SUCCESS;
 
 	}
+
+
+	private function initializeResultsInSecondPeriod() {
+
+			//initialize/empty epal_student_class if there are already data in it!
+			try  {
+				//$this->connection->delete('epal_student_class')->execute();
+
+				$con = $this->connection->prepare("delete from epal_student_class where second_period = 1 ");
+				$con->execute();
+				//$num = $con->rowCount();
+
+			}
+			catch (\Exception $e) {
+				$this->logger->warning($e->getMessage());
+				return ERROR_DB;
+			}
+			return SUCCESS;
+		}
 
 	private function retrieveLastStudentId()	{
 

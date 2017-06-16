@@ -56,5 +56,10 @@ function epal_mail($key, &$message, $params) {
         $message['subject'] = t('Ικανοποίηση ηλεκτρονικής δήλωσης προτίμησης ΕΠΑΛ', $options);
         $message['body'][] = $params['message'];
         break;
+      case 'help_desk':
+        $message['from'] = \Drupal::config('system.site')->get('mail');
+        $message['subject'] = t('Σύστημα υποβολής ηλεκτρονικών δηλώσεων προτίμησης ΕΠΑΛ για το νέο σχολικό έτος: Αίτημα Υποστήριξης', $options);
+        $message['body'][] = $params['message'];
+        break;
     }
 }

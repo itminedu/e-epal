@@ -53,7 +53,20 @@ import {
 <p>Επίσης πρέπει να γνωρίζετε ότι η Ηλεκτρονική Δήλωση Προτίμησης υπέχει θέση Υπ. Δήλωσης του ν. 1599/1986 (Α ́ 75) και οφείλετε τα στοιχεία που καταχωρίζετε σε αυτή να είναι αληθή.</p>
 
 
+      <form novalidate [formGroup]="formGroup" #form>  
         <legal-info></legal-info>
+        <br>
+        <br>
+          <div class="row">
+            <div class="col-md-1 ">
+              <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >
+            </div>
+            <div class="col-md-9">
+              <label for="disclaimerChecked">Συμφωνώ με τα παραπάνω</label>
+            </div>
+          </div>
+
+         </form>
          <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
              <div class="col-md-6">
                  <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">

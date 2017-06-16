@@ -17,7 +17,7 @@ import {
     Validators,
 } from '@angular/forms';
 @Component({
-    selector: 'eduadmin-view',
+    selector: 'perfecture-view',
     template: `
       <div class = "loading" *ngIf="(showLoader | async) === true"></div>
       <div style="min-height: 500px;">

@@ -60,179 +60,188 @@ class ReportsCreator extends ControllerBase {
       );
     }
 
+	public function makeReportUsers(Request $request) {
 
-
-		public function makeReportUsers(Request $request) {
-
-				try  {
-					if (!$request->isMethod('GET')) {
-						 return $this->respondWithStatus([
-								"message" => t("Method Not Allowed")
-								 ], Response::HTTP_METHOD_NOT_ALLOWED);
-					}
-
-					//user validation
-					$authToken = $request->headers->get('PHP_AUTH_USER');
-					$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-					$user = reset($users);
-					if (!$user) {
-							return $this->respondWithStatus([
-											'message' => t("User not found"),
-									], Response::HTTP_FORBIDDEN);
-					}
-
-					//user role validation
-					$roles = $user->getRoles();
-					$validRole = false;
-					foreach ($roles as $role)
-						if ($role === "ministry") {
-							$validRole = true;
-							break;
-						}
-					if (!$validRole) {
-							return $this->respondWithStatus([
-											'message' => t("User Invalid Role"),
-									], Response::HTTP_FORBIDDEN);
-					}
-
-					$list = array();
-
-					//υπολογισμός αριθμού αιτήσεων
-					$sCon = $this->connection->select('epal_student', 'eStudent')
-																		->fields('eStudent', array('id'));
-					$numApplications = $sCon->countQuery()->execute()->fetchField();
-					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
-
-					//υπολογισμός αριθμού αιτήσεων ανά τάξη
-					for ($i = 1; $i <= 4; $i++)	{
-						$sCon = $this->connection->select('epal_student', 'eStudent')
-																			->fields('eStudent', array('id'))
-																			->condition('eStudent.currentclass', strval($i) , '=');
-						$numApplications = $sCon->countQuery()->execute()->fetchField();
-						array_push($list,(object) array('name' => "Αριθμός Αιτήσεων για " . $i . "η Τάξη", 'numStudents' => $numApplications));
-					}
-
-					//υπολογισμός αριθμού αιτήσεων για δεύτερη περίοδο
-					$sCon = $this->connection->select('epal_student', 'eStudent')
-																		->fields('eStudent', array('id'))
-																		->condition('eStudent.second_period', 1 , '=');
-					$numApplications = $sCon->countQuery()->execute()->fetchField();
-					array_push($list,(object) array('name' => "Αριθμός Αιτήσεων B' περιόδου", 'numStudents' => $numApplications));
-
-					//υπολογισμός αριθμού χρηστών
-					$sCon = $this->connection->select('epal_users', 'eUser')
-																		->fields('eUser', array('id'));
-					$numUsers = $sCon->countQuery()->execute()->fetchField();
-					array_push($list,(object) array('name' => "Αριθμός Εγγεγραμένων Χρηστών με ρόλο Αιτούντα", 'numStudents' => $numUsers));
-
-
-					 return $this->respondWithStatus(
-									 $list
-							 , Response::HTTP_OK);
-				}	 //end try
-
-				catch (\Exception $e) {
-					$this->logger->warning($e->getMessage());
-					return $this->respondWithStatus([
-								"message" => t("An unexpected problem occured during makegGeneralReport Method")
-							], Response::HTTP_INTERNAL_SERVER_ERROR);
-				}
-
-			}
-
-
-
-	public function makegGeneralReport(Request $request) {
-
-			try  {
-				if (!$request->isMethod('GET')) {
-					 return $this->respondWithStatus([
-							"message" => t("Method Not Allowed")
-							 ], Response::HTTP_METHOD_NOT_ALLOWED);
-				}
-
-				//user validation
-				$authToken = $request->headers->get('PHP_AUTH_USER');
-				$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-				$user = reset($users);
-				if (!$user) {
-						return $this->respondWithStatus([
-										'message' => t("User not found"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				//user role validation
-				$roles = $user->getRoles();
-				$validRole = false;
-				foreach ($roles as $role)
-					if ($role === "ministry") {
-						$validRole = true;
-						break;
-					}
-				if (!$validRole) {
-						return $this->respondWithStatus([
-										'message' => t("User Invalid Role"),
-								], Response::HTTP_FORBIDDEN);
-				}
-
-				//υπολογισμός αριθμού δηλώσεων
-				$sCon = $this->connection->select('epal_student', 'eStudent')
-																	->fields('eStudent', array('id'));
-				$numTotal = $sCon->countQuery()->execute()->fetchField();
-
-				//υπολογισμός αριθμού δηλώσεων που ικανοποιήθηκαν στην i προτίμηση
-				$numData = array();
-				for ($i=0; $i < 3; $i++)	{
-					$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																		->fields('eStudent', array('id', 'distribution_id'))
-																		->condition('eStudent.distribution_id', $i+1, '=')
-																		->condition('eStudent.finalized', 1 , '=');
-					array_push($numData, $sCon->countQuery()->execute()->fetchField());
-				}
-
-				// υπολογισμός αριθμού δηλώσεων που ΔΕΝ ικανοποιήθηκαν
-				//Σημείωση: υπολογισμός με queries στη βάση
-				$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																	->fields('eStudent', array('student_id'));
-				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-				$studentIds = array();
-				foreach ($epalStudents as $epalStudent)
-					array_push($studentIds, $epalStudent->student_id);
-				$sCon = $this->connection->select('epal_student', 'eStudent')
-																	->fields('eStudent', array('id'))
-																	->condition('eStudent.id', $studentIds, 'NOT IN');
-				$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
-
-				//υπολογισμός αριθμού δηλώσεων που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα
-				$numInSmallClasses = 0;
-				$sCon = $this->connection->select('epal_student_class', 'eStudent')
-																		->fields('eStudent', array('id'))
-																		->condition('eStudent.finalized', 0 , '=');
-				$numInSmallClasses = $sCon->countQuery()->execute()->fetchField();
-
-
-				 $list = array();
-
-				 array_push($list,(object) array('name' => "Αριθμός Δηλώσεων Προτίμησης", 'numStudents' => $numTotal));
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση", 'numStudents' => $numData[0]));
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση", 'numStudents' => $numData[1]));
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση", 'numStudents' => $numData[2]));
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση", 'numStudents' => $numNoAllocated));
-				 array_push($list,(object) array('name' => "Αριθμός μαθητών που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα", 'numStudents' => $numInSmallClasses));
-
-				 return $this->respondWithStatus(
-								 $list
-						 , Response::HTTP_OK);
-			}	 //end try
-
-			catch (\Exception $e) {
-				$this->logger->warning($e->getMessage());
+		try  {
+			if (!$request->isMethod('GET')) {
 				return $this->respondWithStatus([
-							"message" => t("An unexpected problem occured during makegGeneralReport Method")
-						], Response::HTTP_INTERNAL_SERVER_ERROR);
+					"message" => t("Method Not Allowed")
+				], Response::HTTP_METHOD_NOT_ALLOWED);
 			}
 
+			//user validation
+			$authToken = $request->headers->get('PHP_AUTH_USER');
+			$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+			$user = reset($users);
+			if (!$user) {
+				return $this->respondWithStatus([
+					'message' => t("User not found"),
+				], Response::HTTP_FORBIDDEN);
+			}
+
+			//user role validation
+			$roles = $user->getRoles();
+			$validRole = false;
+			foreach ($roles as $role)
+				if ($role === "ministry") {
+					$validRole = true;
+					break;
+				}
+			if (!$validRole) {
+				return $this->respondWithStatus([
+					'message' => t("User Invalid Role"),
+				], Response::HTTP_FORBIDDEN);
+			}
+
+			$list = array();
+
+			//υπολογισμός αριθμού αιτήσεων
+			$sCon = $this->connection
+				->select('epal_student', 'eStudent')
+				->fields('eStudent', array('id'));
+			$numApplications = $sCon->countQuery()->execute()->fetchField();
+			array_push($list,(object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
+
+			//υπολογισμός αριθμού αιτήσεων ανά τάξη
+			$classes = [1 => 'Α', 2 => 'Β', 3 => 'Γ', 4 => 'Δ'];
+			foreach ($classes as $i => $label) {
+				$sCon = $this->connection
+					->select('epal_student', 'eStudent')
+					->fields('eStudent', array('id'))
+					->condition('eStudent.currentclass', strval($i) , '=');
+				$numApplications = $sCon->countQuery()->execute()->fetchField();
+				array_push($list,(object) array('name' => "Αριθμός Αιτήσεων για {$label} Τάξη", 'numStudents' => $numApplications));
+			}
+
+			//υπολογισμός αριθμού αιτήσεων για δεύτερη περίοδο
+			$sCon = $this->connection
+				->select('epal_student', 'eStudent')
+				->fields('eStudent', array('id'))
+				->condition('eStudent.second_period', 1 , '=');
+			$numApplications = $sCon->countQuery()->execute()->fetchField();
+			array_push($list,(object) array('name' => "Αριθμός Αιτήσεων B' περιόδου", 'numStudents' => $numApplications));
+
+			//υπολογισμός αριθμού χρηστών
+			$sCon = $this->connection
+				->select('epal_users', 'eUser')
+				->fields('eUser', array('id'));
+			$numUsers = $sCon->countQuery()->execute()->fetchField();
+			array_push($list,(object) array('name' => "Αριθμός Εγγεγραμένων Χρηστών με ρόλο Αιτούντα", 'numStudents' => $numUsers));
+
+			return $this->respondWithStatus($list, Response::HTTP_OK);
+		}	 //end try
+
+		catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return $this->respondWithStatus([
+				"message" => t("An unexpected problem occured during report")
+			], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
+
+	}
+
+
+
+	public function makeGeneralReport(Request $request) {
+
+		try  {
+			if (!$request->isMethod('GET')) {
+				return $this->respondWithStatus([
+					"message" => t("Method Not Allowed")
+				], Response::HTTP_METHOD_NOT_ALLOWED);
+			}
+
+			//user validation
+			$authToken = $request->headers->get('PHP_AUTH_USER');
+			$users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+			$user = reset($users);
+			if (!$user) {
+				return $this->respondWithStatus([
+					'message' => t("User not found"),
+				], Response::HTTP_FORBIDDEN);
+			}
+
+			//user role validation
+			$roles = $user->getRoles();
+			$validRole = false;
+			foreach ($roles as $role)
+				if ($role === "ministry") {
+					$validRole = true;
+					break;
+				}
+			if (!$validRole) {
+				return $this->respondWithStatus([
+					'message' => t("User Invalid Role"),
+				], Response::HTTP_FORBIDDEN);
+			}
+
+			//υπολογισμός αριθμού δηλώσεων
+			$sCon = $this->connection
+				->select('epal_student', 'eStudent')
+				->fields('eStudent', array('id'));
+			$numTotal = $sCon->countQuery()->execute()->fetchField();
+
+			//υπολογισμός αριθμού δηλώσεων που ικανοποιήθηκαν στην i προτίμηση
+			$numData = array();
+			for ($i=0; $i < 3; $i++)	{
+				$sCon = $this->connection
+					->select('epal_student_class', 'eStudent')
+					->fields('eStudent', array('id', 'distribution_id'))
+					->condition('eStudent.distribution_id', $i+1, '=')
+					->condition('eStudent.finalized', 1 , '=');
+				array_push($numData, $sCon->countQuery()->execute()->fetchField());
+			}
+
+			// υπολογισμός αριθμού δηλώσεων που ΔΕΝ ικανοποιήθηκαν
+			/*
+			$sCon = $this->connection
+				->select('epal_student_class', 'eStudent')
+				->fields('eStudent', array('student_id'));
+			$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+			$studentIds = array();
+			foreach ($epalStudents as $epalStudent)
+				array_push($studentIds, $epalStudent->student_id);
+			$sCon = $this->connection
+				->select('epal_student', 'eStudent')
+				->fields('eStudent', array('id'))
+				->condition('eStudent.id', $studentIds, 'NOT IN');
+			$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
+			*/
+			$sCon = $this->connection->select('epal_student', 'epalStudent');
+			$sCon->leftJoin('epal_student_class', 'eStudent', 'eStudent.student_id = epalStudent.id');
+			$sCon->fields('eStudent', array('student_id'))
+				->fields('epalStudent', array('id'))
+				->isNull('eStudent.student_id');
+			$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
+
+			//υπολογισμός αριθμού δηλώσεων που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα
+			$numInSmallClasses = 0;
+			$sCon = $this->connection
+				->select('epal_student_class', 'eStudent')
+				->fields('eStudent', array('id'))
+				->condition('eStudent.finalized', 0 , '=');
+			$numInSmallClasses = $sCon->countQuery()->execute()->fetchField();
+
+			$list = array(
+				array('name' => "Αριθμός Δηλώσεων Προτίμησης", 'numStudents' => $numTotal),
+				array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην πρώτη τους προτίμηση", 'numStudents' => $numData[0]),
+				array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην δεύτερή τους προτίμηση", 'numStudents' => $numData[1]),
+				array('name' => "Αριθμός μαθητών που τοποθετήθηκαν στην τρίτη τους προτίμηση", 'numStudents' => $numData[2]),
+				array('name' => "Αριθμός μαθητών που δεν τοποθετήθηκαν σε καμμία τους προτίμηση", 'numStudents' => $numNoAllocated),
+				array('name' => "Αριθμός μαθητών που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα", 'numStudents' => $numInSmallClasses)
+			);
+
+			return $this->respondWithStatus($list, Response::HTTP_OK);
+		}	 //end try
+
+		catch (\Exception $e) {
+			$this->logger->warning($e->getMessage());
+			return $this->respondWithStatus([
+				"message" => t("An unexpected problem occured during report")
+			], Response::HTTP_INTERNAL_SERVER_ERROR);
+		}
+
+	}
 
 
 		public function makeReportCompleteness(Request $request, $regionId, $adminId, $schId) {
@@ -1048,14 +1057,9 @@ class ReportsCreator extends ControllerBase {
 		}
 
 		private function respondWithStatus($arr, $s) {
-					$res = new JsonResponse($arr);
-					$res->setStatusCode($s);
-					return $res;
-			}
-
-
-
-
-
+			$res = new JsonResponse($arr);
+			$res->setStatusCode($s);
+			return $res;
+		}
 
 }

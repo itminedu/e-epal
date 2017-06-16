@@ -147,7 +147,7 @@ epal.ministry.general_report:
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\ReportsCreator::makegGeneralReport'
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeGeneralReport'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.report-completeness:

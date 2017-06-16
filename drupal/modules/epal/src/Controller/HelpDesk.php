@@ -31,7 +31,7 @@ class HelpDesk extends ControllerBase {
     public function __construct(
         EntityTypeManagerInterface $entityTypeManager,
         LoggerChannelFactoryInterface $loggerChannel,
-         Connection $connection 
+         Connection $connection
             ) {
 
         $this->entityTypeManager = $entityTypeManager;
@@ -68,17 +68,14 @@ class HelpDesk extends ControllerBase {
 					"message" => t("Method Not Allowed")
 				], Response::HTTP_METHOD_NOT_ALLOWED);
     	}
-        
+
 				$postData = null;
                 if ($content = $request->getContent()) {
                     $postData = json_decode($content);
 
-                	 $this->sendEmailwithcommets($postData->userEmail, $postData->userName, $postData->userMessage,$postData->userSurname);
+                	 $this->sendEmailToHelpDesk($postData->userEmail, $postData->userName, $postData->userMessage,$postData->userSurname);
                     return $this->respondWithStatus([
-                        'userEmail' => $postData->userEmail,
-                        'name' => $postData->userName,	
-                        'surname' => $postData->userSurname,
-                        'message' => $postData->userMessage,
+                        'error_code' => 0,
                     ], Response::HTTP_OK);
                 }
                 else {
@@ -90,16 +87,14 @@ class HelpDesk extends ControllerBase {
     }
 
 
-    private function sendEmailwithcommets($email, $name, $cont_message, $surname) {
-       
-
+    private function sendEmailToHelpDesk($email, $name, $cont_message, $surname) {
 
         $mailManager = \Drupal::service('plugin.manager.mail');
 
-        $module = 'HelpDesk';
-        $key = 'send_mail';
-        $to = 'aspakatsi@yahoo.gr';
-        $params['message'] = 'Αποστολέας:'.$email.'Όνομα:'.$name.'Επωνυμο:'.$surname.'Μήνυμα:'.$cont_message;
+        $module = 'epal';
+        $key = 'help_desk';
+        $to = 'dialogos_eek@minedu.gov.gr';
+        $params['message'] = '<p>Αποστολέας:'.$email.'</p><p>Όνομα: '.$name.'</p><p>Επώνυμο: '.$surname.'</p><p>Μήνυμα: '.$cont_message .'</p>';
         $langcode = 'el';
         $send = true;
 
@@ -109,7 +104,7 @@ class HelpDesk extends ControllerBase {
             $this->logger->info("Mail Sent successfully.");
         }
         else {
-            $this->logger->info("There is error in sending mail.");
+            $this->logger->info("There was an error in sending mail.");
         }
         return;
     }

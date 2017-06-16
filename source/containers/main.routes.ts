@@ -77,7 +77,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/minister-view', component: MinisterView, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-reports', component: MinisterReports, canActivate: [ReportsAuthGuard] },
   { path: 'ministry/report-all-stat/:reportId', component: ReportAllStat, canActivate: [ReportsAuthGuard] },
-  { path: 'ministry/report-general/:reportId', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
+  { path: 'ministry/report-general', component: ReportGeneral, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-users/:reportId', component: ReportUsers, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/report-no-capacity/:reportId', component: ReportNoCapacity, canActivate: [MinistryAuthGuard]  },
   { path: 'ministry/minister-informstudents', component: InformStudents, canActivate: [MinistryAuthGuard]  },

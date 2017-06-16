@@ -139,6 +139,11 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         }
     }
 
+    gohelpDesk()
+    {
+       this.router.navigate(['/help-desk']); 
+    }
+
     public showModal(): void {
         (<any>$("#headerNotice")).modal("show");
     }

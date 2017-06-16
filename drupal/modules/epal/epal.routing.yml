@@ -294,3 +294,11 @@ epal.findcoursesperschool:
     _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.user.send_email:
+  path: '/epal/user/sendmail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\HelpDesk::sendEmail'
+  requirements:
+    _user_is_logged_in: 'TRUE'

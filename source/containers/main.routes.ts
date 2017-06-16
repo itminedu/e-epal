@@ -43,7 +43,7 @@ import StudentAuthGuard from '../guards/student.auth.guard';
 import StudentLockGuard from '../guards/student.lock.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
 import  EduAdminAuthGuard from  '../guards/eduadmin.auth.guard';
-
+import HelpDesk from  '../components/student-application-form/help-desk';
 import MinistryAuthGuard from '../guards/ministry.auth.guard';
 import ReportsAuthGuard from '../guards/reports.auth.guard';
 import Breadcrumbs from '../components/main/breadcrumbs';
@@ -84,6 +84,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/minister-settings', component: MinisterSettings, canActivate: [MinistryAuthGuard] },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
   { path: 'school/eduadmin-view', component: EduadminView, canActivate: [EduAdminAuthGuard] },
+  { path: 'help-desk', component: HelpDesk },
 ];
 
 export const MainDeclarations = [
@@ -121,4 +122,5 @@ export const MainDeclarations = [
   Breadcrumbs,
   DirectorButtons,
   EduadminView,
+  HelpDesk,
 ];

@@ -165,7 +165,7 @@ import {
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header modal-header-warning">
+          <div class="modal-header modal-header-success">
             <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Η επιλογή σας έχει αποθηκευτεί</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#checksaved')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
@@ -187,7 +187,7 @@ import {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
-            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Η επιλογή σας δεν έχει αποθηκευτεί</h3>
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Η επιλογή σας δεν έχει αποθηκευτεί</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#dangermodal')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
@@ -208,7 +208,7 @@ import {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
-            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Δεν υπάρχουν μαθητές</h3>
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Δεν υπάρχουν μαθητές</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#emptyselection')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>

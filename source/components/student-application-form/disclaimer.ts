@@ -53,34 +53,7 @@ import {
 <p>Επίσης πρέπει να γνωρίζετε ότι η Ηλεκτρονική Δήλωση Προτίμησης υπέχει θέση Υπ. Δήλωσης του ν. 1599/1986 (Α ́ 75) και οφείλετε τα στοιχεία που καταχωρίζετε σε αυτή να είναι αληθή.</p>
 
 
-      <form novalidate [formGroup]="formGroup" #form>  
-        <p align="left"><strong> Νομοθεσία  </strong></p>        
-        <li class="list-group-item isclickable evenout"  >
-            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/ypourgikh.pdf" target="_blank">Υπουργική Απόφαση - </a>
-        </li>
-        <li class="list-group-item isclickable oddout" >
-            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/egkyklios.pdf" target="_blank">Εγκύκλιος του Υ.Π.Π.Ε.Θ.- αρ.πρωτ. 89047/ΓΔ4/26-05-2017 </a>
-        </li>
-
-    <br>
-    <br>
-    <p align="left"><strong> Χρήσιμες Πληροφορίες  </strong></p>        
-        <li class="list-group-item isclickable evenout"  >
-            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/infos.pdf" target="_blank">Ενημερωτικά Στοιχεία</a>
-        </li>
-
-        <br>
-        <br>
-          <div class="row">
-            <div class="col-md-1 ">
-              <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >
-            </div>
-            <div class="col-md-9">
-              <label for="disclaimerChecked">Συμφωνώ με τα παραπάνω</label>
-            </div>
-          </div>
-
-         </form>
+        <legal-info></legal-info>
          <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
              <div class="col-md-6">
                  <button type="button" class="btn-primary btn-lg pull-left" (click)="navigateBack()">

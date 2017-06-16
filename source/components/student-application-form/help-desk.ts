@@ -4,6 +4,10 @@ import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import {Router} from "@angular/router";
 import { BehaviorSubject, Subscription, Observable } from 'rxjs/Rx';
 import { HelperDataService } from '../../services/helper-data-service';
+import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { NgRedux, select } from "ng2-redux";
+import { IAppState } from "../../store/store";
 import {
     FormBuilder,
     FormGroup,
@@ -17,7 +21,7 @@ import {
 @Component({
     selector: 'helpdesk',
     template: `
-
+        <div class = "loading" *ngIf="(showLoader | async) === true"></div>
         <p align="left"><strong>Ηλεκτρονικές δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος</strong></p>
         <p align="left">
         Σε περίπτωση που αντιμετωπίζετε οποιοδήποτε πρόβλημα με την καταχώριση της αίτησής σας, παρακαλούμε να 
@@ -29,8 +33,11 @@ import {
     <form [formGroup]="formGroup">
 
     <div class="form-group">
-        <label for="userEmail">Email Επικοινωνίας(<span style="color: #ff0000;">*</span>)</label>
-        <input #userEmail class="form-control" type="text" formControlName="userEmail">
+
+
+  <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" style="margin-bottom: 20px;">
+     <label for="userEmail">Email Επικοινωνίας(<span style="color: #ff0000;">*</span>)</label>
+        <input #userEmail class="form-control" type="text" formControlName="userEmail" >
     </div>
     <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').touched && formGroup.get('userEmail').hasError('required') ">
         Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -41,7 +48,7 @@ import {
 
     <div class="form-group">
         <label for="userName">Όνομα(<span style="color: #ff0000;">*</span>)</label>
-        <input class="form-control" type="text" formControlName="userName">
+        <input class="form-control" type="text" formControlName="userName" >
         <div class="alert alert-danger" *ngIf="formGroup.get('userName').touched && formGroup.get('userName').hasError('required') ">
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
@@ -50,7 +57,8 @@ import {
         </div>
     </div>
     <div class="form-group">
-        <label for="userSurname">Επώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userSurname">
+        <label for="userSurname">Επώνυμο(<span style="color: #ff0000;">*</span>)</label>
+        <input class="form-control" type="text" formControlName="userSurname" >
         <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').touched && formGroup.get('userSurname').hasError('required') ">
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
@@ -69,17 +77,80 @@ import {
             Πληκτρολογήστε ενα μήνυμα!
         </div>
     </div>
+    </div>
 
     <div class="row">
         <div class="col-md-12">
-            <button type="button" class="btn-primary btn-lg  isclickable" style="width: 9em;" (click)="sendmail()" >
-                <span style="font-size: 0.9em; font-weight: bold;">Αποστολή email &nbsp;&nbsp;&nbsp;</span>
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="sendmail()" >
+                <span style="font-size: 0.9em; font-weight: bold;">Αποστολή email </span>
             </button>
         </div>
     </div>
         <br>
         <br>
-      Τηλ. Επικοινωνίας: 2103443014, 2103442231, 2103443359, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)
+        <p align="left">
+      <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103442231, 2103443359, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
+
+
+  <div id="mailsent" (onHidden)="onHidden('#mailsent')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-success">
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;To email έχει αποσταλλεί</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#mailsent')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Επιτυχής αποστόλη!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
+<div id="dangermodal" (onHidden)="onHidden('#dangermodal')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;To email δεν έχει αποσταλλεί</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#dangermodal')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Παρακαλώ προσπαθήστε ξανα!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="fillfields" (onHidden)="onHidden('#fillfields')"
+    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;To email δεν έχει αποσταλλεί</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#fillfields')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία!</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
    `
 })
@@ -88,11 +159,16 @@ import {
 
  
   public formGroup: FormGroup;
-   private emailSent: BehaviorSubject<boolean>;
-
+  private emailSent: BehaviorSubject<boolean>;
+  private loginInfo$: BehaviorSubject<ILoginInfo>;
+  private showLoader: BehaviorSubject<boolean>;
+  
   constructor(private fb: FormBuilder,
-              private hds: HelperDataService,)
+              private hds: HelperDataService,
+              private _ngRedux: NgRedux<IAppState>)
       {
+          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+          this.showLoader = new BehaviorSubject(false);
           this.formGroup = fb.group({
           userEmail: ['', [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
           userName: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
@@ -103,22 +179,62 @@ import {
      this.emailSent = new BehaviorSubject(false);
   }
 
-    ngOnDestroy() {
+   public showModal(popupMsgId): void {
+        (<any>$(popupMsgId)).modal('show');
+    }
+
+    public hideModal(popupMsgId): void {
+
+        (<any>$(popupMsgId)).modal('hide');
+    }
+
+    public onHidden(popupMsgId): void {
 
     }
 
+    ngOnDestroy() {
+      if (this.loginInfo$) this.loginInfo$.unsubscribe();
+    }
+
     ngOnInit() {
+        (<any>$('#mailsent')).appendTo("body");
+        (<any>$('#dangermodal')).appendTo("body");
+        (<any>$('#fillfields')).appendTo("body");
+      this._ngRedux.select(state => {
+            if (state.loginInfo.size > 0) {
+                state.loginInfo.reduce(({}, loginInfoToken) => {
+                    
+                    this.formGroup.controls['userEmail'].setValue(loginInfoToken.cu_email);
+                    this.formGroup.controls['userName'].setValue(loginInfoToken.cu_name);
+                    this.formGroup.controls['userSurname'].setValue(loginInfoToken.cu_surname);
+                    return loginInfoToken;
+
+                }, {});
+            }
+            return state.loginInfo;
+        }).subscribe(this.loginInfo$);
     }
 
 
 
      sendmail() {
+       if (this.formGroup.invalid){
+           this.showModal("#fillfields");
+       }
+       else
+       {
+       this.showLoader.next(true);
         this.hds.sendmail(this.formGroup.value.userEmail, this.formGroup.value.userName, this.formGroup.value.userSurname,this.formGroup.value.userMessage)
             .then(res => {
                 this.emailSent.next(true);
+                this.showLoader.next(false);
+                this.showModal("#mailsent");
             })
             .catch(err => {
                 console.log(err);
+                this.showLoader.next(false);
+                this.showModal("#dangermodal");
             });
+        }
     }
 }

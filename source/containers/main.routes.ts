@@ -44,6 +44,7 @@ import StudentLockGuard from '../guards/student.lock.guard';
 import RegionEduAuthGuard from '../guards/regionedu.auth.guard';
 import  EduAdminAuthGuard from  '../guards/eduadmin.auth.guard';
 import HelpDesk from  '../components/student-application-form/help-desk';
+import LegalInfo from  '../components/student-application-form/legalinfos';
 import MinistryAuthGuard from '../guards/ministry.auth.guard';
 import ReportsAuthGuard from '../guards/reports.auth.guard';
 import Breadcrumbs from '../components/main/breadcrumbs';
@@ -56,11 +57,11 @@ export const MainRoutes: Routes = [
   { path: 'school/logout', component: SchoolHome },
   { path: 'ministry', component: MinistryHome },
   { path: 'ministry/logout', component: MinistryHome },
-//  { path: 'breadcrumbs', component: Breadcrumbs },
   { path: 'parent-form', component: ParentForm, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'student-application-form-main', component: StudentApplicationMain, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'course-fields-select', component: CourseFieldsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'intro-statement', component: Disclaimer, canActivate: [StudentAuthGuard, StudentLockGuard] },
+  { path: 'legal-info', component: LegalInfo},
   { path: 'epal-class-select', component: EpalClassesSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'sector-fields-select', component: SectorFieldsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
   { path: 'region-schools-select', component: RegionSchoolsSelect, canActivate: [StudentAuthGuard, StudentLockGuard] },
@@ -123,4 +124,5 @@ export const MainDeclarations = [
   DirectorButtons,
   EduadminView,
   HelpDesk,
+  LegalInfo
 ];

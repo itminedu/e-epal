@@ -207,6 +207,8 @@ class ReportsCreator extends ControllerBase {
 				->condition('eStudent.id', $studentIds, 'NOT IN');
 			$numNoAllocated = $sCon->countQuery()->execute()->fetchField();
 			*/
+
+
 			$sCon = $this->connection->select('epal_student', 'epalStudent');
 			$sCon->leftJoin('epal_student_class', 'eStudent', 'eStudent.student_id = epalStudent.id');
 			$sCon->fields('eStudent', array('student_id'))
@@ -363,8 +365,8 @@ class ReportsCreator extends ControllerBase {
 						$sCon = $this->connection->select('epal_student_class', 'eStudent')
 																			->fields('eStudent', array('id', 'epal_id', 'currentclass'))
 																			->condition('eStudent.epal_id', $epalSchool->id , '=')
-																			->condition('eStudent.currentclass', $classId , '=')
-																			->condition('eStudent.finalized', 1 , '=');
+																			->condition('eStudent.currentclass', $classId , '=');
+																			//->condition('eStudent.finalized', 1 , '=');
 						array_push( $num, $sCon->countQuery()->execute()->fetchField() );
 						//βρες ποσοστά συμπλήρωσης
 						array_push( $perc, number_format($num[$classId-1] / $capacity[$classId-1] * 100, 2));

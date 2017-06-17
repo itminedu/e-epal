@@ -85,7 +85,7 @@ export const MainRoutes: Routes = [
   { path: 'ministry/minister-settings', component: MinisterSettings, canActivate: [MinistryAuthGuard] },
   { path: 'school/perfecture-view', component: PerfectureView, canActivate: [RegionEduAuthGuard] },
   { path: 'school/eduadmin-view', component: EduadminView, canActivate: [EduAdminAuthGuard] },
-  { path: 'help-desk', component: HelpDesk },
+  { path: 'help-desk', component: HelpDesk, canActivate: [StudentAuthGuard] },
 ];
 
 export const MainDeclarations = [

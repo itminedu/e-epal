@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
+import {Location} from '@angular/common';
 import { Injectable } from "@angular/core";
 import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import {Router} from "@angular/router";
@@ -24,7 +25,7 @@ import {
         <div class = "loading" *ngIf="(showLoader | async) === true"></div>
         <p align="left"><strong>Ηλεκτρονικές δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος</strong></p>
         <p align="left">
-        Σε περίπτωση που αντιμετωπίζετε οποιοδήποτε πρόβλημα με την καταχώριση της αίτησής σας, παρακαλούμε να 
+        Σε περίπτωση που αντιμετωπίζετε οποιοδήποτε πρόβλημα με την καταχώριση της αίτησής σας, παρακαλούμε να
          συμπληρώσετε την παρακάτω φόρμα.
 
 
@@ -33,8 +34,6 @@ import {
     <form [formGroup]="formGroup">
 
     <div class="form-group">
-
-
   <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;" style="margin-bottom: 20px;">
      <label for="userEmail">Email Επικοινωνίας(<span style="color: #ff0000;">*</span>)</label>
         <input #userEmail class="form-control" type="text" formControlName="userEmail" >
@@ -44,6 +43,7 @@ import {
     </div>
     <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('pattern')">
         Πληκτρολογήστε ένα σωστό συντακτικά email!
+    </div>
     </div>
 
     <div class="form-group">
@@ -77,18 +77,22 @@ import {
             Πληκτρολογήστε ενα μήνυμα!
         </div>
     </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
+
+    <div class="row" style="margin-top: 30px; margin-bottom: 30px;">
+        <div class="col-md-6">
+            <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 9em;" (click)="goBack()" >
+                <span style="font-size: 0.9em; font-weight: bold;">Επιστροφή</span>
+            </button>
+        </div>
+        <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="sendmail()" >
                 <span style="font-size: 0.9em; font-weight: bold;">Αποστολή email </span>
             </button>
         </div>
     </div>
-        <br>
-        <br>
-        <p align="left">
+
+        <p style="text-align: left, font-size: 0.9em;">
       <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103442231, 2103443359, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
 
 
@@ -97,16 +101,16 @@ import {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-success">
-            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;To email έχει αποσταλλεί</h3>
+            <h3 class="modal-title pull-left"><i class="fa fa-check-square-o"></i>&nbsp;&nbsp;Επιτυχής αποστολή μηνύματος</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#mailsent')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Επιτυχής αποστόλη!</p>
+            <p>Το μήνυμά σας αποστάλθηκε. Θα μελετήσουμε το αίτημά σας και θα επικοινωνήσουμε μαζί σας το συντομότερο δυνατό!</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="goBack()">Κλείσιμο</button>
           </div>
         </div>
       </div>
@@ -116,13 +120,13 @@ import {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
-            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;To email δεν έχει αποσταλλεί</h3>
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Αποτυχία αποστολής μηνύματος</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#dangermodal')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Παρακαλώ προσπαθήστε ξανα!</p>
+            <p>Πρόβλημα επικοινωνίας! Παρακαλούμε προσπαθήστε πάλι αργότερα.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
@@ -136,13 +140,13 @@ import {
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
-            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;To email δεν έχει αποσταλλεί</h3>
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Αποτυχία αποστολής μηνύματος</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#fillfields')">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Παρακαλώ συμπληρώστε όλα τα υποχρεωτικά πεδία!</p>
+            <p>Παρακαλούμε συμπληρώστε όλα τα υποχρεωτικά πεδία!</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
@@ -150,6 +154,7 @@ import {
         </div>
       </div>
     </div>
+</form>
 
 
    `
@@ -157,29 +162,29 @@ import {
 
 @Injectable() export default class HelpDesk implements OnInit, OnDestroy {
 
- 
-  public formGroup: FormGroup;
-  private emailSent: BehaviorSubject<boolean>;
-  private loginInfo$: BehaviorSubject<ILoginInfo>;
-  private showLoader: BehaviorSubject<boolean>;
-  
-  constructor(private fb: FormBuilder,
-              private hds: HelperDataService,
-              private _ngRedux: NgRedux<IAppState>)
-      {
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.showLoader = new BehaviorSubject(false);
-          this.formGroup = fb.group({
-          userEmail: ['', [Validators.pattern(VALID_EMAIL_PATTERN),Validators.required]],
-          userName: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-          userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN),Validators.required]],
-          userMessage: ['', [Validators.required]],
-      
-     })
-     this.emailSent = new BehaviorSubject(false);
-  }
 
-   public showModal(popupMsgId): void {
+    public formGroup: FormGroup;
+    private emailSent: BehaviorSubject<boolean>;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private showLoader: BehaviorSubject<boolean>;
+
+    constructor(private fb: FormBuilder,
+        private hds: HelperDataService,
+        private _ngRedux: NgRedux<IAppState>,
+        private loc: Location) {
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.showLoader = new BehaviorSubject(false);
+        this.formGroup = fb.group({
+            userEmail: ['', [Validators.pattern(VALID_EMAIL_PATTERN), Validators.required]],
+            userName: ['', [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
+            userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
+            userMessage: ['', [Validators.required]],
+
+        })
+        this.emailSent = new BehaviorSubject(false);
+    }
+
+    public showModal(popupMsgId): void {
         (<any>$(popupMsgId)).modal('show');
     }
 
@@ -193,17 +198,17 @@ import {
     }
 
     ngOnDestroy() {
-      if (this.loginInfo$) this.loginInfo$.unsubscribe();
+        if (this.loginInfo$) this.loginInfo$.unsubscribe();
     }
 
     ngOnInit() {
         (<any>$('#mailsent')).appendTo("body");
         (<any>$('#dangermodal')).appendTo("body");
         (<any>$('#fillfields')).appendTo("body");
-      this._ngRedux.select(state => {
+        this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
-                    
+
                     this.formGroup.controls['userEmail'].setValue(loginInfoToken.cu_email);
                     this.formGroup.controls['userName'].setValue(loginInfoToken.cu_name);
                     this.formGroup.controls['userSurname'].setValue(loginInfoToken.cu_surname);
@@ -215,26 +220,27 @@ import {
         }).subscribe(this.loginInfo$);
     }
 
-
-
-     sendmail() {
-       if (this.formGroup.invalid){
-           this.showModal("#fillfields");
-       }
-       else
-       {
-       this.showLoader.next(true);
-        this.hds.sendmail(this.formGroup.value.userEmail, this.formGroup.value.userName, this.formGroup.value.userSurname,this.formGroup.value.userMessage)
-            .then(res => {
-                this.emailSent.next(true);
-                this.showLoader.next(false);
-                this.showModal("#mailsent");
-            })
-            .catch(err => {
-                console.log(err);
-                this.showLoader.next(false);
-                this.showModal("#dangermodal");
-            });
+    sendmail() {
+        if (this.formGroup.invalid) {
+            this.showModal("#fillfields");
         }
+        else {
+            this.showLoader.next(true);
+            this.hds.sendmail(this.formGroup.value.userEmail, this.formGroup.value.userName, this.formGroup.value.userSurname, this.formGroup.value.userMessage)
+                .then(res => {
+                    this.emailSent.next(true);
+                    this.showLoader.next(false);
+                    this.showModal("#mailsent");
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.showLoader.next(false);
+                    this.showModal("#dangermodal");
+                });
+        }
+    }
+
+    goBack(): void {
+        this.loc.back();
     }
 }

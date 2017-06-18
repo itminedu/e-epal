@@ -23,6 +23,7 @@ import { StudentDataFieldsActions } from "../../actions/studentdatafields.action
 })
 export default class HeaderComponent implements OnInit, OnDestroy {
     private authToken: string;
+    private studentRole = STUDENT_ROLE;
     private authRole: string;
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
@@ -141,7 +142,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     gohelpDesk()
     {
-       this.router.navigate(['/help-desk']); 
+       this.router.navigate(['/help-desk']);
     }
 
     public showModal(): void {

@@ -8,7 +8,7 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-
+import {Location} from '@angular/common';
 
 @Component({
     selector: 'submited-preview',
@@ -42,11 +42,11 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 <p>Έχουν υποβληθεί οι παρακάτω δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος.</p>
                 <p>Επιλέξτε το όνομα ή το επώνυμο του μαθητή για να δείτε αναλυτικά τη δήλωσή σας και να την εκτυπώσετε σε μορφή PDF.</p>
                 <p>Μπορείτε να διαγράψετε μία δήλωση επιλέγοντας το εικονίδιο δεξιά από το ονοματεπώνυμο.</p>
-                <p>Επιλέξτε "Αρχική" επάνω αριστερά αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
+                <p>Επιλέξτε "Αρχική" επάνω αριστερά ή κάτω αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
             </div>
             <div *ngIf="(SubmitedApplic$ | async).length === 0" class="row" style="margin: 10px 2px 10px 2px;">
                 <p>Δεν έχετε ακόμη υποβάλλει δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος.</p>
-                <p>Επιλέξτε "Αρχική" επάνω αριστερά αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
+                <p>Επιλέξτε "Αρχική" επάνω αριστερά ή κάτω αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
             </div>
 
 
@@ -182,6 +182,20 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
               </div>
               </div>
+
+              <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                  <div class="col-md-6">
+                      <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 9em;" (click)="goBack()" >
+                          <span style="font-size: 0.9em; font-weight: bold;">Επιστροφή</span>
+                      </button>
+                  </div>
+                  <div class="col-md-6">
+                      <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="goHome()" >
+                          <span style="font-size: 0.9em; font-weight: bold;">Αρχική</span>
+                      </button>
+                  </div>
+              </div>
+
               </div>
 
    `
@@ -216,7 +230,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        /*private fb: FormBuilder,*/
+        private loc: Location
     ) {
         this.SubmitedApplic$ = new BehaviorSubject([{}]);
         this.SubmitedDetails$ = new BehaviorSubject([{}]);
@@ -349,6 +363,15 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
     public onHidden(): void {
         this.isModalShown.next(false);
+    }
+
+    public goBack(): void {
+        this.loc.back();
+
+    }
+
+    public goHome(): void {
+        this.router.navigate(['']);
     }
 
 }

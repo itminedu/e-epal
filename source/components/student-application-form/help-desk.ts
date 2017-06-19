@@ -68,7 +68,7 @@ import {
     </div>
 
        <div class="form-group">
-        <label for="userMessage">Μύνημα(<span style="color: #ff0000;">*</span>)</label>
+        <label for="userMessage">Μήνυμα(<span style="color: #ff0000;">*</span>)</label>
         <textarea style="height: 150px;" class="form-control" type="text" formControlName="userMessage"></textarea>
         <div class="alert alert-danger" *ngIf="formGroup.get('userMessage').touched && formGroup.get('userMessage').hasError('required') ">
             Το πεδίο δεν μπορεί να αφεθεί κενό!
@@ -93,7 +93,7 @@ import {
     </div>
 
         <p style="text-align: left, font-size: 0.9em;">
-      <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103442231, 2103443359, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
+      <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103442231, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
 
 
   <div id="mailsent" (onHidden)="onHidden('#mailsent')"

@@ -16,18 +16,37 @@ import {Location} from '@angular/common';
     <div id="applicationDeleteConfirm" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header {{modalHeader | async}}">
-              <h3 class="modal-title pull-left"><i class="fa {{modalHeaderIcon | async}}"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-close"></i>&nbsp;&nbsp;Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
           <div class="modal-body">
-              <p>{{ modalText | async }}</p>
+              <p>Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideModal()">Ακύρωση</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideConfirmModal()">Ακύρωση</button>
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="deleteApplicationDo()">Επιβεβαίωση</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="applicationDeleteError" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>Η δήλωσή σας δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή σας αυτή την περίοδο</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" (click)="hideErrorModal()">Κλείσιμο</button>
           </div>
         </div>
       </div>
@@ -243,10 +262,6 @@ import {Location} from '@angular/common';
     private StudentResults$: BehaviorSubject<any>;
     private StudentResultsSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
-    private modalTitle: BehaviorSubject<string>;
-    private modalText: BehaviorSubject<string>;
-    private modalHeader: BehaviorSubject<string>;
-    private modalHeaderIcon: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private applicationIdActive = <number>-1;
 
@@ -267,17 +282,14 @@ import {Location} from '@angular/common';
         this.CritirioChosen$ = new BehaviorSubject([{}]);
         this.incomeChosen$ = new BehaviorSubject([{}]);
         this.showLoader$ = new BehaviorSubject(false);
-        this.modalTitle = new BehaviorSubject("");
-        this.modalText = new BehaviorSubject("");
-        this.modalHeader = new BehaviorSubject("");
-        this.modalHeaderIcon = new BehaviorSubject("");
         this.isModalShown = new BehaviorSubject(false);
         this.StudentResults$ = new BehaviorSubject([{}]);
 
     }
 
     ngOnDestroy() {
-        (<any>$('#studentFormSentNotice')).remove();
+        (<any>$('#applicationDeleteConfirm')).remove();
+        (<any>$('#applicationDeleteError')).remove();
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
@@ -301,6 +313,7 @@ import {Location} from '@angular/common';
     ngOnInit() {
 
         (<any>$('#applicationDeleteConfirm')).appendTo("body");
+        (<any>$('#applicationDeleteError')).appendTo("body");
         this.showLoader$.next(true);
 
         this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
@@ -377,16 +390,12 @@ import {Location} from '@angular/common';
     */
 
     deleteApplication(appId: number): void {
-        this.modalTitle.next("Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ");
-        this.modalText.next("Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση");
-        this.modalHeader.next("modal-header-danger");
-        this.modalHeaderIcon.next("fa-close");
         this.applicationId = appId;
-        this.showModal();
+        this.showConfirmModal();
     }
 
     deleteApplicationDo(): void {
-        this.hideModal();
+        this.hideConfirmModal();
         this.showLoader$.next(true);
         this._hds.deleteApplication(this.applicationId).then(data => {
             this.SubmitedUsersSub.unsubscribe();
@@ -404,21 +413,24 @@ import {Location} from '@angular/common';
 
         }).catch(err => {
             this.showLoader$.next(false);
-            this.modalTitle.next("Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ");
-            this.modalText.next("Η δήλωσή σας δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή σας αυτή την περίοδο");
-            this.modalHeader.next("modal-header-danger");
-            this.modalHeaderIcon.next("fa-ban");
-            this.showModal();
+            this.showErrorModal();
             console.log(err);
         });
     }
 
-    public showModal(): void {
+    public showConfirmModal(): void {
         (<any>$('#applicationDeleteConfirm')).modal('show');
     }
 
-    public hideModal(): void {
+    public showErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('show');
+    }
+
+    public hideConfirmModal(): void {
         (<any>$('#applicationDeleteConfirm')).modal('hide');
+    }
+    public hideErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('hide');
     }
 
     public onHidden(): void {

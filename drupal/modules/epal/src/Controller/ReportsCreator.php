@@ -368,8 +368,7 @@ class ReportsCreator extends ControllerBase
 						->select('epal_student_class', 'eStudent')
                         ->fields('eStudent', array('id', 'epal_id', 'currentclass'))
                         ->condition('eStudent.epal_id', $epalSchool->id, '=')
-                        ->condition('eStudent.currentclass', $classId, '=')
-                        ->condition('eStudent.finalized', 1, '='); 
+                        ->condition('eStudent.currentclass', $classId, '=');
                     array_push( $num, $sCon->countQuery()->execute()->fetchField());
                     //βρες ποσοστά συμπλήρωσης
                     if (isset($capacity[$classId-1]) && $capacity[$classId-1] > 0) {

@@ -302,3 +302,11 @@ epal.user.send_email:
     _controller: '\Drupal\epal\Controller\HelpDesk::sendEmail'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.applicant.showresults:
+  path: '/epal/showresults/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getResults'
+  requirements:
+    _user_is_logged_in: 'TRUE'

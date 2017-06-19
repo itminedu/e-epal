@@ -394,6 +394,95 @@ class SubmitedApplications extends ControllerBase
         }
     }
 
+
+    public function getResults(Request $request, $studentId) {
+
+      //έλεγχος πρόσβασης
+      $authToken = $request->headers->get('PHP_AUTH_USER');
+      $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+      $epalUser = reset($epalUsers);
+      if ($epalUser) {
+          $userid = $epalUser->id();
+          $studentIdNew = intval($studentId);
+          $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid, 'id' => $studentIdNew));
+          $i = 0;
+          if ($epalStudents) {
+              $list = array();
+
+              //ανάκτηση τιμής από ρυθμίσεις διαχειριστή για lock_results
+              $config_storage = $this->entityTypeManager->getStorage('epal_config');
+              $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
+              $epalConfig = reset($epalConfigs);
+              if (!$epalConfig) {
+                 return $this->respondWithStatus([
+                         'message' => t("EpalConfig Enity not found"),
+                     ], Response::HTTP_FORBIDDEN);
+              }
+              else {
+                 $applicantsResultsDisabled = $epalConfig->lock_results->getString();
+              }
+
+              //ανάκτηση αποτελέσματος
+              // εύρεση τοποθέτησης (περίπτωση μαθητή που τοποθετήθηκε "οριστικά")
+
+              if ($applicantsResultsDisabled === "0")   {
+
+        				$sCon = $this->connection->select('epal_student_class', 'eStudent')
+        																	->fields('eStudent', array('student_id', 'epal_id', 'finalized'))
+                                          ->condition('eStudent.student_id', intval($studentId), '=');
+       																	  //->condition('eStudent.finalized', "1" , '=');
+        				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+                if  (sizeof($epalStudents) === 1) {
+                  $epalStudent = reset($epalStudents);
+
+                  $sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
+                                           ->fields('eSchool', array('id', 'name', 'street_address','phone_number'))
+                                           ->condition('eSchool.id', $epalStudent->epal_id, '=');
+                  $epalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+                  //status: 0: δεν τοποθετήθηκε, 1: τοποθετήθηκε, 2: τοποθετήθηκε "προσωρινά" σε ολιγομελές
+                  if (sizeof($epalSchools) === 1) {
+                    $epalSchool = reset($epalSchools);
+                    if ($epalStudent->finalized === "1")  {
+                      $status = "1";
+                      $schoolName = $epalSchool->name;
+                      $schoolAddress = $epalSchool->street_address;
+                      $schoolTel = $epalSchool->phone_number;
+                    }
+                    else  {
+                        $status = "2";
+                    }
+                  }
+                }
+                else  {
+                    $status = "0";
+                }
+
+            } //endif $applicantsResultsDisabled === "0"
+
+            $list[] = array(
+                      'applicantsResultsDisabled' => $applicantsResultsDisabled,
+                      'status' => $status,
+                      'schoolName' => $schoolName,
+                      'schoolAddress' => $schoolAddress,
+                      'schoolTel' => $schoolTel,
+              );
+
+              return $this->respondWithStatus(
+                      $list, Response::HTTP_OK);
+          }
+
+          else {
+              return $this->respondWithStatus([
+                  'message' => t('EPAL user not found'),
+              ], Response::HTTP_FORBIDDEN);
+          }
+        }
+
+
+
+
+    }
+
     private function respondWithStatus($arr, $s)
     {
         $res = new JsonResponse($arr);

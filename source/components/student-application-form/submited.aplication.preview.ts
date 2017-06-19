@@ -70,6 +70,26 @@ import {Location} from '@angular/common';
                     <div style="width: 100%">
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== applicationIdActive" style="margin: 10px 10px 10px 10px;">
 
+                  <div *ngFor="let StudentResult$  of StudentResults$ | async">
+                    <div *ngIf = "StudentResult$.applicantsResultsDisabled == '0'" >
+                      <div *ngIf = "StudentResult$.status == '1'" >
+                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a;">
+                          Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentResult$.schoolName}}.
+                          Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, επισυνάπτοντας τα απαραίτητα δικαιολογητικά.
+                          Διεύθυνση σχολείου: {{StudentResult$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentResult$.schoolTel}}<br><br>
+                        </div>
+                      </div>
+
+                      <div *ngIf = "StudentResult$.status != '1'" >
+                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a;">
+                          Η αίτησή σας δεν ήταν δυνατό να ικανοποιηθεί. Παρακαλώ επικοινωνήστε άμεσα τηλεφωνικά με τη Διεύθυνση Δευτεροβάθμιας Εκπαίδευσης στην οποία ανήκετε,
+                          προκειμένου να διερευνηθεί εκ νέου η δυνατότητα εγγραφής σας.<br><br>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Δήλωσης Προτίμησης ΕΠΑΛ</div>
                       <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.applicationId}}</div>
@@ -170,13 +190,20 @@ import {Location} from '@angular/common';
                     </div>
 
                     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                        <!--
+                        <div class="col-md-6">
+                            <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 10em;" (click)="showResults()" [hidden] = "StudentDetails$.applicantsResultsDisabled == '0'">
+                                <span style="font-size: 0.9em; font-weight: bold;">Αποτελέσματα</span>
+                            </button>
+                        </div>
+                        -->
                         <div class="col-md-12">
                             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
                                 <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
                             </button>
                         </div>
-
                     </div>
+
                     </div>
                 </div>
 
@@ -213,6 +240,8 @@ import {Location} from '@angular/common';
     private incomeChosenSub: Subscription;
     private CritirioChosen$: BehaviorSubject<any>;
     private CritirioChosenSub: Subscription;
+    private StudentResults$: BehaviorSubject<any>;
+    private StudentResultsSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
@@ -243,6 +272,7 @@ import {Location} from '@angular/common';
         this.modalHeader = new BehaviorSubject("");
         this.modalHeaderIcon = new BehaviorSubject("");
         this.isModalShown = new BehaviorSubject(false);
+        this.StudentResults$ = new BehaviorSubject([{}]);
 
     }
 
@@ -258,10 +288,13 @@ import {Location} from '@angular/common';
             this.CritirioChosenSub.unsubscribe();
         if (this.incomeChosenSub)
             this.incomeChosenSub.unsubscribe();
+        if (this.StudentResultsSub)
+            this.StudentResultsSub.unsubscribe();
 
         this.SubmitedDetails$.unsubscribe();
         this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
+        this.StudentResults$.unsubscribe();
 
     }
 
@@ -310,11 +343,38 @@ import {Location} from '@angular/common';
                 console.log("Error Getting Schools");
             });
 
+        this.StudentResultsSub = this._hds.showResults(this.applicationIdActive).subscribe(data => {
+            this.StudentResults$.next(data);
+            this.showLoader$.next(false);
+        },
+            error => {
+                this.StudentResults$.next([{}]);
+                console.log("Error Getting Results");
+                this.showLoader$.next(false);
+            });
+
     }
 
     createPdfServerSide() {
         this._hds.createPdfServerSide(this.applicationIdActive);
     }
+
+
+    /*
+    showResults() {
+
+        this.StudentResultsSub = this._hds.showResults(this.applicationIdActive).subscribe(data => {
+            this.StudentResults$.next(data);
+            this.showLoader$.next(false);
+        },
+            error => {
+                this.StudentResults$.next([{}]);
+                console.log("Error Getting Results");
+                this.showLoader$.next(false);
+            });
+
+    }
+    */
 
     deleteApplication(appId: number): void {
         this.modalTitle.next("Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ");

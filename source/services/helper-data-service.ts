@@ -998,6 +998,19 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
+    showResults(headerid) {
+
+      let headers = new Headers({
+          "Content-Type": "application/json",
+      });
+      this.createAuthorizationHeader(headers);
+      let options = new RequestOptions({ headers: headers });
+      let headerIdStr = headerid.toString();
+      return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
+          .map(response => response.json());
+
+    }
+
 
 
 

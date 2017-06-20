@@ -185,8 +185,11 @@ import {
             return 1;
         else if ((new Date().getFullYear()) - d.date.year < 15)
             return 2;
-        if (!this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no)
+        if (!this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no &&
+            this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id!==38)
             return 3;
+        else if (this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id===38)
+            this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no='0000000'
         if (this.studentDataGroup.controls["telnum"].value.length !== 10 )
             return 4;
 

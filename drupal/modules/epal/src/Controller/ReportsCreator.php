@@ -272,13 +272,19 @@ class ReportsCreator extends ControllerBase
             $validRole = false;
             foreach ($roles as $role) {
                 if ($role === "ministry" || $role === "regioneduadmin" || $role === "eduadmin") {
-                    $validRole = true;
+                    $validRole = $role;
                     break;
                 }
             }
-            if (!$validRole) {
+            if ($validRole === false) {
 				return $this->respondWithStatus([
 					'message' => t("User Invalid Role"),
+				], Response::HTTP_FORBIDDEN);
+            }
+
+            if (!$this->canReportOn($user, $role, $regionId, $adminId, $schId)) {
+				return $this->respondWithStatus([
+					'message' => t('User access to area forbidden'),
 				], Response::HTTP_FORBIDDEN);
             }
 
@@ -410,7 +416,6 @@ class ReportsCreator extends ControllerBase
         }
     }
 
-
     public function makeReportAllStat(Request $request, $regionId, $adminId, $schId, $classId, $sectorId, $courseId, $finalized)
     {
         try {
@@ -435,13 +440,19 @@ class ReportsCreator extends ControllerBase
             $validRole = false;
             foreach ($roles as $role) {
                 if ($role === "ministry" || $role === "regioneduadmin" || $role === "eduadmin") {
-                    $validRole = true;
+                    $validRole = $role;
                     break;
                 }
             }
-            if (!$validRole) {
+            if ($validRole === false) {
 				return $this->respondWithStatus([
 					'message' => t("User Invalid Role"),
+				], Response::HTTP_FORBIDDEN);
+            }
+
+            if (!$this->canReportOn($user, $role, $regionId, $adminId, $schId)) {
+				return $this->respondWithStatus([
+					'message' => t('User access to area forbidden'),
 				], Response::HTTP_FORBIDDEN);
             }
 
@@ -1008,6 +1019,65 @@ class ReportsCreator extends ControllerBase
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
             return -1;
+        }
+    }
+
+    /**
+     * Check if $user, under $role, can issue the report on the 
+     * designated region, admin area and school.
+     *
+     * @return boolean 
+     */
+    protected function canReportOn($user, $role, $regionId, $adminId, $schId)
+    {
+        if ($role === 'ministry') {
+            $can = true;
+        } elseif ($role === 'regioneduadmin') {
+            $can = (
+                ($user->init->value == $regionId)
+                && (($adminId == 0) || $this->isAdminUnderRegion($adminId, $regionId))
+            );
+        } elseif ($role === 'eduadmin') {
+            $can = (
+                ($user->init->value == $adminId)
+                && (($regionId == 0) || $this->isAdminUnderRegion($adminId, $regionId))
+                && (($schId == 0) || $this->isSchoolUnderAdmin($schId, $adminId))
+            );
+        } else {
+            $can = false;
+        }
+        return $can;
+    }
+
+    protected function isSchoolUnderAdmin($schId, $adminId)
+    {
+        $map = $this->entityTypeManager
+            ->getStorage('eepal_school')
+            ->loadByProperties([
+                'id' => $schId,
+                'edu_admin_id' => $adminId,
+            ]);
+        $existing_map = reset($map);
+        if (!$existing_map) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    protected function isAdminUnderRegion($adminId, $regionId)
+    {
+        $map = $this->entityTypeManager
+            ->getStorage('eepal_admin_area')
+            ->loadByProperties([
+                'id' => $adminId,
+                'region_to_belong' => $regionId,
+            ]);
+        $existing_map = reset($map);
+        if (!$existing_map) {
+            return false;
+        } else {
+            return true;
         }
     }
 

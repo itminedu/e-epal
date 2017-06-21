@@ -703,7 +703,6 @@ export class HelperDataService implements OnInit, OnDestroy {
     getCoursePerPerfecture(PerfectureId) {
         let PerfectureIdNew = PerfectureId.toString();
 
-
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;
@@ -1010,8 +1009,5 @@ export class HelperDataService implements OnInit, OnDestroy {
           .map(response => response.json());
 
     }
-
-
-
 
 }

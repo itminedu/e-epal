@@ -45,7 +45,7 @@ import {
                   <div class="col-md-2" style="font-weight: bold;" >{{CoursesPerSchools$.size}}</div>
                 </div>    
                 </li>
-
+ 
                <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
                  <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"
                  [class.selectedappout]="StudentActive === j"

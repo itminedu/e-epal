@@ -31,13 +31,19 @@ import {
        <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
 
-      <div class="row" style="margin-top: 20px; line-height: 2em;" > <b> Τα τμήματα του σχολείου σας. </b></div>
+      <div class="row"> 
+         <div class="col-md-8" style="font-weight: bold;"> Τα τμήματα του σχολείου σας.</div>
+         <div class="col-md-2" style="font-weight: bold;"> Αριθμός Μαθητών</div>
+      </div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li class="list-group-item isclickable" (click)="setActive(i)"
                 (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)"
                 [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown"
                 [class.oddout]="isOdd" [class.evenout]="isEven"  [class.selectedout]="courseActive === i" >
-                    <h5 >{{CoursesPerSchools$.taxi}}&nbsp; <b></b></h5>
+                <div class="row">
+                  <div class="col-md-8" style="font-weight: bold;" >{{CoursesPerSchools$.taxi}}</div>
+                  <div class="col-md-2" style="font-weight: bold;" >{{CoursesPerSchools$.size}}</div>
+                </div>    
                 </li>
 
                <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
@@ -49,7 +55,7 @@ import {
                  [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
                     <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
                     <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)">{{StudentDetails$.name}}</div>
-                    <div [hidden]="StudentActive !== j" class="col-md-2" style="color: black;"  *ngIf = "opened == true"> <span aria-hidden="true"><i class="fa fa-close"  (click) ="setActiveStudentnew(j)"></i></span>  </div>
+                    <div [hidden]="StudentActive !== j" class="col-md-2" style="color: black;"  *ngIf = "opened == true"> <span aria-hidden="true"><button type="button" class="btn-primary btn-sm" (click) ="setActiveStudentnew(j)">Κλείσιμο</button></span>  </div>
 
                     <div style="width: 100%; color: #000000;">
                     <div [hidden]="StudentActive !== j"  style="margin: 20px 10px 10px 10px;">
@@ -67,7 +73,7 @@ import {
                       </div>
                       <div class="col-md-6">
                       <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(StudentDetails$.id, cb, j)">
-                           Επιβεβαίωση Εγγραφής
+                           Ενημέρωση
                        </button>
                      </div>
                      </div>

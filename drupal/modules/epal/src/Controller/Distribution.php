@@ -76,7 +76,7 @@ class Distribution extends ControllerBase {
 	public function createDistribution(Request $request) {
 
 		$numDistributions = 3;
-		$sizeOfBlock = 100000;
+		$sizeOfBlock = 1000000;
 
 		//POST method is checked
 		if (!$request->isMethod('POST')) {
@@ -545,6 +545,26 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 		// (1) έχουν απόλυτη προτεραιότητα όσοι ήδη φοιτούσαν στο σχολείο (σε περίπτωση που φοιτούσαν περισσότεροι από την χωρητικότητα, τους δεχόμαστε όλους)
 		// (2) αν απομένουν κενές θέσεις,...τοποθέτησε και όλους τους άλλους!!.
 
+		//αν capacity = 0, ..διέγραψέ τους από εκεί που τοποθετήθηκαν προσωρινά
+		if ($limit === 0)  {
+			foreach($students as $student)	{
+				array_push($this->pendingStudents, $student->student_id);
+				try {
+					$this->connection->delete('epal_student_class')
+												->condition('student_id', $student->student_id)
+												->execute();
+				}
+				catch (\Exception $e) {
+					$this->logger->warning($e->getMessage());
+					$transaction->rollback();
+					return ERROR_DB;
+				}
+			}
+			return SUCCESS;
+		}
+
+
+
 		//εύρεση αριθμού μαθητών που ήδη φοιτούσαν στο σχολείο
 		$cnt = 0;
 		foreach($students as $student)	{
@@ -909,7 +929,7 @@ public function checkCapacityAndArrange($epalId, $classId, $secCourId, $limitup,
 
 
 	}
-	
+
 
 	private function setFinalize()	{
 

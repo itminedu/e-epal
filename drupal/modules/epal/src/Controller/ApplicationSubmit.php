@@ -315,7 +315,7 @@ class ApplicationSubmit extends ControllerBase
             (checkdate($date_parts[1], $date_parts[2], $date_parts[0]) !== true)) {
             return 1003;
         }
-        if (intval($date_parts[0]) >= 2003) {
+        if (intval($date_parts[0]) >= ((int)date("Y") - 13)) {
             return 1003;
         }
         $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";

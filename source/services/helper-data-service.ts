@@ -593,7 +593,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, { username: username, userpassword: userpassword }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, { }, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -615,7 +615,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { username: username, userpassword: userpassword }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { }, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);

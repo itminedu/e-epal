@@ -24,13 +24,13 @@ use Drupal\Core\TypedData\Plugin\DataType\TimeStamp;
 
 use Drupal\Core\Language\LanguageManagerInterface;
 
-define("ERR_DB", -1);
-define("NO_CLASS_LIM_DOWN", -2);
-define("SMALL_CLS", 1);
-define("NON_SMALL_CLS", 2);
-
 class ReportsCreator extends ControllerBase
 {
+
+    const ERR_DB = -1;
+    const NO_CLASS_LIM_DOWN = -2;
+    const SMALL_CLS = 1;
+    const NON_SMALL_CLS = 2;
 
     protected $entity_query;
     protected $entityTypeManager;
@@ -673,7 +673,7 @@ class ReportsCreator extends ControllerBase
                 for ($j = 0; $j < sizeof($schoolNameColumn); $j++) {
                     // αν έγινε αίτημα για εμφάνιση ολιγομελών και είναι το τρέχον τμήμα ολιγομελές
                     if (($finalized === "1") || 
-                        ($finalized === "0" && $smallClass[$j] === SMALL_CLS
+                        ($finalized === "0" && $smallClass[$j] === self::SMALL_CLS
                             && $schoolSectionColumn[$j] !== "Β τάξη" && $schoolSectionColumn[$j] !== "Γ τάξη" 
                             && $schoolSectionColumn[$j] !== "Δ τάξη")) {
                             array_push($list, (object) array(
@@ -704,17 +704,17 @@ class ReportsCreator extends ControllerBase
 
         $limitDown = $this->retrieveLimitDown($classId, $regionId);
 
-        if ($limitDown === NO_CLASS_LIM_DOWN) {
-            return NO_CLASS_LIM_DOWN;
-        } elseif ($limitDown === ERR_DB) {
-            return ERR_DB;
+        if ($limitDown === self::NO_CLASS_LIM_DOWN) {
+            return self::NO_CLASS_LIM_DOWN;
+        } elseif ($limitDown === self::ERR_DB) {
+            return self::ERR_DB;
         }
 
         $numStudents = (int) $numStud;
         if (($numStudents < $limitDown) /*&& ($numStudents > 0)*/) {
-            return SMALL_CLS;
+            return self::SMALL_CLS;
         } else {
-            return NON_SMALL_CLS;
+            return self::NON_SMALL_CLS;
         }
     }
 
@@ -738,18 +738,18 @@ class ReportsCreator extends ControllerBase
                         $data["$limit->name"]["$limit->category"] = $limit->limit_down;
                     }
                 } else {
-                    return NO_CLASS_LIM_DOWN;                    
+                    return self::NO_CLASS_LIM_DOWN;                    
                 }
             } catch (\Exception $e) {
                 $this->logger->warning($e->getMessage());
-                return ERR_DB;
+                return self::ERR_DB;
             }
         }
 
         if (isset($data["$classId"]["$regionId"])) {
             return $data["$classId"]["$regionId"];
         } else {
-            return NO_CLASS_LIM_DOWN;
+            return self::NO_CLASS_LIM_DOWN;
         }
     }
 

@@ -92,7 +92,7 @@ import {Location} from '@angular/common';
                   <div *ngFor="let StudentResult$  of StudentResults$ | async">
                     <div *ngIf = "StudentResult$.applicantsResultsDisabled == '0'" >
                       <div *ngIf = "StudentResult$.status == '1'" >
-                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a;">
+                        <div class="col-md-12" style="font-size: 1.0em; color: #ffffff; font-weight: bold;">
                           Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentResult$.schoolName}}.
                           Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, επισυνάπτοντας τα απαραίτητα δικαιολογητικά.
                           Διεύθυνση σχολείου: {{StudentResult$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentResult$.schoolTel}}<br><br>
@@ -100,7 +100,7 @@ import {Location} from '@angular/common';
                       </div>
 
                       <div *ngIf = "StudentResult$.status != '1'" >
-                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a;">
+                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a; font-weight: bold;">
                           Η αίτησή σας δεν ήταν δυνατό να ικανοποιηθεί. Παρακαλώ επικοινωνήστε άμεσα τηλεφωνικά με τη Διεύθυνση Δευτεροβάθμιας Εκπαίδευσης στην οποία ανήκετε,
                           προκειμένου να διερευνηθεί εκ νέου η δυνατότητα εγγραφής σας.<br><br>
                         </div>

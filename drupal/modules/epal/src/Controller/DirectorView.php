@@ -9,6 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Database\Connection;
 
 use Drupal\epal\Crypt;
 
@@ -16,12 +17,15 @@ class DirectorView extends ControllerBase
 {
     protected $entityTypeManager;
     protected $logger;
+    protected $connection;
 
     public function __construct(
         EntityTypeManagerInterface $entityTypeManager,
+        Connection $connection,
         LoggerChannelFactoryInterface $loggerChannel
     ) {
         $this->entityTypeManager = $entityTypeManager;
+        $this->connection = $connection;
         $this->logger = $loggerChannel->get('epal-school');
     }
 
@@ -29,6 +33,7 @@ class DirectorView extends ControllerBase
     {
         return new static(
             $container->get('entity_type.manager'),
+            $container->get('database'),
             $container->get('logger.factory')
         );
     }
@@ -89,7 +94,7 @@ class DirectorView extends ControllerBase
                 if ($studentPerSchool) {
                     $list = array();
                     foreach ($studentPerSchool as $object) {
-                        $studentId = intval($object->student_id->getString());
+                        $studentId = $object->student_id->target_id;
                         $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $studentId));
                         $epalStudent = reset($epalStudents);
                         if ($epalStudents) {

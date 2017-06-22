@@ -195,7 +195,9 @@ class ApplicationSubmit extends ControllerBase
                         'guardian_surname' => $applicationForm[0]['cu_surname'],
                         'guardian_fathername' => $applicationForm[0]['cu_fathername'],
                         'guardian_mothername' => $applicationForm[0]['cu_mothername']
-                    ]))) > 0) {
+                    ]), sizeof($applicationForm[1]), $applicationForm[0]['currentclass'],
+                    $applicationForm[3]['sectorfield_id'],
+                    $applicationForm[3]['coursefield_id'])) > 0) {
                 return $this->respondWithStatus([
                     "error_code" => $errorCode
                 ], Response::HTTP_OK);
@@ -299,9 +301,18 @@ class ApplicationSubmit extends ControllerBase
      *  8002 τα στοιχεία φοίτησης δεν επικυρώθηκαν
      *  8003 τα στοιχεία φοίτησης δεν είναι έγκυρα
      */
-    private function validateStudent($student)
+    private function validateStudent($student, $numberOfSchools, $chosenClass, $chosenSector, $chosenCourse)
     {
         $error_code = 0;
+        if ($numberOfSchools < 1) {
+            return 1000;
+        }
+        if ($chosenClass === "2" && !isset($chosenSector)) {
+            return 999;
+        }
+        if (($chosenClass === "3" || $chosenClass === "4") && !isset($chosenCourse)) {
+            return 998;
+        }
         if (!$student["agreement"]) {
             return 1001;
         }

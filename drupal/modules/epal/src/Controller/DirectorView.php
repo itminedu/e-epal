@@ -372,6 +372,7 @@ class DirectorView extends ControllerBase
             if ($userRole === '') {
                 return $this->respondWithStatus([
                     'error_code' => 4003,
+                    "message" => t("1")
                 ], Response::HTTP_FORBIDDEN);
             } elseif ($userRole === 'regioneduadmin') {
                 $schools = $this->entityTypeManager

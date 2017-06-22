@@ -31,21 +31,21 @@ import {
        <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
 
-      <div class="row"> 
-         <div class="col-md-8" style="font-weight: bold;"> Τα τμήματα του σχολείου σας.</div>
-         <div class="col-md-2" style="font-weight: bold;"> Αριθμός Μαθητών</div>
+      <div class="row">
+         <div class="col-md-10" style="font-weight: bold;"> Τα τμήματα του σχολείου σας.</div>
+         <div class="col-md-2" style="font-weight: bold;"> <span class="pull-right" style="text-align: right; padding-right: 2px;">Αριθμός Μαθητών</span></div>
       </div>
       <div *ngFor="let CoursesPerSchools$  of CoursesPerSchool$ | async; let i=index; let isOdd=odd; let isEven=even" >
                 <li class="list-group-item isclickable" (click)="setActive(i)"
                 (click)="findstudent(CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)"
                 [class.changelistcolor]= "CoursesPerSchools$.size < CoursesPerSchools$.limitdown"
                 [class.oddout]="isOdd" [class.evenout]="isEven"  [class.selectedout]="courseActive === i" >
-                <div class="row">
-                  <div class="col-md-8" style="font-weight: bold;" >{{CoursesPerSchools$.taxi}}</div>
-                  <div class="col-md-2" style="font-weight: bold;" >{{CoursesPerSchools$.size}}</div>
-                </div>    
+                <div class="row"  style="line-height: 2em;">
+                  <div class="col-md-10" style="font-weight: bold;" >{{CoursesPerSchools$.taxi}}</div>
+                  <div class="col-md-2" style="font-weight: bold;" ><span class="pull-right" style="text-align: right; padding-right: 2px;">{{CoursesPerSchools$.size}}</span></div>
+                </div>
                 </li>
- 
+
                <div [hidden]="courseActive !== i" *ngIf="(retrievedStudent | async)">
                  <div *ngFor="let StudentDetails$  of StudentInfo$ | async; let j=index; let isOdd=odd; let isEven=even" class="row list-group-item isclickable"
                  [class.selectedappout]="StudentActive === j"
@@ -53,31 +53,38 @@ import {
                  [class.notconfirmed]="StudentDetails$.checkstatus === '0'"
                  [class.notchecked]="(StudentDetails$.checkstatus !== '1') && (StudentDetails$.checkstatus !== '0')"
                  [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
-                    <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
-                    <div class="col-md-4" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)">{{StudentDetails$.name}}</div>
-                    <div [hidden]="StudentActive !== j" class="col-md-2" style="color: black;"  *ngIf = "opened == true"> <span aria-hidden="true"><button type="button" class="btn-primary btn-sm" (click) ="setActiveStudentnew(j)">Κλείσιμο</button></span>  </div>
+                    <div class="col-md-5" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
+                    <div class="col-md-5" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)">{{StudentDetails$.name}}</div>
+                    <div [hidden]="StudentActive !== j" class="col-md-2 pull-right" style="color: black;" > <span aria-hidden="true"><button type="button" class="btn-primary btn-sm pull-right" (click) ="setActiveStudentnew(j)">Κλείσιμο</button></span>  </div>
 
                     <div style="width: 100%; color: #000000;">
                     <div [hidden]="StudentActive !== j"  style="margin: 20px 10px 10px 10px;">
 
-                     <p style="margin-top: 20px; line-height: 2em;"> Παρακαλούμε, αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
+                     <p style="margin-top: 10px; margin-bottom: 5px; line-height: 2em;"> Παρακαλούμε, αφού γίνει ο έλεγχος των στοιχείων του μαθητή επιβεβαιώστε τη δυνατότητα εγγραφής του.</p>
 
                      <div class="row" style="margin-bottom: 20px;">
-                     <div class="col-md-6">
+                     <div class="col-md-8">&nbsp;</div>
+                     <div class="col-md-4">
                       <strong><label>Επιβεβαίωση Εγγραφής:</label> </strong>
-                      <select #cb name="{{StudentDetails$.id}}" >
+                      <select class="form-control pull-right" #cb name="{{StudentDetails$.id}}" (change)="confirmStudent(StudentDetails$.id, cb, j)">
                           <option value="1" [selected]="StudentDetails$.checkstatus === '1' ">Ναι</option>
                           <option value="2" [selected]="StudentDetails$.checkstatus === '0' ">Όχι</option>
-                          <option value="3" [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'"></option>
+                          <option value="3" [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'">Δεν ελέγχθηκε</option>
                       </select>
                       </div>
-                      <div class="col-md-6">
+<!--                      <div class="col-md-2">
                       <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(StudentDetails$.id, cb, j)">
                            Ενημέρωση
                        </button>
-                     </div>
+                     </div> -->
                      </div>
 
+                     <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
+                         <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Δήλωσης Προτίμησης ΕΠΑΛ</div>
+                         <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.id}}</div>
+                         <div class="col-md-3" style="font-size: 0.8em;">Υποβλήθηκε</div>
+                         <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{StudentDetails$.created}}</div>
+                     </div>
 
                        <div class="row evenin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                            <div class="col-md-12" style="font-size: 1em; font-weight: bold; text-align: center;">Στοιχεία αιτούμενου</div>

@@ -34,11 +34,11 @@
                         <div class="col-md-4">
                                  <span *ngIf="loginInfoRow$.auth_role===studentRole" class="signout" style="color:#CC3300;">
                                 <div *ngFor="let TotalStudent$  of TotalStudents$ | async;">
-                                    Σύνολο Αιτήσεων:{{TotalStudent$.numStudents}}
+                                    Σύνολο Δηλώσεων: {{TotalStudent$.numStudents}}
                                 </div>
                                 </span>
                         </div>
-      
+
 
 
                             <div class="col-md-4" style="text-align: right">

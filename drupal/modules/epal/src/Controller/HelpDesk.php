@@ -24,28 +24,32 @@ use Drupal\Core\Language\LanguageManagerInterface;
 
 class HelpDesk extends ControllerBase {
 
-	protected $entityTypeManager;
+    protected $entity_query;
+    protected $entityTypeManager;
     protected $logger;
     protected $connection;
 
     public function __construct(
         EntityTypeManagerInterface $entityTypeManager,
-        LoggerChannelFactoryInterface $loggerChannel,
-         Connection $connection
-            ) {
-
-        $this->entityTypeManager = $entityTypeManager;
-        $this->logger = $loggerChannel->get('epal-school');
-        $this->connection = $connection;
+        QueryFactory $entity_query,
+        Connection $connection,
+        LoggerChannelFactoryInterface $loggerChannel
+    ) {
+    
+            $this->entityTypeManager = $entityTypeManager;
+            $this->entity_query = $entity_query;
+            $connection = Database::getConnection();
+            $this->connection = $connection;
+            $this->logger = $loggerChannel->get('epal');
     }
 
     public static function create(ContainerInterface $container)
     {
         return new static(
             $container->get('entity_type.manager'),
-            $container->get('logger.factory'),
-            $container->get('database')
-
+            $container->get('entity.query'),
+            $container->get('database'),
+            $container->get('logger.factory')
         );
     }
 
@@ -108,6 +112,50 @@ class HelpDesk extends ControllerBase {
         }
         return;
     }
+
+         public function findTotalStudents(Request $request)
+    {
+
+
+
+            $authToken = $request->headers->get('PHP_AUTH_USER');
+            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+            $user = reset($users);
+            if (!$user) {
+                return $this->respondWithStatus([
+                    'message' => t("User not found"),
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            //user role validation
+            $roles = $user->getRoles();
+            $validRole = false;
+            foreach ($roles as $role) {
+                if ($role === "applicant") {
+                    $validRole = true;
+                    break;
+                }
+            }
+            if (!$validRole) {
+                return $this->respondWithStatus([
+                    'message' => t("User Invalid Role"),
+                ], Response::HTTP_FORBIDDEN);
+            }
+
+            $list = array();
+
+            $sCon = $this->connection
+                ->select('epal_student', 'eStudent')
+                ->fields('eStudent', array('id'));
+            $numApplications = $sCon->countQuery()->execute()->fetchField();
+            array_push($list, (object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
+
+
+            return $this->respondWithStatus($list, Response::HTTP_OK);
+
+
+    }
+
 
 
 

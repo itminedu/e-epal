@@ -17,13 +17,6 @@ class SubmitedApplications extends ControllerBase
     protected $entityTypeManager;
     protected $logger;
     protected $connection;
-    /*
-    public function __construct(EntityTypeManagerInterface $entityTypeManager)
-    {
-        $this->entityTypeManager = $entityTypeManager;
-
-    }
-    */
 
     public function __construct(
         EntityTypeManagerInterface $entityTypeManager,
@@ -245,23 +238,15 @@ class SubmitedApplications extends ControllerBase
 
                     $list[] = array(
                             'applicationId' => $object->id(),
-                            //'name' => $object -> name ->value,
                             'name' => $name_decoded,
-                            //'studentsurname' => $object -> studentsurname ->value,
                             'studentsurname' => $studentsurname_decoded,
-                            //'fatherfirstname' => $object -> fatherfirstname ->value,
                             'fatherfirstname' => $fatherfirstname_decoded,
                             'fathersurname' => $object->fathersurname->value,
-                            //'motherfirstname' => $object -> motherfirstname ->value,
                             'motherfirstname' => $motherfirstname_decoded,
                             'mothersurname' => $object->mothersurname->value,
-                            //'guardian_name' =>$object -> guardian_name ->value,
                             'guardian_name' => $guardian_name_decoded,
-                            //'guardian_surname' =>$object -> guardian_surname ->value,
                             'guardian_surname' => $guardian_surname_decoded,
-                            //'guardian_fathername' =>$object -> guardian_fathername ->value,
                             'guardian_fathername' => $guardian_fathername_decoded,
-                            //'guardian_mothername' =>$object -> guardian_mothername ->value,
                             'guardian_mothername' => $guardian_mothername_decoded,
                             'lastschool_schoolname' => $object->lastschool_schoolname->value,
                             'lastschool_schoolyear' => $object->lastschool_schoolyear->value,
@@ -269,16 +254,10 @@ class SubmitedApplications extends ControllerBase
                             'currentclass' => $object->currentclass->value,
                             'currentsector' => $sectorName,
                             'currentcourse' => $courseName,
-                            //'regionaddress' =>$object -> regionaddress ->value,
                             'regionaddress' => $regionaddress_decoded,
-                            //'regiontk' =>$object -> regiontk ->value,
                             'regiontk' => $regiontk_decoded,
-                            //'regionarea' =>$object -> regionarea ->value,
                             'regionarea' => $regionarea_decoded,
-                            //'certificatetype' =>$object -> certificatetype ->value,
-                            //'telnum' =>$object -> telnum ->value,
                             'telnum' => $telnum_decoded,
-                            //'relationtostudent' =>$object -> relationtostudent ->value,
                             'relationtostudent' => $relationtostudent_decoded,
                             'birthdate' => substr($object->birthdate->value, 8, 2).'/'.substr($object->birthdate->value, 5, 2).'/'.substr($object->birthdate->value, 0, 4),
                             'created' => date('d/m/Y H:i', $object->created->value),
@@ -427,31 +406,25 @@ class SubmitedApplications extends ControllerBase
 
               if ($applicantsResultsDisabled === "0")   {
 
-        				$sCon = $this->connection->select('epal_student_class', 'eStudent')
-        																	->fields('eStudent', array('student_id', 'epal_id', 'finalized'))
-                                          ->condition('eStudent.student_id', intval($studentId), '=');
+        				$escQuery = $this->connection->select('epal_student_class', 'esc')
+        										->fields('esc', array('student_id', 'epal_id', 'finalized'))
+                                                ->fields('esch', array('id', 'name', 'street_address','phone_number'));
+                        $escQuery->addJoin('inner', 'eepal_school_field_data', 'esch', 'esc.epal_id=esch.id');
+                        $escQuery->condition('esc.student_id', intval($studentId), '=');
        																	  //->condition('eStudent.finalized', "1" , '=');
-        				$epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-                if  (sizeof($epalStudents) === 1) {
-                  $epalStudent = reset($epalStudents);
+        				$epalStudentClasses = $escQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
+                if  (sizeof($epalStudentClasses) === 1) {
+                  $epalStudentClass = reset($epalStudentClasses);
 
-                  $sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
-                                           ->fields('eSchool', array('id', 'name', 'street_address','phone_number'))
-                                           ->condition('eSchool.id', $epalStudent->epal_id, '=');
-                  $epalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-                  //status: 0: δεν τοποθετήθηκε, 1: τοποθετήθηκε, 2: τοποθετήθηκε "προσωρινά" σε ολιγομελές
-                  if (sizeof($epalSchools) === 1) {
-                    $epalSchool = reset($epalSchools);
-                    if ($epalStudent->finalized === "1")  {
+                    if ($epalStudentClass->finalized === "1")  {
                       $status = "1";
-                      $schoolName = $epalSchool->name;
-                      $schoolAddress = $epalSchool->street_address;
-                      $schoolTel = $epalSchool->phone_number;
+                      $schoolName = $epalStudentClass->name;
+                      $schoolAddress = $epalStudentClass->street_address;
+                      $schoolTel = $epalStudentClass->phone_number;
                     }
                     else  {
                         $status = "2";
                     }
-                  }
                 }
                 else  {
                     $status = "0";
@@ -477,9 +450,6 @@ class SubmitedApplications extends ControllerBase
               ], Response::HTTP_FORBIDDEN);
           }
         }
-
-
-
 
     }
 

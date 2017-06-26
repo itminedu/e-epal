@@ -32,6 +32,8 @@ class Distribution extends ControllerBase
     const NO_CLASS_LIMIT_DOWN = -2;
     const SMALL_CLASS = 1;
     const NON_SMALL_CLASS = 2;
+    const IS_FIRST_PERIOD = false;
+    const IS_SECOND_PERIOD = true;
 
     protected $entity_query;
     protected $entityTypeManager;
@@ -73,7 +75,7 @@ class Distribution extends ControllerBase
 
     public function createDistribution(Request $request)
     {
-
+        set_time_limit(600); // dev
         $numDistributions = 3;
         $sizeOfBlock = 1000000;
 
@@ -127,16 +129,15 @@ class Distribution extends ControllerBase
             if ($this->initializeResults() === self::ERROR_DB) {
 	            $transaction->rollback();
                 return $this->respondWithStatus([
-                    "message" => t("Unexpected Error in initializeResults function")
+                    "message" => t("Unexpected Error")
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
             if (($limitUp_class = $this->retrieveCapacityLimitUp("1")) === self::ERROR_DB) {
 	            $transaction->rollback();
                 return $this->respondWithStatus([
-                    "message" => t("Unexpected Error in retrieveCapacityLimitUp function")
+                    "message" => t("Unexpected Error")
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-            // print_r("<br> ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ: " . $limitUp_class);
 
             while ($this->choice_id <= $numDistributions) {
 
@@ -144,42 +145,30 @@ class Distribution extends ControllerBase
 					// υπολογισμός πλήθους για να καθοριστεί ο αριθμός των fetches που θα κάνουμε με συγκεκριμένο sizeOfBlock
 					$sCon = $this->connection->select('epal_student', 'eStudent')
 						->fields('eStudent', array('id'));
+                    $sCon->join('epal_student_epal_chosen', 'epals', "eStudent.id = epals.student_id AND epals.choice_no = {$this->choice_id}");
 					$numData = $sCon->countQuery()->execute()->fetchField();
-					//print_r("<br>numData: " .  $numData);
 
 	                $num = 1;
 					$j = 1;
                     while ($num <= $numData) {
-                        //print_r("<br>FETCH: " .  $j);
-                        $sCon = $this->connection->select('epal_student', 'eStudent')
-                            ->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
-                            ->condition('eStudent.id', 1 + $sizeOfBlock * ($j-1), '>=')
-                            ->condition('eStudent.id', $j * $sizeOfBlock, '<=');
-                        $epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-
-                        if ($this->locateStudent($this->choice_id, $epalStudents) === self::ERROR_DB) {
+                        if (($total_located = $this->locateStudent($this->choice_id, self::IS_FIRST_PERIOD, 1 + $sizeOfBlock * ($j-1), $j * $sizeOfBlock, null)) === self::ERROR_DB) {
 				            $transaction->rollback();
                             return $this->respondWithStatus([
-                                "message" => t("Unexpected Error in locateStudent function")
+                                "message" => t("Unexpected Error")
                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
                         }
-
-                        $num = $num + sizeof($epalStudents);
-                        $j = $j + 1;
+                        $num += $total_located;
+                        $j += 1;
                     }
                 } 
 				else { // $this->choice_id !== 1
                     if (sizeof($this->pendingStudents) != 0) {
-                        $sCon = $this->connection->select('epal_student', 'eStudent')
-                            ->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
-                            ->condition('eStudent.id', $this->pendingStudents, 'IN');
-                        $epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-
-                        if ($this->locateStudent($this->choice_id, $epalStudents) === self::ERROR_DB) {
+                        if ($this->locateStudent($this->choice_id, self::IS_FIRST_PERIOD, null, null, $this->pendingStudents) === self::ERROR_DB) {
 				            $transaction->rollback();
                             return $this->respondWithStatus([
-                                "message" => t("Unexpected Error in locateStudent function")
+                                "message" => t("Unexpected Error")
                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                        
                         }
                     } else { // αν δεν υπάρχουν εκκρεμότητες, μην συνεχίζεις με άλλο πέρασμα
                         break;
@@ -198,7 +187,7 @@ class Distribution extends ControllerBase
                     if ($this->checkCapacityAndArrange($eepalSchool->id, "1", "-1", $limitUp_class, $eepalSchool->capacity_class_a) === self::ERROR_DB) {
 						$transaction->rollback();
                         return $this->respondWithStatus([
-                            "message" => t("Unexpected Error in checkCapacityAndArrange function")
+                            "message" => t("Unexpected Error")
                         ], Response::HTTP_INTERNAL_SERVER_ERROR);
                     }
 
@@ -210,13 +199,13 @@ class Distribution extends ControllerBase
                         if ($this->checkCapacityAndArrange($eepalSchool->id, "2", $eepalSecInEp->sector_id, $limitUp_class, $eepalSecInEp->capacity_class_sector) === self::ERROR_DB) {
 				            $transaction->rollback();
                             return $this->respondWithStatus([
-                                "message" => t("Unexpected Error in checkCapacityAndArrange function")
+                                "message" => t("Unexpected Error")
                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
                         }
                     }
 
                     $sCon = $this->connection->select('eepal_specialties_in_epal_field_data', 'eSchool')
-                        ->fields('eSchool', array('epal_id', 'specialty_id', 'capacity_class_specialty'))
+                        ->fields('eSchool', array('epal_id', 'specialty_id', 'capacity_class_specialty', 'capacity_class_specialty_d'))
                         ->condition('eSchool.epal_id', $eepalSchool->id, '=');
                     $eepalSpecialtiesInEpal = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
                     foreach ($eepalSpecialtiesInEpal as $eepalSpecialInEp) {
@@ -224,15 +213,15 @@ class Distribution extends ControllerBase
                         if ($this->checkCapacityAndArrange($eepalSchool->id, "3", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty) === self::ERROR_DB) {
 				            $transaction->rollback();
                             return $this->respondWithStatus([
-                                "message" => t("Unexpected Error in checkCapacityAndArrange function")
+                                "message" => t("Unexpected Error")
                             ], Response::HTTP_INTERNAL_SERVER_ERROR);
                         }
                         //Δ' Λυκείου
                         if ($eepalSchool->operation_shift === "ΕΣΠΕΡΙΝΟ") {
-                            if ($this->checkCapacityAndArrange($eepalSchool->id, "4", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty) === self::ERROR_DB) {
+                            if ($this->checkCapacityAndArrange($eepalSchool->id, "4", $eepalSpecialInEp->specialty_id, $limitUp_class, $eepalSpecialInEp->capacity_class_specialty_d) === self::ERROR_DB) {
 					            $transaction->rollback();
                                 return $this->respondWithStatus([
-                                    "message" => t("Unexpected Error in checkCapacityAndArrange function")
+                                    "message" => t("Unexpected Error")
                                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
                             }
                         }
@@ -245,7 +234,7 @@ class Distribution extends ControllerBase
             if ($this->findSmallClasses() === self::ERROR_DB) {
 				$transaction->rollback();
 				return $this->respondWithStatus([
-					"message" => t("Unexpected Error in findSmallClasses function AFTER initial Distribution!")
+                    "message" => t("Unexpected Error")
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
 				// αν αποτύχει, δεν γίνεται rollback. --> Λύση: διαγραφή των όποιων αποτελεσμάτων
                 // if ($this->initializeResults() === self::ERROR_DB) {
@@ -256,95 +245,98 @@ class Distribution extends ControllerBase
             }
         } 
         catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             $transaction->rollback();
             return $this->respondWithStatus([
-				"message" => t("An unexpected problem occured in createDistribution Method")
+                "message" => t("Unexpected Error")
 			], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
 		return $this->respondWithStatus([
-			'message' => "Distribution has made successfully",
+			'message' => "Distribution completed successfully",
 		], Response::HTTP_OK);
     }
 
 
-    public function locateStudent($choice_id, &$epalStudents)
+    /**
+     * @param int $choice_id the order of choice 
+     * @param boolean $period self::IS_FIRST_PERIOD or self::IS_SECOND_PERIOD
+     * @param int $id_range_start id range start 
+     * @param int $id_range_end id range end 
+     * @param int[] $id_list restrict selection to specific ids 
+     * @return int  Return self::ERROR_DB in case of error, else return number of 'locatedStudents'
+     */
+    public function locateStudent($choice_id, $period = false, $id_range_start = null, $id_range_end = null, $id_list = null)
     {
-
-        $epal_dist_id = -1;
-        $specialization_id = -1;
-
+        $total_count = 0;        
         try {
-            foreach ($epalStudents as $epalStudent) {
-                //print_r("<br>ΚΑΤΑΝΟΜΗ ΜΑΘΗΤΩΝ ΝΟ: " . $choice_id);
-                //print_r("<br>ΜΑΘΗΤΗΣ: " .  $epalStudent->id);
+            $sCon = $this->connection->select('epal_student', 'eStudent')
+                ->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'));
+            if ($period === self::IS_SECOND_PERIOD) {
+                $sCon->condition('eStudent.second_period', 1, '=');
+            }
+            if ($id_range_start !== null) {
+                $sCon->condition('eStudent.id', $id_range_start, '>=');
+            }
+            if ($id_range_end !== null) {
+                $sCon->condition('eStudent.id', $id_range_end, '<=');
+            }
+            if (is_array($id_list) && count($id_list) > 0) {
+                $sCon->condition('eStudent.id', $id_list, 'IN');
+            }
+            $sCon->join('epal_student_epal_chosen', 'epals', "eStudent.id = epals.student_id AND epals.choice_no = {$choice_id}");
+            $sCon->fields('epals', array('epal_id', 'choice_no'));
+            $sCon->leftJoin('epal_student_sector_field', 'sectors', "sectors.student_id = eStudent.id");
+            $fieldname1 = $sCon->addField('sectors', 'sectorfield_id');
+            $sCon->leftJoin('epal_student_course_field', 'courses', "courses.student_id = eStudent.id");
+            $fieldname2 = $sCon->addField('courses', 'coursefield_id');
+            // $sCon->addExpression('-1', 'specialization_id'); // no need, will have to check anyway
 
-                $clCon = $this->connection->select('epal_student_epal_chosen', 'epals')
-                    ->fields('epals', array('student_id', 'epal_id', 'choice_no'))
-                    ->condition('epals.student_id', $epalStudent->id, '=')
-                    ->condition('epals.choice_no', $choice_id, '=');
-                $epalSchoolsChosen = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+            // $epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+            // if ($epalStudents === false) {
+            //     throw new \Exception("Cannot fetch data");
+            // }
 
-                if (sizeof($epalSchoolsChosen) !==  0) {
-                    $epalSchoolChos = reset($epalSchoolsChosen);
-                    //print_r(" SCHOOL_ID:" . $epalSchoolChos->epal_id . " STUDENT_ID " . $epalStudent->id);
-                    $epal_dist_id = $epalSchoolChos->epal_id;
+            $results = $sCon->execute();
+            while ($epalStudent = $results->fetchObject()) {
+                $total_count++;
 
-                    if ($epalStudent->currentclass === "2") {
-                        $clCon = $this->connection->select('epal_student_sector_field', 'sectors')
-                            ->fields('sectors', array('student_id', 'sectorfield_id'))
-                            ->condition('sectors.student_id', $epalStudent->id, '=');
-                        $epalSectorChosen = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-                        $epalSecChos = reset($epalSectorChosen);
-                    } //Δ'Λυκείου - Γ' Λυκείου
-                    elseif ($epalStudent->currentclass === "3" || $epalStudent->currentclass === "4") {
-                        $clCon = $this->connection->select('epal_student_course_field', 'courses')
-                            ->fields('courses', array('student_id', 'coursefield_id'))
-                            ->condition('courses.student_id', $epalStudent->id, '=');
-                        $epalCourseChosen = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-                        $epalCourChos = reset($epalCourseChosen);
-                    }
+                if ($epalStudent->currentclass === "2") {
+                    $specialization_id = $epalStudent->sectorfield_id;
+                } else if ($epalStudent->currentclass === "3" || $epalStudent->currentclass === "4") {
+                    $specialization_id = $epalStudent->coursefield_id;
+                } else {
+                    $specialization_id = -1;
+                }
+                $epal_dist_id = $epalStudent->epal_id;
+                $timestamp = strtotime(date("Y-m-d"));
 
-                    if ($epalStudent->currentclass === "2") {
-                        $specialization_id = $epalSecChos->sectorfield_id;
-                    } //Δ'Λυκείου - Γ' Λυκείου
-                    elseif ($epalStudent->currentclass === "3" || $epalStudent->currentclass === "4") {
-                        $specialization_id = $epalCourChos->coursefield_id;
-                    } else {
-                        $specialization_id = -1;
-                    }
-
-                    $timestamp = strtotime(date("Y-m-d"));
-
-                    $this->connection->insert('epal_student_class')->fields(
-                        array(
-							'id' => $this->globalCounterId++,
-                            'uuid' => \Drupal::service('uuid')->generate(),
-                            'langcode' => $this->language,
-                            'user_id' => $this->currentuser,
-                            'student_id'=> $epalStudent->id,
-                            'epal_id'=> $epal_dist_id,
-                            'currentclass' => $epalStudent->currentclass,
-                            'currentepal' => $epalStudent->currentepal,
-                            'specialization_id' => $specialization_id,
-                            //'points' => $epalStudent->points,
-                            'distribution_id' => $choice_id,
-                            'finalized' => 1,
-                            'second_period' => $epalStudent->second_period,
-                            'status' => 1,
-                            'created' => $timestamp,
-                            'changed' => $timestamp
-						)
-                    )->execute();
-                } //end if
-            }   //foreach
+                $this->connection->insert('epal_student_class')->fields([
+                    'id' => $this->globalCounterId++,
+                    'uuid' => \Drupal::service('uuid')->generate(),
+                    'langcode' => $this->language,
+                    'user_id' => $this->currentuser,
+                    'student_id'=> $epalStudent->id,
+                    'epal_id'=> $epal_dist_id,
+                    'currentclass' => $epalStudent->currentclass,
+                    'currentepal' => $epalStudent->currentepal,
+                    'specialization_id' => $specialization_id,
+                    // 'points' => $epalStudent->points,
+                    'distribution_id' => $choice_id,
+                    'finalized' => 1,
+                    'second_period' => $epalStudent->second_period,
+                    'status' => 1,
+                    'created' => $timestamp,
+                    'changed' => $timestamp
+                ])->execute();
+            } 
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
 
-        return self::SUCCESS;
+        // return self::SUCCESS;
+        return $total_count;
     }
 
 
@@ -352,16 +344,16 @@ class Distribution extends ControllerBase
     {
         try {
             $clCon = $this->connection->select('epal_class_limits', 'classLimits')
-             ->fields('classLimits', array('limit_up'))
-             ->condition('classLimits.name', $className, '=');
+                ->fields('classLimits', array('limit_up'))
+                ->condition('classLimits.name', $className, '=');
             $results = $clCon->execute()->fetchAll(\PDO::FETCH_OBJ);
             $row = reset($results);
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
 
-          return $row->limit_up;
+        return $row->limit_up;
     }
 
 
@@ -369,8 +361,6 @@ class Distribution extends ControllerBase
     {
 
         if (!isset($capacity)) {
-            //print_r("<br> ΜΠΗΚΑ!!! ");
-            //print_r("<br> ΣΧΟΛΕΙΟ: " .  $epalId . " ΤΑΞΗ: "  . $classId . " ΤΟΜΕΑΣ/ΕΙΔΙΚΟΤΗΤΑ: " . $secCourId .  " ΧΩΡΗΤΙΚΟΤΗΤΑ: " . $capacity);
             $capacity = 0;
         }
 
@@ -384,24 +374,16 @@ class Distribution extends ControllerBase
 
             $limit = $limitup * $capacity;
             if (sizeof($epalStudentClass) > $limit) {
-                //print_r("<br>ΥΠΕΡΧΕΙΛΙΣΗ!");
-
-                //foreach ($epalStudentClass as $epalStudCl)	{
-                    //Υπολογισμός μορίων του μαθητή και (πιθανή) αποθήκευσή τους
-                    //ΣΗΜΕΙΩΣΗ: Ο υπoλογισμός γίνεται στο front-end
-                //}
                 $this->makeSelectionOfStudents($epalStudentClass, $limit);
-            } else { //αφαίρεσε όσους μαθητές βρίσκονται στον πίνακα εκκρεμοτήτων
-                foreach ($epalStudentClass as $epalStudCl) {
-                    if ($this->choice_id !== 1) {
-                        ////διέγραψε τον μαθητή από τον πίνακα εκκρεμοτήτων (αν βρίσκεται εκεί)
-                        $this->removeFromPendingStudents($epalStudCl->student_id);
-                    }
-                }
+            } elseif ($this->choice_id !== 1) {
+                // αφαίρεσε όσους μαθητές βρίσκονται στον πίνακα εκκρεμοτήτων
+                $clear_ids = array_map(function ($epalStudCl) {
+                    return $epalStudCl->student_id;
+                }, $epalStudentClass);
+                $this->removeFromPendingStudents($clear_ids);
             }
-        } // end try
-        catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
 
@@ -411,10 +393,11 @@ class Distribution extends ControllerBase
 
     public function removeFromPendingStudents($val)
     {
-        if (($key = array_search($val, $this->pendingStudents)) !== false) {
+        if (is_array($val) && count($val) > 0) {
+            $this->pendingStudents = array_diff($this->pendingStudents, $val);
+        } elseif (($key = array_search($val, $this->pendingStudents)) !== false) {
             unset($this->pendingStudents[$key]);
         }
-        //$this->pendingStudents = array_diff($this->pendingStudents, array($val));
     }
 
     public function makeSelectionOfStudents_VERSION_WITH_POINTS(&$students, $limit)
@@ -471,7 +454,7 @@ class Distribution extends ControllerBase
 							->condition('student_id', $student->student_id)
 							->execute();
                     } catch (\Exception $e) {
-                        $this->logger->warning($e->getMessage());
+                        $this->logger->error($e->getMessage());
                         $transaction->rollback();
                         return $this->respondWithStatus([
 							"message" => t("An unexpected problem occured during DELETE proccess in makeSelectionOfStudents Method of Distribution")
@@ -491,8 +474,6 @@ class Distribution extends ControllerBase
 		], Response::HTTP_OK);
     }
 
-
-
     public function makeSelectionOfStudents(&$students, $limit)
     {
         // συνάρτηση επιλογής μαθητών σε περίπτωση υπερχείλισης
@@ -501,16 +482,16 @@ class Distribution extends ControllerBase
 
         //αν capacity = 0, ..διέγραψέ τους από εκεί που τοποθετήθηκαν προσωρινά
         if ($limit === 0) {
-            foreach ($students as $student) {
-                array_push($this->pendingStudents, $student->student_id);
-                try {
-                    $this->connection->delete('epal_student_class')
-                        ->condition('student_id', $student->student_id)
-                        ->execute();
-                } catch (\Exception $e) {
-                    $this->logger->warning($e->getMessage());
-                    return self::ERROR_DB;
-                }
+            try {
+                $clear_ids = array_map(function ($student) {
+                    return $student->student_id;
+                }, $students);
+                $this->connection->delete('epal_student_class')
+                    ->condition('student_id', $clear_ids, 'IN')
+                    ->execute();
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                return self::ERROR_DB;
             }
             return self::SUCCESS;
         }
@@ -527,44 +508,35 @@ class Distribution extends ControllerBase
                 }
             }
         }
-        //print_r("<br>#ΕΓΓΡΑΦΩΝ ΠΟΥ ΟΙ ΜΑΘΗΤΕΣ ΦΟΙΤΟΥΣΑΝ ΗΔΗ:" . $cnt);
 
         $newlimit = $limit - $cnt;
-        //print_r("<br>ΑΝΩΤΑΤΟ ΟΡΙΟ ΜΑΘΗΤΩΝ:" . $limit);
-
         //Αν δεν απέμειναν θέσεις (δηλαδή αν η χωρητικότητα είναι μικρότερη ή ίση από το πλήθος μαθητών που ήδη φοιτούν στο σχολείο)
         //τότε διέγραψέ τους από τον προσωρινό πίνακα αποτελεσμάτων και βάλε τους στον στον πίνακα εκκρεμοτήτων
-
-        foreach ($students as $student) {
-            if ($student->currentepal !== $student->epal_id) {
+        $not_current_students = array_filter($students, function ($student) {
+            return $student->currentepal !== $student->epal_id;
+        });
+        if (count($not_current_students) > 0) {
+            try {
+                $clear_ids = array_map(function ($student) {
+                    return $student->student_id;
+                }, $not_current_students);
                 if ($newlimit <= 0) {
-                    //print_r("<br>ΣΕ ΕΚΚΡΕΜΟΤΗΤΑ - ΔΙΑΓΡΑΦΗ: " . $student->student_id);
-                    array_push($this->pendingStudents, $student->student_id);
-                    try {
-                        $this->connection->delete('epal_student_class')
-                            ->condition('student_id', $student->student_id)
-                            ->execute();
-                    } catch (\Exception $e) {
-                        $this->logger->warning($e->getMessage());
-                        return self::ERROR_DB;
-                    }
-                } // endif new limit
-                else { // $newlimit > 0
+                    $this->pendingStudents = array_merge($this->pendingStudents, $clear_ids);
+                    $this->connection->delete('epal_student_class')
+                        ->condition('student_id', $clear_ids, 'IN')
+                        ->execute();
+                } else { // $newlimit > 0
                     if ($this->choice_id !== 1) {
-                            $this->removeFromPendingStudents($student->student_id);
+                        $this->removeFromPendingStudents($clear_ids);
                     }
                 }
-            } // endif currentepal
-        } // end foreach
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage());
+                return self::ERROR_DB;
+            }
+        }
 
         return self::SUCCESS;
-    }
-
-    private function respondWithStatus($arr, $s)
-    {
-		$res = new JsonResponse($arr);
-		$res->setStatusCode($s);
-		return $res;
     }
 
     private function initializeResults()
@@ -573,7 +545,7 @@ class Distribution extends ControllerBase
         try {
             $this->connection->delete('epal_student_class')->execute();
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
 
@@ -582,18 +554,15 @@ class Distribution extends ControllerBase
 
     private function findSmallClasses()
     {
-
         //Για κάθε σχολείο βρες τα ολιγομελή τμήματα
         $sCon = $this->connection->select('eepal_school_field_data', 'eSchool')
             ->fields('eSchool', array('id', 'metathesis_region','operation_shift'));
         $eepalSchools = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
         foreach ($eepalSchools as $eepalSchool) {
-            //isSmallClass (school_id, class_id, sectorORcourse_id, school_category_metathesis)
 
             // Α' τάξη
             if ($this->isSmallClass($eepalSchool->id, "1", "-1", $eepalSchool->metathesis_region) === self::SMALL_CLASS) {
-                //print_r("<br> ΚΛΗΣΗ markStudentsInSmallClass: SCHOOL_ID: " . $eepalSchool->id . " CLASSID: " . "1 " . "SECTOR/COURSE ID: " . "-1 ");
                 if ($this->markStudentsInSmallClass($eepalSchool->id, "1", "-1") === self::ERROR_DB) {
                     return self::ERROR_DB;
                 }
@@ -687,7 +656,7 @@ class Distribution extends ControllerBase
             }
         } //end try
         catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
     } //end function
@@ -702,7 +671,7 @@ class Distribution extends ControllerBase
                 ->condition('eStudent.specialization_id', $sectorOrcourseId, '=');
             return $sCon->countQuery()->execute()->fetchField();
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
     }
@@ -719,7 +688,7 @@ class Distribution extends ControllerBase
             }
             $query->execute();
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
         return self::SUCCESS;
@@ -727,6 +696,8 @@ class Distribution extends ControllerBase
 
     public function locateSecondPeriodStudents(Request $request)
     {
+        set_time_limit(600); // dev
+
         //POST method is checked
         if (!$request->isMethod('POST')) {
             return $this->respondWithStatus([
@@ -776,22 +747,16 @@ class Distribution extends ControllerBase
             if ($this->initializeResultsInSecondPeriod() === self::ERROR_DB) {
 				$transaction->rollback();
 				return $this->respondWithStatus([
-					"message" => t("Unexpected Error in initializeResultsInSecondPeriod function")
+					"message" => t("Unexpected Error")
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
-            $sCon = $this->connection->select('epal_student', 'eStudent')
-					->fields('eStudent', array('id', 'currentclass', 'currentepal', 'second_period'))
-					->condition('eStudent.second_period', 1, '=');
-            $epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-
-            //τοποθέτηση όλων των μαθητών Β' περιόδου στην πρώτη τους προτίμηση'
+            // τοποθέτηση όλων των μαθητών Β' περιόδου στην πρώτη τους προτίμηση'
             $this->globalCounterId = $this->retrieveLastStudentId() + 1;
-            if ($this->locateStudent(1, $epalStudents) === self::ERROR_DB) {
+            if ($this->locateStudent(1, self::IS_SECOND_PERIOD) === self::ERROR_DB) {
 				$transaction->rollback();
 				return $this->respondWithStatus([
-					"message" => t("Unexpected Error in locateStudent function after calling locateSecondPeriodStudents method"),
-					"numOfDeletions" => $num
+					"message" => t("Unexpected Error"),
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
@@ -801,7 +766,7 @@ class Distribution extends ControllerBase
             if ($this->setFinalize() === self::ERROR_DB) {
 				$transaction->rollback();
 				return $this->respondWithStatus([
-					"message" => t("Unexpected Error in setFinalize function AFTER locateSecondPeriodStudents!")
+					"message" => t("Unexpected Error")
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
@@ -817,14 +782,14 @@ class Distribution extends ControllerBase
 
 				$transaction->rollback();
 				return $this->respondWithStatus([
-					"message" => t("Unexpected Error in findSmallClasses function AFTER locateSecondPeriodStudents!")
+					"message" => t("Unexpected Error")
 				], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
 			$transaction->rollback();
             return $this->respondWithStatus([
-				"message" => t("An unexpected problem occured in locateSecondPeriodStudents Method")
+                "message" => t("Unexpected Error")
 			], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -842,7 +807,7 @@ class Distribution extends ControllerBase
             ]);
             $query->execute();
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
         return self::SUCCESS;
@@ -850,14 +815,13 @@ class Distribution extends ControllerBase
 
     private function initializeResultsInSecondPeriod()
     {
-		//initialize/empty epal_student_class if there are already data in it!
+		// initialize/empty epal_student_class if there are already data in it!
         try {
-            //$this->connection->delete('epal_student_class')->execute();
-            $con = $this->connection->prepare("delete from epal_student_class where second_period = 1 ");
-            $con->execute();
-            //$num = $con->rowCount();
+            $this->connection->delete('epal_student_class')
+                ->condition('second_period', 1)
+                ->execute();
         } catch (\Exception $e) {
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return self::ERROR_DB;
         }
 
@@ -866,15 +830,19 @@ class Distribution extends ControllerBase
 
     private function retrieveLastStudentId()
     {
-        $sCon = $this->connection->select('epal_student', 'eStudent')
-			->fields('eStudent', array('id'));
-        $sCon->orderBy('eStudent.id', 'desc');
-        $epalStudents = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
-        if ($epalStudents) {
-            $epalStrudent = reset($epalStudents);
-            return $epalStrudent->id;
-        }
+        $sCon = $this->connection->select('epal_student', 'eStudent');
+        $sCon->addExpression('max(eStudent.id)', 'max_id');
+        $max_id = intval($sCon->execute()->fetchField());
 
-        return 0;
+        return $max_id;
     }
+
+
+    private function respondWithStatus($arr, $s)
+    {
+		$res = new JsonResponse($arr);
+		$res->setStatusCode($s);
+		return $res;
+    }
+
 }

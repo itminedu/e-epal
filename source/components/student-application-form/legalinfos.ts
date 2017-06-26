@@ -29,6 +29,24 @@ import {Location} from '@angular/common';
             <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="http://www.minedu.gov.gr/texniki-ekpaideusi-2/odigos-spoudon-gia-to-epal" target="_blank">Οδηγός Σπουδών για το ΕΠΑΛ </a>
         </li>
         </ul>
+
+
+    <br>
+    <br>
+    <p align="left"><strong> Οδηγίες Ενημέρωσης  </strong></p>
+        <ul class="list-group">
+        <li class="list-group-item isclickable evenout"  >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/odigiessxoleio.pdf" target="_blank">Οδηγίες προς Διευθυντές ΕΠΑ.Λ. σχετικά με τα αποτελέσματα των Ηλεκτρονικών Δηλώσεων Προτίμησης</a>
+        </li>
+        <li class="list-group-item isclickable oddout"  >
+            <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="../pdfs/files/odigiesstudent.pdf" target="_blank">Οδηγίες ενημέρωσης μαθητών/μαθητριών σχετικά με το αποτέλεσμα της
+Ηλεκτρονικής τους Δήλωσης Προτίμησης
+για τα ΕΠΑ.Λ.</a>
+        </li>
+        </ul>
+
+
+
         <div class="row" style="margin-top: 30px; margin-bottom: 30px;">
             <div class="col-md-6">
                 <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 9em;" (click)="goBack()" >

@@ -46,6 +46,11 @@ import {
                      [class.oddout]="isOdd"
                     [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
                     <div [class.changelistcolor]= "SchoolNames$.status === false" class="col-md-12">{{SchoolNames$.name}}</div>
+                    <div class = "row" [hidden]="SchoolNames$.id !== regionActive" style="margin: 0px 2px 0px 2px;">
+                        <div class="col-md-8">Τμήματα</div>
+                        <div class="col-md-2">Επιλεχθέντες</div>
+                        <div class="col-md-2">Χωρητικότητα</div>
+                    </div> 
                     <div class = "row" *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even"
                         [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" 
                         [class.changecolorbalck]="calccolor(CoursesNames$.limitdown, CoursesNames$.size)"    

@@ -129,8 +129,8 @@ class OAuthLogin extends ControllerBase
 
             $oauthostSession->save();
 
+            $this->logger->warning('redirected to:'.$this->user_authorization_url);
             header('Location: '.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
-            $this->logger->warning('redirected to:'.$this->user_authorization_url.'?oauth_token='.$requestToken['oauth_token']);
             exit;
         } catch (OAuthException $e) {
             $this->logger->warning($e->getMessage());

@@ -78,8 +78,6 @@ import {
           <a class="col-md-12" style="font-size: 0.8em; font-weight: bold;" href="http://www.minedu.gov.gr/texniki-ekpaideusi-2/odigos-spoudon-gia-to-epal" target="_blank">Οδηγός Σπουδών για το ΕΠΑΛ </a>
       </li>
       </ul>
-      <br>
-      <br>
 
       <br>
     <br>
@@ -95,7 +93,7 @@ import {
         </li>
         </ul>
 
-          <div class="row">
+          <div class="row" style="margin-top: 20px;">
             <div class="col-md-1 ">
               <input type="checkbox" [checked]="disclaimerChecked | async"  formControlName="disclaimerChecked" >
             </div>

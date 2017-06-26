@@ -130,15 +130,11 @@ import {
     }
 
     calccolor(size, limit) {
-        if (size < limit){
-            console.log("color1");
+        if (size < limit) {
             return true;
-}
-        else
-        {
-            console.log("color2");
+        } else {
             return false;
-           }
+        }
     }
 
     setActiveRegion(ind) {

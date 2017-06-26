@@ -117,8 +117,7 @@ class ApplicationSubmit extends ControllerBase
             $guardian_fathername_encoded = $crypt->encrypt($applicationForm[0]['cu_fathername']);
             $guardian_mothername_encoded = $crypt->encrypt($applicationForm[0]['cu_mothername']);
         } catch (\Exception $e) {
-            print_r($e->getMessage());
-            $this->logger->warning($e->getMessage());
+            $this->logger->error($e->getMessage());
             return $this->respondWithStatus([
                 "error_code" => 5001
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -197,7 +196,8 @@ class ApplicationSubmit extends ControllerBase
                         'guardian_mothername' => $applicationForm[0]['cu_mothername']
                     ]), sizeof($applicationForm[1]), $applicationForm[0]['currentclass'],
                     $applicationForm[3]['sectorfield_id'],
-                    $applicationForm[3]['coursefield_id'])) > 0) {
+                    $applicationForm[3]['coursefield_id'],
+                    $epalUser)) > 0) {
                 return $this->respondWithStatus([
                     "error_code" => $errorCode
                 ], Response::HTTP_OK);
@@ -284,7 +284,7 @@ class ApplicationSubmit extends ControllerBase
         if (!$epalConfig) {
             $secondPeriodEnabled = 0;
         } else {
-            $secondPeriodEnabled = $epalConfig->activate_second_period->getString();
+            $secondPeriodEnabled = intval($epalConfig->activate_second_period->getString());
         }
         return $secondPeriodEnabled;
     }
@@ -301,7 +301,7 @@ class ApplicationSubmit extends ControllerBase
      *  8002 τα στοιχεία φοίτησης δεν επικυρώθηκαν
      *  8003 τα στοιχεία φοίτησης δεν είναι έγκυρα
      */
-    private function validateStudent($student, $numberOfSchools, $chosenClass, $chosenSector, $chosenCourse)
+    private function validateStudent($student, $numberOfSchools, $chosenClass, $chosenSector, $chosenCourse, $epalUser = null)
     {
         $error_code = 0;
         if ($numberOfSchools < 1) {
@@ -384,6 +384,34 @@ class ApplicationSubmit extends ControllerBase
         }
         if (!$student["lastschool_class"]) {
             return 1023;
+        }
+
+        // second period: check if application exists
+        if ($student['second_period'] == 1 && $epalUser !== null) {
+
+            $esQuery = $this->connection->select('epal_student', 'es')
+                                    ->fields('es',
+                                    array('name',
+                                            'studentsurname',
+                                            'birthdate',
+                                        ));
+            $esQuery->condition('es.epaluser_id', $epalUser->id(), '=');
+
+            $existing = $esQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+/*            $existing = $this->entityTypeManager->getStorage('epal_student')
+                ->loadByProperties(['epaluser_id' => $epalUser->id->value]); */
+            if ($existing && sizeof($existing) > 0) {
+                $crypt = new Crypt();
+                foreach ($existing as $candidate) {
+                    if (($crypt->decrypt($candidate->name) == $student['name'])
+                        && ($crypt->decrypt($candidate->studentsurname) == $student['studentsurname'])
+                        && ($candidate->birthdate == $student['birthdate'])
+                        ) {
+                        return 8004;
+                    }
+                }
+            }
         }
 
         // check as per specs:

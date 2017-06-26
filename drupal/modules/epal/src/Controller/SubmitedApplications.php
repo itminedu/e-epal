@@ -62,6 +62,20 @@ class SubmitedApplications extends ControllerBase
         $authToken = $request->headers->get('PHP_AUTH_USER');
         $transaction = $this->connection->startTransaction();
         try {
+            //ανάκτηση τιμής από ρυθμίσεις διαχειριστή για lock_results
+            $config_storage = $this->entityTypeManager->getStorage('epal_config');
+            $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+               return $this->respondWithStatus([
+                       'message' => t("EpalConfig Enity not found"),
+                   ], Response::HTTP_FORBIDDEN);
+            }
+            else if ($epalConfig->lock_application->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
             $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
             $epalUser = reset($epalUsers);
             if ($epalUser) {
@@ -281,6 +295,182 @@ class SubmitedApplications extends ControllerBase
         }
     }
 
+
+    public function getApplicationDetails(Request $request, $studentId)
+    {
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+        $epalUser = reset($epalUsers);
+        if ($epalUser) {
+
+            $config_storage = $this->entityTypeManager->getStorage('epal_config');
+            $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+               return $this->respondWithStatus([
+                       'message' => t("EpalConfig Enity not found"),
+                   ], Response::HTTP_FORBIDDEN);
+            }
+            else {
+               $applicantsResultsDisabled = $epalConfig->lock_results->value;
+            }
+
+            $status = "0";
+            $schoolName = '';
+            $schoolAddress = '';
+            $schoolTel = '';
+
+            $esQuery = $this->connection->select('epal_student', 'es')
+                                    ->fields('es',
+                                    array('name',
+                                            'studentsurname',
+                                            'fatherfirstname',
+                                            'motherfirstname',
+                                            'regionaddress',
+                                            'regiontk',
+                                            'regionarea',
+                                            'relationtostudent',
+                                            'telnum',
+                                            'guardian_name',
+                                            'guardian_surname',
+                                            'guardian_fathername',
+                                            'guardian_mothername',
+                                            'id',
+                                            'lastschool_schoolname',
+                                            'lastschool_schoolyear',
+                                            'lastschool_class',
+                                            'currentclass',
+                                            'birthdate',
+                                            'created',
+                                        ))
+                                    ->fields('esec',
+                                    array('choice_no'
+                                    ))
+                                    ->fields('eesch',
+                                    array('name'
+                                    ))
+                                    ->fields('eese',
+                                    array('name',
+                                    ))
+                                    ->fields('eesp',
+                                    array('name',
+                                    ))
+                                    ->fields('esc',
+                                    array('finalized',
+                                    ))
+                                    ->fields('eeschfin',
+                                    array('id',
+                                            'name',
+                                            'street_address',
+                                            'phone_number'
+                                    ));
+
+            $esQuery->addJoin('left outer', 'epal_student_epal_chosen', 'esec', 'es.id=esec.student_id');
+            $esQuery->addJoin('left outer', 'eepal_school_field_data', 'eesch', 'esec.epal_id=eesch.id');
+            $esQuery->addJoin('left outer', 'epal_student_sector_field', 'essf', 'es.id=essf.student_id');
+            $esQuery->addJoin('left outer', 'eepal_sectors_field_data', 'eese', 'essf.sectorfield_id=eese.id');
+            $esQuery->addJoin('left outer', 'epal_student_course_field', 'escf', 'es.id=escf.student_id');
+            $esQuery->addJoin('left outer', 'eepal_specialty_field_data', 'eesp', 'escf.coursefield_id=eesp.id');
+            $esQuery->addJoin('left outer', 'epal_student_class', 'esc', 'es.id=esc.student_id');
+            $esQuery->addJoin('left outer', 'eepal_school_field_data', 'eeschfin', 'esc.epal_id=eeschfin.id');
+            $esQuery->condition('es.id', intval($studentId), '=');
+            $esQuery->condition('es.epaluser_id', $epalUser->id(), '=');
+            $esQuery->orderBy('esec.choice_no');
+
+            $epalStudents = $esQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+            if ($epalStudents && sizeof($epalStudents) > 0) {
+                $epalSchoolsChosen = array();
+                foreach ($epalStudents as $es) {
+                    array_push($epalSchoolsChosen, array(
+                        'epal_id' => $es->eesch_name,
+                        'choice_no' => $es->choice_no,
+                      ));
+                }
+
+                $epalStudent = reset($epalStudents);
+                $list = array();
+
+                    $crypt = new Crypt();
+                    try {
+                        $name_decoded = $crypt->decrypt($epalStudent->name);
+                        $studentsurname_decoded = $crypt->decrypt($epalStudent->studentsurname);
+                        $fatherfirstname_decoded = $crypt->decrypt($epalStudent->fatherfirstname);
+                        $motherfirstname_decoded = $crypt->decrypt($epalStudent->motherfirstname);
+                        $regionaddress_decoded = $crypt->decrypt($epalStudent->regionaddress);
+                        $regiontk_decoded = $crypt->decrypt($epalStudent->regiontk);
+                        $regionarea_decoded = $crypt->decrypt($epalStudent->regionarea);
+                        $relationtostudent_decoded = $crypt->decrypt($epalStudent->relationtostudent);
+                        $telnum_decoded = $crypt->decrypt($epalStudent->telnum);
+                        $guardian_name_decoded = $crypt->decrypt($epalStudent->guardian_name);
+                        $guardian_surname_decoded = $crypt->decrypt($epalStudent->guardian_surname);
+                        $guardian_fathername_decoded = $crypt->decrypt($epalStudent->guardian_fathername);
+                        $guardian_mothername_decoded = $crypt->decrypt($epalStudent->guardian_mothername);
+                    } catch (\Exception $e) {
+                        unset($crypt);
+                        $this->logger->warning($e->getMessage());
+
+                        return $this->respondWithStatus([
+                            'message' => t('An unexpected error occured during DECODING data in getStudentApplications Method '),
+                                   ], Response::HTTP_INTERNAL_SERVER_ERROR);
+                    }
+                    unset($crypt);
+
+                    if ($epalStudent->finalized === null)  {
+                        $status = "0";
+                    }
+                    else if ($epalStudent->finalized === "1")  {
+                        $status = "1";
+                    } else  {
+                        $status = "2";
+                    }
+                    $list[] = array(
+                            'applicationId' => $epalStudent->id,
+                            'name' => $name_decoded,
+                            'studentsurname' => $studentsurname_decoded,
+                            'fatherfirstname' => $fatherfirstname_decoded,
+                            'fathersurname' => $epalStudent->fathersurname,
+                            'motherfirstname' => $motherfirstname_decoded,
+                            'mothersurname' => $epalStudent->mothersurname,
+                            'guardian_name' => $guardian_name_decoded,
+                            'guardian_surname' => $guardian_surname_decoded,
+                            'guardian_fathername' => $guardian_fathername_decoded,
+                            'guardian_mothername' => $guardian_mothername_decoded,
+                            'lastschool_schoolname' => $epalStudent->lastschool_schoolname,
+                            'lastschool_schoolyear' => $epalStudent->lastschool_schoolyear,
+                            'lastschool_class' => $epalStudent->lastschool_class,
+                            'currentclass' => $epalStudent->currentclass,
+                            'currentsector' => $epalStudent->eese_name,
+                            'currentcourse' => $epalStudent->eesp_name,
+                            'regionaddress' => $regionaddress_decoded,
+                            'regiontk' => $regiontk_decoded,
+                            'regionarea' => $regionarea_decoded,
+                            'telnum' => $telnum_decoded,
+                            'relationtostudent' => $relationtostudent_decoded,
+                            'birthdate' => substr($epalStudent->birthdate, 8, 2).'/'.substr($epalStudent->birthdate, 5, 2).'/'.substr($epalStudent->birthdate, 0, 4),
+                            'created' => date('d/m/Y H:i', $epalStudent->created),
+                            'epalSchoolsChosen' => $epalSchoolsChosen,
+                            'applicantsResultsDisabled' => $applicantsResultsDisabled,
+                            'status' => $status,
+                            'schoolName' => $epalStudent->eeschfin_name,
+                            'schoolAddress' => $epalStudent->street_address,
+                            'schoolTel' => $epalStudent->phone_number,
+                        );
+
+                return $this->respondWithStatus(
+                        $list, Response::HTTP_OK);
+            } else {
+                return $this->respondWithStatus([
+                    'message' => t('EPAL user not found'),
+                ], Response::HTTP_FORBIDDEN);
+            }
+        } else {
+            return $this->respondWithStatus([
+                    'message' => t('User not found!!!!'),
+                ], Response::HTTP_FORBIDDEN);
+        }
+    }
+
     public function getEpalChosen(Request $request, $studentId)
     {
         $authToken = $request->headers->get('PHP_AUTH_USER');
@@ -400,6 +590,11 @@ class SubmitedApplications extends ControllerBase
               else {
                  $applicantsResultsDisabled = $epalConfig->lock_results->getString();
               }
+
+              $status = "0";
+              $schoolName = '';
+              $schoolAddress = '';
+              $schoolTel = '';
 
               //ανάκτηση αποτελέσματος
               // εύρεση τοποθέτησης (περίπτωση μαθητή που τοποθετήθηκε "οριστικά")

@@ -89,25 +89,22 @@ import {Location} from '@angular/common';
                     <div style="width: 100%">
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== applicationIdActive" style="margin: 10px 10px 10px 10px;">
 
-                  <div *ngFor="let StudentResult$  of StudentResults$ | async">
-                    <div *ngIf = "StudentResult$.applicantsResultsDisabled == '0'" >
-                      <div *ngIf = "StudentResult$.status == '1'" >
+                    <div *ngIf = "StudentDetails$.applicantsResultsDisabled == '0'" >
+                      <div *ngIf = "StudentDetails$.status == '1'" >
                         <div class="col-md-12" style="font-size: 1.0em; color: #143147; font-weight: bold;">
-                          Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentResult$.schoolName}}.
-                          Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, επισυνάπτοντας τα απαραίτητα δικαιολογητικά.
-                          Διεύθυνση σχολείου: {{StudentResult$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentResult$.schoolTel}}<br><br>
+                          Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentDetails$.schoolName}}.
+                          Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, προσκομίζοντας τα απαραίτητα δικαιολογητικά. Διεύθυνση σχολείου: {{StudentDetails$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentDetails$.schoolTel}}<br><br>
                         </div>
                       </div>
 
-                      <div *ngIf = "StudentResult$.status != '1'" >
+                      <div *ngIf = "StudentDetails$.status != '1'" >
                         <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a; font-weight: bold;">
-                          Η αίτησή σας δεν ήταν δυνατό να ικανοποιηθεί. Παρακαλώ επικοινωνήστε άμεσα τηλεφωνικά με τη Διεύθυνση Δευτεροβάθμιας Εκπαίδευσης στην οποία ανήκετε,
-                          προκειμένου να διερευνηθεί εκ νέου η δυνατότητα εγγραφής σας.<br><br>
+                          Η αίτησή σας είναι σε εκκρεμότητα. Για την τοποθέτησή σας και τις ενέργειες που πρέπει να  κάνετε θα ενημερωθείτε με νέο μήνυμα, με τον ίδιο τρόπο, μετά τις 8-7-2017.<br><br>
                         </div>
                       </div>
 
                     </div>
-                  </div>
+
 
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Δήλωσης Προτίμησης ΕΠΑΛ</div>
@@ -203,7 +200,7 @@ import {Location} from '@angular/common';
                         <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
                     </div>
 
-                    <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of EpalChosen$ | async; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== applicationIdActive">
+                    <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of StudentDetails$['epalSchoolsChosen']; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== applicationIdActive">
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{epalChoices$.choice_no}}</div>
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{epalChoices$.epal_id}}</div>
                     </div>
@@ -253,14 +250,6 @@ import {Location} from '@angular/common';
     private SubmitedUsersSub: Subscription;
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
-    private EpalChosen$: BehaviorSubject<any>;
-    private EpalChosenSub: Subscription;
-    private incomeChosen$: BehaviorSubject<any>;
-    private incomeChosenSub: Subscription;
-    private CritirioChosen$: BehaviorSubject<any>;
-    private CritirioChosenSub: Subscription;
-    private StudentResults$: BehaviorSubject<any>;
-    private StudentResultsSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
     public isModalShown: BehaviorSubject<boolean>;
     private applicationIdActive = <number>-1;
@@ -278,13 +267,8 @@ import {Location} from '@angular/common';
     ) {
         this.SubmitedApplic$ = new BehaviorSubject([{}]);
         this.SubmitedDetails$ = new BehaviorSubject([{}]);
-        this.EpalChosen$ = new BehaviorSubject([{}]);
-        this.CritirioChosen$ = new BehaviorSubject([{}]);
-        this.incomeChosen$ = new BehaviorSubject([{}]);
         this.showLoader$ = new BehaviorSubject(false);
         this.isModalShown = new BehaviorSubject(false);
-        this.StudentResults$ = new BehaviorSubject([{}]);
-
     }
 
     ngOnDestroy() {
@@ -294,20 +278,8 @@ import {Location} from '@angular/common';
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
             this.SubmitedDetailsSub.unsubscribe();
-        if (this.EpalChosenSub)
-            this.EpalChosenSub.unsubscribe();
-        if (this.CritirioChosenSub)
-            this.CritirioChosenSub.unsubscribe();
-        if (this.incomeChosenSub)
-            this.incomeChosenSub.unsubscribe();
-        if (this.StudentResultsSub)
-            this.StudentResultsSub.unsubscribe();
-
         this.SubmitedDetails$.unsubscribe();
-        this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
-        this.StudentResults$.unsubscribe();
-
     }
 
     ngOnInit() {
@@ -347,47 +319,12 @@ import {Location} from '@angular/common';
                 this.showLoader$.next(false);
             });
 
-
-        this.EpalChosenSub = this._hds.getEpalchosen(this.applicationIdActive).subscribe(data => {
-            this.EpalChosen$.next(data);
-        },
-            error => {
-                this.EpalChosen$.next([{}]);
-                console.log("Error Getting Schools");
-            });
-
-        this.StudentResultsSub = this._hds.showResults(this.applicationIdActive).subscribe(data => {
-            this.StudentResults$.next(data);
-            this.showLoader$.next(false);
-        },
-            error => {
-                this.StudentResults$.next([{}]);
-                console.log("Error Getting Results");
-                this.showLoader$.next(false);
-            });
-
     }
 
     createPdfServerSide() {
         this._hds.createPdfServerSide(this.applicationIdActive);
     }
 
-
-    /*
-    showResults() {
-
-        this.StudentResultsSub = this._hds.showResults(this.applicationIdActive).subscribe(data => {
-            this.StudentResults$.next(data);
-            this.showLoader$.next(false);
-        },
-            error => {
-                this.StudentResults$.next([{}]);
-                console.log("Error Getting Results");
-                this.showLoader$.next(false);
-            });
-
-    }
-    */
 
     deleteApplication(appId: number): void {
         this.applicationId = appId;

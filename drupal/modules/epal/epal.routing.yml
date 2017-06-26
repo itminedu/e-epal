@@ -38,6 +38,14 @@ epal.current_user:
     _controller: '\Drupal\epal\Controller\CurrentUser::getLoginInfo'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.applicationdetails:
+  path: '/epal/application/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getApplicationDetails'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.submitedapplications:
   path: '/epal/subapplic'
   options:

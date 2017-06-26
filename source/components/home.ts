@@ -23,9 +23,9 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
-            <div class="text-center bg-warning" style="padding: 2em;"><p>
-            <strong>Ανακοίνωση:</strong> τη Δευτέρα <strong>26/6/2017</strong> 
-            το σύστημα θα είναι διαθέσιμο<br/> <strong>μετά τις 13:00</strong> λόγω εργασιών συντήρησης.</p></div>
+<!--            <div class="text-center bg-warning" style="padding: 2em;"><p>
+            <strong>Ανακοίνωση:</strong> τη Δευτέρα <strong>26/6/2017</strong>
+            το σύστημα θα είναι διαθέσιμο<br/> <strong>μετά τις 13:00</strong> λόγω εργασιών συντήρησης.</p></div> -->
 
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row" style="min-height: 300px; margin-top: 100px;">

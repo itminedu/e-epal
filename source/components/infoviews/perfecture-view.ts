@@ -43,9 +43,9 @@ import {
             <div class="row" style="margin-top: 20px; line-height: 2em;"><p><strong>Τα τμήματα</strong></p></div>
             <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even" style="font-size: 0.8em; font-weight: bold;">
                 <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)"
-                    [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd"
+                     [class.oddout]="isOdd"
                     [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
-                    <div class="col-md-12">{{SchoolNames$.name}}</div>
+                    <div [class.changelistcolor]= "SchoolNames$.status === false" class="col-md-12">{{SchoolNames$.name}}</div>
                     <div class = "row" *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even"
                         [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)"
                         [class.selectedappout]="regionActive === j"

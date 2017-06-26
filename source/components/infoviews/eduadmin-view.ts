@@ -43,11 +43,12 @@ import {
             <div class="row" style="margin-top: 20px; line-height: 2em;"><p><strong>Τα τμήματα</strong></p></div>
             <div *ngFor="let SchoolNames$  of SchoolsPerPerf$  | async; let i=index; let isOdd=odd; let isEven=even" style="font-size: 0.8em; font-weight: bold;">
                 <li class="list-group-item isclickable" (click)="setActiveRegion(SchoolNames$.id)"
-                    [class.changelistcolor]= "SchoolNames$.status === false" [class.oddout]="isOdd"
+                     [class.oddout]="isOdd"
                     [class.evenout]="isEven" [class.selectedout]="regionActive === SchoolNames$.id" >
-                    <div class="col-md-12">{{SchoolNames$.name}}</div>
+                    <div [class.changelistcolor]= "SchoolNames$.status === false" class="col-md-12">{{SchoolNames$.name}}</div>
                     <div class = "row" *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even"
-                        [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)"
+                        [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" 
+                        [class.changecolorbalck]="calccolor(CoursesNames$.limitdown, CoursesNames$.size)"    
                         [class.selectedappout]="regionActive === j"
                         [hidden]="SchoolNames$.id !== regionActive" style="margin: 0px 2px 0px 2px;">
                         <div class="col-md-9">{{CoursesNames$.name}}</div>
@@ -123,10 +124,15 @@ import {
     }
 
     calccolor(size, limit) {
-        if (size < limit)
+        if (size < limit){
+            console.log("color1");
             return true;
+}
         else
+        {
+            console.log("color2");
             return false;
+           }
     }
 
     setActiveRegion(ind) {

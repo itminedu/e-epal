@@ -56,8 +56,9 @@ import {
                         [class.changecolorbalck]="calccolor(CoursesNames$.limitdown, CoursesNames$.size)"    
                         [class.selectedappout]="regionActive === j"
                         [hidden]="SchoolNames$.id !== regionActive" style="margin: 0px 2px 0px 2px;">
-                        <div class="col-md-9">{{CoursesNames$.name}}</div>
-                        <div class="col-md-3">{{CoursesNames$.size}}</div>
+                        <div class="col-md-8">{{CoursesNames$.name}}</div>
+                        <div class="col-md-2">{{CoursesNames$.size}}</div>
+                        <div class="col-md-2">{{CoursesNames$.capc}}</div>
                     </div>
                 </li>
             </div>

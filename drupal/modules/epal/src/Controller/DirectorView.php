@@ -446,6 +446,7 @@ class DirectorView extends ControllerBase
             if ($SchoolCat) {
                 $categ = $SchoolCat->metathesis_region->value;
                 $operation_shift = $SchoolCat->operation_shift->value;
+                $capacity_class_a = ($SchoolCat -> capacity_class_a ->value) *25;
             } else {
                 return $this->respondWithStatus([
                     'message' => t('No school located'),
@@ -476,6 +477,8 @@ class DirectorView extends ControllerBase
                         'categ' => $categ,
                         'classes' => 1,
                         'limitdown' => $limit,
+                         'capc' => $capacity_class_a,
+
                     );
                 }
             }
@@ -494,6 +497,7 @@ class DirectorView extends ControllerBase
 
                 foreach ($CourseB as $object) {
                     $sectorid = $object->sector_id->entity->id();
+                    $capacity_class_b = ($object -> capacity_class_sector ->value) *25;
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')
                         ->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
                     $list[] = array(
@@ -503,6 +507,8 @@ class DirectorView extends ControllerBase
                         'categ' => $categ,
                         'classes' => 2,
                         'limitdown' => $limit,
+                        'capc' => $capacity_class_b,
+
                     );
                 }
             }
@@ -520,6 +526,7 @@ class DirectorView extends ControllerBase
 
                 foreach ($CourseC as $object) {
                     $specialityid = $object->specialty_id->entity->id();
+                    $capacity_class_c = ($object -> capacity_class_specialty ->value) *25;
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')
                         ->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
                     $list[] = array(
@@ -529,6 +536,8 @@ class DirectorView extends ControllerBase
                         'categ' => $categ,
                         'classes' => 3,
                         'limitdown' => $limit,
+                        'capc' => $capacity_class_c,
+
                     );
                 }
             }
@@ -546,7 +555,7 @@ class DirectorView extends ControllerBase
                     $specialityid = $object->specialty_id->entity->id();
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')
                         ->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
-
+                      $capacity_class_d = ($object -> capacity_class_specialty_d ->value) *25;  
                     $list[] = array(
                         'id' => $object->specialty_id->entity->id(),
                         'name' => 'Δ Λυκείου  '.$object->specialty_id->entity->get('name')->value,
@@ -554,6 +563,7 @@ class DirectorView extends ControllerBase
                         'categ' => $categ,
                         'classes' => 4,
                         'limitdown' => $limit,
+                        'capc' => $capacity_class_d,
                     );
                 }
             }

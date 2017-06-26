@@ -363,7 +363,9 @@ class ReportsCreator extends ControllerBase
                 }
 
                 //χωρητικότητα για όλο το σχολείο
-                $capacityTotal = array_sum($capacity);
+                $capacityTotal = array_reduce($capacity, function ($sum, $v) {
+                        return $sum += ($v > 0) ? intval($v) : 0;
+                    }, 0);
 
                 //βρες αριθμό μαθητών γισ κάθε τάξη
                 $num = array();
@@ -379,11 +381,13 @@ class ReportsCreator extends ControllerBase
                     //βρες ποσοστά συμπλήρωσης
                     if (isset($capacity[$classId-1]) && $capacity[$classId-1] > 0) {
                         $perc_str = number_format($num[$classId-1] / $capacity[$classId-1] * 100, 2);
+                    } elseif (isset($capacity[$classId-1]) && $capacity[$classId-1] == -1) {
+                        $perc_str = '-';
                     } else {
                         $perc_str = '-';
                         $stat_complete = false;
                     }
-                    array_push( $perc, $perc_str);
+                    array_push($perc, $perc_str);
                 }
 
                 if ($stat_complete === true && $capacityTotal > 0) {

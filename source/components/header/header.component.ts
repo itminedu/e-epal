@@ -37,6 +37,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private TotalStudents$: BehaviorSubject<any>;
     private TotalStudentsSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
+    private hasvalue: boolean;
 
     constructor(private _ata: LoginInfoActions,
         private _hds: HelperDataService,
@@ -60,6 +61,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         this.modalHeader = new BehaviorSubject("");
         this.TotalStudents$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
+        this.hasvalue = false;
 
     };
 
@@ -74,19 +76,21 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                     return loginInfoToken;
                 }, {});
 
+            if (this.hasvalue == false)
+            {
             this.showLoader.next(true);
             this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
             this.TotalStudents$.next(x);
             this.showLoader.next(false);
-
-        },
+            this.hasvalue = true; 
+            },
             error => {
                 this.TotalStudents$.next([{}]);
                 console.log("Error Getting courses perSchool");
                 this.showLoader.next(false);
             });
 
-
+            }
 
             }
 

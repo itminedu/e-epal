@@ -487,7 +487,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/student/` + headerIdNew, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/application/` + headerIdNew, options)
             .map(response => response.json());
     }
 
@@ -506,8 +506,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/epalchosen/` + headerIdNew, options)
             .map(response => response.json());
     }
-
-
 
 
 
@@ -997,7 +995,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
-    showResults(headerid) {
+/*    showResults(headerid) {
 
       let headers = new Headers({
           "Content-Type": "application/json",
@@ -1008,7 +1006,7 @@ export class HelperDataService implements OnInit, OnDestroy {
       return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
           .map(response => response.json());
 
-    }
+    } */
 
 
     findTotalStudents() {

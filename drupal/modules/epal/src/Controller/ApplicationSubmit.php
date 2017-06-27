@@ -136,7 +136,7 @@ class ApplicationSubmit extends ControllerBase
                 ], Response::HTTP_FORBIDDEN);
             }
 
-            $second_period = $this->retrievePeriod();
+            $second_period = $epalConfig->activate_second_period->value;
 
             $student = array(
                 'langcode' => 'el',
@@ -274,19 +274,6 @@ class ApplicationSubmit extends ControllerBase
         $res = new JsonResponse($arr);
         $res->setStatusCode($s);
         return $res;
-    }
-
-    private function retrievePeriod()
-    {
-        $config_storage = $this->entityTypeManager->getStorage('epal_config');
-        $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
-        $epalConfig = reset($epalConfigs);
-        if (!$epalConfig) {
-            $secondPeriodEnabled = 0;
-        } else {
-            $secondPeriodEnabled = intval($epalConfig->activate_second_period->getString());
-        }
-        return $secondPeriodEnabled;
     }
 
     /**

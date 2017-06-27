@@ -487,7 +487,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/student/` + headerIdNew, options)
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/application/` + headerIdNew, options)
             .map(response => response.json());
     }
 
@@ -506,8 +506,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/epalchosen/` + headerIdNew, options)
             .map(response => response.json());
     }
-
-
 
 
 
@@ -593,7 +591,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, { username: username, userpassword: userpassword }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, { }, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -615,7 +613,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { username: username, userpassword: userpassword }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { }, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -702,7 +700,6 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     getCoursePerPerfecture(PerfectureId) {
         let PerfectureIdNew = PerfectureId.toString();
-
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -977,5 +974,56 @@ export class HelperDataService implements OnInit, OnDestroy {
             },
             err => console.error(err));
     }
+
+
+    sendmail(email, name, surname, message) {
+         let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/sendmail`, { userEmail: email, userName : name, userSurname : surname, userMessage : message }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(data);
+                },
+                error => {
+                    console.log("Error Sending Email");
+                    reject("Error Sending email");
+                });
+        });
+    }
+
+/*    showResults(headerid) {
+
+      let headers = new Headers({
+          "Content-Type": "application/json",
+      });
+      this.createAuthorizationHeader(headers);
+      let options = new RequestOptions({ headers: headers });
+      let headerIdStr = headerid.toString();
+      return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
+          .map(response => response.json());
+
+    } */
+
+
+    findTotalStudents() {
+
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(`${AppSettings.API_ENDPOINT}/epal/totalstudent`, options)
+
+            .map(response => response.json());
+        }
+
 
 }

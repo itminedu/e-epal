@@ -21,12 +21,12 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
         <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
            <div class="row" style="margin-top: 130px; margin-bottom: 200px;">
                <div class="col-md-3 offset-md-3">
-                <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px; height: 6em;" (click)="submittedView()">
+                <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px; height: 8em;" (click)="submittedView()">
                 Εμφάνιση<br />Εκτύπωση<br />Δήλωσης<br />Προτίμησης
                 </button>
                 </div>
                 <div class="col-md-6">
-                 <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px; height: 6em;" (click)="signOut()">
+                 <button type="submit" class="btn-primary btn-lg btn-block isclickable" style="margin: 0px; font-size: 1em; padding: 5px; height: 8em;" (click)="signOut()">
                 Αποσύνδεση
                 </button>
                </div>

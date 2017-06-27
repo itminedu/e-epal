@@ -38,6 +38,14 @@ epal.current_user:
     _controller: '\Drupal\epal\Controller\CurrentUser::getLoginInfo'
   requirements:
     _user_is_logged_in: 'TRUE'
+epal.applicationdetails:
+  path: '/epal/application/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getApplicationDetails'
+  requirements:
+    _user_is_logged_in: 'TRUE'
 epal.submitedapplications:
   path: '/epal/subapplic'
   options:
@@ -147,7 +155,7 @@ epal.ministry.general_report:
   options:
     _auth: [ 'basic_auth' ]
   defaults:
-    _controller: '\Drupal\epal\Controller\ReportsCreator::makegGeneralReport'
+    _controller: '\Drupal\epal\Controller\ReportsCreator::makeGeneralReport'
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.report-completeness:
@@ -292,5 +300,29 @@ epal.findcoursesperschool:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\DirectorView::FindCoursesPerSchool'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.user.send_email:
+  path: '/epal/user/sendmail'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\HelpDesk::sendEmail'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.applicant.showresults:
+  path: '/epal/showresults/{studentId}'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::getResults'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.totalstudents:
+  path: '/epal/totalstudent'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\HelpDesk::findTotalStudents'
   requirements:
     _user_is_logged_in: 'TRUE'

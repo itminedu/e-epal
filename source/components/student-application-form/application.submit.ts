@@ -1,33 +1,33 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Http, Response, RequestOptions, Headers } from '@angular/http';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { Http, Response, RequestOptions, Headers } from "@angular/http";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { IStudentDataFields } from '../../store/studentdatafields/studentdatafields.types';
-import { IRegions } from '../../store/regionschools/regionschools.types';
-import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
-import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from '../../store/studentdatafields/studentdatafields.initial-state';
-import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
-import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
-import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
-import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from '../students/student';
-import { AppSettings } from '../../app.settings';
-import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
-import { HelperDataService } from '../../services/helper-data-service';
+import { NgRedux, select } from "ng2-redux";
+import { IAppState } from "../../store/store";
+import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
+import { IRegions } from "../../store/regionschools/regionschools.types";
+import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
+import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
+import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
+import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from "../students/student";
+import { AppSettings } from "../../app.settings";
+import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { EpalClassesActions } from "../../actions/epalclass.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
+import { HelperDataService } from "../../services/helper-data-service";
 
 @Component({
-    selector: 'application-submit',
+    selector: "application-submit",
     template: `
     <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
     <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -173,12 +173,9 @@ import { HelperDataService } from '../../services/helper-data-service';
         this.showLoader = new BehaviorSubject(false);
     };
 
-
-
-
     ngOnInit() {
 
-        (<any>$('#studentFormSentNotice')).appendTo("body");
+        (<any>$("#studentFormSentNotice")).appendTo("body");
         this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({ }, loginInfoToken) => {
@@ -228,7 +225,7 @@ import { HelperDataService } from '../../services/helper-data-service';
             state.sectors.reduce((prevSector, sector) => {
                 sector.courses.reduce((prevCourse, course) => {
                     if (course.selected === true) {
-                        this.courseSelected = course.course_id
+                        this.courseSelected = course.course_id;
                     }
                     return course;
                 }, {});
@@ -240,7 +237,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         this.sectorFieldsSub = this._ngRedux.select(state => {
             state.sectorFields.reduce(({ }, sectorField) => {
                 if (sectorField.selected === true) {
-                    this.sectorSelected = sectorField.id
+                    this.sectorSelected = sectorField.id;
                 }
                 return sectorField;
             }, {});
@@ -250,7 +247,7 @@ import { HelperDataService } from '../../services/helper-data-service';
     };
 
     ngOnDestroy() {
-        (<any>$('#studentFormSentNotice')).remove();
+        (<any>$("#studentFormSentNotice")).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
         if (this.regionsSub) this.regionsSub.unsubscribe();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
@@ -266,7 +263,7 @@ import { HelperDataService } from '../../services/helper-data-service';
     }
 
     submitNow() {
-        //αποστολή στοιχείων μαθητή στο entity: epal_student
+        // αποστολή στοιχείων μαθητή στο entity: epal_student
         // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
         let aitisiObj: Array<any> = [];
         let epalObj: Array<StudentEpalChosen> = [];
@@ -282,7 +279,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         aitisiObj[0].regionaddress = std.regionaddress;
         aitisiObj[0].regionarea = std.regionarea;
         aitisiObj[0].regiontk = std.regiontk;
-        aitisiObj[0].certificatetype = '';
+        aitisiObj[0].certificatetype = "";
 
         aitisiObj[0].graduation_year = 0;
         aitisiObj[0].lastschool_registrynumber = std.lastschool_schoolname.registry_no;
@@ -301,14 +298,15 @@ import { HelperDataService } from '../../services/helper-data-service';
         aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
         aitisiObj[0].currentclass = this.classSelected;
 
-        for (let i = 0; i < this.epalSelected.length; i++)
+        for (let i = 0; i < this.epalSelected.length; i++) {
             epalObj[i] = new StudentEpalChosen(null, this.epalSelected[i], this.epalSelectedOrder[i]);
-        aitisiObj['1'] = epalObj;
+        }
+        aitisiObj["1"] = epalObj;
 
-        if (aitisiObj[0]['currentclass'] === "2")
-            aitisiObj['3'] = new StudentSectorChosen(null, this.sectorSelected);
-        else if (aitisiObj[0]['currentclass'] === "3" || aitisiObj[0]['currentclass'] === "4") {
-            aitisiObj['3'] = new StudentCourseChosen(null, this.courseSelected);
+        if (aitisiObj[0]["currentclass"] === "2") {
+            aitisiObj["3"] = new StudentSectorChosen(null, this.sectorSelected);
+        } else if (aitisiObj[0]["currentclass"] === "3" || aitisiObj[0]["currentclass"] === "4") {
+            aitisiObj["3"] = new StudentCourseChosen(null, this.courseSelected);
         }
 
         this.submitRecord(aitisiObj);
@@ -316,6 +314,26 @@ import { HelperDataService } from '../../services/helper-data-service';
 
 
     submitRecord(record) {
+        let errors = {
+            1004: "Όνομα μαθητή (ελάχιστο τρεις (3) χαρακτήρες)",
+            1005: "Επώνυμο μαθητή (ελάχιστο τρεις (3) χαρακτήρες)",
+            1006: "Όνομα Πατέρα (ελάχιστο τρεις (3) χαρακτήρες)",
+            1007: "Όνομα Μητέρας (ελάχιστο τρεις (3) χαρακτήρες)",
+            1008: "Διεύθυνση κατοικίας αιτούμενου",
+            1009: "ΤΚ (πενταψήφιος αριθμός)",
+            1010: "Πόλη/Περιοχή",
+            1013: "Τάξη φοίτησης",
+            1014: "Η δήλωση προτίμησης γίνεται από",
+            1015: "Σταθερό Τηλέφωνο Επικοινωνίας",
+            1016: "Όνομα (στοιχεία αιτούμενου)",
+            1017: "Επώνυμο (στοιχεία αιτούμενου)",
+            1018: "Όνομα πατέρα (στοιχεία αιτούμενου)",
+            1019: "Όνομα μητέρας (στοιχεία αιτούμενου)",
+            1020: "Κωδικός μονάδας σχολείου τελευταίας φοίτησης",
+            1021: "Τύπος μονάδας σχολείου τελευταίας φοίτησης",
+            1022: "Σχολείο τελευταίας φοίτησης",
+            1023: "Τάξη τελευταίας φοίτησης"
+        };
         let authTokenPost = this.authToken + ":" + this.authToken;
 
         let headers = new Headers({
@@ -331,7 +349,7 @@ import { HelperDataService } from '../../services/helper-data-service';
         this.http.post(connectionString, record, options)
             .map((res: Response) => res.json())
             .subscribe(success => {
-                (<any>$('.loading')).remove();
+                (<any>$(".loading")).remove();
                 this.showLoader.next(false);
                 let errorCode = parseInt(success.error_code);
 
@@ -346,8 +364,23 @@ import { HelperDataService } from '../../services/helper-data-service';
                         this._csa.initSectorCourses();
                         this._sdfa.initStudentDataFields();
                         mTitle = "Υποβολή Δήλωσης Προτίμησης";
-                        mText = "Η υποβολή της αίτησής σας πραγματοποιήθηκε. Μπορείτε να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Θα ειδοποιηθείτε στο e-mail που δηλώσατε για την εξέλιξη της αίτησής σας.";
+                        mText = "Η υποβολή της δήλωσής σας πραγματοποιήθηκε. Μπορείτε να τη δείτε και να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Από την επιλογή 'Υποβληθείσες Δηλώσεις' θα μπορείτε να ενημερωθείτε όταν υπάρξει εξέλιξη σχετική με τη δήλωση σας. Επίσης, θα λάβετε και ενημερωτικό email.";
                         mHeader = "modal-header-success";
+                        break;
+                    case 1000:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Δεν έχετε επιλέξει σχολεία";
+                        mHeader = "modal-header-danger";
+                        break;
+                    case 999:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Δεν έχετε επιλέξει τομέα";
+                        mHeader = "modal-header-danger";
+                        break;
+                    case 998:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Δεν έχετε επιλέξει ειδικότητα";
+                        mHeader = "modal-header-danger";
                         break;
                     case 1001:
                         mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
@@ -362,6 +395,28 @@ import { HelperDataService } from '../../services/helper-data-service';
                     case 1003:
                         mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Ελέξτε τη φόρμα σας. Η ημερομηνία γέννησης δεν είναι έγκυρη.";
+                        mHeader = "modal-header-danger";
+                        break;
+                    case 1004:
+                    case 1005:
+                    case 1006:
+                    case 1007:
+                    case 1008:
+                    case 1009:
+                    case 1010:
+                    case 1013:
+                    case 1014:
+                    case 1015:
+                    case 1016:
+                    case 1017:
+                    case 1018:
+                    case 1019:
+                    case 1020:
+                    case 1021:
+                    case 1022:
+                    case 1023:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Παρακαλούμε ελέγξτε τα στοιχεία που υποβάλλετε. Υπάρχουν λάθη - ελλείψεις στο πεδίο \"" + errors[errorCode] + "\"που δεν επιτρέπουν την υποβολή.";
                         mHeader = "modal-header-danger";
                         break;
                     case 3002:
@@ -385,6 +440,11 @@ import { HelperDataService } from '../../services/helper-data-service';
                         mText = "Τα στοιχεία φοίτησης που υποβάλλατε δεν είναι έγκυρα. Παρακαλώ ελέγξτε τη φόρμα σας και προσπαθήστε ξανά. Εάν το θέμα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.";
                         mHeader = "modal-header-danger";
                         break;
+                    case 8004:
+                        mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
+                        mText = "Τα στοιχεία φοίτησης που υποβάλλατε δεν είναι έγκυρα. Παρακαλώ ελέγξτε τη φόρμα σας και προσπαθήστε ξανά. Ελέγξτε επίσης αν έχετε ήδη κάνει δήλωση για τον ίδιο μαθητή.";
+                        mHeader = "modal-header-danger";
+                        break;
                     default:
                         mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
                         mText = "Ελέξτε τη φόρμα σας. Υπάρχουν λάθη - ελλείψεις που δεν επιτρέπουν την υποβολή.";
@@ -395,40 +455,40 @@ import { HelperDataService } from '../../services/helper-data-service';
                 this.modalText.next(mText);
                 this.modalHeader.next(mHeader);
                 this.showModal();
-                (<any>$('.loading')).remove();
+                (<any>$(".loading")).remove();
                 this.showLoader.next(false);
             },
             error => {
-                (<any>$('.loading')).remove();
+                (<any>$(".loading")).remove();
                 this.modalHeader.next("modal-header-danger");
                 this.modalTitle.next("Υποβολή Δήλωσης Προτίμησης");
                 this.modalText.next("Η υποβολή της δήλωσης προτίμησης απέτυχε. Παρακαλούμε προσπαθήστε πάλι και αν το πρόβλημα συνεχίσει να υφίσταται, επικοινωνήστε με την ομάδα υποστήριξης.");
                 this.showModal();
                 this.showLoader.next(false);
-                console.log("Error HTTP POST Service")
+                console.log("Error HTTP POST Service");
             });
 
     }
 
     public showModal(): void {
-        (<any>$('#studentFormSentNotice')).modal('show');
+        (<any>$("#studentFormSentNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#studentFormSentNotice')).modal('hide');
+        (<any>$("#studentFormSentNotice")).modal("hide");
         if (this.modalHeader.getValue() === "modal-header-success") {
-            this.router.navigate(['/post-submit']);
+            this.router.navigate(["/post-submit"]);
         }
 
     }
 
     public onHidden(): void {
         this.isModalShown.next(false);
-        this.router.navigate(['/post-submit']);
+        this.router.navigate(["/post-submit"]);
     }
 
     navigateBack() {
-        this.router.navigate(['/student-application-form-main']);
+        this.router.navigate(["/student-application-form-main"]);
     }
 
 }

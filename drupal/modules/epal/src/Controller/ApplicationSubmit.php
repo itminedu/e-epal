@@ -29,6 +29,15 @@ class ApplicationSubmit extends ControllerBase
     const CERT_GYM = 'Απολυτήριο Γυμνασίου';
     const CERT_LYK = 'Απολυτήριο Λυκείου';
 
+    const VALID_NAMES_PATTERN = '/^[A-Za-zΑ-ΩΆΈΉΊΙΎΌΏα-ωάέήίΐύόώ \-]*$/mu';
+    const VALID_UCASE_NAMES_PATTERN = '/^[A-ZΑ-Ω]{3,}[A-ZΑ-Ω \-]*$/mu';
+    const VALID_ADDRESS_PATTERN = '/^[0-9A-Za-zΑ-ΩΆΈΉΊΎΌΏα-ωάέήίύόώ\/\. \-]*$/mu';
+    const VALID_ADDRESSTK_PATTERN = '/^[0-9]{5}$/';
+    const VALID_DIGITS_PATTERN = '/^[0-9]*$/';
+    const VALID_TELEPHONE_PATTERN = '/^2[0-9]{9}$/';
+    const VALID_YEAR_PATTERN = '/^(19[6789][0-9]|20[0-1][0-9])$/';
+    const VALID_CAPACITY_PATTERN = '/[0-9]*$/';
+
     protected $entityTypeManager;
     protected $logger;
     protected $connection;
@@ -60,80 +69,76 @@ class ApplicationSubmit extends ControllerBase
         );
     }
 
-    public function appSubmit(Request $request) {
-    		if (!$request->isMethod('POST')) {
-    			return $this->respondWithStatus([
-    					"error_code" => 2001
-    				], Response::HTTP_METHOD_NOT_ALLOWED);
-        	}
-    		$applicationForm = array();
+    public function appSubmit(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            return $this->respondWithStatus([
+                "error_code" => 2001
+            ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+        $applicationForm = array();
 
-    		$content = $request->getContent();
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $applicationForm = json_decode($content, true);
+        } else {
+            return $this->respondWithStatus([
+                "error_code" => 5002
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
-    		if (!empty($content)) {
-    			$applicationForm = json_decode($content, TRUE);
-    		}
-    		else {
-    			return $this->respondWithStatus([
-    					"error_code" => 5002
-    				], Response::HTTP_BAD_REQUEST);
-    		}
-
-            $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
-            $epalConfig = reset($epalConfigs);
-            if (!$epalConfig) {
-                return $this->respondWithStatus([
-                        "error_code" => 3001
-                    ], Response::HTTP_FORBIDDEN);
-            }
-            if ($epalConfig->lock_application->value) {
-                return $this->respondWithStatus([
-                        "error_code" => 3002
-                    ], Response::HTTP_FORBIDDEN);
-            }
+        $epalConfigs = $this->entityTypeManager->getStorage('epal_config')->loadByProperties(array('name' => 'epal_config'));
+        $epalConfig = reset($epalConfigs);
+        if (!$epalConfig) {
+            return $this->respondWithStatus([
+                "error_code" => 3001
+            ], Response::HTTP_FORBIDDEN);
+        }
+        if ($epalConfig->lock_application->value) {
+            return $this->respondWithStatus([
+                "error_code" => 3002
+            ], Response::HTTP_FORBIDDEN);
+        }
 
         $crypt = new Crypt();
-        try  {
-          $name_encoded = $crypt->encrypt($applicationForm[0]['name']);
-          $studentsurname_encoded = $crypt->encrypt($applicationForm[0]['studentsurname']);
-          $fatherfirstname_encoded = $crypt->encrypt($applicationForm[0]['fatherfirstname']);
-          $motherfirstname_encoded = $crypt->encrypt($applicationForm[0]['motherfirstname']);
-          $regionaddress_encoded = $crypt->encrypt($applicationForm[0]['regionaddress']);
-          $regiontk_encoded = $crypt->encrypt($applicationForm[0]['regiontk']);
-          $regionarea_encoded = $crypt->encrypt($applicationForm[0]['regionarea']);
-          //$certificatetype_encoded = $crypt->encrypt($applicationForm[0]['certificatetype']);
-          $relationtostudent_encoded = $crypt->encrypt($applicationForm[0]['relationtostudent']);
-          $telnum_encoded = $crypt->encrypt($applicationForm[0]['telnum']);
-          $guardian_name_encoded = $crypt->encrypt($applicationForm[0]['cu_name']);
-          $guardian_surname_encoded = $crypt->encrypt($applicationForm[0]['cu_surname']);
-          $guardian_fathername_encoded = $crypt->encrypt($applicationForm[0]['cu_fathername']);
-          $guardian_mothername_encoded = $crypt->encrypt($applicationForm[0]['cu_mothername']);
-        }
-        catch (\Exception $e) {
-            print_r($e->getMessage());
-            unset($crypt);
-      			$this->logger->warning($e->getMessage());
-      			return $this->respondWithStatus([
-      					"error_code" => 5001
-      				], Response::HTTP_INTERNAL_SERVER_ERROR);
+        try {
+            $name_encoded = $crypt->encrypt($applicationForm[0]['name']);
+            $studentsurname_encoded = $crypt->encrypt($applicationForm[0]['studentsurname']);
+            $fatherfirstname_encoded = $crypt->encrypt($applicationForm[0]['fatherfirstname']);
+            $motherfirstname_encoded = $crypt->encrypt($applicationForm[0]['motherfirstname']);
+            $regionaddress_encoded = $crypt->encrypt($applicationForm[0]['regionaddress']);
+            $regiontk_encoded = $crypt->encrypt($applicationForm[0]['regiontk']);
+            $regionarea_encoded = $crypt->encrypt($applicationForm[0]['regionarea']);
+            // $certificatetype_encoded = $crypt->encrypt($applicationForm[0]['certificatetype']);
+            $relationtostudent_encoded = $crypt->encrypt($applicationForm[0]['relationtostudent']);
+            $telnum_encoded = $crypt->encrypt($applicationForm[0]['telnum']);
+            $guardian_name_encoded = $crypt->encrypt($applicationForm[0]['cu_name']);
+            $guardian_surname_encoded = $crypt->encrypt($applicationForm[0]['cu_surname']);
+            $guardian_fathername_encoded = $crypt->encrypt($applicationForm[0]['cu_fathername']);
+            $guardian_mothername_encoded = $crypt->encrypt($applicationForm[0]['cu_mothername']);
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+            return $this->respondWithStatus([
+                "error_code" => 5001
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         unset($crypt);
 
         $transaction = $this->connection->startTransaction();
-    		try {
-    			//insert records in entity: epal_student
-    			$authToken = $request->headers->get('PHP_AUTH_USER');
-    	        $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
-    	        $epalUser = reset($epalUsers);
-                if (!$epalUser){
-        			return $this->respondWithStatus([
-        					"error_code" => 4003
-        				], Response::HTTP_FORBIDDEN);
-        		}
+        try {
+            //insert records in entity: epal_student
+            $authToken = $request->headers->get('PHP_AUTH_USER');
+            $epalUsers = $this->entityTypeManager->getStorage('epal_users')->loadByProperties(array('authtoken' => $authToken));
+            $epalUser = reset($epalUsers);
+            if (!$epalUser) {
+                return $this->respondWithStatus([
+                    "error_code" => 4003
+                ], Response::HTTP_FORBIDDEN);
+            }
 
-          $second_period = $this->retrievePeriod();
+            $second_period = $epalConfig->activate_second_period->value;
 
-			    $student = array(
+            $student = array(
                 'langcode' => 'el',
                 'student_record_id' => 0,
                 'sex' => 0,
@@ -148,23 +153,22 @@ class ApplicationSubmit extends ControllerBase
                 'points' => 0,
                 'user_id' => $epalUser->user_id->target_id,
                 'epaluser_id' => $epalUser->id(),
-
                 'name' => $name_encoded,
                 'studentsurname' => $studentsurname_encoded,
-        				'birthdate' => $applicationForm[0]['studentbirthdate'],
+                'birthdate' => $applicationForm[0]['studentbirthdate'],
                 'fatherfirstname' => $fatherfirstname_encoded,
                 'motherfirstname' => $motherfirstname_encoded,
                 'regionaddress' => $regionaddress_encoded,
                 'regionarea' => $regionarea_encoded,
                 'regiontk' => $regiontk_encoded,
-                //'certificatetype' => $certificatetype_encoded,
-        				//'graduation_year' => $applicationForm[0]['graduation_year'],
+                // 'certificatetype' => $certificatetype_encoded,
+                // 'graduation_year' => $applicationForm[0]['graduation_year'],
                 'lastschool_registrynumber' => $applicationForm[0]['lastschool_registrynumber'],
                 'lastschool_unittypeid' => $applicationForm[0]['lastschool_unittypeid'],
                 'lastschool_schoolname' => $applicationForm[0]['lastschool_schoolname'],
                 'lastschool_schoolyear' => $applicationForm[0]['lastschool_schoolyear'],
                 'lastschool_class' => $applicationForm[0]['lastschool_class'],
-        				'currentclass' => $applicationForm[0]['currentclass'],
+                'currentclass' => $applicationForm[0]['currentclass'],
                 'guardian_name' => $guardian_name_encoded,
                 'guardian_surname' => $guardian_surname_encoded,
                 'guardian_fathername' => $guardian_fathername_encoded,
@@ -172,11 +176,28 @@ class ApplicationSubmit extends ControllerBase
                 'agreement' => $applicationForm[0]['disclaimer_checked'],
                 'relationtostudent' => $relationtostudent_encoded,
                 'telnum' => $telnum_encoded,
-
                 'second_period' => $second_period,
-                    );
+            );
 
-            if (($errorCode = $this->validateStudent($student)) > 0) {
+            if (($errorCode = $this->validateStudent(array_merge(
+                    $student, [
+                        'name' => $applicationForm[0]['name'],
+                        'studentsurname' => $applicationForm[0]['studentsurname'],
+                        'fatherfirstname' => $applicationForm[0]['fatherfirstname'],
+                        'motherfirstname' => $applicationForm[0]['motherfirstname'],
+                        'regionaddress' => $applicationForm[0]['regionaddress'],
+                        'regiontk' => $applicationForm[0]['regiontk'],
+                        'regionarea' => $applicationForm[0]['regionarea'],
+                        'relationtostudent' => $applicationForm[0]['relationtostudent'],
+                        'telnum' => $applicationForm[0]['telnum'],
+                        'guardian_name' => $applicationForm[0]['cu_name'],
+                        'guardian_surname' => $applicationForm[0]['cu_surname'],
+                        'guardian_fathername' => $applicationForm[0]['cu_fathername'],
+                        'guardian_mothername' => $applicationForm[0]['cu_mothername']
+                    ]), sizeof($applicationForm[1]), $applicationForm[0]['currentclass'],
+                    $applicationForm[3]['sectorfield_id'],
+                    $applicationForm[3]['coursefield_id'],
+                    $epalUser)) > 0) {
                 return $this->respondWithStatus([
                     "error_code" => $errorCode
                 ], Response::HTTP_OK);
@@ -187,11 +208,11 @@ class ApplicationSubmit extends ControllerBase
             if ((int)date("Y") === $lastSchoolYear && (int)$student['lastschool_unittypeid'] === 5) {
                 $epalSchools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('registry_no' => $lastSchoolRegistryNumber));
                 $epalSchool = reset($epalSchools);
-            /*  if (!$epalSchool){
-        			return $this->respondWithStatus([
-        					"error_code" => 4004
-        				], Response::HTTP_FORBIDDEN);
-        		} else { */
+                /*  if (!$epalSchool){
+                return $this->respondWithStatus([
+                        "error_code" => 4004
+                    ], Response::HTTP_FORBIDDEN);
+                } else { */
                 if ($epalSchool) {
                     $student['currentepal'] = $epalSchool->id();
                 } else {
@@ -217,7 +238,6 @@ class ApplicationSubmit extends ControllerBase
                 $entity_object = $entity_storage_epalchosen->create($epalchosen);
                 $entity_storage_epalchosen->save($entity_object);
             }
-
 
             if ($applicationForm[0]['currentclass'] === "3" || $applicationForm[0]['currentclass'] === "4") {
                 $course = array(
@@ -256,21 +276,6 @@ class ApplicationSubmit extends ControllerBase
         return $res;
     }
 
-
-    private function retrievePeriod() {
-
-      $config_storage = $this->entityTypeManager->getStorage('epal_config');
-      $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
-      $epalConfig = reset($epalConfigs);
-      if (!$epalConfig)
-         return 0;
-      else
-         $secondPeriodEnabled = $epalConfig->activate_second_period->getString();
-
-      return $secondPeriodEnabled;
-
-    }
-
     /**
      *
      * @return int error code ελέγχου; 0 εάν ο έλεγχος επιτύχει, μη μηδενικό εάν αποτύχει:
@@ -283,9 +288,18 @@ class ApplicationSubmit extends ControllerBase
      *  8002 τα στοιχεία φοίτησης δεν επικυρώθηκαν
      *  8003 τα στοιχεία φοίτησης δεν είναι έγκυρα
      */
-    private function validateStudent($student)
+    private function validateStudent($student, $numberOfSchools, $chosenClass, $chosenSector, $chosenCourse, $epalUser = null)
     {
         $error_code = 0;
+        if ($numberOfSchools < 1) {
+            return 1000;
+        }
+        if ($chosenClass === "2" && !isset($chosenSector)) {
+            return 999;
+        }
+        if (($chosenClass === "3" || $chosenClass === "4") && !isset($chosenCourse)) {
+            return 998;
+        }
         if (!$student["agreement"]) {
             return 1001;
         }
@@ -299,58 +313,51 @@ class ApplicationSubmit extends ControllerBase
             (checkdate($date_parts[1], $date_parts[2], $date_parts[0]) !== true)) {
             return 1003;
         }
-        if (intval($date_parts[0]) >= 2003)
+        if (intval($date_parts[0]) >= ((int)date("Y") - 13)) {
             return 1003;
+        }
         $birthdate = "{$date_parts[2]}-{$date_parts[1]}-{$date_parts[0]}";
 
-        if (!$student["name"]) {
+        if (preg_match(self::VALID_UCASE_NAMES_PATTERN, $student["name"]) !== 1) {
             return 1004;
         }
-        if (!$student["studentsurname"]) {
+        if (preg_match(self::VALID_UCASE_NAMES_PATTERN, $student["studentsurname"]) !== 1) {
             return 1005;
         }
-        if (!$student["fatherfirstname"]) {
+        if (preg_match(self::VALID_UCASE_NAMES_PATTERN, $student["fatherfirstname"]) !== 1) {
             return 1006;
         }
-        if (!$student["motherfirstname"]) {
+        if (preg_match(self::VALID_UCASE_NAMES_PATTERN, $student["motherfirstname"]) !== 1) {
             return 1007;
         }
-        if (!$student["regionaddress"]) {
+        if (preg_match(self::VALID_ADDRESS_PATTERN, $student["regionaddress"]) !== 1) {
             return 1008;
         }
-        if (!$student["regiontk"]) {
+        if (preg_match(self::VALID_ADDRESSTK_PATTERN, $student["regiontk"]) !== 1) {
             return 1009;
         }
-        if (!$student["regionarea"]) {
+        if (preg_match(self::VALID_NAMES_PATTERN, $student["regionarea"]) !== 1) {
             return 1010;
         }
-        /*
-        if (!$student["certificatetype"]) {
-            return 1011;
-        }
-        if (!$student["graduation_year"]) {
-            return 1012;
-        }
-        */
-        if (!$student["currentclass"] || ($student["currentclass"] !== "1" && $student["currentclass"] !== "2" && $student["currentclass"] !== "3" && $student["currentclass"] !== "4") ) {
+        if (!$student["currentclass"] || ($student["currentclass"] !== "1" && $student["currentclass"] !== "2" && $student["currentclass"] !== "3" && $student["currentclass"] !== "4")) {
             return 1013;
         }
         if (!$student["relationtostudent"]) {
             return 1014;
         }
-        if (!$student["telnum"]) {
+        if (preg_match(self::VALID_TELEPHONE_PATTERN, $student["telnum"]) !== 1) {
             return 1015;
         }
-        if (!$student["guardian_name"]) {
+        if (preg_match(self::VALID_NAMES_PATTERN, $student["guardian_name"]) !== 1) {
             return 1016;
         }
-        if (!$student["guardian_surname"]) {
+        if (preg_match(self::VALID_NAMES_PATTERN, $student["guardian_surname"]) !== 1) {
             return 1017;
         }
-        if (!$student["guardian_fathername"]) {
+        if (preg_match(self::VALID_NAMES_PATTERN, $student["guardian_fathername"]) !== 1) {
             return 1018;
         }
-        if (!$student["guardian_mothername"]) {
+        if (preg_match(self::VALID_NAMES_PATTERN, $student["guardian_mothername"]) !== 1) {
             return 1019;
         }
         if (!$student["lastschool_registrynumber"]) {
@@ -364,6 +371,34 @@ class ApplicationSubmit extends ControllerBase
         }
         if (!$student["lastschool_class"]) {
             return 1023;
+        }
+
+        // second period: check if application exists
+        if ($student['second_period'] == 1 && $epalUser !== null) {
+
+            $esQuery = $this->connection->select('epal_student', 'es')
+                                    ->fields('es',
+                                    array('name',
+                                            'studentsurname',
+                                            'birthdate',
+                                        ));
+            $esQuery->condition('es.epaluser_id', $epalUser->id(), '=');
+
+            $existing = $esQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+/*            $existing = $this->entityTypeManager->getStorage('epal_student')
+                ->loadByProperties(['epaluser_id' => $epalUser->id->value]); */
+            if ($existing && sizeof($existing) > 0) {
+                $crypt = new Crypt();
+                foreach ($existing as $candidate) {
+                    if (($crypt->decrypt($candidate->name) == $student['name'])
+                        && ($crypt->decrypt($candidate->studentsurname) == $student['studentsurname'])
+                        && ($candidate->birthdate == $student['birthdate'])
+                        ) {
+                        return 8004;
+                    }
+                }
+            }
         }
 
         // check as per specs:

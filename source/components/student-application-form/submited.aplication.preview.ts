@@ -8,7 +8,7 @@ import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-
+import {Location} from '@angular/common';
 
 @Component({
     selector: 'submited-preview',
@@ -16,18 +16,37 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
     <div id="applicationDeleteConfirm" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
-          <div class="modal-header {{modalHeader | async}}">
-              <h3 class="modal-title pull-left"><i class="fa {{modalHeaderIcon | async}}"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-close"></i>&nbsp;&nbsp;Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ</h3>
             <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
               <span aria-hidden="true"><i class="fa fa-times"></i></span>
             </button>
           </div>
           <div class="modal-body">
-              <p>{{ modalText | async }}</p>
+              <p>Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση</p>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideModal()">Ακύρωση</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideConfirmModal()">Ακύρωση</button>
             <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="deleteApplicationDo()">Επιβεβαίωση</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="applicationDeleteError" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>Η δήλωσή σας δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή σας αυτή την περίοδο</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" (click)="hideErrorModal()">Κλείσιμο</button>
           </div>
         </div>
       </div>
@@ -39,10 +58,14 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         </div>
 
             <div *ngIf="(SubmitedApplic$ | async).length > 0" class="row" style="margin: 10px 2px 10px 2px;">
-                Έχει υποβληθεί δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος των παρακάτω ατόμων:
+                <p>Έχουν υποβληθεί οι παρακάτω δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος.</p>
+                <p>Επιλέξτε το όνομα ή το επώνυμο του μαθητή για να δείτε αναλυτικά τη δήλωσή σας και να την εκτυπώσετε σε μορφή PDF.</p>
+                <p>Μπορείτε να διαγράψετε μία δήλωση επιλέγοντας το εικονίδιο δεξιά από το ονοματεπώνυμο.</p>
+                <p>Επιλέξτε "Αρχική" επάνω αριστερά ή κάτω αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
             </div>
             <div *ngIf="(SubmitedApplic$ | async).length === 0" class="row" style="margin: 10px 2px 10px 2px;">
-                Δεν έχετε ακόμη υποβάλλει δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος
+                <p>Δεν έχετε ακόμη υποβάλλει δήλωση προτίμησης ΕΠΑΛ για το νέο σχολικό έτος.</p>
+                <p>Επιλέξτε "Αρχική" επάνω αριστερά ή κάτω αν θέλετε να ξεκινήσετε την υποβολή νέας δήλωσης προτίμησης.</p>
             </div>
 
 
@@ -65,6 +88,23 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
                     <div style="width: 100%">
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== applicationIdActive" style="margin: 10px 10px 10px 10px;">
+
+                    <div *ngIf = "StudentDetails$.applicantsResultsDisabled == '0'" >
+                      <div *ngIf = "StudentDetails$.status == '1' && StudentDetails$.secondPeriod == '0'" >
+                        <div class="col-md-12" style="font-size: 1.0em; color: #143147; font-weight: bold;">
+                          Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentDetails$.schoolName}}.
+                          Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, προσκομίζοντας τα απαραίτητα δικαιολογητικά. Διεύθυνση σχολείου: {{StudentDetails$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentDetails$.schoolTel}}<br><br>
+                        </div>
+                      </div>
+
+                      <div *ngIf = "StudentDetails$.status != '1'  && StudentDetails$.secondPeriod == '0'" >
+                        <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a; font-weight: bold;">
+                          Η αίτησή σας είναι σε εκκρεμότητα. Για την τοποθέτησή σας και τις ενέργειες που πρέπει να  κάνετε θα ενημερωθείτε με νέο μήνυμα, με τον ίδιο τρόπο, μετά τις 8-7-2017.<br><br>
+                        </div>
+                      </div>
+
+                    </div>
+
 
                   <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
                       <div class="col-md-3" style="font-size: 0.8em;">Αριθμός Δήλωσης Προτίμησης ΕΠΑΛ</div>
@@ -160,24 +200,45 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                         <div class="col-md-6" style="font-size: 1em; font-weight: bold;">Επιλογή ΕΠΑΛ</div>
                     </div>
 
-                    <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of EpalChosen$ | async; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== applicationIdActive">
+                    <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;" *ngFor="let epalChoices$  of StudentDetails$['epalSchoolsChosen']; let i=index; let isOdd=odd; let isEven=even" [hidden]="UserData$.id !== applicationIdActive">
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold; text-align: center;">{{epalChoices$.choice_no}}</div>
                         <div class="col-md-6" style="font-size: 0.8em; font-weight: bold;">{{epalChoices$.epal_id}}</div>
                     </div>
 
                     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                        <!--
+                        <div class="col-md-6">
+                            <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 10em;" (click)="showResults()" [hidden] = "StudentDetails$.applicantsResultsDisabled == '0'">
+                                <span style="font-size: 0.9em; font-weight: bold;">Αποτελέσματα</span>
+                            </button>
+                        </div>
+                        -->
                         <div class="col-md-12">
                             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
                                 <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
                             </button>
                         </div>
-
                     </div>
+
                     </div>
                 </div>
 
               </div>
               </div>
+
+              <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+                  <div class="col-md-6">
+                      <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 9em;" (click)="goBack()" >
+                          <span style="font-size: 0.9em; font-weight: bold;">Επιστροφή</span>
+                      </button>
+                  </div>
+                  <div class="col-md-6">
+                      <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="goHome()" >
+                          <span style="font-size: 0.9em; font-weight: bold;">Αρχική</span>
+                      </button>
+                  </div>
+              </div>
+
               </div>
 
    `
@@ -189,17 +250,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
     private SubmitedUsersSub: Subscription;
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
-    private EpalChosen$: BehaviorSubject<any>;
-    private EpalChosenSub: Subscription;
-    private incomeChosen$: BehaviorSubject<any>;
-    private incomeChosenSub: Subscription;
-    private CritirioChosen$: BehaviorSubject<any>;
-    private CritirioChosenSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
-    private modalTitle: BehaviorSubject<string>;
-    private modalText: BehaviorSubject<string>;
-    private modalHeader: BehaviorSubject<string>;
-    private modalHeaderIcon: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private applicationIdActive = <number>-1;
 
@@ -212,44 +263,29 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
         private router: Router,
-        /*private fb: FormBuilder,*/
+        private loc: Location
     ) {
         this.SubmitedApplic$ = new BehaviorSubject([{}]);
         this.SubmitedDetails$ = new BehaviorSubject([{}]);
-        this.EpalChosen$ = new BehaviorSubject([{}]);
-        this.CritirioChosen$ = new BehaviorSubject([{}]);
-        this.incomeChosen$ = new BehaviorSubject([{}]);
         this.showLoader$ = new BehaviorSubject(false);
-        this.modalTitle = new BehaviorSubject("");
-        this.modalText = new BehaviorSubject("");
-        this.modalHeader = new BehaviorSubject("");
-        this.modalHeaderIcon = new BehaviorSubject("");
         this.isModalShown = new BehaviorSubject(false);
-
     }
 
     ngOnDestroy() {
-        (<any>$('#studentFormSentNotice')).remove();
+        (<any>$('#applicationDeleteConfirm')).remove();
+        (<any>$('#applicationDeleteError')).remove();
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
             this.SubmitedDetailsSub.unsubscribe();
-        if (this.EpalChosenSub)
-            this.EpalChosenSub.unsubscribe();
-        if (this.CritirioChosenSub)
-            this.CritirioChosenSub.unsubscribe();
-        if (this.incomeChosenSub)
-            this.incomeChosenSub.unsubscribe();
-
         this.SubmitedDetails$.unsubscribe();
-        this.EpalChosen$.unsubscribe();
         this.SubmitedApplic$.unsubscribe();
-
     }
 
     ngOnInit() {
 
         (<any>$('#applicationDeleteConfirm')).appendTo("body");
+        (<any>$('#applicationDeleteError')).appendTo("body");
         this.showLoader$.next(true);
 
         this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
@@ -283,32 +319,20 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
                 this.showLoader$.next(false);
             });
 
-
-        this.EpalChosenSub = this._hds.getEpalchosen(this.applicationIdActive).subscribe(data => {
-            this.EpalChosen$.next(data);
-        },
-            error => {
-                this.EpalChosen$.next([{}]);
-                console.log("Error Getting Schools");
-            });
-
     }
 
     createPdfServerSide() {
         this._hds.createPdfServerSide(this.applicationIdActive);
     }
 
+
     deleteApplication(appId: number): void {
-        this.modalTitle.next("Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ");
-        this.modalText.next("Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση");
-        this.modalHeader.next("modal-header-danger");
-        this.modalHeaderIcon.next("fa-close");
         this.applicationId = appId;
-        this.showModal();
+        this.showConfirmModal();
     }
 
     deleteApplicationDo(): void {
-        this.hideModal();
+        this.hideConfirmModal();
         this.showLoader$.next(true);
         this._hds.deleteApplication(this.applicationId).then(data => {
             this.SubmitedUsersSub.unsubscribe();
@@ -326,25 +350,37 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 
         }).catch(err => {
             this.showLoader$.next(false);
-            this.modalTitle.next("Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ");
-            this.modalText.next("Η δήλωσή σας δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή σας αυτή την περίοδο");
-            this.modalHeader.next("modal-header-danger");
-            this.modalHeaderIcon.next("fa-ban");
-            this.showModal();
+            this.showErrorModal();
             console.log(err);
         });
     }
 
-    public showModal(): void {
+    public showConfirmModal(): void {
         (<any>$('#applicationDeleteConfirm')).modal('show');
     }
 
-    public hideModal(): void {
+    public showErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('show');
+    }
+
+    public hideConfirmModal(): void {
         (<any>$('#applicationDeleteConfirm')).modal('hide');
+    }
+    public hideErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('hide');
     }
 
     public onHidden(): void {
         this.isModalShown.next(false);
+    }
+
+    public goBack(): void {
+        this.loc.back();
+
+    }
+
+    public goHome(): void {
+        this.router.navigate(['']);
     }
 
 }

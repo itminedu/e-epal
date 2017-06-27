@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from "@angular/core";
 import {Router} from "@angular/router";
 import { Injectable } from "@angular/core";
 
-import { BehaviorSubject } from "rxjs/Rx";
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { NgRedux, select } from "ng2-redux";
 import { IAppState } from "../../store/store";
 import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
@@ -17,12 +17,14 @@ import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
 import { CriteriaActions } from "../../actions/criteria.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
 
+
 @Component({
     selector: "reg-header",
     templateUrl: "header.component.html"
 })
 export default class HeaderComponent implements OnInit, OnDestroy {
     private authToken: string;
+    private studentRole = STUDENT_ROLE;
     private authRole: string;
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
@@ -31,6 +33,11 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
+
+    private TotalStudents$: BehaviorSubject<any>;
+    private TotalStudentsSub: Subscription;
+    private showLoader: BehaviorSubject<boolean>;
+    private hasvalue: boolean;
 
     constructor(private _ata: LoginInfoActions,
         private _hds: HelperDataService,
@@ -52,6 +59,9 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         this.modalTitle = new BehaviorSubject("");
         this.modalText = new BehaviorSubject("");
         this.modalHeader = new BehaviorSubject("");
+        this.TotalStudents$ = new BehaviorSubject([{}]);
+        this.showLoader = new BehaviorSubject(false);
+        this.hasvalue = false;
 
     };
 
@@ -65,10 +75,30 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                     this.cuName = loginInfoToken.cu_name;
                     return loginInfoToken;
                 }, {});
+
+            if (this.hasvalue == false)
+            {
+            this.showLoader.next(true);
+            this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
+            this.TotalStudents$.next(x);
+            this.showLoader.next(false);
+            this.hasvalue = true; 
+            },
+            error => {
+                this.TotalStudents$.next([{}]);
+                console.log("Error Getting courses perSchool");
+                this.showLoader.next(false);
+            });
+
+            }
+
             }
 
             return state.loginInfo;
         }).subscribe(this.loginInfo$);
+
+
+
 
     }
 
@@ -137,6 +167,11 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         else if (this.authRole === MINISTRY_ROLE) {
             this.router.navigate(["/ministry"]);
         }
+    }
+
+    gohelpDesk()
+    {
+       this.router.navigate(['/help-desk']);
     }
 
     public showModal(): void {

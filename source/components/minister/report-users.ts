@@ -1,23 +1,23 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
-import {reportsSchema, TableColumn} from './reports-schema';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import {csvCreator} from './csv-creator';
+import { Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "ng2-redux";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
+import {reportsSchema, TableColumn} from "./reports-schema";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import {csvCreator} from "./csv-creator";
 
-import { API_ENDPOINT } from '../../app.settings';
+import { API_ENDPOINT } from "../../app.settings";
 
 @Component({
-    selector: 'report-users',
+    selector: "report-users",
     template: `
 
   <div>
@@ -66,7 +66,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private distStatus = "READY";
     private data;
     private validCreator: number;
-    //private reportId: number;
+    // private reportId: number;
     private routerSub: any;
 
     private source: LocalDataSource;
@@ -75,17 +75,16 @@ import { API_ENDPOINT } from '../../app.settings';
     private reportSchema = new reportsSchema();
     private csvObj = new csvCreator();
 
-
-    constructor(private _ngRedux: NgRedux<IAppState>,
+    constructor(
+        private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
+        private router: Router
+    ) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.generalReport$ = new BehaviorSubject([{}]);
-        this.minedu_userName = '';
+        this.minedu_userName = "";
         this.validCreator = -1;
-
     }
 
     ngOnInit() {
@@ -120,23 +119,23 @@ import { API_ENDPOINT } from '../../app.settings';
 
         this.validCreator = 0;
 
-        let route;
-        route = "/ministry/report-users/";
+        let route = "/ministry/report-users/";
         this.settings = this.reportSchema.ReportUsersSchema;
 
-        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0).subscribe(data => {
-            this.generalReport$.next(data);
-            this.data = data;
-            this.validCreator = 1;
-            this.source = new LocalDataSource(this.data);
-            this.columnMap = new Map<string, TableColumn>();
+        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0)
+            .subscribe(data => {
+                this.generalReport$.next(data);
+                this.data = data;
+                this.validCreator = 1;
+                this.source = new LocalDataSource(this.data);
+                this.columnMap = new Map<string, TableColumn>();
 
-            //pass parametes to csv class object
-            this.csvObj.columnMap = this.columnMap;
-            this.csvObj.source = this.source;
-            this.csvObj.settings = this.settings;
-            this.csvObj.prepareColumnMap();
-        },
+                // pass parametes to csv class object
+                this.csvObj.columnMap = this.columnMap;
+                this.csvObj.source = this.source;
+                this.csvObj.settings = this.settings;
+                this.csvObj.prepareColumnMap();
+            },
             error => {
                 this.generalReport$.next([{}]);
                 this.validCreator = -1;
@@ -146,20 +145,15 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     navigateBack() {
-        this.router.navigate(['/ministry/minister-reports']);
+        this.router.navigate(["/ministry/minister-reports"]);
     }
 
-
-    onSearch(query: string = '') {
-
+    onSearch(query: string = "") {
         this.csvObj.onSearch(query);
     }
 
-
     export2Csv() {
-
         this.csvObj.export2Csv();
-
     }
 
 }

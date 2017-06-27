@@ -20,16 +20,27 @@
 <div class="header-wrapper">
     <header id="navbar" role="banner" class="navbar navbar-default">
         <div class="container">
-            <div *ngIf="(loginInfo$ | async).size > 0">
+            <div *ngFor="let loginInfoRow$ of loginInfo$ | async; let i=index;">
                 <ul class="navbar-nav">
-                    <div *ngIf="(loginInfo$ | async).cu_name !== ''">
+                    <div *ngIf="loginInfoRow$.cu_name !== ''">
                         <div class="row">
                             <div class="col-md-2">
                                 <i class="fa fa-home isclickable" (click)="goHome()"></i>
                                 <span class="signout isclickable" (click)="goHome()" style="color:#CC3300;">&nbsp;&nbsp;Αρχική</span>
-
                             </div>
-                            <div class="col-md-6">&nbsp;</div>
+                            <div class="col-md-2">
+                                 <span *ngIf="loginInfoRow$.auth_role===studentRole" class="signout isclickable" (click)="gohelpDesk()" style="color:#CC3300;">Επικοινωνία</span>
+                            </div>
+                        <div class="col-md-4">
+                                 <span *ngIf="loginInfoRow$.auth_role===studentRole" class="signout" style="color:#CC3300;">
+                                <div *ngFor="let TotalStudent$  of TotalStudents$ | async;">
+                                    Σύνολο Δηλώσεων: {{TotalStudent$.numStudents}}
+                                </div>
+                                </span>
+                        </div>
+
+
+
                             <div class="col-md-4" style="text-align: right">
                                 <span class="username" style="text-align: right">{{ cuName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                 <span class="signout isclickable" style="text-align: right" (click)="signOut()" style="color:#CC3300;">Αποσύνδεση&nbsp;&nbsp;</span>

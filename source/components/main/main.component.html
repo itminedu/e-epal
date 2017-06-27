@@ -3,11 +3,33 @@
       <div class="row">
       &nbsp;&nbsp;&nbsp;
       </div>
+
       <div class="row">
         <div class="col-sm-12 col-md-3 hidden-md-down">
           <div class="left-sidebar">
            <div class="navig-left-img">
                <img src="../myschool/assets/images/default.png" alt="">
+          </div>
+          <br>
+          <br>
+          <div class="left-choices">
+            <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 10em;" (click)="navigatelegal()" >
+                    <span style="font-size: 0.9em; font-family: arial, sans-serif!important; font-weight: bold; color: #ffffff;"> Νομοθεσία </span>
+                </button>
+            </div>
+            </div>
+          </div>
+
+          <div style="margin-top:15px; margin-bottom: 10px;" class="left-choices">
+            <div class="row">
+            <div class="col-md-12">
+                <a href="/pdfs/files/odigies.pdf" target="_blank" class="btn btn-primary btn-lg pull-left isclickable active" style="width: 10em; " role="button" aria-pressed="true">
+                    <span style="font-size: 0.9em; font-family: arial, sans-serif!important; font-weight: bold; color: #ffffff;">Οδηγίες χρήσης</span>
+                </a>
+            </div>
+            </div>
           </div>
 
          <div class="left-choices">
@@ -18,7 +40,7 @@
         </div>
         <div class="col-sm-12 col-md-9">
           <div class="main-content">
-           
+
            <div class="panel panel-primary">
             <div class="panel-body">
               <router-outlet></router-outlet>

@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
-import {reportsSchema, TableColumn} from './reports-schema';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import {csvCreator} from './csv-creator';
-import {chartCreator} from './chart-creator';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
+import { Observable } from "rxjs/Observable";
+import { Http, Headers, RequestOptions } from "@angular/http";
+import { NgRedux, select } from "ng2-redux";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
+import { reportsSchema, TableColumn } from "./reports-schema";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { csvCreator } from "./csv-creator";
+import { chartCreator } from "./chart-creator";
 
 import {
     FormBuilder,
@@ -21,13 +21,12 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
-
-import { API_ENDPOINT } from '../../app.settings';
+import { API_ENDPOINT } from "../../app.settings";
 
 @Component({
-    selector: 'report-general',
+    selector: "report-general",
     template: `
 
   <div>
@@ -40,7 +39,7 @@ import { API_ENDPOINT } from '../../app.settings';
           <h5> >Επιλογή Φίλτρων <br><br></h5>
           <h6> Δεν υπάρχουν διαθέσιμα φίλτρα <br><br><br></h6>
 
-          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
+          <button type="submit" class="btn btn-alert"  (click)="createReport()" [hidden]="minedu_userName == ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
           </button>
@@ -89,8 +88,6 @@ import { API_ENDPOINT } from '../../app.settings';
     private data;
     private validCreator: number;
     private createGraph: boolean;
-    private reportId: number;
-    private routerSub: any;
 
     private source: LocalDataSource;
     columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
@@ -99,7 +96,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private csvObj = new csvCreator();
 
     private chartObj = new chartCreator();
-    @ViewChild('chart') public chartContainer: ElementRef;
+    @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
 
@@ -110,14 +107,14 @@ import { API_ENDPOINT } from '../../app.settings';
         private router: Router) {
 
         this.formGroup = this.fb.group({
-            region: ['', []],
-            adminarea: ['', []],
-            schoollist: ['', []],
+            region: ["", []],
+            adminarea: ["", []],
+            schoollist: ["", []],
         });
 
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.generalReport$ = new BehaviorSubject([{}]);
-        this.minedu_userName = '';
+        this.minedu_userName = "";
         this.validCreator = -1;
         this.createGraph = false;
 
@@ -127,7 +124,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
         this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
+                state.loginInfo.reduce(({ }, loginInfoToken) => {
                     this.minedu_userName = loginInfoToken.minedu_username;
                     this.minedu_userPassword = loginInfoToken.minedu_userpassword;
                     return loginInfoToken;
@@ -135,11 +132,6 @@ import { API_ENDPOINT } from '../../app.settings';
             }
             return state.loginInfo;
         }).subscribe(this.loginInfo$);
-
-        this.routerSub = this.activatedRoute.params.subscribe(params => {
-            this.reportId = +params['reportId'];
-
-        });
 
     }
 
@@ -156,41 +148,28 @@ import { API_ENDPOINT } from '../../app.settings';
 
     }
 
-
-    createReport(regionSel) {
+    createReport() {
 
         this.validCreator = 0;
         this.createGraph = false;
 
-        let route;
-        if (this.reportId === 1) {
-            route = "/ministry/general-report/";
-            this.settings = this.reportSchema.genReportSchema;
-        }
-        else if (this.reportId === 2) {
-            route = "/ministry/report-completeness/";
-            this.settings = this.reportSchema.reportCompletenessSchema;
-        }
-        else if (this.reportId === 3) {
-            route = "/ministry/report-all-stat/";
-            this.settings = this.reportSchema.reportAllStatSchema;
-        }
+        let route = "/ministry/general-report/";
+        this.settings = this.reportSchema.genReportSchema;
 
-        let regSel = 0;
+        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0)
+            .subscribe(data => {
+                this.generalReport$.next(data);
+                this.data = data;
+                this.validCreator = 1;
+                this.source = new LocalDataSource(this.data);
+                this.columnMap = new Map<string, TableColumn>();
 
-        this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, 0, 0, 0, 0, 0, 0, 0).subscribe(data => {
-            this.generalReport$.next(data);
-            this.data = data;
-            this.validCreator = 1;
-            this.source = new LocalDataSource(this.data);
-            this.columnMap = new Map<string, TableColumn>();
-
-            //pass parametes to csv class object
-            this.csvObj.columnMap = this.columnMap;
-            this.csvObj.source = this.source;
-            this.csvObj.settings = this.settings;
-            this.csvObj.prepareColumnMap();
-        },
+                // pass parametes to csv class object
+                this.csvObj.columnMap = this.columnMap;
+                this.csvObj.source = this.source;
+                this.csvObj.settings = this.settings;
+                this.csvObj.prepareColumnMap();
+            },
             error => {
                 this.generalReport$.next([{}]);
                 this.validCreator = -1;
@@ -200,20 +179,15 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     navigateBack() {
-        this.router.navigate(['/ministry/minister-reports']);
+        this.router.navigate(["/ministry/minister-reports"]);
     }
 
-
-    onSearch(query: string = '') {
-
+    onSearch(query: string = "") {
         this.csvObj.onSearch(query);
     }
 
-
     export2Csv() {
-
         this.csvObj.export2Csv();
-
     }
 
 
@@ -229,33 +203,20 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     generateGraphData() {
-
         this.d3data = [];
 
-        if (this.reportId === 1) {
-            let labelsX = [];
-            labelsX.push("1η Προτίμηση");
-            labelsX.push("2η Προτίμηση");
-            labelsX.push("3η Προτίμηση");
-            labelsX.push("Μη τοποθετημένοι");
-            labelsX.push("Προσωρινά τοποθετημένοι σε ολιγομελή");
-            for (let i = 1; i <= 5; i++) {
-                this.d3data.push([
-                    labelsX[i - 1],
-                    this.data[i].numStudents / this.data[0].numStudents,
-                ]);
-            }
+        let labelsX = [];
+        labelsX.push("1η Προτίμηση");
+        labelsX.push("2η Προτίμηση");
+        labelsX.push("3η Προτίμηση");
+        labelsX.push("Μη τοποθετημένοι");
+        labelsX.push("Προσωρινά τοποθετημένοι σε ολιγομελή");
+        for (let i = 1; i <= 5; i++) {
+            this.d3data.push([
+                labelsX[i - 1],
+                this.data[i].numStudents / this.data[0].numStudents,
+            ]);
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 }

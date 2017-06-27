@@ -177,15 +177,20 @@
     background-color: #fd9665;
 }
 .selectedappout {
-    background-color: #a38d82;
+/*   background-color: #a38d82; */
+    background-color: #b5b0a5;
 }
 
-.changecolor
+div.changecolor 
 {
-    color: red;
+    color: red!important;
 }
 
-.changelistcolor
+div.changecolorbalck{
+ color: black!important;   
+}
+
+.changelistcolor 
 {
     color:red!important ;
 }
@@ -324,6 +329,6 @@ label {
     margin-bottom: 0px;
 }
 
-.ng2-smart-pagination { 
+.ng2-smart-pagination {
     display: inline-flex !important;
 }

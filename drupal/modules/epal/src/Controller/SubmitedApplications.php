@@ -84,8 +84,12 @@ class SubmitedApplications extends ControllerBase
                 $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('epaluser_id' => $userid, 'id' => $applicationId));
                 $epalStudent = reset($epalStudents);
 
-
                 if ($epalStudent) {
+                    if (!$epalStudent->second_period->value && $epalConfig->activate_second_period->value) {
+                        return $this->respondWithStatus([
+                                "error_code" => 3002
+                            ], Response::HTTP_FORBIDDEN);
+                    }
                     $epalStudentClasses = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $applicationId));
                     $epalStudentClass = reset($epalStudentClasses);
                     if ($epalStudentClass) {

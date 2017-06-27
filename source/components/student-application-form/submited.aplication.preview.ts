@@ -90,14 +90,14 @@ import {Location} from '@angular/common';
                   <div *ngFor="let StudentDetails$  of SubmitedDetails$ | async" [hidden]="UserData$.id !== applicationIdActive" style="margin: 10px 10px 10px 10px;">
 
                     <div *ngIf = "StudentDetails$.applicantsResultsDisabled == '0'" >
-                      <div *ngIf = "StudentDetails$.status == '1'" >
+                      <div *ngIf = "StudentDetails$.status == '1' && StudentDetails$.secondPeriod == '0'" >
                         <div class="col-md-12" style="font-size: 1.0em; color: #143147; font-weight: bold;">
                           Η αίτησή σας ικανοποιήθηκε. Έχετε επιλεγεί για να εγγραφείτε στο {{StudentDetails$.schoolName}}.
                           Παρακαλώ να προσέλθετε ΑΜΕΣΑ στο σχολείο για να προχωρήσει η διαδικασία εγγραφής σας σε αυτό, προσκομίζοντας τα απαραίτητα δικαιολογητικά. Διεύθυνση σχολείου: {{StudentDetails$.schoolAddress}}, Τηλέφωνο σχολείου: {{StudentDetails$.schoolTel}}<br><br>
                         </div>
                       </div>
 
-                      <div *ngIf = "StudentDetails$.status != '1'" >
+                      <div *ngIf = "StudentDetails$.status != '1'  && StudentDetails$.secondPeriod == '0'" >
                         <div class="col-md-12" style="font-size: 1.0em; color: #a52a2a; font-weight: bold;">
                           Η αίτησή σας είναι σε εκκρεμότητα. Για την τοποθέτησή σας και τις ενέργειες που πρέπει να  κάνετε θα ενημερωθείτε με νέο μήνυμα, με τον ίδιο τρόπο, μετά τις 8-7-2017.<br><br>
                         </div>

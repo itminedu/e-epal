@@ -313,6 +313,7 @@ class SubmitedApplications extends ControllerBase
             }
             else {
                $applicantsResultsDisabled = $epalConfig->lock_results->value;
+               //$secondPeriodEnabled = $epalConfig->activate_second_period->value;
             }
 
             $status = "0";
@@ -342,6 +343,8 @@ class SubmitedApplications extends ControllerBase
                                             'currentclass',
                                             'birthdate',
                                             'created',
+
+                                            'second_period',
                                         ))
                                     ->fields('esec',
                                     array('choice_no'
@@ -455,6 +458,8 @@ class SubmitedApplications extends ControllerBase
                             'schoolName' => $epalStudent->eeschfin_name,
                             'schoolAddress' => $epalStudent->street_address,
                             'schoolTel' => $epalStudent->phone_number,
+                            'secondPeriod' => $epalStudent->second_period,
+                            //'secondPeriodSettingEnabled' => $secondPeriodEnabled,
                         );
 
                 return $this->respondWithStatus(
@@ -589,12 +594,14 @@ class SubmitedApplications extends ControllerBase
               }
               else {
                  $applicantsResultsDisabled = $epalConfig->lock_results->getString();
+                 //$secondPeriodEnabled = $epalConfig->activate_second_period->getString();
               }
 
               $status = "0";
               $schoolName = '';
               $schoolAddress = '';
               $schoolTel = '';
+              $secondPeriod = "0";
 
               //ανάκτηση αποτελέσματος
               // εύρεση τοποθέτησης (περίπτωση μαθητή που τοποθετήθηκε "οριστικά")
@@ -606,7 +613,8 @@ class SubmitedApplications extends ControllerBase
                                                 ->fields('esch', array('id', 'name', 'street_address','phone_number'));
                         $escQuery->addJoin('inner', 'eepal_school_field_data', 'esch', 'esc.epal_id=esch.id');
                         $escQuery->condition('esc.student_id', intval($studentId), '=');
-       																	  //->condition('eStudent.finalized', "1" , '=');
+                        //$escQuery->condition('esc.second_period', intval($secondPeriodEnabled), '=');
+
         				$epalStudentClasses = $escQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
                 if  (sizeof($epalStudentClasses) === 1) {
                   $epalStudentClass = reset($epalStudentClasses);
@@ -616,13 +624,19 @@ class SubmitedApplications extends ControllerBase
                       $schoolName = $epalStudentClass->name;
                       $schoolAddress = $epalStudentClass->street_address;
                       $schoolTel = $epalStudentClass->phone_number;
+                      //$secondPeriod = $epalStudentClass->second_period;
+                      //$secondPeriodEnabled = $secondPeriodEnabled;
                     }
                     else  {
                         $status = "2";
+                        //$secondPeriod = $epalStudentClass->second_period;
+                        //$secondPeriodEnabled = $secondPeriodEnabled;
                     }
                 }
                 else  {
                     $status = "0";
+                    //$secondPeriod = $epalStudentClass->second_period;
+                    //$secondPeriodEnabled = $secondPeriodEnabled;
                 }
 
             } //endif $applicantsResultsDisabled === "0"
@@ -633,6 +647,8 @@ class SubmitedApplications extends ControllerBase
                       'schoolName' => $schoolName,
                       'schoolAddress' => $schoolAddress,
                       'schoolTel' => $schoolTel,
+                      //'secondPeriod' => $secondPeriod,
+                      //'secondPeriodSettingEnabled' => $secondPeriodEnabled,
               );
 
               return $this->respondWithStatus(

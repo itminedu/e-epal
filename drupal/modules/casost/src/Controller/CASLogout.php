@@ -11,6 +11,7 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use phpCAS;
 
@@ -190,10 +191,6 @@ class CASLogout extends ControllerBase
         session_unset();
         session_destroy();
         \Drupal::service('page_cache_kill_switch')->trigger();
-        if ('casost_sch_sso_config' === $configRowName) {
-            return new RedirectResponse($this->redirectUrl.'&error_code=' . $errorCode, 302, []);
-        } else {
-            return new RedirectResponseWithCookieExt($this->redirectUrl .'&error_code=' . $errorCode, 302, []);
-        }
+        return new RedirectResponse($this->redirectUrl.'&error_code=' . $errorCode, 302, []);
     }
 }

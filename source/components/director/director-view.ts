@@ -298,9 +298,9 @@ import {
     private showLoader: BehaviorSubject<boolean>;
     private opened;
     private applicationId = <number>0;
-    private taxi= <number>0;
+    private taxi = <number>0;
     private sector = <number>0;
-    private special= <number>0;
+    private special = <number>0;
 
 
 
@@ -452,8 +452,8 @@ import {
     }
 
 
-    deleteApplication(appId: number,taxi, sector, special ): void {
-        
+    deleteApplication(appId: number, taxi, sector, special): void {
+
         this.applicationId = appId;
         this.taxi = taxi;
         this.sector = sector;
@@ -465,41 +465,41 @@ import {
 
 
 
-deleteApplicationDo(): void {
-  
+    deleteApplicationDo(): void {
+
         this.hideConfirmModal();
         this.showLoader.next(true);
         this._hds.deleteApplicationforDirector(this.applicationId).then(data => {
-           this.StudentInfoSub.unsubscribe();
-           this.CoursesPerSchoolSub.unsubscribe();
-           this.showLoader.next(false);
-           this.StudentActive = -1;
-           //this.courseActive = -1;
-
-        this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
-            this.CoursesPerSchool$.next(x);
+            this.StudentInfoSub.unsubscribe();
+            this.CoursesPerSchoolSub.unsubscribe();
             this.showLoader.next(false);
+            this.StudentActive = -1;
+            //this.courseActive = -1;
 
-        },
-            error => {
-                this.CoursesPerSchool$.next([{}]);
-                console.log("Error Getting courses perSchool");
+            this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
+                this.CoursesPerSchool$.next(x);
                 this.showLoader.next(false);
-            });
 
-
-           this.StudentInfoSub = this._hds.getStudentPerSchool(this.taxi, this.sector, this.special)
-            .subscribe(data => {
-                this.StudentInfo$.next(data);
-                this.retrievedStudent.next(true);
-                this.showLoader.next(false);
             },
-            error => {
-                this.StudentInfo$.next([{}]);
-                console.log("Error Getting Students");
-                this.showLoader.next(false);
-                this.showModal("#emptyselection");
-            });
+                error => {
+                    this.CoursesPerSchool$.next([{}]);
+                    console.log("Error Getting courses perSchool");
+                    this.showLoader.next(false);
+                });
+
+
+            this.StudentInfoSub = this._hds.getStudentPerSchool(this.taxi, this.sector, this.special)
+                .subscribe(data => {
+                    this.StudentInfo$.next(data);
+                    this.retrievedStudent.next(true);
+                    this.showLoader.next(false);
+                },
+                error => {
+                    this.StudentInfo$.next([{}]);
+                    console.log("Error Getting Students");
+                    this.showLoader.next(false);
+                    this.showModal("#emptyselection");
+                });
 
 
         }).catch(err => {
@@ -507,4 +507,4 @@ deleteApplicationDo(): void {
             this.showLoader.next(false);
         });
     }
-  }
+}

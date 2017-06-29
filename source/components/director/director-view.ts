@@ -471,7 +471,22 @@ deleteApplicationDo(): void {
         this.showLoader.next(true);
         this._hds.deleteApplicationforDirector(this.applicationId).then(data => {
            this.StudentInfoSub.unsubscribe();
+           this.CoursesPerSchoolSub.unsubscribe();
            this.showLoader.next(false);
+           this.StudentActive = -1;
+           //this.courseActive = -1;
+
+        this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
+            this.CoursesPerSchool$.next(x);
+            this.showLoader.next(false);
+
+        },
+            error => {
+                this.CoursesPerSchool$.next([{}]);
+                console.log("Error Getting courses perSchool");
+                this.showLoader.next(false);
+            });
+
 
            this.StudentInfoSub = this._hds.getStudentPerSchool(this.taxi, this.sector, this.special)
             .subscribe(data => {

@@ -612,14 +612,14 @@ class SubmitedApplications extends ControllerBase
 
               if ($applicantsResultsDisabled === "0")   {
 
-        				$escQuery = $this->connection->select('epal_student_class', 'esc')
-        										->fields('esc', array('student_id', 'epal_id', 'finalized'))
+                        $escQuery = $this->connection->select('epal_student_class', 'esc')
+                                                ->fields('esc', array('student_id', 'epal_id', 'finalized'))
                                                 ->fields('esch', array('id', 'name', 'street_address','phone_number'));
                         $escQuery->addJoin('inner', 'eepal_school_field_data', 'esch', 'esc.epal_id=esch.id');
                         $escQuery->condition('esc.student_id', intval($studentId), '=');
                         //$escQuery->condition('esc.second_period', intval($secondPeriodEnabled), '=');
 
-        				$epalStudentClasses = $escQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
+                        $epalStudentClasses = $escQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
                 if  (sizeof($epalStudentClasses) === 1) {
                   $epalStudentClass = reset($epalStudentClasses);
 
@@ -667,6 +667,132 @@ class SubmitedApplications extends ControllerBase
         }
 
     }
+
+
+    public function deleteApplicationFromDirector(Request $request)
+    {
+        if (!$request->isMethod('POST')) {
+            return $this->respondWithStatus([
+                    "error_code" => 2001
+                ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
+            $authToken = $request->headers->get('PHP_AUTH_USER');
+
+            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+            $user = reset($users);
+            if ($user) {
+                $epalId = $user->init->value;
+                $schools = $this->entityTypeManager->getStorage('eepal_school')->loadByProperties(array('id' => $epalId));
+                $school = reset($schools);
+                if (!$school) {
+                    $this->logger->warning('no access to this school='.$user->id());
+                    return $this->respondWithStatus([
+                        "message" => "No access to this school"
+                    ], Response::HTTP_FORBIDDEN);
+                }
+
+                $userRoles = $user->getRoles();
+                $userRole = '';
+                foreach ($userRoles as $tmpRole) {
+                    if ($tmpRole === 'epal') {
+                        $userRole = $tmpRole;
+                    }
+                }
+                if ($userRole === '') {
+                    return $this->respondWithStatus([
+                             'error_code' => 4003,
+                         ], Response::HTTP_FORBIDDEN);
+                } elseif ($userRole === 'epal') {
+
+
+
+        $content = $request->getContent();
+
+        $applicationId = 0;
+        if (!empty($content)) {
+            $postArr = json_decode($content, TRUE);
+            $applicationId = $postArr['applicationId'];
+        }
+        else {
+            return $this->respondWithStatus([
+                    "error_code" => 5002
+                ], Response::HTTP_BAD_REQUEST);
+        }
+
+
+        
+        $transaction = $this->connection->startTransaction();
+        try {
+            //ανάκτηση τιμής από ρυθμίσεις διαχειριστή για lock_school_students_view
+
+            $config_storage = $this->entityTypeManager->getStorage('epal_config');
+            $epalConfigs = $config_storage->loadByProperties(array('name' => 'epal_config'));
+            $epalConfig = reset($epalConfigs);
+            if (!$epalConfig) {
+               return $this->respondWithStatus([
+                       'message' => t("EpalConfig Enity not found"),
+                   ], Response::HTTP_FORBIDDEN);
+            }
+            else if ($epalConfig->lock_school_students_view->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
+
+
+
+                //$userid = $epalUser->id();
+
+                $epalStudents = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array( 'id' => $applicationId));
+                $epalStudent = reset($epalStudents);
+
+                if ($epalStudent) {
+                    $epalStudentClasses = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $applicationId));
+                    $epalStudentClass = reset($epalStudentClasses);
+                  
+                    if ($epalStudentClass)  {
+                      if ($epalStudentClass->directorconfirm->value === "1")  {
+                        return $this->respondWithStatus([
+                                "error_code" => -1
+                            ], Response::HTTP_FORBIDDEN);
+                      }
+                    }
+
+                    $delQuery = $this->connection->delete('epal_student_epal_chosen');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_sector_field');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_course_field');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $delQuery = $this->connection->delete('epal_student_class');
+                    $delQuery->condition('student_id', $applicationId);
+                    $delQuery->execute();
+                    $epalStudent->delete();
+                    return $this->respondWithStatus([
+                      'error_code' => 0,
+                  ], Response::HTTP_OK);
+
+                } else {
+                    return $this->respondWithStatus([
+                    'message' => t('EPAL student not found'),
+                ], Response::HTTP_FORBIDDEN);
+                }
+        } catch (\Exception $e) {
+            $this->logger->warning($e->getMessage());
+            $transaction->rollback();
+
+            return $this->respondWithStatus([
+                'error_code' => 5001,
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+}
+
+
 
     private function respondWithStatus($arr, $s)
     {

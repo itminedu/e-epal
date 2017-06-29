@@ -191,29 +191,35 @@ epal.ministry.retrieve-registry-id:
   requirements:
     _user_is_logged_in: 'TRUE'
 epal.ministry.massive_mail_unallocated:
-  path: '/ministry/send-unallocated-massive-mail'
+  path: '/ministry/send-unallocated-massive-mail/{period}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudents'
+    period: 2
   requirements:
     _user_is_logged_in: 'TRUE'
+    period: ^[0,1,2]$
 epal.ministry.massive_mail_unallocated_smallclass:
-  path: '/ministry/send-unallocated-sc-massive-mail'
+  path: '/ministry/send-unallocated-sc-massive-mail/{period}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToUnallocatedStudentsSC'
+    period: 2
   requirements:
     _user_is_logged_in: 'TRUE'
+    period: ^[0,1,2]$
 epal.ministry.massive_mail_located:
-  path: '/ministry/send-located-massive-mail'
+  path: '/ministry/send-located-massive-mail/{period}'
   options:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\InformUnlocatedStudents::sendMailToLocatedStudents'
+    period: 2
   requirements:
     _user_is_logged_in: 'TRUE'
+    period: ^[0,1,2]$
 epal.ministry.retrievesettings:
   path: '/ministry/retrieve-settings'
   options:
@@ -324,5 +330,13 @@ epal.totalstudents:
     _auth: [ 'basic_auth' ]
   defaults:
     _controller: '\Drupal\epal\Controller\HelpDesk::findTotalStudents'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+epal.application_delete_director:
+  path: '/epal/application/deleteFromDirector'
+  options:
+    _auth: [ 'basic_auth' ]
+  defaults:
+    _controller: '\Drupal\epal\Controller\SubmitedApplications::deleteApplicationFromDirector'
   requirements:
     _user_is_logged_in: 'TRUE'

@@ -662,7 +662,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    informUnlocatedStudents(username, userpassword, unallocated) {
+    informUnlocatedStudents(username, userpassword, unallocated, period) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -671,12 +671,13 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         let route = "";
-        if (unallocated == 1)
-            route = "ministry/send-unallocated-massive-mail";
-        else if (unallocated == 2)
-            route = "ministry/send-unallocated-sc-massive-mail";
-        else if (unallocated == 3)
-            route = "ministry/send-located-massive-mail";
+        if (unallocated == 1) {
+            route = "ministry/send-unallocated-massive-mail/" + period;
+        } else if (unallocated == 2) {
+            route = "ministry/send-unallocated-sc-massive-mail/" + period;
+        } else if (unallocated == 3) {
+            route = "ministry/send-located-massive-mail/" + period;
+        }
 
         return this.http.get(`${AppSettings.API_ENDPOINT}/` + route, options)
             .map(response => response.json());

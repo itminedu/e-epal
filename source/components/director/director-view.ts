@@ -24,6 +24,46 @@ import {
 @Component({
     selector: 'director-classcapacity',
     template: `
+
+
+      <div id="applicationDeleteConfirm" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-close"></i>&nbsp;&nbsp;Διαγραφή Δήλωσης Προτίμησης ΕΠΑΛ</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>Επιλέξατε να διαγράψετε τη δήλωση προτίμησης ΕΠΑΛ. Παρακαλούμε επιλέξτε Επιβεβαίωση</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="hideConfirmModal()">Ακύρωση</button>
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal" (click)="deleteApplicationDo()">Επιβεβαίωση</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="applicationDeleteError" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+              <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Αποτυχία Διαγραφής Δήλωσης Προτίμησης ΕΠΑΛ</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>Η δήλωσή δεν διαγράφηκε. Δεν μπορείτε να διαγράψετε τη δήλωσή μαθητή εαν έχετε κάνει την επιβεβαίωση εγγραφής.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-right" data-dismiss="modal" (click)="hideErrorModal()">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
     <form [formGroup]="formGroup">
@@ -55,6 +95,8 @@ import {
                  [class.oddout]="isOdd" [class.evenout]="isEven" style="margin: 0px 2px 0px 2px;">
                     <div class="col-md-5" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)" >{{StudentDetails$.studentsurname}}</div>
                     <div class="col-md-5" style="font-size: 0.8em; font-weight: bold;" (click) ="setActiveStudent(j)">{{StudentDetails$.name}}</div>
+                    <div class="col-md-2" style="font-size: 1.5em; font-weight: bold;"><i class="fa fa-trash isclickable" (click)="deleteApplication(StudentDetails$.id, CoursesPerSchools$.class, CoursesPerSchools$.newsector, CoursesPerSchools$.newspecialit)"></i></div>
+
                     <div [hidden]="StudentActive !== j" class="col-md-2 pull-right" style="color: black;" > <span aria-hidden="true"><button type="button" class="btn-primary btn-sm pull-right" (click) ="setActiveStudentnew(j)">Κλείσιμο</button></span>  </div>
 
                     <div style="width: 100%; color: #000000;">
@@ -255,6 +297,10 @@ import {
     private StudentActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
     private opened;
+    private applicationId = <number>0;
+    private taxi = <number>0;
+    private sector = <number>0;
+    private special = <number>0;
 
 
 
@@ -276,6 +322,21 @@ import {
     }
 
 
+    public showConfirmModal(): void {
+        (<any>$('#applicationDeleteConfirm')).modal('show');
+    }
+
+    public showErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('show');
+    }
+
+    public hideConfirmModal(): void {
+        (<any>$('#applicationDeleteConfirm')).modal('hide');
+    }
+    public hideErrorModal(): void {
+        (<any>$('#applicationDeleteError')).modal('hide');
+    }
+
 
     public showModal(popupMsgId): void {
         (<any>$(popupMsgId)).modal('show');
@@ -292,13 +353,16 @@ import {
 
 
     ngOnDestroy() {
-
+        (<any>$('#applicationDeleteConfirm')).remove();
+        (<any>$('#applicationDeleteError')).remove();
     }
 
     ngOnInit() {
         (<any>$('#checksaved')).appendTo("body");
         (<any>$('#dangermodal')).appendTo("body");
         (<any>$('#emptyselection')).appendTo("body");
+        (<any>$('#applicationDeleteConfirm')).appendTo("body");
+        (<any>$('#applicationDeleteError')).appendTo("body");
         this.showLoader.next(true);
         this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
             this.CoursesPerSchool$.next(x);
@@ -387,4 +451,60 @@ import {
             });
     }
 
+
+    deleteApplication(appId: number, taxi, sector, special): void {
+
+        this.applicationId = appId;
+        this.taxi = taxi;
+        this.sector = sector;
+        this.special = special;
+        this.showConfirmModal();
+    }
+
+
+
+
+
+    deleteApplicationDo(): void {
+
+        this.hideConfirmModal();
+        this.showLoader.next(true);
+        this._hds.deleteApplicationforDirector(this.applicationId).then(data => {
+            this.StudentInfoSub.unsubscribe();
+            this.CoursesPerSchoolSub.unsubscribe();
+            this.showLoader.next(false);
+            this.StudentActive = -1;
+            //this.courseActive = -1;
+
+            this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
+                this.CoursesPerSchool$.next(x);
+                this.showLoader.next(false);
+
+            },
+                error => {
+                    this.CoursesPerSchool$.next([{}]);
+                    console.log("Error Getting courses perSchool");
+                    this.showLoader.next(false);
+                });
+
+
+            this.StudentInfoSub = this._hds.getStudentPerSchool(this.taxi, this.sector, this.special)
+                .subscribe(data => {
+                    this.StudentInfo$.next(data);
+                    this.retrievedStudent.next(true);
+                    this.showLoader.next(false);
+                },
+                error => {
+                    this.StudentInfo$.next([{}]);
+                    console.log("Error Getting Students");
+                    this.showLoader.next(false);
+                    this.showModal("#emptyselection");
+                });
+
+
+        }).catch(err => {
+            this.showErrorModal();
+            this.showLoader.next(false);
+        });
+    }
 }

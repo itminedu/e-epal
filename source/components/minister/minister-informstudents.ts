@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from "@angular/core";
 import { Injectable } from "@angular/core";
 import { AppSettings } from '../../app.settings';
 import { HelperDataService } from '../../services/helper-data-service';
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
+import { Observable } from "rxjs/Observable";
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { NgRedux, select } from 'ng2-redux';
 import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
@@ -19,8 +19,6 @@ import { API_ENDPOINT } from '../../app.settings';
     <div
       class = "loading" *ngIf="successSending == -2" >
     </div>
-
-    <div style="min-height: 400px;">
 
     <div id="emaiSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -43,24 +41,67 @@ import { API_ENDPOINT } from '../../app.settings';
 
     <h5> >Αποστολή ειδοποιήσεων <br></h5>
     <br><br>
-    <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(1)" [disabled] = "!applicantsResultsDisabled" >
-          Αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
-      </button>
-    </div>
-    <br>
-    <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(2)" [disabled] = "!applicantsResultsDisabled" >
-          Αποστολή e-mail στους μαθητές που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα<span class="glyphicon glyphicon-menu-right"></span>
-      </button>
-    </div>
-    <br>
-    <div class="col-md-12">
-      <button type="submit" class="btn btn-lg btn-block"  *ngIf="(loginInfo$ | async).size !== 0"  (click)="informUnlocatedStudents(3)" [disabled] = "!applicantsResultsDisabled">
-          Αποστολή e-mail στους μαθητές που τοποθετήθηκαν<span class="glyphicon glyphicon-menu-right"></span>
-      </button>
+    <div class="row" style="margin: 2em 0 2em 0;">
+        <div class="col-md-12">
+            <h3>Αποστολή e-mail στους μαθητές που ΔΕΝ τοποθετήθηκαν</h3>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(1, 0)" [disabled] = "!applicantsResultsDisabled" >
+                Α' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(1, 1)" [disabled] = "!applicantsResultsDisabled" >
+                B' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(1, 2)" [disabled] = "!applicantsResultsDisabled" >
+                Α' και Β' Περίοδος
+            </button>
+        </div>
     </div>
 
+    <div class="row" style="margin: 2em 0 2em 0;">
+        <div class="col-md-12">
+            <h3>Αποστολή e-mail στους μαθητές που τοποθετήθηκαν προσωρινά σε ολιγομελή τμήματα</h3>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(2, 0)" [disabled] = "!applicantsResultsDisabled" >
+                Α' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(2, 1)" [disabled] = "!applicantsResultsDisabled" >
+                B' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(2, 2)" [disabled] = "!applicantsResultsDisabled" >
+                Α' και Β' Περίοδος
+            </button>
+        </div>
+    </div>
+
+    <div class="row" style="margin: 2em 0 2em 0;">
+        <div class="col-md-12">
+            <h3>Αποστολή e-mail στους μαθητές που τοποθετήθηκαν</h3>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(3, 0)" [disabled] = "!applicantsResultsDisabled" >
+                Α' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(3, 1)" [disabled] = "!applicantsResultsDisabled" >
+                B' Περίοδος
+            </button>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-lg btn-block" *ngIf="(loginInfo$ | async).size !== 0" (click)="informUnlocatedStudents(3, 2)" [disabled] = "!applicantsResultsDisabled" >
+                Α' και Β' Περίοδος
+            </button>
+        </div>
     </div>
 
    `
@@ -103,7 +144,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
         this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
+                state.loginInfo.reduce(({ }, loginInfoToken) => {
                     this.minedu_userName = loginInfoToken.minedu_username;
                     this.minedu_userPassword = loginInfoToken.minedu_userpassword;
                     return loginInfoToken;
@@ -150,27 +191,28 @@ import { API_ENDPOINT } from '../../app.settings';
         //this.isModalShown.next(false);
     }
 
-    informUnlocatedStudents(unallocated) {
+    informUnlocatedStudents(unallocated, period) {
 
         this.successSending = -2;
         this.numSuccessMails = 0;
         this.numFailMails = 0;
 
-        this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword, unallocated).subscribe(data => {
-            this.numSuccessMails = data.num_success_mail;
-            this.numFailMails = data.num_fail_mail;
-            this.successSending = 1;
+        this._hds.informUnlocatedStudents(this.minedu_userName, this.minedu_userPassword, unallocated, period)
+            .subscribe(data => {
+                this.numSuccessMails = data.num_success_mail;
+                this.numFailMails = data.num_fail_mail;
+                this.successSending = 1;
 
-            this.modalHeader.next("modal-header-success");
-            this.modalTitle.next("Κατανομή Μαθητών");
-            let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
-            if (this.numFailMails != 0) {
-                this.modalHeader.next("modal-header-warning");
-                txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
-            }
-            this.modalText.next(txtModal);
-            this.showModal();
-        },
+                this.modalHeader.next("modal-header-success");
+                this.modalTitle.next("Κατανομή Μαθητών");
+                let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
+                if (this.numFailMails != 0) {
+                    this.modalHeader.next("modal-header-warning");
+                    txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
+                }
+                this.modalText.next(txtModal);
+                this.showModal();
+            },
             error => {
                 console.log("Error");
                 this.successSending = 0;
@@ -184,19 +226,19 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     retrieveSettings() {
+        this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword)
+            .subscribe(data => {
+                this.settings$.next(data);
+                this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
 
-        this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
-            this.settings$.next(data);
-            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
-
-            if (this.applicantsResultsDisabled == false) {
-                this.modalTitle.next("Κατανομή Μαθητών");
-                this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
-                    ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές."));
-                this.modalHeader.next("modal-header-warning");
-                this.showModal();
-            }
-        },
+                if (this.applicantsResultsDisabled == false) {
+                    this.modalTitle.next("Κατανομή Μαθητών");
+                    this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
+                        ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές."));
+                    this.modalHeader.next("modal-header-warning");
+                    this.showModal();
+                }
+            },
             error => {
                 this.settings$.next([{}]);
                 console.log("Error Getting MinisterRetrieveSettings");

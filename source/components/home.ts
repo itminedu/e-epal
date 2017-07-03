@@ -23,9 +23,23 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
-<!--            <div class="text-center bg-warning" style="padding: 2em;"><p>
-            <strong>Ανακοίνωση:</strong> τη Δευτέρα <strong>26/6/2017</strong>
-            το σύστημα θα είναι διαθέσιμο<br/> <strong>μετά τις 13:00</strong> λόγω εργασιών συντήρησης.</p></div> -->
+            <div class="bg-warning" style="padding: 2em;">
+            <p>
+            <strong>Ανακοίνωση:</strong> Παρακαλείσθε να μην καταχωρείτε δήλωση προτίμησης επιλέγοντας τα παρακάτω:</p>
+            <ul>
+                <li> 9ο ΕΠΑ.Λ. Πειραιά, Β τάξη, Τομέας Ναυτιλιακών Επαγγελμάτων, Γ τάξη-Ειδικότητες Πλοίαρχος Εμπορικού Ναυτικού, Μηχανικός Εμπορικού Ναυτικού 
+                </li>
+                <li> 1ο ΕΠΑ.Λ. Δάφνης, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή 
+                </li>
+                <li> 1ο Ημερήσιο ΕΠΑ.Λ. Σιβιτανιδείου, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή 
+                </li>
+             </ul>
+             <p>Τα τμήματα έχουν πληρότητα από την 1η περίοδο κατανομής.
+            </p>
+            </div> 
+
+
+
 
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row" style="min-height: 300px; margin-top: 100px;">

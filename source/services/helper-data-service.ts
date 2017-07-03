@@ -662,7 +662,7 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-    informUnlocatedStudents(username, userpassword, unallocated) {
+    informUnlocatedStudents(username, userpassword, unallocated, period) {
 
         let headers = new Headers({
             "Content-Type": "application/json",
@@ -671,12 +671,13 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         let route = "";
-        if (unallocated == 1)
-            route = "ministry/send-unallocated-massive-mail";
-        else if (unallocated == 2)
-            route = "ministry/send-unallocated-sc-massive-mail";
-        else if (unallocated == 3)
-            route = "ministry/send-located-massive-mail";
+        if (unallocated == 1) {
+            route = "ministry/send-unallocated-massive-mail/" + period;
+        } else if (unallocated == 2) {
+            route = "ministry/send-unallocated-sc-massive-mail/" + period;
+        } else if (unallocated == 3) {
+            route = "ministry/send-located-massive-mail/" + period;
+        }
 
         return this.http.get(`${AppSettings.API_ENDPOINT}/` + route, options)
             .map(response => response.json());
@@ -1026,4 +1027,35 @@ export class HelperDataService implements OnInit, OnDestroy {
         }
 
 
+
+
+deleteApplicationforDirector(appId) {
+        this.loginInfo$.getValue().forEach(loginInfoToken => {
+            this.authToken = loginInfoToken.auth_token;
+            this.authRole = loginInfoToken.auth_role;
+        });
+        let headers = new Headers({
+            "Content-Type": "application/json",
+        });
+        this.createAuthorizationHeader(headers);
+        //        let options = new RequestOptions({ headers: headers, withCredentials: true });
+        let options = new RequestOptions({ headers: headers });
+        return new Promise((resolve, reject) => {
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/application/deleteFromDirector`, { applicationId: appId }, options)
+                .map(response => response.json())
+                .subscribe(data => {
+                    resolve(<any>data);
+                },
+                error => {
+                    console.log("Error Removing Application");
+                    reject("Error Removing Application");
+                });
+        });
+    }
+
+
+
+
 }
+
+

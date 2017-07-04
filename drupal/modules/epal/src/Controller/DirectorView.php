@@ -81,7 +81,6 @@ class DirectorView extends ControllerBase
                              'error_code' => 4003,
                          ], Response::HTTP_FORBIDDEN);
                 } elseif ($userRole === 'epal') {
-                    $selectIdNew = $selectId;
                     if ($classId == 1) {
                         $selectIdNew = -1;
                     } elseif ($classId == 2) {
@@ -555,7 +554,7 @@ class DirectorView extends ControllerBase
                     $specialityid = $object->specialty_id->entity->id();
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')
                         ->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
-                      $capacity_class_d = ($object -> capacity_class_specialty_d ->value) *25;  
+                      $capacity_class_d = ($object -> capacity_class_specialty_d ->value) *25;
                     $list[] = array(
                         'id' => $object->specialty_id->entity->id(),
                         'name' => 'Δ Λυκείου  '.$object->specialty_id->entity->get('name')->value,

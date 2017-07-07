@@ -738,6 +738,11 @@ class SubmitedApplications extends ControllerBase
                         "error_code" => 3002
                     ], Response::HTTP_FORBIDDEN);
             }
+            else if ($epalConfig->lock_application->value) {
+                return $this->respondWithStatus([
+                        "error_code" => 3002
+                    ], Response::HTTP_FORBIDDEN);
+            }
 
 
 

@@ -386,8 +386,6 @@ class ApplicationSubmit extends ControllerBase
 
             $existing = $esQuery->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-/*            $existing = $this->entityTypeManager->getStorage('epal_student')
-                ->loadByProperties(['epaluser_id' => $epalUser->id->value]); */
             if ($existing && sizeof($existing) > 0) {
                 $crypt = new Crypt();
                 foreach ($existing as $candidate) {

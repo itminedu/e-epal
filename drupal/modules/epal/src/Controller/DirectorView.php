@@ -50,7 +50,7 @@ class DirectorView extends ControllerBase
                         "error_code" => 3001
                     ], Response::HTTP_FORBIDDEN);
             }
-            if ($epalConfig->lock_students->value) {
+            if ($epalConfig->lock_school_students_view->value) {
                 return $this->respondWithStatus([
                         "error_code" => 3002
                     ], Response::HTTP_FORBIDDEN);

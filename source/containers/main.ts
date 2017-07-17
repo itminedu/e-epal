@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, OnDestroy }
 import {
   Router,
   ActivatedRoute,
+  NavigationStart
 }
  from '@angular/router';
 import './globalstyles.css';
@@ -34,10 +35,18 @@ export default class Main {
     private _ngRedux: NgRedux<IAppState>,
     private _devTools: DevToolsExtension
   ) {
-    router.events.subscribe((data) => {
+/*      router.events
+      .filter((e: Event) => e instanceof NavigationStart)
+      .subscribe((e: NavigationStart) => {
+            console.log(e.url);
+            console.log(e.toString());
+            this.path = e.url.substr(1);
+            this.pathSchool = e.url.substr(1);
+        }); */
+/*    router.events.subscribe((data) => {
       this.path = data.url.substr(1);
       this.pathSchool = data.url.substr(1);
-    });
+  }); */
 
 
     const tools = _devTools.enhancer({
@@ -46,9 +55,9 @@ export default class Main {
     _ngRedux.configureStore(
       rootReducer,
       {},
-//      middleware,
+      middleware,
 //      tools ? [ ...enhancers, tools ] : enhancers);
-//      tools);
-      );
+      tools);
+//      );
   }
 }

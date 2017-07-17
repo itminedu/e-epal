@@ -17,7 +17,7 @@ export class AuthService {
     };
 
     isLoggedIn(role) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {
@@ -38,13 +38,13 @@ export class AuthService {
             },
                 error => {
                     console.log("Error Getting Auth Data");
-                    reject("Error Getting Auth Data");
+                    reject(false);
                 });
         });
     }
 
     isLoggedInForReports(role1,role2,role3) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {
@@ -71,7 +71,7 @@ export class AuthService {
     }
 
     isApplicationLocked(role) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {
@@ -96,7 +96,7 @@ export class AuthService {
     }
 
     isStudentsLocked(role) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {
@@ -121,7 +121,7 @@ export class AuthService {
     }
 
     isCapacityLocked(role) {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select(state => {
                 return state.loginInfo;
             }).subscribe(loginInfo => {

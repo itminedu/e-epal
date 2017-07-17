@@ -1,11 +1,12 @@
-import { IRegions, IRegion, IRegionSchool } from './regionschools.types';
+import { IRegions, IRegion, IRegionM, RegionSchool } from './regionschools.types';
 import { regionSchoolsReducer } from './regionschools.reducer';
 import { deimmutifyRegionSchools } from './regionschools.transformers';
 
 export {
   IRegion,
+  IRegionM,
   IRegions,
-  IRegionSchool,
+  RegionSchool,
   regionSchoolsReducer,
   deimmutifyRegionSchools,
 };

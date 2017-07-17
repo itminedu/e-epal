@@ -82,7 +82,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
             this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
             this.TotalStudents$.next(x);
             this.showLoader.next(false);
-            this.hasvalue = true; 
+            this.hasvalue = true;
             },
             error => {
                 this.TotalStudents$.next([{}]);

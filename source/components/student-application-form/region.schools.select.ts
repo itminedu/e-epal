@@ -32,7 +32,7 @@ import {AppSettings} from '../../app.settings';
              <breadcrumbs></breadcrumbs>
     </div>
 
-    <div class = "loading" *ngIf="(regions$ | async).size === 0">
+    <div class = "loading" *ngIf="!(regions$ | async)">
     </div>
     <!-- <div class="row equal">
       <div class="col-md-12"> -->
@@ -66,20 +66,20 @@ import {AppSettings} from '../../app.settings';
             <ul class="list-group main-view">
             <div *ngFor="let region$ of regions$ | async; let i=index; let isOdd=odd; let isEven=even"  >
                 <li class="list-group-item isclickable" (click)="setActiveRegion(i)" [class.oddout]="isOdd" [class.evenout]="isEven" [class.selectedout]="regionActive === i">
-                    <h5>{{region$.region_name}}</h5>
+                    <h5>{{region$.get("region_name")}}</h5>
                 </li>
 
-                <div *ngFor="let epal$ of region$.epals; let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [hidden]="i !== regionActive">
+                <div *ngFor="let epal$ of region$.get('epals'); let j=index; let isOdd2=odd; let isEven2=even" [class.oddin]="isOdd2" [class.evenin]="isEven2" [hidden]="i !== regionActive">
 
                         <div class="row">
                             <div class="col-md-2 col-md-offset-1">
-                                <input #cb type="checkbox" formControlName="{{ epal$.globalIndex }}"
+                                <input #cb type="checkbox" formControlName="{{ epal$.get('globalIndex') }}"
                                 (change)="saveSelected(cb.checked,i,j)"
                                 [hidden] = "(numSelected | async) === 3 && cb.checked === false"
                                 >
                              </div>
                             <div class="col-md-8  col-md-offset-1 isclickable">
-                                {{epal$.epal_name | removeSpaces}}
+                                {{epal$.get("epal_name") | removeSpaces}}
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@ import {AppSettings} from '../../app.settings';
             </div>
             </ul>
         </div>
-        <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(regions$ | async).size > 0">
+        <div class="row" style="margin-top: 20px; margin-bottom: 20px;" *ngIf="(regions$ | async)">
         <div class="col-md-6">
             <button type="button" class="btn-primary btn-lg pull-left isclickable" (click)="navigateBack()" >
           <i class="fa fa-backward"></i>
@@ -109,6 +109,7 @@ import {AppSettings} from '../../app.settings';
         </div>
         </div>
     </form>
+<!--     <pre>{{formGroup.value | json}}</pre> -->
     </div>
   `
 })
@@ -233,20 +234,28 @@ import {AppSettings} from '../../app.settings';
             let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
             this.selectionLimitOptional.next(false);
 
+            console.log("numsel="+numsel);
+            console.log(state.regions);
+            console.log(state.regions.size);
+            console.log(this.regions$.getValue());
+            if (state.regions.size === 0)
+                return;
+
             state.regions.reduce((prevRegion, region) =>{
                 numreg++;
-                region.epals.reduce((prevEpal, epal) =>{
-                    this.rss.push( new FormControl(epal.selected, []));
-                    if (epal.selected === true) {
+                region.get("epals").reduce((prevEpal, epal) =>{
+                    this.rss.push( new FormControl(epal.get("selected"), []));
+                    if (epal.get("selected") === true) {
                       numsel++;
-                      if ( epal.epal_special_case === "1") {
+                      console.log("numsel2="+numsel);
+                      if ( epal.get("epal_special_case") === "1") {
                         this.selectionLimitOptional.next(true);
                       }
                       this.regionActiveId = Number(region.region_id);
                       this.regionActive = numreg - 1;
                     }
                     if (Number(region.region_id) ===  this.regionActiveId)  {
-                      if (region.epals.length < this.regionSizeLimit)
+                      if (region.get("epals").length < this.regionSizeLimit)
                         this.selectionLimitOptional.next(true);
                     }
                     return epal;
@@ -254,9 +263,12 @@ import {AppSettings} from '../../app.settings';
 
                 return region;
             }, {});
+
+            console.log("numsel3="+numsel);
             this.numSelected.next(numsel);
             return state.regions;
         }).subscribe(this.regions$);
+
     }
 
     setClassActive(className) {
@@ -327,12 +339,12 @@ import {AppSettings} from '../../app.settings';
       //  if ( (this.selectionLimitOptional.value === false /*&& this.classNight.value === false */  && this.numSelected.value < this.selectionLimit.value )
       //        || (this.numSelected.value === 0) )    {
 
-      if ( this.numSelected.value === 0)     {
+      if ( this.numSelected.getValue() === 0)     {
 
           //this.modalHeader = "modal-header-success";
           this.modalHeader.next("modal-header-danger");
           this.modalTitle.next("Επιλογή αριθμού σχολείων");
-          if (this.numSelected.value === 0)
+          if (this.numSelected.getValue() === 0)
             this.modalText.next("Δεν έχετε επιλέξει κανένα σχολείο!");
           /*
           else

@@ -66,12 +66,12 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
             </ul>
         </div>
 
-        <ul *ngIf="(regions$ | async).size > 0" class="list-group left-side-view" style="margin-bottom: 20px;">
+        <ul *ngIf="(regions$ | async)" class="list-group left-side-view" style="margin-bottom: 20px;">
 
                 <div *ngFor="let epal$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even" >
 
                 <li class="list-group-item" [class.oddout]="isOdd" [class.evenout]="isEven">
-                    <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{epal$.epal_name}}
+                    <span class="roundedNumber">{{(i+1)}}</span>&nbsp;&nbsp;{{epal$.get("epal_name")}}
                 </li>
               </div>
         </ul>
@@ -124,13 +124,17 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0, numsel2 = 0;
             let selectedSchools = Array<IRegionSchool>();
+            if (state.regions.size === 0)
+                return;
+            console.log(state.regions);
             state.regions.reduce((prevRegion, region) => {
-                region.epals.reduce((prevEpal, epal) => {
-                    if (epal.selected === true) {
+                console.log(region);
+                region.get("epals").reduce((prevEpal, epal) => {
+                    if (epal.get("selected") === true) {
                         numsel++;
                         selectedSchools.push(epal);
                     }
-                    if (epal.order_id !== 0) {
+                    if (epal.get("order_id") !== 0) {
                         numsel2++;
                     }
                     return epal;

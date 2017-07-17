@@ -272,8 +272,8 @@ import {Location} from '@angular/common';
     }
 
     ngOnDestroy() {
-        (<any>$('#applicationDeleteConfirm')).remove();
-        (<any>$('#applicationDeleteError')).remove();
+        (<any>jQuery('#applicationDeleteConfirm')).remove();
+        (<any>jQuery('#applicationDeleteError')).remove();
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
@@ -284,8 +284,8 @@ import {Location} from '@angular/common';
 
     ngOnInit() {
 
-        (<any>$('#applicationDeleteConfirm')).appendTo("body");
-        (<any>$('#applicationDeleteError')).appendTo("body");
+        (<any>jQuery('#applicationDeleteConfirm')).appendTo("body");
+        (<any>jQuery('#applicationDeleteError')).appendTo("body");
         this.showLoader$.next(true);
 
         this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
@@ -356,18 +356,18 @@ import {Location} from '@angular/common';
     }
 
     public showConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('show');
+        (<any>jQuery('#applicationDeleteConfirm')).modal('show');
     }
 
     public showErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('show');
+        (<any>jQuery('#applicationDeleteError')).modal('show');
     }
 
     public hideConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('hide');
+        (<any>jQuery('#applicationDeleteConfirm')).modal('hide');
     }
     public hideErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('hide');
+        (<any>jQuery('#applicationDeleteError')).modal('hide');
     }
 
     public onHidden(): void {

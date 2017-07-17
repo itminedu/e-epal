@@ -436,9 +436,9 @@ class SubmitedApplications extends ControllerBase
                             'name' => $name_decoded,
                             'studentsurname' => $studentsurname_decoded,
                             'fatherfirstname' => $fatherfirstname_decoded,
-                            'fathersurname' => $epalStudent->fathersurname,
+                            'fathersurname' => '',
                             'motherfirstname' => $motherfirstname_decoded,
-                            'mothersurname' => $epalStudent->mothersurname,
+                            'mothersurname' => '',
                             'guardian_name' => $guardian_name_decoded,
                             'guardian_surname' => $guardian_surname_decoded,
                             'guardian_fathername' => $guardian_fathername_decoded,
@@ -720,7 +720,7 @@ class SubmitedApplications extends ControllerBase
         }
 
 
-        
+
         $transaction = $this->connection->startTransaction();
         try {
             //ανάκτηση τιμής από ρυθμίσεις διαχειριστή για lock_school_students_view
@@ -749,7 +749,7 @@ class SubmitedApplications extends ControllerBase
                 if ($epalStudent) {
                     $epalStudentClasses = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('student_id' => $applicationId));
                     $epalStudentClass = reset($epalStudentClasses);
-                  
+
                     if ($epalStudentClass)  {
                       if ($epalStudentClass->directorconfirm->value === "1")  {
                         return $this->respondWithStatus([

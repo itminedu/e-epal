@@ -40,6 +40,7 @@ import RegionEduAuthGuard from './guards/regionedu.auth.guard';
 import EduAdminAuthGuard from './guards/eduadmin.auth.guard';
 import MinistryAuthGuard from './guards/ministry.auth.guard';
 
+import * as $ from 'jquery';
 import { ACTION_PROVIDERS } from './actions';
 import Home from './components/home';
 import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
@@ -101,5 +102,5 @@ class MyLocalization extends NgLocalization {
 })
 class AppModule {}
 
-enableProdMode();
+// enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);

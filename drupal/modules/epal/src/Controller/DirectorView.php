@@ -50,7 +50,7 @@ class DirectorView extends ControllerBase
                         "error_code" => 3001
                     ], Response::HTTP_FORBIDDEN);
             }
-            if ($epalConfig->lock_students->value) {
+            if ($epalConfig->lock_school_students_view->value) {
                 return $this->respondWithStatus([
                         "error_code" => 3002
                     ], Response::HTTP_FORBIDDEN);
@@ -555,7 +555,7 @@ class DirectorView extends ControllerBase
                     $specialityid = $object->specialty_id->entity->id();
                     $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')
                         ->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 4));
-                      $capacity_class_d = ($object -> capacity_class_specialty_d ->value) *25;  
+                      $capacity_class_d = ($object -> capacity_class_specialty_d ->value) *25;
                     $list[] = array(
                         'id' => $object->specialty_id->entity->id(),
                         'name' => 'Δ Λυκείου  '.$object->specialty_id->entity->get('name')->value,

@@ -1,6 +1,6 @@
-import { IRegions, IRegion, IRegionSchool } from './regionschools.types';
+import { IRegions, Region, IRegion, IRegionM, RegionSchool, IRegionSchools } from './regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from './regionschools.initial-state';
-import { Seq } from 'immutable';
+import { Seq, Map, fromJS } from 'immutable';
 
 import {
   REGIONSCHOOLS_RECEIVED,
@@ -12,28 +12,42 @@ import {
 export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_STATE, action): IRegions {
   switch (action.type) {
     case REGIONSCHOOLS_RECEIVED:
-        let newRegions = Array<IRegion>();
+        let newRegions = Array<Region>();
         let i=0;
         action.payload.regions.forEach(region => {
-            newRegions.push(<IRegion>{region_id: region.region_id, region_name: region.region_name, epals: Array<IRegionSchool>() });
+            newRegions.push(<any>{region_id: region.region_id, region_name: region.region_name, epals: <any>[] });
             region.epals.forEach(epal => {
-                newRegions[i].epals.push(<IRegionSchool>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id });
+                newRegions[i].epals.push(<any>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id });
             })
             i++;
         });
-        return Seq(newRegions).map(n => n).toList();
+        return fromJS(newRegions);
     case REGIONSCHOOLS_SELECTED_SAVE:
-        let ind=0;
-        state.forEach(region => {
+//        let ind=0;
+        let region: IRegionM;
+        let epals: IRegionSchools;
+        region = state.get(action.payload.rIndex);
+        console.log(region);
+
+        epals = region.get("epals").epals;
+        let epal = epals.get(action.payload.sIndex);
+        epal.set("selected", action.payload.checked);
+        region = region.set("epals", epals.set(action.payload.sIndex,
+            epal.set("selected", action.payload.checked)));
+        return state
+            .set(action.payload.rIndex, region);
+
+/*        state.forEach(region => {
             if (ind === action.payload.rIndex) {
-                region.epals[action.payload.sIndex].selected = action.payload.checked;
+                let regionCopy = state.get(ind);
+                regionCopy.epals[action.payload.sIndex].selected = action.payload.checked;
                 return state.withMutations(function (list) {
-                    list.set(ind++, region);
+                    list.set(ind++, regionCopy);
                 });
             }
             ind++;
-        });
-        return state;
+        }); */
+//        return state;
 
     case REGIONSCHOOLS_ORDER_SAVE:
         let ind2=0;

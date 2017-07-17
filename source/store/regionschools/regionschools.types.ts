@@ -1,12 +1,13 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 
-export interface IRegion {
+
+export interface Region {
     region_id: string;
     region_name: string;
-    epals: IRegionSchool[];
+    epals: RegionSchool[];
 }
 
-export interface IRegionSchool {
+export interface RegionSchool {
     epal_id: string;
     epal_name: string;
     epal_special_case: string;
@@ -15,4 +16,14 @@ export interface IRegionSchool {
     order_id: number;
 }
 
-export type IRegions = List<IRegion>;
+export interface IRegion {
+    region_id: string;
+    region_name: string;
+    epals: IRegionSchools;
+}
+
+export type IRegions = List<IRegionM>;
+// export type IRegionM = Map<IRegion>;
+export type IRegionM = Map<string, IRegion>;
+export type IRegionSchoolM = Map<string, RegionSchool>;
+export type IRegionSchools = Map<string, List<IRegionSchoolM>>;

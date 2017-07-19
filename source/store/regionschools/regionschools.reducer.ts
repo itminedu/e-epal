@@ -1,6 +1,7 @@
-import { IRegions, Region, IRegion, IRegionM, RegionSchool, IRegionSchools } from './regionschools.types';
+import { IRegions, Region, IRegion, IRRegion, IRegionM, RegionSchool, IRRegionSchool, IRegionSchools, IRegionSchoolRecord, IRegionSchoolRecords, IRegionRecord } from './regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from './regionschools.initial-state';
 import { Seq, Map, fromJS } from 'immutable';
+import {recordify} from 'typed-immutable-record';
 
 import {
   REGIONSCHOOLS_RECEIVED,
@@ -9,33 +10,58 @@ import {
   REGIONSCHOOLS_INIT
 } from '../../constants';
 
-export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_STATE, action): IRegions {
+export function regionSchoolsReducer(state: IRegionRecord[] = REGION_SCHOOLS_INITIAL_STATE, action): IRegionRecord[] {
   switch (action.type) {
     case REGIONSCHOOLS_RECEIVED:
-        let newRegions = Array<Region>();
-        let i=0;
+        let newRegions = Array<IRegionRecord>();
+        let i=0, j=0;
+        let ii=0;
+
         action.payload.regions.forEach(region => {
-            newRegions.push(<any>{region_id: region.region_id, region_name: region.region_name, epals: <any>[] });
             region.epals.forEach(epal => {
-                newRegions[i].epals.push(<any>{epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id });
+                if (j !== i || (i === 0 && ii===0)) {
+                    newRegions.push(recordify<IRRegion, IRegionRecord>({region_id: region.region_id, region_name: region.region_name, epals: new Array(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id })) }));
+                    j = i;
+                } else
+                    newRegions[i].epals.push(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id }));
+                ii++;
             })
             i++;
         });
-        return fromJS(newRegions);
+        return newRegions;
     case REGIONSCHOOLS_SELECTED_SAVE:
 //        let ind=0;
-        let region: IRegionM;
-        let epals: IRegionSchools;
-        region = state.get(action.payload.rIndex);
-        console.log(region);
+        let region: IRegionRecord;
 
-        epals = region.get("epals").epals;
-        let epal = epals.get(action.payload.sIndex);
-        epal.set("selected", action.payload.checked);
-        region = region.set("epals", epals.set(action.payload.sIndex,
-            epal.set("selected", action.payload.checked)));
-        return state
-            .set(action.payload.rIndex, region);
+        region = state[action.payload.rIndex];
+        let newState = Array<IRegionRecord>();
+
+        i=0, j=0;
+        ii=0;
+        state.forEach(region => {
+            let epals: IRegionSchoolRecords;
+            epals = region.get("epals");
+            ii=0;
+            epals.forEach(epal => {
+                if (j !== i || (i === 0 && ii===0)) {
+                    if (i===action.payload.rIndex && ii===action.payload.sIndex)
+                        newState.push(recordify<IRRegion, IRegionRecord>({region_id: region.region_id, region_name: region.region_name, epals: new Array(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: action.payload.checked, order_id: epal.order_id })) }));
+                    else
+                        newState.push(recordify<IRRegion, IRegionRecord>({region_id: region.region_id, region_name: region.region_name, epals: new Array(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id })) }));
+                    j = i;
+                } else {
+                    if (i===action.payload.rIndex && ii===action.payload.sIndex)
+                        newState[i].epals.push(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: action.payload.checked, order_id: epal.order_id }));
+                    else
+                        newState[i].epals.push(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: epal.order_id }));
+                }
+                ii++;
+            })
+            i++;
+
+        })
+
+        return newState;
 
 /*        state.forEach(region => {
             if (ind === action.payload.rIndex) {
@@ -50,39 +76,37 @@ export function regionSchoolsReducer(state: IRegions = REGION_SCHOOLS_INITIAL_ST
 //        return state;
 
     case REGIONSCHOOLS_ORDER_SAVE:
+        region = state[action.payload.rIndex];
+        let newState2 = Array<IRegionRecord>();
+
+        i=0, j=0;
         let ind2=0;
         state.forEach(region => {
-            for(let i=0; i<region.epals.length; i++){
-                if (region.epals[i].globalIndex === action.payload.selectedSchools[0].globalIndex) {
-                    region.epals[i].order_id = action.payload.selectedSchools[0].order_id
-                    return state.withMutations(function (list) {
-                        list.set(ind2++, region);
-                    });
+            let epals: IRegionSchoolRecords;
+            epals = region.get("epals");
+            epals.forEach(epal => {
+                let newOrderId = epal.order_id;
+                for (let jjj=0; jjj<3; jjj++) {
+                    if (typeof action.payload.selectedSchools[jjj] !== 'undefined' &&
+                            epal.globalIndex === action.payload.selectedSchools[jjj].globalIndex) {
+                        newOrderId = action.payload.selectedSchools[jjj].order_id;
+                        break;
+                    }
                 }
-                if (typeof action.payload.selectedSchools[1] !== 'undefined' &&
-                  region.epals[i].globalIndex === action.payload.selectedSchools[1].globalIndex) {
-                    region.epals[i].order_id = action.payload.selectedSchools[1].order_id
-                    return state.withMutations(function (list) {
-                        list.set(ind2++, region);
-                    });
+                if (j !== i || i === 0) {
+                    newState2.push(recordify<IRRegion, IRegionRecord>({region_id: region.region_id, region_name: region.region_name, epals: new Array(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: newOrderId })) }));
+                    j = i;
+                } else {
+                    newState2[i].epals.push(recordify<IRRegionSchool, IRegionSchoolRecord>({epal_id: epal.epal_id, epal_name: epal.epal_name, epal_special_case: epal.epal_special_case, globalIndex: epal.globalIndex, selected: epal.selected, order_id: newOrderId }));
                 }
-                if (typeof action.payload.selectedSchools[2] !== 'undefined' &&
-                    region.epals[i].globalIndex === action.payload.selectedSchools[2].globalIndex) {
-                      region.epals[i].order_id = action.payload.selectedSchools[2].order_id
-                      return state.withMutations(function (list) {
-                          list.set(ind2++, region);
-                      });
-                  }
-                //}
+            });
+            i++;
 
-
-            }
-            ind2++;
         });
-        return state;
 
-        case REGIONSCHOOLS_INIT:
-            return REGION_SCHOOLS_INITIAL_STATE;
+        return newState2;
+    case REGIONSCHOOLS_INIT:
+        return REGION_SCHOOLS_INITIAL_STATE;
     default: return state;
   }
 };

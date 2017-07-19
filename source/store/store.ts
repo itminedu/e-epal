@@ -15,7 +15,7 @@ import * as criter from './criteria';
 export interface IAppState {
     courseFields?: courseFields.ICourseFields;
     sectorFields?: sectorFields.ISectorFields;
-    regions?: regions.IRegions;
+    regions?: regions.IRegionRecord[];
     sectors?: sectors.ISectors;
     studentDataFields?: studentDataFields.IStudentDataFields;
     epalclasses?: epalclasses.IEpalClasses;

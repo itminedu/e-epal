@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { IAppState } from '../../store/store';
 import {AppSettings} from '../../app.settings';
@@ -15,8 +15,9 @@ import {AppSettings} from '../../app.settings';
     <div class="row">
              <breadcrumbs></breadcrumbs>
     </div>
-    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || (regions$ | async).size === 0">
+    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || !(regions$ | async) || ((regions$ | async).length === 1 &&  (regions$ | async)[0].region_id === null)">
     </div>
+
     <h4> Σειρά προτίμησης</h4>
     <p style="margin-top: 20px; line-height: 2em;" *ngIf = "(selectedSchools$ | async).length === 1" >Έχετε επιλέξει το παρακάτω σχολείο. Εάν συμφωνείτε με την επιλογή σας
     πατήστε Συνέχεια, διαφορετικά μπορείτε να τροποποιήστε τις επιλογές σας επιστρέφοντας στην προηγούμενη οθόνη από το αριστερό βέλος κάτω αριστερά.</p>
@@ -50,9 +51,9 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
     //    public formGroup: FormGroup;
-    private regions$: BehaviorSubject<IRegions>;
+    private regions$: BehaviorSubject<Array<IRegionRecord>>;
     private regionsSub: Subscription;
-    private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
+    private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
 
     constructor(private _cfa: RegionSchoolsActions,
         private _ngRedux: NgRedux<IAppState>,
@@ -62,12 +63,12 @@ import {AppSettings} from '../../app.settings';
 
     ngOnInit() {
         this.regionsSub = this._ngRedux.select(state => {
-            let selectedSchools = Array<IRegionSchool>();
+            let selectedSchools = Array<IRegionSchoolRecord>();
 
             state.regions.reduce((prevRegion, region) => {
-                region.epals.reduce((prevEpal, epal) => {
-                    if (epal.selected === true) {
-                        selectedSchools.push(epal);
+                region.get("epals").reduce((prevEpal, epal) => {
+                    if (epal.get("selected") === true) {
+                        selectedSchools.push(epal.toJS());
                     }
 
                     return epal;
@@ -97,7 +98,7 @@ import {AppSettings} from '../../app.settings';
         if (this.regions$) this.regions$.unsubscribe();
     }
 
-    compareSchools(a: IRegionSchool, b: IRegionSchool) {
+    compareSchools(a: IRegionSchoolRecord, b: IRegionSchoolRecord) {
         if (a.order_id < b.order_id)
             return -1;
         if (a.order_id > b.order_id)
@@ -106,7 +107,7 @@ import {AppSettings} from '../../app.settings';
     }
 
     changeOrder(i) {
-        let selectedSchools = Array<IRegionSchool>();
+        let selectedSchools = Array<IRegionSchoolRecord>();
         selectedSchools = this.selectedSchools$.getValue();
 
         if (i === 1) {

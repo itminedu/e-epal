@@ -10,7 +10,7 @@ import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { IRegions, IRegionSchool } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
@@ -80,8 +80,8 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
 @Injectable() export default class ApplicationPreview implements OnInit {
     private sectors$: BehaviorSubject<ISectors>;
-    private regions$: BehaviorSubject<IRegions>;
-    private selectedSchools$: BehaviorSubject<Array<IRegionSchool>> = new BehaviorSubject(Array());
+    private regions$: BehaviorSubject<Array<IRegionRecord>>;
+    private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private sectorsSub: Subscription;
@@ -123,12 +123,10 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0, numsel2 = 0;
-            let selectedSchools = Array<IRegionSchool>();
-            if (state.regions.size === 0)
+            let selectedSchools = Array<IRegionSchoolRecord>();
+            if (state.regions.length === 0 || state.regions[0].get("region_id") === null)
                 return;
-            console.log(state.regions);
             state.regions.reduce((prevRegion, region) => {
-                console.log(region);
                 region.get("epals").reduce((prevEpal, epal) => {
                     if (epal.get("selected") === true) {
                         numsel++;
@@ -172,7 +170,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
     }
 
-    compareSchools(a: IRegionSchool,b: IRegionSchool) {
+    compareSchools(a: IRegionSchoolRecord,b: IRegionSchoolRecord) {
         if (a.order_id < b.order_id)
             return -1;
         if (a.order_id > b.order_id)

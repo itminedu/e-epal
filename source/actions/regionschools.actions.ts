@@ -12,7 +12,7 @@ export class RegionSchoolsActions {
 
   getRegionSchools = (classActive,courseActive, reload) => {
     const { regions } = this._ngRedux.getState();
-    if (reload === true || (reload === false && regions.size === 0)) {
+    if (reload === true || (reload === false && (regions.length === 0 || regions[0].get("region_id") === null))) {
         return this._hds.getRegionsWithSchools(classActive,courseActive).then(regions => {
             return this._ngRedux.dispatch({
                 type: REGIONSCHOOLS_RECEIVED,

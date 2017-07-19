@@ -6,7 +6,7 @@ import { Injectable } from "@angular/core";
 import { NgRedux, select } from "ng2-redux";
 import { IAppState } from "../../store/store";
 import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
-import { IRegions } from "../../store/regionschools/regionschools.types";
+import { IRegionRecord, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
 import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
@@ -106,7 +106,7 @@ import { HelperDataService } from "../../services/helper-data-service";
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
+            <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (regions$ | async) && (regions$ | async).length > 0 && (regions$ | async)[0].region_id !== null && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
                 <span style="font-size: 0.9em; font-weight: bold;">Υποβολή&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -124,7 +124,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private classSelected;
     private totalPoints = <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
-    private regions$: BehaviorSubject<IRegions>;
+    private regions$: BehaviorSubject<Array<IRegionRecord>>;
     private sectors$: BehaviorSubject<ISectors>;
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;

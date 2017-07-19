@@ -4,7 +4,7 @@ import { BehaviorSubject } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import { ICourseField } from "../store/coursefields/coursefields.types";
 import { ISectorField } from "../store/sectorfields/sectorfields.types";
-import { IRegion, IRegions, IRegionSchool } from "../store/regionschools/regionschools.types";
+import { IRegionRecord, IRegionSchoolRecord, IRRegion, IRRegionSchool } from "../store/regionschools/regionschools.types";
 import { ISector, ISectors, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
 import { AppSettings } from "../app.settings";
 import { NgRedux, select } from "ng2-redux";
@@ -278,7 +278,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     };
 
     transformRegionSchoolsSchema(regionSchools: any) {
-        let rsa = Array<IRegion>();
+        let rsa = Array<IRRegion>();
         let trackRegionId: string;
         let trackIndex: number;
 
@@ -289,10 +289,10 @@ export class HelperDataService implements OnInit, OnDestroy {
         regionSchools.forEach(regionSchool => {
             if (trackRegionId !== regionSchool.region_id) {
                 trackIndex++;
-                rsa.push(<IRegion>{ "region_id": regionSchool.region_id, "region_name": regionSchool.region_name, "epals": Array<IRegionSchool>() });
+                rsa.push(<IRRegion>{ "region_id": regionSchool.region_id, "region_name": regionSchool.region_name, "epals": Array<IRRegionSchool>() });
                 trackRegionId = regionSchool.region_id;
             }
-            rsa[trackIndex].epals.push(<IRegionSchool>{ "epal_id": regionSchool.epal_id, "epal_name": regionSchool.epal_name, "epal_special_case": regionSchool.epal_special_case, "globalIndex": j, "selected": false, "order_id": 0 });
+            rsa[trackIndex].epals.push(<IRRegionSchool>{ "epal_id": regionSchool.epal_id, "epal_name": regionSchool.epal_name, "epal_special_case": regionSchool.epal_special_case, "globalIndex": j, "selected": false, "order_id": 0 });
             j++;
         });
         return rsa;
@@ -1057,5 +1057,3 @@ deleteApplicationforDirector(appId) {
 
 
 }
-
-

@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { NgRedux, select } from 'ng2-redux';
-import { IRegions } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
@@ -32,7 +32,7 @@ import {AppSettings} from '../../app.settings';
              <breadcrumbs></breadcrumbs>
     </div>
 
-    <div class = "loading" *ngIf="!(regions$ | async)">
+    <div class = "loading" *ngIf="!(regions$ | async) || (regions$ | async)[0].region_id===null">
     </div>
     <!-- <div class="row equal">
       <div class="col-md-12"> -->
@@ -115,7 +115,7 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
     private epalclasses$: BehaviorSubject<IEpalClasses>;
-    private regions$: BehaviorSubject<IRegions>;
+    private regions$: BehaviorSubject<IRegionRecord[]>;
     private sectors$: BehaviorSubject<ISectors>;
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclassesSub: Subscription;
@@ -234,11 +234,7 @@ import {AppSettings} from '../../app.settings';
             let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
             this.selectionLimitOptional.next(false);
 
-            console.log("numsel="+numsel);
-            console.log(state.regions);
-            console.log(state.regions.size);
-            console.log(this.regions$.getValue());
-            if (state.regions.size === 0)
+            if (state.regions.length === 0 || state.regions[0].get("region_id") === null)
                 return;
 
             state.regions.reduce((prevRegion, region) =>{
@@ -247,7 +243,6 @@ import {AppSettings} from '../../app.settings';
                     this.rss.push( new FormControl(epal.get("selected"), []));
                     if (epal.get("selected") === true) {
                       numsel++;
-                      console.log("numsel2="+numsel);
                       if ( epal.get("epal_special_case") === "1") {
                         this.selectionLimitOptional.next(true);
                       }
@@ -264,7 +259,6 @@ import {AppSettings} from '../../app.settings';
                 return region;
             }, {});
 
-            console.log("numsel3="+numsel);
             this.numSelected.next(numsel);
             return state.regions;
         }).subscribe(this.regions$);

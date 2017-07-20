@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { NgRedux, select } from 'ng2-redux';
-import { IRegionRecord } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord, IRegionRecords } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
@@ -32,7 +32,7 @@ import {AppSettings} from '../../app.settings';
              <breadcrumbs></breadcrumbs>
     </div>
 
-    <div class = "loading" *ngIf="!(regions$ | async) || (regions$ | async)[0].region_id===null">
+    <div class = "loading" *ngIf="!(regions$ | async) || (regions$ | async).size===0">
     </div>
     <!-- <div class="row equal">
       <div class="col-md-12"> -->
@@ -115,7 +115,7 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
     private epalclasses$: BehaviorSubject<IEpalClasses>;
-    private regions$: BehaviorSubject<IRegionRecord[]>;
+    private regions$: BehaviorSubject<IRegionRecords>;
     private sectors$: BehaviorSubject<ISectors>;
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclassesSub: Subscription;
@@ -234,7 +234,7 @@ import {AppSettings} from '../../app.settings';
             let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
             this.selectionLimitOptional.next(false);
 
-            if (state.regions.length === 0 || state.regions[0].get("region_id") === null)
+            if (state.regions.size === 0)
                 return;
 
             state.regions.reduce((prevRegion, region) =>{

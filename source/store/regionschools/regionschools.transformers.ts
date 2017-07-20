@@ -1,6 +1,6 @@
-import { IRegionRecord } from './regionschools.types';
+import { IRegionRecord, IRegionRecords } from './regionschools.types';
 
-export function deimmutifyRegionSchools(state: IRegionRecord[]): IRegionRecord[] {
+export function deimmutifyRegionSchools(state: IRegionRecords): IRegionRecords {
 //    let fetchedRegions =  new Array<IRegion>();
 //    let i = 0;
 

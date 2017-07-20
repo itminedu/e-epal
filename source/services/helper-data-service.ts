@@ -32,8 +32,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         private _ngRedux: NgRedux<IAppState>,
         private _cookieService: CookieService) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-
-
     };
 
     ngOnInit() {
@@ -278,7 +276,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     };
 
     transformRegionSchoolsSchema(regionSchools: any) {
-        let rsa = Array<IRRegion>();
+        let rsa = Array<any>();
         let trackRegionId: string;
         let trackIndex: number;
 
@@ -289,7 +287,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         regionSchools.forEach(regionSchool => {
             if (trackRegionId !== regionSchool.region_id) {
                 trackIndex++;
-                rsa.push(<IRRegion>{ "region_id": regionSchool.region_id, "region_name": regionSchool.region_name, "epals": Array<IRRegionSchool>() });
+                rsa.push(<any>{ "region_id": regionSchool.region_id, "region_name": regionSchool.region_name, "epals": Array<any>() });
                 trackRegionId = regionSchool.region_id;
             }
             rsa[trackIndex].epals.push(<IRRegionSchool>{ "epal_id": regionSchool.epal_id, "epal_name": regionSchool.epal_name, "epal_special_case": regionSchool.epal_special_case, "globalIndex": j, "selected": false, "order_id": 0 });

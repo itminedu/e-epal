@@ -10,7 +10,7 @@ import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { IRegionRecord, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import {AppSettings} from '../../app.settings';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
@@ -80,7 +80,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
 @Injectable() export default class ApplicationPreview implements OnInit {
     private sectors$: BehaviorSubject<ISectors>;
-    private regions$: BehaviorSubject<Array<IRegionRecord>>;
+    private regions$: BehaviorSubject<IRegionRecords>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
@@ -124,7 +124,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
         this.regionsSub = this._ngRedux.select(state => {
             let numsel = 0, numsel2 = 0;
             let selectedSchools = Array<IRegionSchoolRecord>();
-            if (state.regions.length === 0 || state.regions[0].get("region_id") === null)
+            if (state.regions.size === 0)
                 return;
             state.regions.reduce((prevRegion, region) => {
                 region.get("epals").reduce((prevEpal, epal) => {

@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { NgRedux, select } from 'ng2-redux';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegionRecord, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
+import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { IAppState } from '../../store/store';
 import {AppSettings} from '../../app.settings';
@@ -15,7 +15,7 @@ import {AppSettings} from '../../app.settings';
     <div class="row">
              <breadcrumbs></breadcrumbs>
     </div>
-    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || !(regions$ | async) || ((regions$ | async).length === 1 &&  (regions$ | async)[0].region_id === null)">
+    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || !(regions$ | async) || (regions$ | async).size === 0">
     </div>
 
     <h4> Σειρά προτίμησης</h4>
@@ -51,7 +51,7 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
     //    public formGroup: FormGroup;
-    private regions$: BehaviorSubject<Array<IRegionRecord>>;
+    private regions$: BehaviorSubject<IRegionRecords>;
     private regionsSub: Subscription;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
 

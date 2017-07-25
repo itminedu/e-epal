@@ -1,7 +1,7 @@
 import {Router} from '@angular/router';
 import {OnInit, OnDestroy, Component, Injectable} from '@angular/core';
 import { HelperDataService } from '../../services/helper-data-service';
-import { BehaviorSubject } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
@@ -41,6 +41,7 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     public cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
+    private loginInfoSub: Subscription;
 
     constructor(
         private _ata: LoginInfoActions,
@@ -58,7 +59,7 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     };
 
     ngOnInit() {
-        this._ngRedux.select(state => {
+        this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
@@ -73,8 +74,8 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     }
 
     ngOnDestroy() {
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
 
     }
 

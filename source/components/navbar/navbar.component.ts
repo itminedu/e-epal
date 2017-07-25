@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import { Injectable } from "@angular/core";
 
-import { BehaviorSubject } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
@@ -22,6 +22,7 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
  	public cuser :any;
+    private loginInfoSub: Subscription;
 
     constructor( private _ngRedux: NgRedux<IAppState>
                 ) {
@@ -36,7 +37,7 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
         };
 
     ngOnInit() {
-        this._ngRedux.select(state => {
+        this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
@@ -60,7 +61,8 @@ import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial
     }
 
     ngOnDestroy() {
-        this.loginInfo$.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
 
     }
 

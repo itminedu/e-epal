@@ -29,7 +29,7 @@ import { HelperDataService } from "../../services/helper-data-service";
 @Component({
     selector: "application-submit",
     template: `
-    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
+    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (epalSelected$ | async).length === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
     <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -117,14 +117,13 @@ import { HelperDataService } from "../../services/helper-data-service";
 @Injectable() export default class ApplicationSubmit implements OnInit {
 
     private authToken;
-    private epalSelected: Array<number> = new Array();
+    private epalSelected$: BehaviorSubject<Array<number>> = new BehaviorSubject(new Array());
     private epalSelectedOrder: Array<number> = new Array();
     private courseSelected;
     private sectorSelected;
     private classSelected;
     private totalPoints = <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
-    private regions$: BehaviorSubject<IRegionRecords>;
     private sectors$: BehaviorSubject<ISectors>;
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
@@ -159,7 +158,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         private http: Http
     ) {
 
-        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+//        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
         this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
         this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
@@ -209,7 +208,7 @@ import { HelperDataService } from "../../services/helper-data-service";
             return state.studentDataFields;
         }).subscribe(this.studentDataFields$);
 
-        this.regionsSub = this._ngRedux.select(state => {
+/*        this.regionsSub = this._ngRedux.select((state) => {
             console.log("SELECTOR3");
             state.regions.reduce((prevRegion, region) => {
                 region.epals.reduce((prevEpal, epal) => {
@@ -222,7 +221,34 @@ import { HelperDataService } from "../../services/helper-data-service";
                 return region;
             }, {});
             return state.regions;
-        }).subscribe(this.regions$);
+        }).subscribe(this.regions$); */
+
+
+        this.regionsSub = this._ngRedux.select('regions').
+            subscribe(regions => {
+                console.log("SELECTOR: REGIONS");
+                    let rgns = <IRegionRecords>regions;
+                    let prevSelected: Array<number> = new Array();
+                    rgns.reduce((prevRgn, rgn) => {
+                        rgn.epals.reduce((prevSchool, school) => {
+                            if (school.selected === true) {
+                                prevSelected = this.epalSelected$.getValue();
+                                prevSelected[prevSelected.length] = <number>parseInt(school.epal_id);
+
+                                this.epalSelected$.next(prevSelected);
+                                this.epalSelectedOrder.push(school.order_id);
+                            }
+                            return school;
+                        }, {});
+                        return rgn;
+                    }, {});
+//                    this.regions$.next(<IRegionRecords>regions);
+                },
+                error => {
+                    console.log("Error Selecting Regions");
+                }
+                );
+
 
         this.sectorsSub = this._ngRedux.select(state => {
             console.log("SELECTOR2");
@@ -283,7 +309,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         // αποστολή στοιχείων μαθητή στο entity: epal_student
         // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
 
-        if (this.studentDataFields$.getValue().size === 0 || this.regions$.getValue().size === 0 || this.epalclasses$.getValue().size === 0 || this.loginInfo$.getValue().size === 0)
+        if (this.studentDataFields$.getValue().size === 0 || this.epalSelected$.getValue().length === 0 || this.epalclasses$.getValue().size === 0 || this.loginInfo$.getValue().size === 0)
             return;
 
         let aitisiObj: Array<any> = [];
@@ -319,8 +345,9 @@ import { HelperDataService } from "../../services/helper-data-service";
         aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
         aitisiObj[0].currentclass = this.classSelected;
 
-        for (let i = 0; i < this.epalSelected.length; i++) {
-            epalObj[i] = new StudentEpalChosen(null, this.epalSelected[i], this.epalSelectedOrder[i]);
+        let epalSelected = this.epalSelected$.getValue();
+        for (let i = 0; i < epalSelected.length; i++) {
+            epalObj[i] = new StudentEpalChosen(null, epalSelected[i], this.epalSelectedOrder[i]);
         }
         aitisiObj["1"] = epalObj;
 

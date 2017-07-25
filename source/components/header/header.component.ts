@@ -38,6 +38,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private TotalStudentsSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
     private hasvalue: boolean;
+    private loginInfoSub: Subscription;
 
     constructor(private _ata: LoginInfoActions,
         private _hds: HelperDataService,
@@ -67,7 +68,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         (<any>$("#headerNotice")).appendTo("body");
-        this._ngRedux.select(state => {
+        this.loginInfoSub = this._ngRedux.select(state => {
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
@@ -104,7 +105,10 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         (<any>$("#headerNotice")).remove();
-        this.loginInfo$.unsubscribe();
+        if (this.loginInfoSub) {
+            this.loginInfoSub.unsubscribe();
+        }
+//        this.loginInfo$.unsubscribe();
 
     }
 

@@ -1,6 +1,6 @@
 // import * as persistState from 'redux-localstorage';
-// import {createLogger} from 'redux-logger';
-import createLogger = require("redux-logger");
+import {createLogger} from 'redux-logger';
+// import logger = require("redux-logger");
 // import {applyMiddleware} from 'redux';
 import { IAppState, rootReducer, deimmutify } from './store';
 import { ICourseField, ICourseFields } from './coursefields/coursefields.types';
@@ -38,13 +38,14 @@ export {
 };
 
 
-const logger = createLogger({
+const myLogger = createLogger({
     level: 'info',
     collapsed: true,
     stateTransformer: deimmutify
 })
+// const logger2 = logger();
 export const middleware = [
-  logger
+  myLogger
 ];
 
 /* export const middleware = [

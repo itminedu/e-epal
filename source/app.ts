@@ -3,7 +3,7 @@ import "babel-polyfill";
 import "core-js/es6";
 import "core-js/es7/reflect";
 import { NgModule } from "@angular/core";
-import { NgReduxModule, DevToolsExtension, NgRedux } from "ng2-redux";
+import { NgReduxModule, DevToolsExtension, NgRedux } from "@angular-redux/store";
 import {BrowserModule} from "@angular/platform-browser";
 import { CookieModule } from "ngx-cookie";
 import { MyDatePickerModule } from "mydatepicker";

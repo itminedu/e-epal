@@ -1,6 +1,6 @@
 import { REGIONSCHOOLS_RECEIVED, REGIONSCHOOLS_SELECTED_SAVE,  REGIONSCHOOLS_ORDER_SAVE, REGIONSCHOOLS_INIT } from '../constants';
 import { Injectable } from '@angular/core';
-import { NgRedux } from 'ng2-redux';
+import { NgRedux } from '@angular-redux/store';
 import { IAppState } from '../store';
 import { HelperDataService } from '../services/helper-data-service';
 

@@ -7,7 +7,7 @@ import { BehaviorSubject, Subscription, Observable } from 'rxjs/Rx';
 import { HelperDataService } from '../../services/helper-data-service';
 import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { NgRedux, select } from "ng2-redux";
+import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import {
     FormBuilder,

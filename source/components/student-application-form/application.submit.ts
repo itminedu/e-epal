@@ -3,7 +3,7 @@ import { Router } from "@angular/router";
 import { Http, Response, RequestOptions, Headers } from "@angular/http";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from "ng2-redux";
+import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
@@ -106,7 +106,7 @@ import { HelperDataService } from "../../services/helper-data-service";
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (regions$ | async) && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
                 <span style="font-size: 0.9em; font-weight: bold;">Υποβολή&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -177,6 +177,7 @@ import { HelperDataService } from "../../services/helper-data-service";
 
         (<any>$("#studentFormSentNotice")).appendTo("body");
         this.loginInfoSub = this._ngRedux.select(state => {
+            console.log("SELECTOR5");
             if (state.loginInfo.size > 0) {
                 state.loginInfo.reduce(({ }, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
@@ -194,6 +195,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         }).subscribe(this.loginInfo$);
 
         this.epalclassesSub = this._ngRedux.select(state => {
+            console.log("SELECTOR4");
             if (state.epalclasses.size > 0) {
                 state.epalclasses.reduce(({ }, epalclass) => {
                     this.classSelected = epalclass.name;
@@ -208,6 +210,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         }).subscribe(this.studentDataFields$);
 
         this.regionsSub = this._ngRedux.select(state => {
+            console.log("SELECTOR3");
             state.regions.reduce((prevRegion, region) => {
                 region.epals.reduce((prevEpal, epal) => {
                     if (epal.selected === true) {
@@ -222,6 +225,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         }).subscribe(this.regions$);
 
         this.sectorsSub = this._ngRedux.select(state => {
+            console.log("SELECTOR2");
             state.sectors.reduce((prevSector, sector) => {
                 sector.courses.reduce((prevCourse, course) => {
                     if (course.selected === true) {
@@ -235,6 +239,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         }).subscribe(this.sectors$);
 
         this.sectorFieldsSub = this._ngRedux.select(state => {
+            console.log("SELECTOR");
             state.sectorFields.reduce(({ }, sectorField) => {
                 if (sectorField.selected === true) {
                     this.sectorSelected = sectorField.id;
@@ -248,23 +253,39 @@ import { HelperDataService } from "../../services/helper-data-service";
 
     ngOnDestroy() {
         (<any>$("#studentFormSentNotice")).remove();
-        if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.regionsSub) this.regionsSub.unsubscribe();
-        if (this.sectorsSub) this.sectorsSub.unsubscribe();
-        if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
-        if (this.epalclassesSub) this.epalclassesSub.unsubscribe();
-        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
-        this.regions$.unsubscribe();
-        this.epalclasses$.unsubscribe();
-        this.sectors$.unsubscribe();
-        this.sectorFields$.unsubscribe();
-        this.studentDataFields$.unsubscribe();
-        this.loginInfo$.unsubscribe();
+        if (this.studentDataFieldsSub) {
+            this.studentDataFieldsSub.unsubscribe();
+//            this.studentDataFields$.unsubscribe();
+        }
+        if (this.regionsSub) {
+            this.regionsSub.unsubscribe();
+//            this.regions$.unsubscribe();
+        }
+        if (this.sectorsSub) {
+            this.sectorsSub.unsubscribe();
+//            this.sectors$.unsubscribe();
+        }
+        if (this.sectorFieldsSub) {
+            this.sectorFieldsSub.unsubscribe();
+//            this.sectorFields$.unsubscribe();
+        }
+        if (this.epalclassesSub) {
+            this.epalclassesSub.unsubscribe();
+//            this.epalclasses$.unsubscribe();
+        }
+        if (this.loginInfoSub) {
+            this.loginInfoSub.unsubscribe();
+//            this.loginInfo$.unsubscribe();
+        }
     }
 
     submitNow() {
         // αποστολή στοιχείων μαθητή στο entity: epal_student
         // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+
+        if (this.studentDataFields$.getValue().size === 0 || this.regions$.getValue().size === 0 || this.epalclasses$.getValue().size === 0 || this.loginInfo$.getValue().size === 0)
+            return;
+
         let aitisiObj: Array<any> = [];
         let epalObj: Array<StudentEpalChosen> = [];
 
@@ -358,14 +379,14 @@ import { HelperDataService } from "../../services/helper-data-service";
                 let mHeader = "";
                 switch (errorCode) {
                     case 0:
+                        mTitle = "Υποβολή Δήλωσης Προτίμησης";
+                        mText = "Η υποβολή της δήλωσής σας πραγματοποιήθηκε. Μπορείτε να τη δείτε και να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Από την επιλογή 'Υποβληθείσες Δηλώσεις' θα μπορείτε να ενημερωθείτε όταν υπάρξει εξέλιξη σχετική με τη δήλωση σας. Επίσης, θα λάβετε και ενημερωτικό email.";
+                        mHeader = "modal-header-success";
                         this._eca.initEpalClasses();
                         this._sfa.initSectorFields();
                         this._rsa.initRegionSchools();
                         this._csa.initSectorCourses();
                         this._sdfa.initStudentDataFields();
-                        mTitle = "Υποβολή Δήλωσης Προτίμησης";
-                        mText = "Η υποβολή της δήλωσής σας πραγματοποιήθηκε. Μπορείτε να τη δείτε και να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Από την επιλογή 'Υποβληθείσες Δηλώσεις' θα μπορείτε να ενημερωθείτε όταν υπάρξει εξέλιξη σχετική με τη δήλωση σας. Επίσης, θα λάβετε και ενημερωτικό email.";
-                        mHeader = "modal-header-success";
                         break;
                     case 1000:
                         mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
@@ -457,6 +478,7 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.showModal();
                 (<any>$(".loading")).remove();
                 this.showLoader.next(false);
+
             },
             error => {
                 (<any>$(".loading")).remove();
@@ -466,7 +488,8 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.showModal();
                 this.showLoader.next(false);
                 console.log("Error HTTP POST Service");
-            });
+            }
+        );
 
     }
 

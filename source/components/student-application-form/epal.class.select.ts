@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';

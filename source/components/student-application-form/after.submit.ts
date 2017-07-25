@@ -2,7 +2,7 @@ import {Router} from '@angular/router';
 import {OnInit, OnDestroy, Component, Injectable} from '@angular/core';
 import { HelperDataService } from '../../services/helper-data-service';
 import { BehaviorSubject } from 'rxjs/Rx';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
 import { LoginInfoActions } from '../../actions/logininfo.actions';

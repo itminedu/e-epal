@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import {RemoveSpaces} from '../../pipes/removespaces';
 

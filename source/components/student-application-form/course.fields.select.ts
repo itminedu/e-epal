@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { CourseFieldsActions } from '../../actions/coursefields.actions';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { ICourseFields } from '../../store/coursefields/coursefields.types';
 import { IAppState } from '../../store/store';
 

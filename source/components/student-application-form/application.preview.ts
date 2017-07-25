@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
@@ -84,6 +84,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private epalclassesSub: Subscription;
     private sectorsSub: Subscription;
     private regionsSub: Subscription;
     private sectorFieldsSub: Subscription;
@@ -153,7 +154,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
             return state.sectorFields;
         }).subscribe(this.sectorFields$);
 
-        this._ngRedux.select(state => {
+        this.epalclassesSub = this._ngRedux.select(state => {
             state.epalclasses.reduce(({}, epalclass) => {
                 if (epalclass.name === "Α' Λυκείου")
                     this.classSelected = 1;
@@ -179,16 +180,23 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
     }
 
     ngOnDestroy() {
-        if (this.regionsSub)
+        if (this.regionsSub) {
             this.regionsSub.unsubscribe();
-        if (this.sectorsSub)
+//            this.regions$.unsubscribe();
+        }
+        if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
-        if (this.sectorFieldsSub)
+//            this.sectors$.unsubscribe();
+        }
+        if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
-        this.regions$.unsubscribe();
-        this.epalclasses$.unsubscribe();
-        this.sectors$.unsubscribe();
-        this.sectorFields$.unsubscribe();
+//            this.sectorFields$.unsubscribe();
+        }
+        if (this.epalclassesSub) {
+            this.epalclassesSub.unsubscribe();
+//            this.epalclasses$.unsubscribe();
+        }
+
     }
 
 }

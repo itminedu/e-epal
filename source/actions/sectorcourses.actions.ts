@@ -1,6 +1,6 @@
 import { SECTORCOURSES_RECEIVED, SECTORCOURSES_SELECTED_SAVE, SECTORCOURSES_INIT } from '../constants';
 import { Injectable } from '@angular/core';
-import { NgRedux } from 'ng2-redux';
+import { NgRedux } from '@angular-redux/store';
 import { IAppState } from '../store';
 import { HelperDataService } from '../services/helper-data-service';
 

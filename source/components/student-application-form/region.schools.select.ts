@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IRegionRecord, IRegionRecords } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
 import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
@@ -182,20 +182,21 @@ import {AppSettings} from '../../app.settings';
 
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
+//            this.epalclasses$.unsubscribe();
         }
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
+//            this.regions$.unsubscribe();
         }
         if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
+//            this.sectors$.unsubscribe();
         }
         if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
+//            this.sectorFields$.unsubscribe();
         }
-        if (this.sectorFields$) this.sectorFields$.unsubscribe();
-        if (this.sectors$) this.sectors$.unsubscribe();
-        if (this.regions$) this.regions$.unsubscribe();
-        if (this.epalclasses$) this.epalclasses$.unsubscribe();
+
     }
 
     public showModal():void {

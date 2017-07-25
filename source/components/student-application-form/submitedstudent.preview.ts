@@ -6,7 +6,7 @@ import {Observable} from "rxjs/Observable";
 import {IStudentDataFields, IStudentDataField} from '../../store/studentdatafields';
 import {Http, Headers, RequestOptions} from '@angular/http';
 import {Removetags} from '../../pipes/removehtmltags';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { IAppState } from '../../store/store';
 import { ILoginInfo } from '../../store/logininfo/logininfo.types';
 import {Router, ActivatedRoute, Params} from '@angular/router';

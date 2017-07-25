@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { NgRedux, select } from 'ng2-redux';
+import { NgRedux, select } from '@angular-redux/store';
 import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
 import { IAppState } from '../../store/store';
 import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';

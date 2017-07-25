@@ -3,7 +3,7 @@ import { OnInit, OnDestroy, Component } from "@angular/core";
 import { LoginInfoActions } from "../actions/logininfo.actions";
 import { ILoginInfo } from "../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
-import { NgRedux, select } from "ng2-redux";
+import { NgRedux, select } from "@angular-redux/store";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { IAppState } from "../store/store";
 import { HelperDataService } from "../services/helper-data-service";

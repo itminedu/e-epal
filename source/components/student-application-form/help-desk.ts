@@ -93,7 +93,7 @@ import {
     </div>
 
         <p style="text-align: left, font-size: 0.9em;">
-      <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103442231, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
+      <strong>Τηλ. Επικοινωνίας:</strong> 2103443014, 2103443359, 2103442034, 2103443309 (ώρες: 8:00 - 16:00)</p>
 
 
   <div id="mailsent" (onHidden)="onHidden('#mailsent')"

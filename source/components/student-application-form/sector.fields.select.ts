@@ -105,26 +105,26 @@ import {AppSettings} from '../../app.settings';
     ngOnInit() {
         (<any>$('#sectorFieldsNotice')).appendTo("body");
         this._cfa.getSectorFields(false);
-        this.sectorFieldsSub = this._ngRedux.select(state => {
-            state.sectorFields.reduce(({}, sectorField) =>{
-                this.cfs.push(new FormControl(sectorField.selected, []));
-                //in case we want to retrieve last check when we return to the form
+        this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+            .subscribe(sectorFields => {
+                let sfds = <ISectorFields>sectorFields;
+                sfds.reduce(({}, sectorField) =>{
+                    this.cfs.push(new FormControl(sectorField.selected, []));
+                    //in case we want to retrieve last check when we return to the form
 
-                if (sectorField.selected === true) {
-                  this.sectorActive = sectorField.id - 1;
-                }
+                    if (sectorField.selected === true) {
+                        this.sectorActive = sectorField.id - 1;
+                    }
 
-                return sectorField;
-            }, {});
-            return state.sectorFields;
-        }).subscribe(this.sectorFields$);
-
+                    return sectorField;
+                }, {});
+                this.sectorFields$.next(sfds);
+            }, error => {console.log("error selecting sectorFields");});
     }
 
     ngOnDestroy() {
         (<any>$('#sectorFieldsNotice')).remove();
         if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
-        this.sectorFields$.unsubscribe();
     }
 
     public showModal(): void {

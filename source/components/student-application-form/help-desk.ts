@@ -3,7 +3,7 @@ import {Location} from '@angular/common';
 import { Injectable } from "@angular/core";
 import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
 import {Router} from "@angular/router";
-import { BehaviorSubject, Subscription, Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { HelperDataService } from '../../services/helper-data-service';
 import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -17,8 +17,6 @@ import {
     Validators,
 } from '@angular/forms';
 
-
-
 @Component({
     selector: 'helpdesk',
     template: `
@@ -27,7 +25,6 @@ import {
         <p align="left">
         Σε περίπτωση που αντιμετωπίζετε οποιοδήποτε πρόβλημα με την καταχώριση της αίτησής σας, παρακαλούμε να
          συμπληρώσετε την παρακάτω φόρμα.
-
 
       <p align="left"><strong> Φόρμα Επικοινωνίας </strong></p>
 
@@ -162,10 +159,10 @@ import {
 
 @Injectable() export default class HelpDesk implements OnInit, OnDestroy {
 
-
     public formGroup: FormGroup;
     private emailSent: BehaviorSubject<boolean>;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfoSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
 
     constructor(private fb: FormBuilder,
@@ -205,19 +202,19 @@ import {
         (<any>$('#mailsent')).appendTo("body");
         (<any>$('#dangermodal')).appendTo("body");
         (<any>$('#fillfields')).appendTo("body");
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-
-                    this.formGroup.controls['userEmail'].setValue(loginInfoToken.cu_email);
-                    this.formGroup.controls['userName'].setValue(loginInfoToken.cu_name);
-                    this.formGroup.controls['userSurname'].setValue(loginInfoToken.cu_surname);
-                    return loginInfoToken;
-
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                let linfo = <ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
+                        this.formGroup.controls['userEmail'].setValue(loginInfoToken.cu_email);
+                        this.formGroup.controls['userName'].setValue(loginInfoToken.cu_name);
+                        this.formGroup.controls['userSurname'].setValue(loginInfoToken.cu_surname);
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(linfo);
+            }, error => {console.log("error selecting loginInfo");});
     }
 
     sendmail() {

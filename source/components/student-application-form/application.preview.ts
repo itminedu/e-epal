@@ -66,7 +66,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
             </ul>
         </div>
 
-        <ul *ngIf="(regions$ | async)" class="list-group left-side-view" style="margin-bottom: 20px;">
+        <ul *ngIf="(selectedSchools$ | async)" class="list-group left-side-view" style="margin-bottom: 20px;">
 
                 <div *ngFor="let epal$ of selectedSchools$ | async; let i=index; let isOdd=odd; let isEven=even" >
 
@@ -107,67 +107,68 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
     ngOnInit() {
         this.currentUrl = this.router.url;
-        this.sectorsSub = this._ngRedux.select(state => {
-            state.sectors.reduce((prevSector, sector) => {
-                sector.courses.reduce((prevCourse, course) => {
-                    if (course.selected === true) {
-                        this.courseActive = course.course_id;
-                    }
+        this.sectorsSub = this._ngRedux.select('sectors')
+            .subscribe(sectors => {
+                let scs = <ISectors>sectors;
+                scs.reduce((prevSector, sector) => {
+                    sector.courses.reduce((prevCourse, course) => {
+                        if (course.selected === true) {
+                            this.courseActive = course.course_id;
+                        }
 
-                    return course;
+                        return course;
+                    }, {});
+                    return sector;
                 }, {});
-                return sector;
-            }, {});
-            //this.numSelectedCourses = numsel;
-            return state.sectors;
-        }).subscribe(this.sectors$);
+                this.sectors$.next(scs);
+            });
 
-        this.regionsSub = this._ngRedux.select(state => {
-            let numsel = 0, numsel2 = 0;
-            let selectedSchools = Array<IRegionSchoolRecord>();
-            if (state.regions.size === 0)
-                return;
-            state.regions.reduce((prevRegion, region) => {
-                region.get("epals").reduce((prevEpal, epal) => {
-                    if (epal.get("selected") === true) {
-                        numsel++;
-                        selectedSchools.push(epal);
-                    }
-                    if (epal.get("order_id") !== 0) {
-                        numsel2++;
-                    }
-                    return epal;
+        this.regionsSub = this._ngRedux.select('regions')
+            .subscribe(regions => {
+                let rgns = <IRegionRecords>regions;
+                let numsel = 0, numsel2 = 0;
+                let selectedSchools = Array<IRegionSchoolRecord>();
+                if (rgns.size === 0)
+                    return;
+                rgns.reduce((prevRegion, region) => {
+                    region.get("epals").reduce((prevEpal, epal) => {
+                        if (epal.get("selected") === true) {
+                            numsel++;
+                            selectedSchools.push(epal);
+                        }
+                        if (epal.get("order_id") !== 0) {
+                            numsel2++;
+                        }
+                        return epal;
+                    }, {});
+                    return region;
                 }, {});
-                return region;
-            }, {});
-            this.numSelectedSchools = numsel;
-            this.numSelectedOrder = numsel2;
-            this.selectedSchools$.next(selectedSchools.sort(this.compareSchools));
-//            this.selectedSchools$.next(selectedSchools);
-            return state.regions;
-        }).subscribe(this.regions$);
+                this.numSelectedSchools = numsel;
+                this.numSelectedOrder = numsel2;
+                this.selectedSchools$.next(selectedSchools.sort(this.compareSchools));
+            });
 
-        this.sectorFieldsSub = this._ngRedux.select(state => {
-            state.sectorFields.reduce(({}, sectorField) => {
-                return sectorField;
-            }, {});
-            return state.sectorFields;
-        }).subscribe(this.sectorFields$);
+        this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+            .subscribe(sectorFields => {
+                this.sectorFields$.next(<ISectorFields>sectorFields);
+            }, error => {console.log("error selecting sectorFields");});
 
-        this.epalclassesSub = this._ngRedux.select(state => {
-            state.epalclasses.reduce(({}, epalclass) => {
-                if (epalclass.name === "Α' Λυκείου")
-                    this.classSelected = 1;
-                else if (epalclass.name === "Β' Λυκείου")
-                    this.classSelected = 2;
-                else if (epalclass.name === "Γ' Λυκείου")
-                    this.classSelected = 3;
-                else if (epalclass.name === "Δ' Λυκείου")
-                    this.classSelected = 4;
-                return epalclass;
-            }, {});
-            return state.epalclasses;
-        }).subscribe(this.epalclasses$);
+        this.epalclassesSub = this._ngRedux.select('epalclasses')
+            .subscribe(epalclasses => {
+                let ecs = <IEpalClasses>epalclasses;
+                ecs.reduce(({}, epalclass) => {
+                    if (epalclass.name === "Α' Λυκείου")
+                        this.classSelected = 1;
+                    else if (epalclass.name === "Β' Λυκείου")
+                        this.classSelected = 2;
+                    else if (epalclass.name === "Γ' Λυκείου")
+                        this.classSelected = 3;
+                    else if (epalclass.name === "Δ' Λυκείου")
+                        this.classSelected = 4;
+                    return epalclass;
+                }, {});
+                this.epalclasses$.next(ecs);
+            }, error => {console.log("error selecting epalclasses");});
 
     }
 

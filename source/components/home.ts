@@ -1,13 +1,14 @@
 import {Router, ActivatedRoute, Params} from '@angular/router';
-import {OnInit, Component} from '@angular/core';
+import {OnInit, OnDestroy, Component} from '@angular/core';
 import { LoginInfoActions } from '../actions/logininfo.actions';
 import { ILoginInfo } from '../store/logininfo/logininfo.types';
 import { NgRedux, select } from '@angular-redux/store';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { IAppState } from '../store/store';
 import { HelperDataService } from '../services/helper-data-service';
 import { CookieService } from 'ngx-cookie';
 import { STUDENT_ROLE } from '../constants';
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import {
     FormBuilder,
     FormGroup,
@@ -27,16 +28,16 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
             <p>
             <strong>Ανακοίνωση:</strong> Παρακαλείσθε να μην καταχωρείτε δήλωση προτίμησης επιλέγοντας τα παρακάτω:</p>
             <ul>
-                <li> 9ο ΕΠΑ.Λ. Πειραιά, Β τάξη, Τομέας Ναυτιλιακών Επαγγελμάτων, Γ τάξη-Ειδικότητες Πλοίαρχος Εμπορικού Ναυτικού, Μηχανικός Εμπορικού Ναυτικού 
+                <li> 9ο ΕΠΑ.Λ. Πειραιά, Β τάξη, Τομέας Ναυτιλιακών Επαγγελμάτων, Γ τάξη-Ειδικότητες Πλοίαρχος Εμπορικού Ναυτικού, Μηχανικός Εμπορικού Ναυτικού
                 </li>
-                <li> 1ο ΕΠΑ.Λ. Δάφνης, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή 
+                <li> 1ο ΕΠΑ.Λ. Δάφνης, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή
                 </li>
-                <li> 1ο Ημερήσιο ΕΠΑ.Λ. Σιβιτανιδείου, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή 
+                <li> 1ο Ημερήσιο ΕΠΑ.Λ. Σιβιτανιδείου, Γ τάξη, Ειδικότητα Βοηθός Νοσηλευτή
                 </li>
              </ul>
              <p>Τα τμήματα έχουν πληρότητα από την 1η περίοδο κατανομής.
             </p>
-            </div> 
+            </div>
 
 
 
@@ -56,15 +57,16 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
   `
 })
 
-export default class Home implements OnInit {
+export default class Home implements OnInit, OnDestroy {
     public formGroup: FormGroup;
     private authToken: string;
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
-    private loginInfo$: Observable<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
+    private loginInfoSub: Subscription;
 
     constructor(private fb: FormBuilder,
         private _ata: LoginInfoActions,
@@ -79,13 +81,15 @@ export default class Home implements OnInit {
         this.name = '';
         this.formGroup = this.fb.group({
         });
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     };
 
     ngOnInit() {
 
-        this.loginInfo$ = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
+        this.loginInfoSub = this._ngRedux.select('loginInfo').subscribe(loginInfo => {
+            let linfo=<ILoginInfo>loginInfo;
+            if (linfo.size > 0) {
+                linfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE) {
@@ -99,8 +103,8 @@ export default class Home implements OnInit {
                 }, {});
             }
 
-            return state.loginInfo;
-        });
+            this.loginInfo$.next(linfo);
+        }, error => {console.log("error selecting loginInfo");});
 
         // subscribe to router event
         this.activatedRoute.queryParams.subscribe((params: Params) => {
@@ -113,6 +117,10 @@ export default class Home implements OnInit {
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
 
         });
+    }
+
+    ngOnDestroy () {
+        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
     }
 
     getCookie(key: string){

@@ -38,7 +38,6 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     private authToken: string;
     private authRole: string;
     private cuName: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
     public cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
     private loginInfoSub: Subscription;
@@ -59,25 +58,24 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    this.cuName = loginInfoToken.cu_name;
-                    return loginInfoToken;
-                }, {})
-            }
-
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-    }
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                let linfo = <ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
+                        this.authToken = loginInfoToken.auth_token;
+                        this.authRole = loginInfoToken.auth_role;
+                        this.cuName = loginInfoToken.cu_name;
+                        return loginInfoToken;
+                    }, {});
+                }
+            }, error => {console.log("error selecting epalclasses")});
+    };
 
     ngOnDestroy() {
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-
-    }
+    };
 
     signOut() {
         this.showLoader$.next(true);

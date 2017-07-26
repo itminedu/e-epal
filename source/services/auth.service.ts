@@ -18,11 +18,10 @@ export class AuthService {
 
     isLoggedIn(role) {
         return new Promise<boolean>((resolve, reject) => {
-            this._ngRedux.select(state => {
-                return state.loginInfo;
-            }).subscribe(loginInfo => {
-                if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
+            this._ngRedux.select('loginInfo').subscribe(loginInfo => {
+                let linfo = <ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
                         if ((loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) ||
                         (loginInfoToken.minedu_username && loginInfoToken.minedu_username.length > 0 && loginInfoToken.auth_role === MINISTRY_ROLE && role === MINISTRY_ROLE)
                     ) {
@@ -72,11 +71,10 @@ export class AuthService {
 
     isApplicationLocked(role) {
         return new Promise<boolean>((resolve, reject) => {
-            this._ngRedux.select(state => {
-                return state.loginInfo;
-            }).subscribe(loginInfo => {
-                if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
+            this._ngRedux.select('loginInfo').subscribe(loginInfo => {
+                let linfo=<ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
                         if ((loginInfoToken.lock_application && loginInfoToken.lock_application === 1 && loginInfoToken.auth_role === role)) {
                             resolve(true);
                         }
@@ -97,9 +95,9 @@ export class AuthService {
 
     isStudentsLocked(role) {
         return new Promise<boolean>((resolve, reject) => {
-            this._ngRedux.select(state => {
-                return state.loginInfo;
-            }).subscribe(loginInfo => {
+            this._ngRedux.select('loginInfo')
+                .map(loginInfo => <ILoginInfo>loginInfo)
+                .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
                     loginInfo.reduce(({}, loginInfoToken) => {
                         if ((loginInfoToken.lock_students && loginInfoToken.lock_students === 1 && loginInfoToken.auth_role === role)) {
@@ -122,9 +120,9 @@ export class AuthService {
 
     isCapacityLocked(role) {
         return new Promise<boolean>((resolve, reject) => {
-            this._ngRedux.select(state => {
-                return state.loginInfo;
-            }).subscribe(loginInfo => {
+            this._ngRedux.select('loginInfo')
+                .map(loginInfo => <ILoginInfo>loginInfo)
+                .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
                     loginInfo.reduce(({}, loginInfoToken) => {
                         if ((loginInfoToken.lock_capacity && loginInfoToken.lock_capacity === 1 && loginInfoToken.auth_role === role)) {

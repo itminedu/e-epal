@@ -120,8 +120,9 @@ import {AppSettings} from '../../app.settings';
         (<any>$('#sectorCourseNotice')).appendTo("body");
         this._sca.getSectorCourses(false);
         let ids = 0;
-        this.sectorsSub = this._ngRedux.select(state => {
-            state.sectors.reduce((prevSector, sector) =>{
+        this.sectorsSub = this._ngRedux.select('sectors').subscribe(sectors => {
+            let scs = <ISectors>sectors;
+            scs.reduce((prevSector, sector) =>{
                 this.sectorsList[ids] = sector.sector_selected;
                 ids++;
                 //In case we want to preserve last checked option when we revisit the form
@@ -139,15 +140,14 @@ import {AppSettings} from '../../app.settings';
                 return sector;
             }, {});
             ids = 0;
-            return state.sectors;
-        }).subscribe(this.sectors$);
+            this.sectors$.next(scs);
+        }, error => {console.log("error selecting sectors");});
 
     }
 
     ngOnDestroy() {
         (<any>$('#sectorCourseNotice')).remove();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
-        this.sectors$.unsubscribe();
     }
 
     public showModal(): void {

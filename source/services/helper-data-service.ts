@@ -1,6 +1,6 @@
 import { Http, Headers, RequestOptions, ResponseContentType, Response } from "@angular/http";
 import { Injectable, OnInit, OnDestroy } from "@angular/core";
-import { BehaviorSubject } from "rxjs/Rx";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import { ICourseField } from "../store/coursefields/coursefields.types";
 import { ISectorField } from "../store/sectorfields/sectorfields.types";
@@ -22,6 +22,7 @@ const HEADER = { headers: new Headers({ "Content-Type": "application/json" }) };
 export class HelperDataService implements OnInit, OnDestroy {
 
     private authToken: string;
+    private loginInfoSub: Subscription;
     private authRole: string;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -35,21 +36,24 @@ export class HelperDataService implements OnInit, OnDestroy {
     };
 
     ngOnInit() {
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({ }, loginInfoToken) => {
+                        this.authToken = loginInfoToken.auth_token;
+                        this.authRole = loginInfoToken.auth_role;
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            });
 
     }
 
     ngOnDestroy() {
-        this.loginInfo$.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
     }
 
     createAuthorizationHeader(headers: Headers) {

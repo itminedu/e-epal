@@ -87,26 +87,28 @@ export default class SchoolHome implements OnInit, OnDestroy {
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0) {
-                        if (this.authRole === "director") {
-                            this.router.navigate(["/school/director-buttons"]);
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                let linfo=<ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({ }, loginInfoToken) => {
+                        this.authToken = loginInfoToken.auth_token;
+                        this.authRole = loginInfoToken.auth_role;
+                        if (this.authToken && this.authToken.length > 0) {
+                            if (this.authRole === "director") {
+                                this.router.navigate(["/school/director-buttons"]);
+                            }
+                            else if (this.authRole === "pde")
+                                this.router.navigate(["/school/perfecture-view"]);
+                            else if (this.authRole === "dide")
+                                this.router.navigate(["/school/eduadmin-view"]);
                         }
-                        else if (this.authRole === "pde")
-                            this.router.navigate(["/school/perfecture-view"]);
-                        else if (this.authRole === "dide")
-                            this.router.navigate(["/school/eduadmin-view"]);
-                    }
-                    return loginInfoToken;
-                }, {});
-            }
+                        return loginInfoToken;
+                    }, {});
+                }
 
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+                this.loginInfo$.next(linfo);
+            });
 
         // subscribe to router event
         this.activatedRoute.queryParams.subscribe((params: Params) => {

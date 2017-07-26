@@ -171,25 +171,24 @@ import {
 
       if (this.loginInfoSub)
         this.loginInfoSub.unsubscribe();
-
-      if (this.loginInfo$)
-        this.loginInfo$.unsubscribe();
     }
 
     ngOnInit() {
 
       (<any>$('#disclaimerNotice')).appendTo("body");
 
-      this.loginInfoSub = this._ngRedux.select(state => {
-          if (state.loginInfo.size > 0) {
-              state.loginInfo.reduce(({}, loginInfoToken) => {
-                  this.formGroup.controls['disclaimerChecked'].setValue(loginInfoToken.disclaimer_checked);
-                  this.disclaimerChecked.next(loginInfoToken.disclaimer_checked);
-                  return loginInfoToken;
-              }, {});
-          }
-          return state.loginInfo;
-      }).subscribe(this.loginInfo$);
+      this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                let linfo = <ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
+                        this.formGroup.controls['disclaimerChecked'].setValue(loginInfoToken.disclaimer_checked);
+                        this.disclaimerChecked.next(loginInfoToken.disclaimer_checked);
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(linfo);
+            }, error => {console.log("error selecting loginInfo");});
   }
 
   navigateBack() {

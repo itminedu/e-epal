@@ -15,7 +15,7 @@ import {AppSettings} from '../../app.settings';
     <div class="row">
              <breadcrumbs></breadcrumbs>
     </div>
-    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0 || !(regions$ | async) || (regions$ | async).size === 0">
+    <div class = "loading" *ngIf="(selectedSchools$ | async).length === 0">
     </div>
 
     <h4> Σειρά προτίμησης</h4>
@@ -51,51 +51,45 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
     //    public formGroup: FormGroup;
-    private regions$: BehaviorSubject<IRegionRecords>;
     private regionsSub: Subscription;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
 
     constructor(private _cfa: RegionSchoolsActions,
         private _ngRedux: NgRedux<IAppState>,
         private router: Router) {
-        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+
     };
 
     ngOnInit() {
-        this.regionsSub = this._ngRedux.select(state => {
-            let selectedSchools = Array<IRegionSchoolRecord>();
+        this.regionsSub = this._ngRedux.select('regions')
+            .subscribe(regions => {
+                let rgns = <IRegionRecords>regions;
+                let selectedSchools = Array<IRegionSchoolRecord>();
 
-            state.regions.reduce((prevRegion, region) => {
-                region.get("epals").reduce((prevEpal, epal) => {
-                    if (epal.get("selected") === true) {
-                        selectedSchools.push(epal.toJS());
-                    }
+                rgns.reduce((prevRegion, region) => {
+                    region.get("epals").reduce((prevEpal, epal) => {
+                        if (epal.get("selected") === true) {
+                            selectedSchools.push(epal.toJS());
+                        }
 
-                    return epal;
+                        return epal;
+                    }, {});
+
+                    return region;
                 }, {});
 
-                return region;
-            }, {});
+                selectedSchools.sort(this.compareSchools);
+                for (let i=0; i < selectedSchools.length; i++)
+                    selectedSchools[i].order_id = i+1;
+                this.selectedSchools$.next(selectedSchools);
 
-            selectedSchools.sort(this.compareSchools);
-            for (let i=0; i < selectedSchools.length; i++)
-              selectedSchools[i].order_id = i+1;
-            //selectedSchools[0].order_id = 1;
-            //selectedSchools[1].order_id = 2;
-            //selectedSchools[2].order_id = 3;
-
-            this.selectedSchools$.next(selectedSchools);
-
-            return state.regions;
-        }).subscribe(this.regions$);
-
+            }, error => {console.log("error selecting regions");});
     }
 
     ngOnDestroy() {
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
         }
-        if (this.regions$) this.regions$.unsubscribe();
     }
 
     compareSchools(a: IRegionSchoolRecord, b: IRegionSchoolRecord) {

@@ -1,12 +1,13 @@
 import { Router, Params} from '@angular/router';
-import { OnInit, Component} from '@angular/core';
+import { OnInit, OnDestroy, Component} from '@angular/core';
 import { LoginInfoActions } from '../actions/logininfo.actions';
 import { ILoginInfo } from '../store/logininfo/logininfo.types';
 import { NgRedux, select } from '@angular-redux/store';
-import { Observable } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { IAppState } from '../store/store';
 import { HelperDataService } from '../services/helper-data-service';
 import {Http, Response, RequestOptions} from '@angular/http';
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import {
     FormBuilder,
     FormGroup,
@@ -57,14 +58,15 @@ import { API_ENDPOINT } from '../app.settings';
   `
 })
 
-export default class MinistryHome implements OnInit {
+export default class MinistryHome implements OnInit, OnDestroy {
     public userDataGroup: FormGroup;
     private authRole: string;
     private mineduUsername: string;
     //private mineduPassword: string;
     //private cuName: string;
     private validLogin: number;
-    private loginInfo$: Observable<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
 
     constructor(private fb: FormBuilder,
@@ -89,22 +91,29 @@ export default class MinistryHome implements OnInit {
           cu_name: [''],
           auth_role: [''],
         });
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     };
 
     ngOnInit() {
-        this.loginInfo$ = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.mineduUsername = loginInfoToken.minedu_username;
-                    //this.mineduPassword = loginInfoToken.minedu_userpassword;
-                    if (this.mineduUsername && this.mineduUsername.length > 0)
-                        this.router.navigate(['/ministry/minister-settings']);
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        });
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                let linfo = <ILoginInfo>loginInfo;
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoToken) => {
+                        this.mineduUsername = loginInfoToken.minedu_username;
+                        //this.mineduPassword = loginInfoToken.minedu_userpassword;
+                        if (this.mineduUsername && this.mineduUsername.length > 0)
+                            this.router.navigate(['/ministry/minister-settings']);
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(linfo);
+            }, error => {console.log("error selecting loginInfo");});
 
+    }
+
+    ngOnDestroy() {
+        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
     }
 
     submitCredentials() {

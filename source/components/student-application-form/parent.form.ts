@@ -72,14 +72,12 @@ import {AppSettings} from '../../app.settings';
             this.formGroup.get('userSurname').setValue(x.userSurname);
             this.formGroup.get('userFathername').setValue(x.userFathername);
             this.formGroup.get('userMothername').setValue(x.userMothername);
-
         });
     }
 
     ngOnDestroy() {
         (<any>$('#emailSentNotice')).remove();
         if (this.epalUserDataSub) this.epalUserDataSub.unsubscribe();
-        this.epalUserData$.unsubscribe();
     }
 
     saveProfileAndContinue() : void {

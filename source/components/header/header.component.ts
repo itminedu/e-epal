@@ -68,35 +68,37 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         (<any>$("#headerNotice")).appendTo("body");
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    this.cuName = loginInfoToken.cu_name;
-                    return loginInfoToken;
-                }, {});
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        this.authToken = loginInfoToken.auth_token;
+                        this.authRole = loginInfoToken.auth_role;
+                        this.cuName = loginInfoToken.cu_name;
+                        return loginInfoToken;
+                    }, {});
 
-            if (this.hasvalue == false)
-            {
-            this.showLoader.next(true);
-            this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
-            this.TotalStudents$.next(x);
-            this.showLoader.next(false);
-            this.hasvalue = true;
-            },
-            error => {
-                this.TotalStudents$.next([{}]);
-                console.log("Error Getting courses perSchool");
+                if (this.hasvalue == false)
+                {
+                this.showLoader.next(true);
+                this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
+                this.TotalStudents$.next(x);
                 this.showLoader.next(false);
+                this.hasvalue = true;
+                },
+                error => {
+                    this.TotalStudents$.next([{}]);
+                    console.log("Error Getting courses perSchool");
+                    this.showLoader.next(false);
+                });
+
+                }
+
+                }
+
+                this.loginInfo$.next(loginInfo);
             });
-
-            }
-
-            }
-
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
 
 
 

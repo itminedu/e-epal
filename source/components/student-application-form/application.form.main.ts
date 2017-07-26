@@ -32,16 +32,16 @@ import {
 
 @Injectable() export default class StudentApplicationMain implements OnInit {
 
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
     private studentDataFields$: BehaviorSubject<IStudentDataFields>;
     private criteria$: BehaviorSubject<ICriter>;
 
     private studentDataFieldsSub: Subscription;
+    private loginInfoSub: Subscription;
     private criteriaSub: Subscription;
 
     public studentDataGroup: FormGroup;
     public studentCriteriaGroup: FormGroup;
-
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
 
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
@@ -84,11 +84,11 @@ import {
                 private router: Router,
                 private http: Http) {
         this.populateSchoolyears();
-        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.modalTitle =  new BehaviorSubject("");
         this.modalText =  new BehaviorSubject("");
         this.modalHeader =  new BehaviorSubject("");
 
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
         this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
         this.studentDataGroup = this.fb.group({
@@ -111,45 +111,41 @@ import {
     ngOnInit() {
         (<any>$("#applicationFormNotice")).appendTo("body");
 
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                this.loginInfo$.next(<ILoginInfo>loginInfo);
+            }, error => {console.log("error selecting loginInfo");});
 
-        this.studentDataFieldsSub = this._ngRedux.select(state => {
-            if (state.studentDataFields.size > 0) {
-                state.studentDataFields.reduce(({}, studentDataField) => {
+        this.studentDataFieldsSub = this._ngRedux.select('studentDataFields')
+            .subscribe(studentDataFields => {
+                let sdfds = <IStudentDataFields>studentDataFields;
+                if (sdfds.size > 0) {
+                    sdfds.reduce(({}, studentDataField) => {
 
-                    this.studentDataGroup.controls["name"].setValue(studentDataField.name);
-                    this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.studentsurname);
-                    this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.fatherfirstname);
-                    this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.motherfirstname);
-                    this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.regionaddress);
-                    this.studentDataGroup.controls["regiontk"].setValue(studentDataField.regiontk);
-                    this.studentDataGroup.controls["regionarea"].setValue(studentDataField.regionarea);
-                    this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.lastschool_schoolname);
-                    this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.lastschool_schoolyear);
-                    this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.lastschool_class);
-                    this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.relationtostudent);
-                    this.studentDataGroup.controls["telnum"].setValue(studentDataField.telnum);
-                    this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.studentbirthdate));
-                    return studentDataField;
-                }, {});
-            }
-            return state.studentDataFields;
-        }).subscribe(this.studentDataFields$);
+                        this.studentDataGroup.controls["name"].setValue(studentDataField.name);
+                        this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.studentsurname);
+                        this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.fatherfirstname);
+                        this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.motherfirstname);
+                        this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.regionaddress);
+                        this.studentDataGroup.controls["regiontk"].setValue(studentDataField.regiontk);
+                        this.studentDataGroup.controls["regionarea"].setValue(studentDataField.regionarea);
+                        this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.lastschool_schoolname);
+                        this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.lastschool_schoolyear);
+                        this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.lastschool_class);
+                        this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.relationtostudent);
+                        this.studentDataGroup.controls["telnum"].setValue(studentDataField.telnum);
+                        this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.studentbirthdate));
+                        return studentDataField;
+                    }, {});
+                }
+                this.studentDataFields$.next(sdfds);
+            }, error => {console.log("error selecting studentDataFields");});
 
     };
 
     ngOnDestroy() {
         (<any>$("#applicationFormNotice")).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.studentDataFields$) this.studentDataFields$.unsubscribe();
-        if (this.loginInfo$) this.loginInfo$.unsubscribe();
     }
 
     navigateBack() {

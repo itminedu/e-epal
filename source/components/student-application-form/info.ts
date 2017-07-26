@@ -47,23 +47,15 @@ import {Router} from "@angular/router";
     }
 
     ngOnDestroy() {
-
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
     }
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select('loginInfo')
+            .subscribe(loginInfo => {
+                this.loginInfo$.next(<ILoginInfo>loginInfo);
+            }, error => {console.log("error selecting loginInfo");});
     }
 
     signOut() {

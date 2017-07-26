@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from 'rxjs/Rx';
 import { Injectable } from "@angular/core";
 import { EpalClassesActions } from '../../actions/epalclass.actions';
 import { NgRedux, select } from '@angular-redux/store';
@@ -9,6 +9,7 @@ import { SectorFieldsActions } from '../../actions/sectorfields.actions';
 import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { IAppState } from '../../store/store';
+import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
 import {
     FormBuilder,
     FormGroup,
@@ -76,7 +77,8 @@ import {AppSettings} from '../../app.settings';
 })
 
 @Injectable() export default class EpalClassesSelect implements OnInit, OnDestroy {
-    private epalclasses$: Observable<IEpalClasses>;
+    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private epalclassesSub: Subscription;
 
     public formGroup: FormGroup;
     private modalTitle: BehaviorSubject<string>;
@@ -98,25 +100,30 @@ import {AppSettings} from '../../app.settings';
             this.modalText = new BehaviorSubject("");
             this.modalHeader = new BehaviorSubject("");
             this.isModalShown = new BehaviorSubject(false);
+            this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
         };
 
     ngOnInit() {
         (<any>$('#epalClassNotice')).appendTo("body");
-          this.epalclasses$ = this._ngRedux.select(state => {
-            if (state.epalclasses.size > 0) {
-                state.epalclasses.reduce(({}, epalclass) => {
-                    this.formGroup.setValue(epalclass);
-                    return epalclass;
-                }, {});
-            } else {
-                this.formGroup.controls["name"].setValue("");
-            }
-            return state.epalclasses;
-        });
+          this.epalclassesSub = this._ngRedux.select('epalclasses')
+                .subscribe(epalclasses => {
+                    let ecs = <IEpalClasses>epalclasses;
+                  if (ecs.size > 0) {
+                      ecs.reduce(({}, epalclass) => {
+                          this.formGroup.setValue(epalclass);
+                          return epalclass;
+                      }, {});
+                  } else {
+                      this.formGroup.controls["name"].setValue("");
+                  }
+                  this.epalclasses$.next(ecs);
+              }, error => {console.log("error selecting epalclasses");});
 
     }
 
     ngOnDestroy() {
+        if (this.epalclassesSub)
+            this.epalclassesSub.unsubscribe();
         (<any>$('#epalClassNotice')).remove();
     }
 

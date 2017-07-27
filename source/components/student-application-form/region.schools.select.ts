@@ -6,10 +6,6 @@ import { RegionSchoolsActions } from '../../actions/regionschools.actions';
 import { NgRedux, select } from '@angular-redux/store';
 import { IRegionRecord, IRegionRecords } from '../../store/regionschools/regionschools.types';
 import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
-import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
-import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
-import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
 import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
 import { IAppState } from '../../store/store';
 import { RemoveSpaces } from '../../pipes/removespaces';
@@ -95,14 +91,6 @@ import {AppSettings} from '../../app.settings';
             </button>
         </div>
         <div class="col-md-6">
-            <!--
-            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToApplication()"
-
-              [disabled] = " ( (selectionLimitOptional  | async) === false && (classNight  | async) === false  && (numSelected | async) < (selectionLimit | async) )
-                                || ( (numSelected | async) === 0)">
-                <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
-            </button>
-            -->
             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="navigateToApplication()" >
                 <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
@@ -115,7 +103,6 @@ import {AppSettings} from '../../app.settings';
 })
 @Injectable() export default class RegionSchoolsSelect implements OnInit, OnDestroy {
     private regions$: BehaviorSubject<IRegionRecords>;
-    private sectors$: BehaviorSubject<ISectors>;
     private epalclassesSub: Subscription;
     private regionsSub: Subscription;
     private sectorsSub: Subscription;
@@ -140,13 +127,11 @@ import {AppSettings} from '../../app.settings';
 
     constructor(private fb: FormBuilder,
                 private _rsa: RegionSchoolsActions,
-                private _rsb: SectorCoursesActions,
                 private _ngRedux: NgRedux<IAppState>,
                 private router: Router
 
             ) {
         this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
-        this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.formGroup = this.fb.group({
             formArray: this.rss
 
@@ -178,19 +163,15 @@ import {AppSettings} from '../../app.settings';
 
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
-//            this.epalclasses$.unsubscribe();
         }
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
-//            this.regions$.unsubscribe();
         }
         if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
-//            this.sectors$.unsubscribe();
         }
         if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
-//            this.sectorFields$.unsubscribe();
         }
 
     }
@@ -208,20 +189,6 @@ import {AppSettings} from '../../app.settings';
     }
 
     selectEpalClasses() {
-/*        this.epalclassesSub = this._ngRedux.select(state => {
-          if (state.epalclasses.size > 0) {
-              state.epalclasses.reduce(({}, epalclass, i) => {
-                  this.setClassActive(epalclass.name);
-                  if (epalclass.name === "4") {
-                    //this.selectionLimitOptional.next(true);
-                    this.classNight.next(true);
-                  }
-                  this.getAppropriateSchools(epalclass.name);
-                  return epalclass;
-              }, {});
-          }
-          return state.epalclasses;
-      }).subscribe(this.epalclasses$); */
       this.epalclassesSub = this._ngRedux.select('epalclasses')
                 .subscribe(epalclasses => {
                     let ecs = <IEpalClasses>epalclasses;
@@ -321,23 +288,24 @@ import {AppSettings} from '../../app.settings';
         }
         else if (epalClass === "3" || epalClass === "4")  {
 
-            this.sectorsSub = this._ngRedux.select(state => {
-                console.log("sectorsSub");
-                state.sectors.reduce((prevSector, sector) =>{
-                      if (sector.sector_selected === true) {
-                          sector.courses.reduce((prevCourse, course) =>{
-                              if (course.selected === true) {
-                                  this.courseActive = parseInt(course.course_id);
-                                  //this._rsa.getRegionSchools(3,this.courseActive, false);
-                                  this._rsa.getRegionSchools(Number(epalClass),this.courseActive, false);
-                              }
-                              return course;
-                          }, {});
-                      }
-                    return sector;
-                }, {});
-                return state.sectors;
-            }).subscribe(this.sectors$);
+            this.sectorsSub = this._ngRedux.select('sectors')
+                .map(sectors => <ISectors>sectors)
+                .subscribe(sectors => {
+                    console.log("sectorsSub");
+                    sectors.reduce((prevSector, sector) =>{
+                          if (sector.sector_selected === true) {
+                              sector.courses.reduce((prevCourse, course) =>{
+                                  if (course.selected === true) {
+                                      this.courseActive = parseInt(course.course_id);
+                                      //this._rsa.getRegionSchools(3,this.courseActive, false);
+                                      this._rsa.getRegionSchools(Number(epalClass),this.courseActive, false);
+                                  }
+                                  return course;
+                              }, {});
+                          }
+                        return sector;
+                    }, {});
+                });
         }
     }
 
@@ -388,5 +356,4 @@ import {AppSettings} from '../../app.settings';
           this.router.navigate(['/schools-order-select']);
 
     }
-
 }

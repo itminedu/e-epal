@@ -1,7 +1,7 @@
 import {createLogger} from "redux-logger";
 
 import { IAppState, rootReducer, deimmutify } from "./store";
-import { ISectorField, ISectorFields } from "./sectorfields/sectorfields.types";
+import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields/sectorfields.types";
 import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolRecord, IRegionSchoolRecords } from "./regionschools/regionschools.types";
 import { ISectors, ISector, ISectorCourse } from "./sectorcourses/sectorcourses.types";
 import { IStudentDataField, IStudentDataFields } from "./studentdatafields/studentdatafields.types";
@@ -11,8 +11,8 @@ import { ILoginInfoToken, ILoginInfo } from "./logininfo/logininfo.types";
 export {
 IAppState,
 rootReducer,
-ISectorField,
-ISectorFields,
+ISectorFieldRecord,
+ISectorFieldRecords,
 IRRegion,
 IRegionRecord,
 IRegionRecords,

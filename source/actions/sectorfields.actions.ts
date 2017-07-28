@@ -34,11 +34,12 @@ export class SectorFieldsActions {
     };
 
 
-    saveSectorFieldsSelected = (sectorFieldsSelected) => {
+    saveSectorFieldsSelected = (prevChoice: number, newChoice: number) => {
         return this._ngRedux.dispatch({
             type: SECTORFIELDS_SELECTED_SAVE,
             payload: {
-                sectorFieldsSelected
+                prevChoice: prevChoice,
+                newChoice: newChoice
             }
         });
     };

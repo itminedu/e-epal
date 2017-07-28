@@ -1,10 +1,10 @@
-import { ISectorField, ISectorFields } from "./sectorfields.types";
+import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields.types";
 import { sectorFieldsReducer } from "./sectorfields.reducer";
 import { deimmutifySectorFields } from "./sectorfields.transformers";
 
 export {
-ISectorField,
-ISectorFields,
+ISectorFieldRecord,
+ISectorFieldRecords,
 sectorFieldsReducer,
 deimmutifySectorFields,
 };

@@ -20,6 +20,7 @@ export class AuthService {
         return new Promise<boolean>((resolve, reject) => {
             this._ngRedux.select("loginInfo").subscribe(loginInfo => {
                 let linfo = <ILoginInfo>loginInfo;
+
                 if (linfo.size > 0) {
                     linfo.reduce(({}, loginInfoToken) => {
                         if ((loginInfoToken.auth_token && loginInfoToken.auth_token.length > 0 && loginInfoToken.auth_role === role) ||

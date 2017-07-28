@@ -1,4 +1,4 @@
-import { List, Map } from "immutable";
+import { List } from "immutable";
 import {TypedRecord} from "typed-immutable-record";
 
 export interface IRRegion {

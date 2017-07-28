@@ -137,7 +137,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private modalHeader: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
-    public currentUrl: string;
+    private currentUrl: string;
     private cu_name: string;
     private cu_surname: string;
     private cu_fathername: string;
@@ -156,7 +156,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         private http: Http
     ) {
 
-//        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+        //        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
         this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -171,7 +171,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     ngOnInit() {
 
         (<any>$("#studentFormSentNotice")).appendTo("body");
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
                 let linfo = <ILoginInfo>loginInfo;
                 console.log("SELECTOR5");
@@ -189,9 +189,9 @@ import { HelperDataService } from "../../services/helper-data-service";
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
-            }, error => {console.log("error selecting loginInfo")});
+            }, error => { console.log("error selecting loginInfo"); });
 
-        this.epalclassesSub = this._ngRedux.select('epalclasses').subscribe(epalclasses => {
+        this.epalclassesSub = this._ngRedux.select("epalclasses").subscribe(epalclasses => {
             let ecs = <IEpalClasses>epalclasses;
             console.log("SELECTOR4");
             if (ecs.size > 0) {
@@ -201,56 +201,40 @@ import { HelperDataService } from "../../services/helper-data-service";
                 }, {});
             }
             this.epalclasses$.next(ecs);
-        }, error => {console.log("error selecting epalclasses")});
+        }, error => { console.log("error selecting epalclasses"); });
 
-        this.studentDataFieldsSub = this._ngRedux.select('studentDataFields')
+        this.studentDataFieldsSub = this._ngRedux.select("studentDataFields")
             .subscribe(studentDataFields => {
                 this.studentDataFields$.next(<IStudentDataFields>studentDataFields);
-        }, error => {console.log("error selecting studentDataFields")});
+            }, error => { console.log("error selecting studentDataFields"); });
 
-/*        this.regionsSub = this._ngRedux.select((state) => {
-            console.log("SELECTOR3");
-            state.regions.reduce((prevRegion, region) => {
-                region.epals.reduce((prevEpal, epal) => {
-                    if (epal.selected === true) {
-                        this.epalSelected.push(Number(epal.epal_id));
-                        this.epalSelectedOrder.push(epal.order_id);
-                    }
-                    return epal;
-                }, {});
-                return region;
-            }, {});
-            return state.regions;
-        }).subscribe(this.regions$); */
-
-
-        this.regionsSub = this._ngRedux.select('regions').
+        this.regionsSub = this._ngRedux.select("regions").
             subscribe(regions => {
                 console.log("SELECTOR: REGIONS");
-                    let rgns = <IRegionRecords>regions;
-                    let prevSelected: Array<number> = new Array();
-                    rgns.reduce((prevRgn, rgn) => {
-                        rgn.epals.reduce((prevSchool, school) => {
-                            if (school.selected === true) {
-                                prevSelected = this.epalSelected$.getValue();
-                                prevSelected[prevSelected.length] = <number>parseInt(school.epal_id);
+                let rgns = <IRegionRecords>regions;
+                let prevSelected: Array<number> = new Array();
+                rgns.reduce((prevRgn, rgn) => {
+                    rgn.epals.reduce((prevSchool, school) => {
+                        if (school.selected === true) {
+                            prevSelected = this.epalSelected$.getValue();
+                            prevSelected[prevSelected.length] = <number>parseInt(school.epal_id);
 
-                                this.epalSelected$.next(prevSelected);
-                                this.epalSelectedOrder.push(school.order_id);
-                            }
-                            return school;
-                        }, {});
-                        return rgn;
+                            this.epalSelected$.next(prevSelected);
+                            this.epalSelectedOrder.push(school.order_id);
+                        }
+                        return school;
                     }, {});
-//                    this.regions$.next(<IRegionRecords>regions);
-                },
-                error => {
-                    console.log("Error Selecting Regions");
-                }
-                );
+                    return rgn;
+                }, {});
+                //                    this.regions$.next(<IRegionRecords>regions);
+            },
+            error => {
+                console.log("Error Selecting Regions");
+            }
+            );
 
 
-        this.sectorsSub = this._ngRedux.select('sectors')
+        this.sectorsSub = this._ngRedux.select("sectors")
             .subscribe(sectors => {
                 let scs = <ISectors>sectors;
                 console.log("SELECTOR2");
@@ -265,7 +249,7 @@ import { HelperDataService } from "../../services/helper-data-service";
                 }, {});
             });
 
-        this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+        this.sectorFieldsSub = this._ngRedux.select("sectorFields")
             .subscribe(sectorFields => {
                 let sfds = <ISectorFields>sectorFields;
                 console.log("SELECTOR");
@@ -283,33 +267,25 @@ import { HelperDataService } from "../../services/helper-data-service";
         (<any>$("#studentFormSentNotice")).remove();
         if (this.studentDataFieldsSub) {
             this.studentDataFieldsSub.unsubscribe();
-//            this.studentDataFields$.unsubscribe();
         }
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
-//            this.regions$.unsubscribe();
         }
         if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
-//            this.sectors$.unsubscribe();
         }
         if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
-//            this.sectorFields$.unsubscribe();
         }
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
-//            this.epalclasses$.unsubscribe();
         }
         if (this.loginInfoSub) {
             this.loginInfoSub.unsubscribe();
-//            this.loginInfo$.unsubscribe();
         }
     }
 
     submitNow() {
-        // αποστολή στοιχείων μαθητή στο entity: epal_student
-        // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
 
         if (this.studentDataFields$.getValue().size === 0 || this.epalSelected$.getValue().length === 0 || this.epalclasses$.getValue().size === 0 || this.loginInfo$.getValue().size === 0)
             return;
@@ -518,7 +494,7 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.showLoader.next(false);
                 console.log("Error HTTP POST Service");
             }
-        );
+            );
 
     }
 

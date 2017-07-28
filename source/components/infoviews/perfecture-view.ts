@@ -69,7 +69,7 @@ import {
 
 @Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
     private LimitPerCateg$: BehaviorSubject<any>;
@@ -79,7 +79,6 @@ import {
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
-    public perfecture;
     private regionActive = <number>-1;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;

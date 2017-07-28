@@ -2,7 +2,6 @@ import { Http, Headers, RequestOptions, ResponseContentType, Response } from "@a
 import { Injectable, OnInit, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import "rxjs/add/operator/map";
-import { ICourseField } from "../store/coursefields/coursefields.types";
 import { ISectorField } from "../store/sectorfields/sectorfields.types";
 import { IRegionRecord, IRegionSchoolRecord, IRRegion, IRRegionSchool } from "../store/regionschools/regionschools.types";
 import { ISector, ISectors, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
@@ -36,7 +35,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .map(loginInfo => <ILoginInfo>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
@@ -175,30 +174,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
-    getCourseFields() {
-
-        this.loginInfo$.getValue().forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.auth_token;
-            this.authRole = loginInfoToken.auth_role;
-        });
-        let headers = new Headers({
-            "Content-Type": "application/json",
-        });
-        this.createAuthorizationHeader(headers);
-        let options = new RequestOptions({ headers: headers });
-        return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/coursefields/list`, options)
-                .map(response => <ICourseField[]>response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    console.log("Error HTTP GET Service");
-                    reject("Error HTTP GET Service");
-                });
-        });
-    };
-
     getSectorFields() {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
@@ -321,31 +296,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         return rsa;
     }
 
-    getCriteria() {
-
-        this.loginInfo$.getValue().forEach(loginInfoToken => {
-            this.authToken = loginInfoToken.auth_token;
-            this.authRole = loginInfoToken.auth_role;
-        });
-        let headers = new Headers({
-            "Content-Type": "application/json",
-        });
-        this.createAuthorizationHeader(headers);
-        let options = new RequestOptions({ headers: headers });
-        return new Promise((resolve, reject) => {
-            this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list`, options)
-                //this.http.get(`${AppSettings.API_ENDPOINT}/criteria/list?category=${category}`, options)
-                .map(response => <ISectorField[]>response.json())
-                .subscribe(data => {
-                    resolve(data);
-                },
-                error => {
-                    console.log("Error HTTP GET Service");
-                    reject("Error HTTP GET Service");
-                });
-        });
-    };
-
     getCurrentUser(oauthtoken, oauthrole) {
 
         this.authToken = oauthtoken;
@@ -433,7 +383,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
-                    window.onbeforeunload = function() { console.log("unloading") };
+                    window.onbeforeunload = function() { console.log("unloading"); };
                     resolve(data);
                 },
                 error => {
@@ -452,7 +402,7 @@ export class HelperDataService implements OnInit, OnDestroy {
                 .map(response => response.json())
                 .subscribe(data => {
                     this._cookieService.removeAll();
-                    window.onbeforeunload = function() { console.log("unloading") };
+                    window.onbeforeunload = function() { console.log("unloading"); };
                     resolve(data);
                 },
                 error => {
@@ -593,7 +543,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, { }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution`, {}, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -615,7 +565,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, { }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/distribution-secondperiod`, {}, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -637,24 +587,24 @@ export class HelperDataService implements OnInit, OnDestroy {
         this.createMinistryAuthorizationHeader(headers, username, userpassword);
         let options = new RequestOptions({ headers: headers });
 
-        if (routepath == "/ministry/report-users/") {
+        if (routepath === "/ministry/report-users/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath, options)
                 .map(response => response.json());
         }
-        else if (routepath == "/ministry/general-report/") {
+        else if (routepath === "/ministry/general-report/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath, options)
                 .map(response => response.json());
         }
-        else if (routepath == "/ministry/report-completeness/") {
+        else if (routepath === "/ministry/report-completeness/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/" + schsel, options)
                 .map(response => response.json());
         }
-        else if (routepath == "/ministry/report-all-stat/") {
+        else if (routepath === "/ministry/report-all-stat/") {
             return this.http.get(`${AppSettings.API_ENDPOINT}` + routepath + regionsel + "/" + adminsel + "/" + schsel + "/" +
                 clsel + "/" + secsel + "/" + coursel + "/" + distribfinal, options)
                 .map(response => response.json());
         }
-        else if (routepath == "/ministry/report-no-capacity/") {
+        else if (routepath === "/ministry/report-no-capacity/") {
             let capacityFilter = 0;
             if (regionsel)
                 capacityFilter = 1;
@@ -673,11 +623,11 @@ export class HelperDataService implements OnInit, OnDestroy {
         let options = new RequestOptions({ headers: headers });
 
         let route = "";
-        if (unallocated == 1) {
+        if (unallocated === 1) {
             route = "ministry/send-unallocated-massive-mail/" + period;
-        } else if (unallocated == 2) {
+        } else if (unallocated === 2) {
             route = "ministry/send-unallocated-sc-massive-mail/" + period;
-        } else if (unallocated == 3) {
+        } else if (unallocated === 3) {
             route = "ministry/send-located-massive-mail/" + period;
         }
 
@@ -969,7 +919,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         let headerIdStr = headerid.toString();
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/pdf-application/` + headerIdStr, options)
             .map((res) => {
-                return new Blob([res['_body']], { type: "application/octet-stream" })
+                return new Blob([res["_body"]], { type: "application/octet-stream" });
             })
             .subscribe(
             data => {
@@ -980,13 +930,13 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
     sendmail(email, name, surname, message) {
-         let headers = new Headers({
+        let headers = new Headers({
             "Content-Type": "application/json",
         });
         this.createAuthorizationHeader(headers);
         let options = new RequestOptions({ headers: headers });
         return new Promise((resolve, reject) => {
-            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/sendmail`, { userEmail: email, userName : name, userSurname : surname, userMessage : message }, options)
+            this.http.post(`${AppSettings.API_ENDPOINT}/epal/user/sendmail`, { userEmail: email, userName: name, userSurname: surname, userMessage: message }, options)
                 .map(response => response.json())
                 .subscribe(data => {
                     resolve(data);
@@ -998,18 +948,18 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
-/*    showResults(headerid) {
+    /*    showResults(headerid) {
 
-      let headers = new Headers({
-          "Content-Type": "application/json",
-      });
-      this.createAuthorizationHeader(headers);
-      let options = new RequestOptions({ headers: headers });
-      let headerIdStr = headerid.toString();
-      return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
-          .map(response => response.json());
+          let headers = new Headers({
+              "Content-Type": "application/json",
+          });
+          this.createAuthorizationHeader(headers);
+          let options = new RequestOptions({ headers: headers });
+          let headerIdStr = headerid.toString();
+          return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
+              .map(response => response.json());
 
-    } */
+        } */
 
 
     findTotalStudents() {
@@ -1026,12 +976,12 @@ export class HelperDataService implements OnInit, OnDestroy {
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/totalstudent`, options)
 
             .map(response => response.json());
-        }
+    }
 
 
 
 
-deleteApplicationforDirector(appId) {
+    deleteApplicationforDirector(appId) {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
             this.authToken = loginInfoToken.auth_token;
             this.authRole = loginInfoToken.auth_role;

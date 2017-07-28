@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 
 
 import {
@@ -18,11 +18,11 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
 
 @Component({
-    selector: 'minister-settings',
+    selector: "minister-settings",
     template: `
 
     <div
@@ -120,13 +120,13 @@ import {
 
 @Injectable() export default class MinisterSettings implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    private formGroup: FormGroup;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private settings$: BehaviorSubject<any>;
-    loginInfoSub: Subscription;
+    private loginInfoSub: Subscription;
     private settingsSub: Subscription;
 
     private capacityDisabled: boolean;
@@ -145,11 +145,11 @@ import {
         private router: Router) {
 
         this.formGroup = this.fb.group({
-            capacityDisabled: ['', []],
-            directorViewDisabled: ['', []],
-            applicantsLoginDisabled: ['', []],
-            applicantsResultsDisabled: ['', []],
-            secondPeriodEnabled: ['', []],
+            capacityDisabled: ["", []],
+            directorViewDisabled: ["", []],
+            applicantsLoginDisabled: ["", []],
+            applicantsResultsDisabled: ["", []],
+            secondPeriodEnabled: ["", []],
         });
 
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -161,46 +161,44 @@ import {
     }
 
     public showModal(): void {
-        (<any>$('#configNotice')).modal('show');
+        (<any>$("#configNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#configNotice')).modal('hide');
+        (<any>$("#configNotice")).modal("hide");
     }
 
     public onHidden(): void {
-        //this.isModalShown.next(false);
+        // this.isModalShown.next(false);
     }
 
 
     ngOnDestroy() {
 
-        (<any>$('#configNotice')).remove();
+        (<any>$("#configNotice")).remove();
 
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
         if (this.settingsSub)
             this.settingsSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.settings$)
-            this.settings$.unsubscribe();
     }
 
     ngOnInit() {
 
-        (<any>$('#configNotice')).appendTo("body");
+        (<any>$("#configNotice")).appendTo("body");
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        this.minedu_userName = loginInfoToken.minedu_username;
+                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
 
         this.retrieveSettings();
 
@@ -212,11 +210,11 @@ import {
 
         this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
             this.settings$.next(data);
-            this.capacityDisabled = Boolean(Number(this.settings$.value['capacityDisabled']));
-            this.directorViewDisabled = Boolean(Number(this.settings$.value['directorViewDisabled']));
-            this.applicantsLoginDisabled = Boolean(Number(this.settings$.value['applicantsLoginDisabled']));
-            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
-            this.secondPeriodEnabled = Boolean(Number(this.settings$.value['secondPeriodEnabled']));
+            this.capacityDisabled = Boolean(Number(this.settings$.value["capacityDisabled"]));
+            this.directorViewDisabled = Boolean(Number(this.settings$.value["directorViewDisabled"]));
+            this.applicantsLoginDisabled = Boolean(Number(this.settings$.value["applicantsLoginDisabled"]));
+            this.applicantsResultsDisabled = Boolean(Number(this.settings$.value["applicantsResultsDisabled"]));
+            this.secondPeriodEnabled = Boolean(Number(this.settings$.value["secondPeriodEnabled"]));
 
             this.dataRetrieved = 1;
         },

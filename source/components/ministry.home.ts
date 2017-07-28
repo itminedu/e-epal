@@ -1,12 +1,12 @@
-import { Router, Params} from '@angular/router';
-import { OnInit, OnDestroy, Component} from '@angular/core';
-import { LoginInfoActions } from '../actions/logininfo.actions';
-import { ILoginInfo } from '../store/logininfo/logininfo.types';
-import { NgRedux, select } from '@angular-redux/store';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { IAppState } from '../store/store';
-import { HelperDataService } from '../services/helper-data-service';
-import {Http, Response, RequestOptions} from '@angular/http';
+import { Router, Params} from "@angular/router";
+import { OnInit, OnDestroy, Component} from "@angular/core";
+import { LoginInfoActions } from "../actions/logininfo.actions";
+import { ILoginInfo } from "../store/logininfo/logininfo.types";
+import { NgRedux, select } from "@angular-redux/store";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { IAppState } from "../store/store";
+import { HelperDataService } from "../services/helper-data-service";
+import {Http, Response, RequestOptions} from "@angular/http";
 import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import {
     FormBuilder,
@@ -14,12 +14,12 @@ import {
     FormControl,
     FormArray,
     Validators
-} from '@angular/forms';
+} from "@angular/forms";
 
-import { API_ENDPOINT } from '../app.settings';
+import { API_ENDPOINT } from "../app.settings";
 
 @Component({
-    selector: 'ministry-home',
+    selector: "ministry-home",
     template: `
   <div>
        <form novalidate [formGroup]="userDataGroup"  #form>
@@ -59,11 +59,11 @@ import { API_ENDPOINT } from '../app.settings';
 })
 
 export default class MinistryHome implements OnInit, OnDestroy {
-    public userDataGroup: FormGroup;
+    private userDataGroup: FormGroup;
     private authRole: string;
     private mineduUsername: string;
-    //private mineduPassword: string;
-    //private cuName: string;
+    // private mineduPassword: string;
+    // private cuName: string;
     private validLogin: number;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     private loginInfoSub: Subscription;
@@ -77,38 +77,35 @@ export default class MinistryHome implements OnInit, OnDestroy {
         private router: Router
     ) {
 
-        this.mineduUsername = '';
-        //this.mineduPassword = '';
-        this.authRole = '';
-        //this.cuName = '';
-        //this.validLogin = true;
+        this.mineduUsername = "";
+        this.authRole = "";
         this.validLogin = 1;
 
 
         this.userDataGroup = this.fb.group({
-          minedu_username: ['', [Validators.required]],
-          minedu_userpassword: ['', [Validators.required]],
-          cu_name: [''],
-          auth_role: [''],
+            minedu_username: ["", [Validators.required]],
+            minedu_userpassword: ["", [Validators.required]],
+            cu_name: [""],
+            auth_role: [""],
         });
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
                 let linfo = <ILoginInfo>loginInfo;
                 if (linfo.size > 0) {
                     linfo.reduce(({}, loginInfoToken) => {
                         this.mineduUsername = loginInfoToken.minedu_username;
-                        //this.mineduPassword = loginInfoToken.minedu_userpassword;
+                        // this.mineduPassword = loginInfoToken.minedu_userpassword;
                         if (this.mineduUsername && this.mineduUsername.length > 0)
-                            this.router.navigate(['/ministry/minister-settings']);
+                            this.router.navigate(["/ministry/minister-settings"]);
                         return loginInfoToken;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
-            }, error => {console.log("error selecting loginInfo");});
+            }, error => { console.log("error selecting loginInfo"); });
 
     }
 
@@ -119,20 +116,20 @@ export default class MinistryHome implements OnInit, OnDestroy {
     submitCredentials() {
         this.validLogin = -1;
         let success = true;
-        this._hds.sendMinisrtyCredentials(this.userDataGroup.value['minedu_username'],this.userDataGroup.value['minedu_userpassword'])
-          .catch(err => {console.log(err); success = false; this.validLogin = 0; })
-          .then(msg => {
-            if (success)  {
-              this.authRole = 'supervisor';
-              this._hds.setMineduCurrentUser(this.userDataGroup.value['minedu_username'], this.userDataGroup.value['minedu_userpassword'],   this.authRole);
+        this._hds.sendMinisrtyCredentials(this.userDataGroup.value["minedu_username"], this.userDataGroup.value["minedu_userpassword"])
+            .catch(err => { console.log(err); success = false; this.validLogin = 0; })
+            .then(msg => {
+                if (success) {
+                    this.authRole = "supervisor";
+                    this._hds.setMineduCurrentUser(this.userDataGroup.value["minedu_username"], this.userDataGroup.value["minedu_userpassword"], this.authRole);
 
-              this.validLogin = 1;
-              this.userDataGroup.value['cu_name'] = this.userDataGroup.value['minedu_username'];
-              this.userDataGroup.value['auth_role'] = 'supervisor';
-              this._ata.saveMinEduloginInfo([this.userDataGroup.value]);
-          }
-          });
-        }
+                    this.validLogin = 1;
+                    this.userDataGroup.value["cu_name"] = this.userDataGroup.value["minedu_username"];
+                    this.userDataGroup.value["auth_role"] = "supervisor";
+                    this._ata.saveMinEduloginInfo([this.userDataGroup.value]);
+                }
+            });
+    }
 
 
 

@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
+import { AppSettings } from "../../app.settings";
+import { Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { LoginInfoActions } from "../../actions/logininfo.actions";
 
 import {
     FormBuilder,
@@ -16,10 +16,10 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
 @Component({
-    selector: 'intro-statement',
+    selector: "intro-statement",
     template: `
 
     <div id="disclaimerNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -127,83 +127,83 @@ import {
 
 @Injectable() export default class Disclaimer implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    private formGroup: FormGroup;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private disclaimerChecked: BehaviorSubject<number>;
-    loginInfoSub: Subscription;
+    private loginInfoSub: Subscription;
 
     constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
         private _lia: LoginInfoActions,
         private router: Router) {
 
-          this.formGroup = this.fb.group({
-              disclaimerChecked: ['', []],
-          });
+        this.formGroup = this.fb.group({
+            disclaimerChecked: ["", []],
+        });
 
-          this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-          this.modalTitle =  new BehaviorSubject("");
-          this.modalText =  new BehaviorSubject("");
-          this.modalHeader =  new BehaviorSubject("");
-          this.disclaimerChecked = new BehaviorSubject(0);
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
+        this.disclaimerChecked = new BehaviorSubject(0);
 
     }
 
-    public showModal():void {
-        (<any>$('#disclaimerNotice')).modal('show');
+    public showModal(): void {
+        (<any>$("#disclaimerNotice")).modal("show");
     }
 
-    public hideModal():void {
-        (<any>$('#disclaimerNotice')).modal('hide');
+    public hideModal(): void {
+        (<any>$("#disclaimerNotice")).modal("hide");
     }
 
-    public onHidden():void {
-        //this.isModalShown.next(false);
+    public onHidden(): void {
+        // this.isModalShown.next(false);
     }
 
 
     ngOnDestroy() {
 
-      (<any>$('#disclaimerNotice')).remove();
+        (<any>$("#disclaimerNotice")).remove();
 
-      if (this.loginInfoSub)
-        this.loginInfoSub.unsubscribe();
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
     }
 
     ngOnInit() {
 
-      (<any>$('#disclaimerNotice')).appendTo("body");
+        (<any>$("#disclaimerNotice")).appendTo("body");
 
-      this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
                 let linfo = <ILoginInfo>loginInfo;
                 if (linfo.size > 0) {
                     linfo.reduce(({}, loginInfoToken) => {
-                        this.formGroup.controls['disclaimerChecked'].setValue(loginInfoToken.disclaimer_checked);
+                        this.formGroup.controls["disclaimerChecked"].setValue(loginInfoToken.disclaimer_checked);
                         this.disclaimerChecked.next(loginInfoToken.disclaimer_checked);
                         return loginInfoToken;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
-            }, error => {console.log("error selecting loginInfo");});
-  }
+            }, error => { console.log("error selecting loginInfo"); });
+    }
 
-  navigateBack() {
-      this.router.navigate(['/parent-form']);
-  }
+    navigateBack() {
+        this.router.navigate(["/parent-form"]);
+    }
 
-  saveStatementAgree() {
-      if (!this.formGroup.controls['disclaimerChecked'].value) {
-          this.modalHeader.next("modal-header-danger");
-          this.modalTitle.next("Αποδοχή όρων χρήσης");
-          this.modalText.next("Πρέπει να αποδεχθείτε πρώτα τους όρους χρήσης για να συνεχίσετε");
-          this.showModal();
-      } else {
-          this._lia.saveStatementAgree(this.formGroup.controls['disclaimerChecked'].value);
-          this.router.navigate(['epal-class-select']);
-      }
-  }
+    saveStatementAgree() {
+        if (!this.formGroup.controls["disclaimerChecked"].value) {
+            this.modalHeader.next("modal-header-danger");
+            this.modalTitle.next("Αποδοχή όρων χρήσης");
+            this.modalText.next("Πρέπει να αποδεχθείτε πρώτα τους όρους χρήσης για να συνεχίσετε");
+            this.showModal();
+        } else {
+            this._lia.saveStatementAgree(this.formGroup.controls["disclaimerChecked"].value);
+            this.router.navigate(["epal-class-select"]);
+        }
+    }
 }

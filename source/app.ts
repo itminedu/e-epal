@@ -9,24 +9,23 @@ import { CookieModule } from "ngx-cookie";
 import { MyDatePickerModule } from "mydatepicker";
 import { NguiAutoCompleteModule } from "@ngui/auto-complete";
 import {
-  FormsModule,
-  ReactiveFormsModule,
+    FormsModule,
+    ReactiveFormsModule,
 } from "@angular/forms";
 
 import {RouterModule} from "@angular/router";
 import { HttpModule } from "@angular/http";
 import {
-  APP_BASE_HREF,
-  HashLocationStrategy,
-  LocationStrategy,
-  NgLocalization,
+    APP_BASE_HREF,
+    HashLocationStrategy,
+    LocationStrategy,
+    NgLocalization,
 } from "@angular/common";
 
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import Main from "./containers/main";
 import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from "./app.routes";
 
-/* Here we import services */
 import {HelperDataService} from "./services/helper-data-service";
 import {LoaderService} from "./services/Spinner.service";
 import {AuthService} from "./services/auth.service";
@@ -53,54 +52,54 @@ import FooterComponent from "./components/footer/footer.component";
 import {enableProdMode} from "@angular/core";
 
 class MyLocalization extends NgLocalization {
-   getPluralCategory(value: any) {
-      if (value < 5) {
-         return "few";
-      }
-   }
+    getPluralCategory(value: any) {
+        if (value < 5) {
+            return "few";
+        }
+    }
 }
 
 @NgModule({
-  imports:      [
-    BrowserModule,
-    MyDatePickerModule,
-    FormsModule,
-    NguiAutoCompleteModule,
-    RouterModule,
-    ReactiveFormsModule,
-    APP_ROUTER_PROVIDERS,
-    HttpModule,
-    Ng2SmartTableModule,
-    NgReduxModule,
-    CookieModule.forRoot()
-  ],
-  declarations: [
-    Main, FooterComponent, HeaderComponent, NavbarComponent, MainComponent,
-    APP_DECLARATIONS,
-  ],
-  bootstrap: [ Main ],
-  providers: [
-    { provide: APP_BASE_HREF, useValue: "/" },
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
-    { provide: NgLocalization, useClass: MyLocalization },
-    DevToolsExtension,
-    ACTION_PROVIDERS,
-    // Service1, again services here
-    HelperDataService,
-    LoaderService,
-    AuthService,
-    SchoolAuthGuard,
-    SchoolStudentsLockedGuard,
-    SchoolCapacityLockedGuard,
-    StudentAuthGuard,
-    StudentLockGuard,
-    RegionEduAuthGuard,
-    EduAdminAuthGuard,
-    MinistryAuthGuard,
-    ReportsAuthGuard
-  ]
+    imports: [
+        BrowserModule,
+        MyDatePickerModule,
+        FormsModule,
+        NguiAutoCompleteModule,
+        RouterModule,
+        ReactiveFormsModule,
+        APP_ROUTER_PROVIDERS,
+        HttpModule,
+        Ng2SmartTableModule,
+        NgReduxModule,
+        CookieModule.forRoot()
+    ],
+    declarations: [
+        Main, FooterComponent, HeaderComponent, NavbarComponent, MainComponent,
+        APP_DECLARATIONS,
+    ],
+    bootstrap: [Main],
+    providers: [
+        { provide: APP_BASE_HREF, useValue: "/" },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
+        { provide: NgLocalization, useClass: MyLocalization },
+        DevToolsExtension,
+        ACTION_PROVIDERS,
+        // Service1, again services here
+        HelperDataService,
+        LoaderService,
+        AuthService,
+        SchoolAuthGuard,
+        SchoolStudentsLockedGuard,
+        SchoolCapacityLockedGuard,
+        StudentAuthGuard,
+        StudentLockGuard,
+        RegionEduAuthGuard,
+        EduAdminAuthGuard,
+        MinistryAuthGuard,
+        ReportsAuthGuard
+    ]
 })
-class AppModule {}
+class AppModule { }
 
 // enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);

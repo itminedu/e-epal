@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import { Observable } from "rxjs/Observable";
-import { Http, Headers, RequestOptions } from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { API_ENDPOINT } from '../../app.settings';
+import { Http, Headers, RequestOptions } from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { API_ENDPOINT } from "../../app.settings";
 
 @Component({
-    selector: 'minister-informstudents',
+    selector: "minister-informstudents",
     template: `
 
     <div
@@ -140,18 +140,20 @@ import { API_ENDPOINT } from '../../app.settings';
 
     ngOnInit() {
 
-        (<any>$('#emaiSentNotice')).appendTo("body");
+        (<any>$("#emaiSentNotice")).appendTo("body");
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({ }, loginInfoToken) => {
+                        this.minedu_userName = loginInfoToken.minedu_username;
+                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
 
         this.numSuccessMails = 0;
         this.numFailMails = 0;
@@ -163,32 +165,25 @@ import { API_ENDPOINT } from '../../app.settings';
 
     ngOnDestroy() {
 
-        (<any>$('#emaiSentNotice')).remove();
+        (<any>$("#emaiSentNotice")).remove();
 
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
         if (this.settingsSub)
             this.settingsSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.settings$)
-            this.settings$.unsubscribe();
-
 
     }
 
     public showModal(): void {
-        (<any>$('#emaiSentNotice')).modal('show');
+        (<any>$("#emaiSentNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#emaiSentNotice')).modal('hide');
+        (<any>$("#emaiSentNotice")).modal("hide");
     }
 
     public onHidden(): void {
-        //this.isModalShown.next(false);
+        // this.isModalShown.next(false);
     }
 
     informUnlocatedStudents(unallocated, period) {
@@ -206,7 +201,7 @@ import { API_ENDPOINT } from '../../app.settings';
                 this.modalHeader.next("modal-header-success");
                 this.modalTitle.next("Κατανομή Μαθητών");
                 let txtModal = "Έγινε αποστολή " + this.numSuccessMails + " e-mails! ";
-                if (this.numFailMails != 0) {
+                if (this.numFailMails !== 0) {
                     this.modalHeader.next("modal-header-warning");
                     txtModal += "Κάποια e-mail δεν έχουν σταλεί. Δεν ήταν δυνατή η αποστολή " + this.numFailMails + " e-mails!";
                 }
@@ -229,9 +224,9 @@ import { API_ENDPOINT } from '../../app.settings';
         this.settingsSub = this._hds.retrieveAdminSettings(this.minedu_userName, this.minedu_userPassword)
             .subscribe(data => {
                 this.settings$.next(data);
-                this.applicantsResultsDisabled = Boolean(Number(this.settings$.value['applicantsResultsDisabled']));
+                this.applicantsResultsDisabled = Boolean(Number(this.settings$.value["applicantsResultsDisabled"]));
 
-                if (this.applicantsResultsDisabled == false) {
+                if (this.applicantsResultsDisabled === false) {
                     this.modalTitle.next("Κατανομή Μαθητών");
                     this.modalText.next(("ΠΡΟΣΟΧΗ: Για να μπορείτε να αποστείλετε e-mail ενημέρωσης, παρακαλώ πηγαίνετε στις Ρυθμίσεις και ΕΝΕΡΓΟΠΟΙΗΣΤΕ  ") +
                         ("τη δυνατότητα της προβολής αποτελεσμάτων κατανομής από τους μαθητές."));

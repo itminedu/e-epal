@@ -1,5 +1,5 @@
-import { List, Map } from 'immutable';
-import {TypedRecord} from 'typed-immutable-record';
+import { List, Map } from "immutable";
+import {TypedRecord} from "typed-immutable-record";
 
 export interface IRRegion {
     region_id: string;
@@ -16,7 +16,7 @@ export interface IRRegionSchool {
     order_id: number;
 }
 
-export interface IRegionRecord extends TypedRecord<IRegionRecord>, IRRegion {};
+export interface IRegionRecord extends TypedRecord<IRegionRecord>, IRRegion { };
 export type IRegionRecords = List<IRegionRecord>;
-export interface IRegionSchoolRecord extends TypedRecord<IRegionSchoolRecord>, IRRegionSchool {};
+export interface IRegionSchoolRecord extends TypedRecord<IRegionSchoolRecord>, IRRegionSchool { };
 export type IRegionSchoolRecords = List<IRegionSchoolRecord>;

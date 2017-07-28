@@ -1,25 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
-import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
-import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import {AppSettings} from '../../app.settings';
-import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
-import { EPALCLASSES_INITIAL_STATE } from '../../store/epalclasses/epalclasses.initial-state';
-import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
-import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { EpalClassesActions } from "../../actions/epalclass.actions";
+import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
+import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import {AppSettings} from "../../app.settings";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
+import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
+import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
 
 @Component({
-    selector: 'application-preview-select',
+    selector: "application-preview-select",
     template: `
         <div *ngFor="let epalclass$ of epalclasses$ | async;">
         <h4 style="margin-top: 20px; line-height: 2em; ">Οι επιλογές μου</h4>
@@ -92,7 +92,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
     private numSelectedSchools = <number>0;
     private numSelectedOrder = <number>0;
     private classSelected = 0;
-    public currentUrl: string;
+    private currentUrl: string;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
         private router: Router
@@ -107,7 +107,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
 
     ngOnInit() {
         this.currentUrl = this.router.url;
-        this.sectorsSub = this._ngRedux.select('sectors')
+        this.sectorsSub = this._ngRedux.select("sectors")
             .subscribe(sectors => {
                 let scs = <ISectors>sectors;
                 scs.reduce((prevSector, sector) => {
@@ -123,7 +123,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
                 this.sectors$.next(scs);
             });
 
-        this.regionsSub = this._ngRedux.select('regions')
+        this.regionsSub = this._ngRedux.select("regions")
             .subscribe(regions => {
                 let rgns = <IRegionRecords>regions;
                 let numsel = 0, numsel2 = 0;
@@ -148,12 +148,12 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
                 this.selectedSchools$.next(selectedSchools.sort(this.compareSchools));
             });
 
-        this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+        this.sectorFieldsSub = this._ngRedux.select("sectorFields")
             .subscribe(sectorFields => {
                 this.sectorFields$.next(<ISectorFields>sectorFields);
-            }, error => {console.log("error selecting sectorFields");});
+            }, error => { console.log("error selecting sectorFields"); });
 
-        this.epalclassesSub = this._ngRedux.select('epalclasses')
+        this.epalclassesSub = this._ngRedux.select("epalclasses")
             .subscribe(epalclasses => {
                 let ecs = <IEpalClasses>epalclasses;
                 ecs.reduce(({}, epalclass) => {
@@ -168,11 +168,11 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
                     return epalclass;
                 }, {});
                 this.epalclasses$.next(ecs);
-            }, error => {console.log("error selecting epalclasses");});
+            }, error => { console.log("error selecting epalclasses"); });
 
     }
 
-    compareSchools(a: IRegionSchoolRecord,b: IRegionSchoolRecord) {
+    compareSchools(a: IRegionSchoolRecord, b: IRegionSchoolRecord) {
         if (a.order_id < b.order_id)
             return -1;
         if (a.order_id > b.order_id)
@@ -183,19 +183,19 @@ import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfiel
     ngOnDestroy() {
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
-//            this.regions$.unsubscribe();
+            //            this.regions$.unsubscribe();
         }
         if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
-//            this.sectors$.unsubscribe();
+            //            this.sectors$.unsubscribe();
         }
         if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
-//            this.sectorFields$.unsubscribe();
+            //            this.sectorFields$.unsubscribe();
         }
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
-//            this.epalclasses$.unsubscribe();
+            //            this.epalclasses$.unsubscribe();
         }
 
     }

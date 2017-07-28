@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from "@angular/core";
 import {Router} from "@angular/router";
 import { Injectable } from "@angular/core";
 
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
@@ -14,9 +14,7 @@ import { EpalClassesActions } from "../../actions/epalclass.actions";
 import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
-import { CriteriaActions } from "../../actions/criteria.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
-
 
 @Component({
     selector: "reg-header",
@@ -28,7 +26,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private authRole: string;
     private cuName: string;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
-    public cuser: any;
+    private cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
@@ -47,7 +45,6 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         private _rsa: RegionSchoolsActions,
         private _eca: EpalClassesActions,
         private _sdfa: StudentDataFieldsActions,
-        private _cria: CriteriaActions,
         private _ngRedux: NgRedux<IAppState>,
         private router: Router
     ) {
@@ -68,7 +65,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         (<any>$("#headerNotice")).appendTo("body");
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .map(loginInfo => <ILoginInfo>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
@@ -79,21 +76,20 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                         return loginInfoToken;
                     }, {});
 
-                if (this.hasvalue == false)
-                {
-                this.showLoader.next(true);
-                this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
-                this.TotalStudents$.next(x);
-                this.showLoader.next(false);
-                this.hasvalue = true;
-                },
-                error => {
-                    this.TotalStudents$.next([{}]);
-                    console.log("Error Getting courses perSchool");
-                    this.showLoader.next(false);
-                });
+                    if (this.hasvalue === false) {
+                        this.showLoader.next(true);
+                        this.TotalStudentsSub = this._hds.findTotalStudents().subscribe(x => {
+                            this.TotalStudents$.next(x);
+                            this.showLoader.next(false);
+                            this.hasvalue = true;
+                        },
+                            error => {
+                                this.TotalStudents$.next([{}]);
+                                console.log("Error Getting courses perSchool");
+                                this.showLoader.next(false);
+                            });
 
-                }
+                    }
 
                 }
 
@@ -110,7 +106,6 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         if (this.loginInfoSub) {
             this.loginInfoSub.unsubscribe();
         }
-//        this.loginInfo$.unsubscribe();
 
     }
 
@@ -119,19 +114,16 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         this._hds.signOut().then(data => {
             this._ata.initLoginInfo();
             if (this.authRole === SCHOOL_ROLE) {
-                // this.router.navigate(['/school']);
                 this.authToken = "";
                 this.authRole = "";
                 window.location.assign((<any>data).next);
             }
             else if (this.authRole === PDE_ROLE) {
-                // this.router.navigate(["/school"]);
                 this.authToken = "";
                 this.authRole = "";
                 window.location.assign((<any>data).next);
             }
             else if (this.authRole === DIDE_ROLE) {
-                // this.router.navigate(["/school"]);
                 this.authToken = "";
                 this.authRole = "";
                 window.location.assign((<any>data).next);
@@ -142,7 +134,6 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                 this._rsa.initRegionSchools();
                 this._csa.initSectorCourses();
                 this._sdfa.initStudentDataFields();
-                this._cria.initCriteria();
                 this.router.navigate([""]);
             }
             else if (this.authRole === MINISTRY_ROLE) {
@@ -159,7 +150,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
 
     goHome() {
         if (this.authRole === SCHOOL_ROLE) {
-            this.router.navigate(['/school']);
+            this.router.navigate(["/school"]);
         }
         else if (this.authRole === PDE_ROLE) {
             this.router.navigate(["/school"]);
@@ -175,9 +166,8 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         }
     }
 
-    gohelpDesk()
-    {
-       this.router.navigate(['/help-desk']);
+    gohelpDesk() {
+        this.router.navigate(["/help-desk"]);
     }
 
     public showModal(): void {

@@ -87,9 +87,9 @@ import { API_ENDPOINT } from "../../app.settings";
 
 @Injectable() export default class MinisterReports implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
-    loginInfoSub: Subscription;
+    private formGroup: FormGroup;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
@@ -116,30 +116,29 @@ import { API_ENDPOINT } from "../../app.settings";
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    if (loginInfoToken.auth_role === PDE_ROLE || loginInfoToken.auth_role === DIDE_ROLE) {
-                        this.userRole = loginInfoToken.auth_role;
-                        this.minedu_userName = loginInfoToken.auth_token;
-                        this.minedu_userPassword = loginInfoToken.auth_token;
-                    }
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        this.minedu_userName = loginInfoToken.minedu_username;
+                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                        if (loginInfoToken.auth_role === PDE_ROLE || loginInfoToken.auth_role === DIDE_ROLE) {
+                            this.userRole = loginInfoToken.auth_role;
+                            this.minedu_userName = loginInfoToken.auth_token;
+                            this.minedu_userPassword = loginInfoToken.auth_token;
+                        }
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
 
     }
 
     ngOnDestroy() {
         if (this.loginInfoSub) {
             this.loginInfoSub.unsubscribe();
-        }
-        if (this.loginInfo$) {
-            this.loginInfo$.unsubscribe();
         }
     }
 

@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from '@angular-redux/store';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from '../../store/regionschools/regionschools.types';
-import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
-import { IAppState } from '../../store/store';
-import {AppSettings} from '../../app.settings';
+import { NgRedux, select } from "@angular-redux/store";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { IAppState } from "../../store/store";
+import {AppSettings} from "../../app.settings";
 
 @Component({
-    selector: 'schools-order-select',
+    selector: "schools-order-select",
     template: `
     <div class="row">
              <breadcrumbs></breadcrumbs>
@@ -50,7 +50,6 @@ import {AppSettings} from '../../app.settings';
 
 })
 @Injectable() export default class SchoolsOrderSelect implements OnInit, OnDestroy {
-    //    public formGroup: FormGroup;
     private regionsSub: Subscription;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
 
@@ -61,7 +60,7 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        this.regionsSub = this._ngRedux.select('regions')
+        this.regionsSub = this._ngRedux.select("regions")
             .subscribe(regions => {
                 let rgns = <IRegionRecords>regions;
                 let selectedSchools = Array<IRegionSchoolRecord>();
@@ -79,11 +78,11 @@ import {AppSettings} from '../../app.settings';
                 }, {});
 
                 selectedSchools.sort(this.compareSchools);
-                for (let i=0; i < selectedSchools.length; i++)
-                    selectedSchools[i].order_id = i+1;
+                for (let i = 0; i < selectedSchools.length; i++)
+                    selectedSchools[i].order_id = i + 1;
                 this.selectedSchools$.next(selectedSchools);
 
-            }, error => {console.log("error selecting regions");});
+            }, error => { console.log("error selecting regions"); });
     }
 
     ngOnDestroy() {
@@ -105,20 +104,10 @@ import {AppSettings} from '../../app.settings';
         selectedSchools = this.selectedSchools$.getValue();
 
         if (i === 1) {
-          //selectedSchools[0].order_id = 2;
-          //selectedSchools[1].order_id = 1;
-          //selectedSchools[2].order_id = 3;
-
-          //swap selectedSchools[0].order_id <-> selectedSchools[1].order_id
-          [ selectedSchools[0].order_id, selectedSchools[1].order_id ] = [ selectedSchools[1].order_id, selectedSchools[0].order_id ];
+            [selectedSchools[0].order_id, selectedSchools[1].order_id] = [selectedSchools[1].order_id, selectedSchools[0].order_id];
         }
         else if (i === 2) {
-          //selectedSchools[0].order_id = 1;
-          //selectedSchools[1].order_id = 3;
-          //selectedSchools[2].order_id = 2;
-
-          //swap selectedSchools[1].order_id <-> selectedSchools[2].order_id
-          [ selectedSchools[1].order_id, selectedSchools[2].order_id ] = [ selectedSchools[2].order_id, selectedSchools[1].order_id ];
+            [selectedSchools[1].order_id, selectedSchools[2].order_id] = [selectedSchools[2].order_id, selectedSchools[1].order_id];
         }
 
         this._cfa.saveRegionSchoolsOrder(selectedSchools);
@@ -126,11 +115,11 @@ import {AppSettings} from '../../app.settings';
 
     navigateToStudentForm() {
         this._cfa.saveRegionSchoolsOrder(this.selectedSchools$.getValue());
-        this.router.navigate(['/student-application-form-main']);
+        this.router.navigate(["/student-application-form-main"]);
     }
 
     navigateBack() {
         this._cfa.saveRegionSchoolsOrder(this.selectedSchools$.getValue());
-        this.router.navigate(['/region-schools-select']);
+        this.router.navigate(["/region-schools-select"]);
     }
 }

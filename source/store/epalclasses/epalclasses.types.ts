@@ -1,11 +1,8 @@
-import { List } from 'immutable';
+import { List } from "immutable";
 
 export interface IEpalClass {
-   // id: number;
+    // id: number;
     name: string;
-    
+
 }
-
 export type IEpalClasses = List<IEpalClass>;
-
-

@@ -10,9 +10,9 @@ import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { ILoginInfo } from "../../store/logininfo/logininfo.types";
 import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
-import {reportsSchema, TableColumn} from "./reports-schema";
+import {ReportsSchema, TableColumn} from "./reports-schema";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import {csvCreator} from "./csv-creator";
+import {CsvCreator} from "./csv-creator";
 
 import { API_ENDPOINT } from "../../app.settings";
 
@@ -72,8 +72,8 @@ import { API_ENDPOINT } from "../../app.settings";
     private source: LocalDataSource;
     columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new reportsSchema();
-    private csvObj = new csvCreator();
+    private reportSchema = new ReportsSchema();
+    private csvObj = new CsvCreator();
 
     constructor(
         private _ngRedux: NgRedux<IAppState>,
@@ -89,16 +89,18 @@ import { API_ENDPOINT } from "../../app.settings";
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        this.minedu_userName = loginInfoToken.minedu_username;
+                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
     }
 
     ngOnDestroy() {

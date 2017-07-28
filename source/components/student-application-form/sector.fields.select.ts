@@ -1,25 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { NgRedux, select } from '@angular-redux/store';
-import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
-import { IAppState } from '../../store/store';
-import { SECTOR_FIELDS_INITIAL_STATE } from '../../store/sectorfields/sectorfields.initial-state';
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { NgRedux, select } from "@angular-redux/store";
+import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { IAppState } from "../../store/store";
+import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
 
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 
 import {
     FormBuilder,
     FormGroup,
     FormControl,
     FormArray
-} from '@angular/forms';
-import {AppSettings} from '../../app.settings';
+} from "@angular/forms";
+import {AppSettings} from "../../app.settings";
 
 @Component({
-    selector: 'sector-fields-select',
+    selector: "sector-fields-select",
     template: `
     <div id="sectorFieldsNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
@@ -78,8 +78,8 @@ import {AppSettings} from '../../app.settings';
 @Injectable() export default class SectorFieldsSelect implements OnInit, OnDestroy {
     private sectorFields$: BehaviorSubject<ISectorFields>;
     private sectorFieldsSub: Subscription;
-    public formGroup: FormGroup;
-    public cfs = new FormArray([]);
+    private formGroup: FormGroup;
+    private cfs = new FormArray([]);
     private sectorActive = <number>-1;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
@@ -87,10 +87,10 @@ import {AppSettings} from '../../app.settings';
     public isModalShown: BehaviorSubject<boolean>;
 
     constructor(private fb: FormBuilder,
-                private _cfa: SectorFieldsActions,
-                private _rsa: RegionSchoolsActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router) {
+        private _cfa: SectorFieldsActions,
+        private _rsa: RegionSchoolsActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router) {
         this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
 
         this.formGroup = this.fb.group({
@@ -103,14 +103,14 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        (<any>$('#sectorFieldsNotice')).appendTo("body");
+        (<any>$("#sectorFieldsNotice")).appendTo("body");
         this._cfa.getSectorFields(false);
-        this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+        this.sectorFieldsSub = this._ngRedux.select("sectorFields")
             .subscribe(sectorFields => {
                 let sfds = <ISectorFields>sectorFields;
-                sfds.reduce(({}, sectorField) =>{
+                sfds.reduce(({}, sectorField) => {
                     this.cfs.push(new FormControl(sectorField.selected, []));
-                    //in case we want to retrieve last check when we return to the form
+                    // in case we want to retrieve last check when we return to the form
 
                     if (sectorField.selected === true) {
                         this.sectorActive = sectorField.id - 1;
@@ -119,20 +119,20 @@ import {AppSettings} from '../../app.settings';
                     return sectorField;
                 }, {});
                 this.sectorFields$.next(sfds);
-            }, error => {console.log("error selecting sectorFields");});
+            }, error => { console.log("error selecting sectorFields"); });
     }
 
     ngOnDestroy() {
-        (<any>$('#sectorFieldsNotice')).remove();
+        (<any>$("#sectorFieldsNotice")).remove();
         if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
     }
 
     public showModal(): void {
-        (<any>$('#sectorFieldsNotice')).modal('show');
+        (<any>$("#sectorFieldsNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#sectorFieldsNotice')).modal('hide');
+        (<any>$("#sectorFieldsNotice")).modal("hide");
     }
 
     public onHidden(): void {
@@ -147,24 +147,24 @@ import {AppSettings} from '../../app.settings';
             this.showModal();
         }
         else {
-            this.router.navigate(['/region-schools-select']);
+            this.router.navigate(["/region-schools-select"]);
         }
     }
 
     saveSelected() {
-      for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-        this.formGroup.value.formArray[i] = false;
-      if (this.sectorActive != -1)
-        this.formGroup.value.formArray[this.sectorActive] = true;
+        for (let i = 0; i < this.formGroup.value.formArray.length; i++)
+            this.formGroup.value.formArray[i] = false;
+        if (this.sectorActive !== -1)
+            this.formGroup.value.formArray[this.sectorActive] = true;
 
-      this._cfa.saveSectorFieldsSelected(this.formGroup.value.formArray);
+        this._cfa.saveSectorFieldsSelected(this.formGroup.value.formArray);
 
-      this._rsa.initRegionSchools();
+        this._rsa.initRegionSchools();
     }
 
     setActiveSectorAndSave(ind) {
         if (ind === this.sectorActive)
-          ind = -1;
+            ind = -1;
         this.sectorActive = ind;
         this.saveSelected();
     }

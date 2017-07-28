@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy} from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { NgRedux, select } from '@angular-redux/store';
-import { IRegionRecord, IRegionRecords } from '../../store/regionschools/regionschools.types';
-import { REGION_SCHOOLS_INITIAL_STATE } from '../../store/regionschools/regionschools.initial-state';
-import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { IAppState } from '../../store/store';
-import { RemoveSpaces } from '../../pipes/removespaces';
-import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import { ISectorFields } from '../../store/sectorfields/sectorfields.types';
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { NgRedux, select } from "@angular-redux/store";
+import { IRegionRecord, IRegionRecords } from "../../store/regionschools/regionschools.types";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { IAppState } from "../../store/store";
+import { RemoveSpaces } from "../../pipes/removespaces";
+import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
 
 
 import {
@@ -18,11 +18,11 @@ import {
     FormGroup,
     FormControl,
     FormArray
-} from '@angular/forms';
-import {AppSettings} from '../../app.settings';
+} from "@angular/forms";
+import {AppSettings} from "../../app.settings";
 
 @Component({
-    selector: 'region-schools-select',
+    selector: "region-schools-select",
     template: `
     <div class="row">
              <breadcrumbs></breadcrumbs>
@@ -126,11 +126,11 @@ import {AppSettings} from '../../app.settings';
 
 
     constructor(private fb: FormBuilder,
-                private _rsa: RegionSchoolsActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router
+        private _rsa: RegionSchoolsActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router
 
-            ) {
+    ) {
         this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
         this.formGroup = this.fb.group({
             formArray: this.rss
@@ -142,15 +142,15 @@ import {AppSettings} from '../../app.settings';
         this.selectionLimitOptional = new BehaviorSubject(false);
         this.classNight = new BehaviorSubject(false);
 
-        this.modalTitle =  new BehaviorSubject("");
-        this.modalText =  new BehaviorSubject("");
-        this.modalHeader =  new BehaviorSubject("");
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
 
     };
 
     ngOnInit() {
 
-        (<any>$('#choiceSentNotice')).appendTo("body");
+        (<any>$("#choiceSentNotice")).appendTo("body");
 
         this.selectEpalClasses();
 
@@ -159,7 +159,7 @@ import {AppSettings} from '../../app.settings';
 
     ngOnDestroy() {
 
-        (<any>$('#choiceSentNotice')).remove();
+        (<any>$("#choiceSentNotice")).remove();
 
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
@@ -176,63 +176,63 @@ import {AppSettings} from '../../app.settings';
 
     }
 
-    public showModal():void {
-        (<any>$('#choiceSentNotice')).modal('show');
+    public showModal(): void {
+        (<any>$("#choiceSentNotice")).modal("show");
     }
 
-    public hideModal():void {
-        (<any>$('#choiceSentNotice')).modal('hide');
+    public hideModal(): void {
+        (<any>$("#choiceSentNotice")).modal("hide");
     }
 
-    public onHidden():void {
-        //this.isModalShown.next(false);
+    public onHidden(): void {
+        // this.isModalShown.next(false);
     }
 
     selectEpalClasses() {
-      this.epalclassesSub = this._ngRedux.select('epalclasses')
-                .subscribe(epalclasses => {
-                    let ecs = <IEpalClasses>epalclasses;
-                      if (ecs.size > 0) {
-                          ecs.reduce(({}, epalclass, i) => {
-                              this.setClassActive(epalclass.name);
-                              if (epalclass.name === "4") {
-                                this.classNight.next(true);
-                              }
-                              this.getAppropriateSchools(epalclass.name);
-                              return epalclass;
-                          }, {});
-                      }
-                  }, error => {console.log("error selecting epalclasses");});
+        this.epalclassesSub = this._ngRedux.select("epalclasses")
+            .subscribe(epalclasses => {
+                let ecs = <IEpalClasses>epalclasses;
+                if (ecs.size > 0) {
+                    ecs.reduce(({}, epalclass, i) => {
+                        this.setClassActive(epalclass.name);
+                        if (epalclass.name === "4") {
+                            this.classNight.next(true);
+                        }
+                        this.getAppropriateSchools(epalclass.name);
+                        return epalclass;
+                    }, {});
+                }
+            }, error => { console.log("error selecting epalclasses"); });
     }
 
     selectRegionSchools() {
 
-        this.regionsSub = this._ngRedux.select('regions')
+        this.regionsSub = this._ngRedux.select("regions")
             .subscribe(regions => {
                 let rgns = <IRegionRecords>regions;
                 let numsel = 0;
-                let numreg = 0;   //count reduced regions in order to set activeRegion when user comes back to his choices
+                let numreg = 0;   // count reduced regions in order to set activeRegion when user comes back to his choices
                 console.log("selectRegionSchools");
                 this.selectionLimitOptional.next(false);
 
                 if (rgns.size === 0)
                     return;
 
-                rgns.reduce((prevRegion, region) =>{
+                rgns.reduce((prevRegion, region) => {
                     numreg++;
-                    region.get("epals").reduce((prevEpal, epal) =>{
-                        this.rss.push( new FormControl(epal.get("selected"), []));
+                    region.get("epals").reduce((prevEpal, epal) => {
+                        this.rss.push(new FormControl(epal.get("selected"), []));
                         if (epal.get("selected") === true) {
-                          numsel++;
-                          if ( epal.get("epal_special_case") === "1") {
-                            this.selectionLimitOptional.next(true);
-                          }
-                          this.regionActiveId = Number(region.region_id);
-                          this.regionActive = numreg - 1;
+                            numsel++;
+                            if (epal.get("epal_special_case") === "1") {
+                                this.selectionLimitOptional.next(true);
+                            }
+                            this.regionActiveId = Number(region.region_id);
+                            this.regionActive = numreg - 1;
                         }
-                        if (Number(region.region_id) ===  this.regionActiveId)  {
-                          if (region.get("epals").length < this.regionSizeLimit)
-                            this.selectionLimitOptional.next(true);
+                        if (Number(region.region_id) === this.regionActiveId) {
+                            if (region.get("epals").length < this.regionSizeLimit)
+                                this.selectionLimitOptional.next(true);
                         }
                         return epal;
                     }, {});
@@ -242,7 +242,7 @@ import {AppSettings} from '../../app.settings';
 
                 this.numSelected.next(numsel);
                 this.regions$.next(rgns);
-            }, error => {console.log("error selecting regions")});
+            }, error => { console.log("error selecting regions"); });
 
     }
 
@@ -252,32 +252,19 @@ import {AppSettings} from '../../app.settings';
 
     getAppropriateSchools(epalClass) {
 
-        if (epalClass === "1")  {
+        if (epalClass === "1") {
             console.log("getRegionSchools");
-            this._rsa.getRegionSchools(1,"-1", false);
+            this._rsa.getRegionSchools(1, "-1", false);
         }
-/*        else if (epalClass === "2") {
-            this.sectorFieldsSub = this._ngRedux.select(state => {
-                console.log("sectorFieldsSub");
-                state.sectorFields.reduce(({}, sectorField) =>{
-                    if (sectorField.selected === true) {
-                        this.courseActive = sectorField.id;
-                        this._rsa.getRegionSchools(2,this.courseActive, false);
-                    }
-                    return sectorField;
-                }, {});
-                return state.sectorFields;
-            }).subscribe(this.sectorFields$);
-        } */
         else if (epalClass === "2") {
-            this.sectorFieldsSub = this._ngRedux.select('sectorFields')
+            this.sectorFieldsSub = this._ngRedux.select("sectorFields")
                 .subscribe(sectorFields => {
                     let sfds = <ISectorFields>sectorFields;
                     console.log("sectorFieldsSub");
-                    sfds.reduce(({}, sectorField) =>{
+                    sfds.reduce(({}, sectorField) => {
                         if (sectorField.selected === true) {
                             this.courseActive = sectorField.id;
-                            this._rsa.getRegionSchools(2,this.courseActive, false);
+                            this._rsa.getRegionSchools(2, this.courseActive, false);
                         }
                         return sectorField;
                     }, {});
@@ -286,74 +273,62 @@ import {AppSettings} from '../../app.settings';
                     console.log("Error Selecting Sector Fields");
                 });
         }
-        else if (epalClass === "3" || epalClass === "4")  {
+        else if (epalClass === "3" || epalClass === "4") {
 
-            this.sectorsSub = this._ngRedux.select('sectors')
+            this.sectorsSub = this._ngRedux.select("sectors")
                 .map(sectors => <ISectors>sectors)
                 .subscribe(sectors => {
                     console.log("sectorsSub");
-                    sectors.reduce((prevSector, sector) =>{
-                          if (sector.sector_selected === true) {
-                              sector.courses.reduce((prevCourse, course) =>{
-                                  if (course.selected === true) {
-                                      this.courseActive = parseInt(course.course_id);
-                                      //this._rsa.getRegionSchools(3,this.courseActive, false);
-                                      this._rsa.getRegionSchools(Number(epalClass),this.courseActive, false);
-                                  }
-                                  return course;
-                              }, {});
-                          }
+                    sectors.reduce((prevSector, sector) => {
+                        if (sector.sector_selected === true) {
+                            sector.courses.reduce((prevCourse, course) => {
+                                if (course.selected === true) {
+                                    this.courseActive = parseInt(course.course_id);
+                                    // this._rsa.getRegionSchools(3,this.courseActive, false);
+                                    this._rsa.getRegionSchools(Number(epalClass), this.courseActive, false);
+                                }
+                                return course;
+                            }, {});
+                        }
                         return sector;
                     }, {});
-                });
+                }, error => console.log("error selecting loginInfo"));
         }
     }
 
     navigateBack() {
-//        this.router.navigate(['/epal-class-select']);
-        if (this.classActive === "1")  {
-            this.router.navigate(['/epal-class-select']);
+        if (this.classActive === "1") {
+            this.router.navigate(["/epal-class-select"]);
         }
         else if (this.classActive === "2") {
-            this.router.navigate(['/sector-fields-select']);
+            this.router.navigate(["/sector-fields-select"]);
         }
-        else if (this.classActive === "3" || this.classActive === "4")  {
-            this.router.navigate(['/sectorcourses-fields-select']);
+        else if (this.classActive === "3" || this.classActive === "4") {
+            this.router.navigate(["/sectorcourses-fields-select"]);
         }
     }
 
     setActiveRegion(ind) {
-      if (ind === this.regionActive)
-        ind = -1;
-      this.regionActive = ind;
+        if (ind === this.regionActive)
+            ind = -1;
+        this.regionActive = ind;
     }
 
-    saveSelected(checked,i,j) {
+    saveSelected(checked, i, j) {
         this._rsa.saveRegionSchoolsSelected(checked, i, j);
     }
 
     navigateToApplication() {
-      //  if ( (this.selectionLimitOptional.value === false /*&& this.classNight.value === false */  && this.numSelected.value < this.selectionLimit.value )
-      //        || (this.numSelected.value === 0) )    {
+        if (this.numSelected.getValue() === 0) {
+            this.modalHeader.next("modal-header-danger");
+            this.modalTitle.next("Επιλογή αριθμού σχολείων");
+            if (this.numSelected.getValue() === 0)
+                this.modalText.next("Δεν έχετε επιλέξει κανένα σχολείο!");
 
-      if ( this.numSelected.getValue() === 0)     {
-
-          //this.modalHeader = "modal-header-success";
-          this.modalHeader.next("modal-header-danger");
-          this.modalTitle.next("Επιλογή αριθμού σχολείων");
-          if (this.numSelected.getValue() === 0)
-            this.modalText.next("Δεν έχετε επιλέξει κανένα σχολείο!");
-          /*
-          else
-            this.modalText.next("Παρακαλώ επιλέξτε ΤΡΙΑ σχολεία. "
-                              + "Μπορείτε να επιλέξετε ή να αφαιρέσετε μια επιλογή, κάνωντας κλικ στο αντίστοιχο κουτάκι που βρίσκεται μπροστά στο όνομα κάθε σχολείου. "
-                              + "Θα έχετε τη δυνατότητα να καθορίσετε την επιθυμητή σειρά προτίμησής των επιλεγμένων σχολείων στην επόμενη οθόνη.");
-            */
-
-          this.showModal();
+            this.showModal();
         }
         else
-          this.router.navigate(['/schools-order-select']);
+            this.router.navigate(["/schools-order-select"]);
 
     }
 }

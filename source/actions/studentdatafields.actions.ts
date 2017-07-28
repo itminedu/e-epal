@@ -1,28 +1,26 @@
-import { STUDENTDATAFIELDS_SAVE, STUDENTDATAFIELDS_INIT } from '../constants';
-import { Injectable } from '@angular/core';
-import { NgRedux } from '@angular-redux/store';
-import { IAppState } from '../store';
-//import { UserDataService } from '../services/user-data-service';
-
+import { STUDENTDATAFIELDS_SAVE, STUDENTDATAFIELDS_INIT } from "../constants";
+import { Injectable } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { IAppState } from "../store";
 
 @Injectable()
 export class StudentDataFieldsActions {
-  constructor(
-    private _ngRedux: NgRedux<IAppState>) {}
+    constructor(
+        private _ngRedux: NgRedux<IAppState>) { }
 
-  saveStudentDataFields = (studentDataFields) => {
+    saveStudentDataFields = (studentDataFields) => {
 
-      return this._ngRedux.dispatch({
-        type: STUDENTDATAFIELDS_SAVE,
-        payload: {
-          studentDataFields
-        }
+        return this._ngRedux.dispatch({
+            type: STUDENTDATAFIELDS_SAVE,
+            payload: {
+                studentDataFields
+            }
 
-      });
+        });
 
-  };
+    };
 
-  initStudentDataFields = () => {
+    initStudentDataFields = () => {
         return this._ngRedux.dispatch({
             type: STUDENTDATAFIELDS_INIT,
             payload: {

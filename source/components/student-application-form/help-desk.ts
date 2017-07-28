@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import {Location} from '@angular/common';
+import {Location} from "@angular/common";
 import { Injectable } from "@angular/core";
-import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from '../../constants';
+import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from "../../constants";
 import {Router} from "@angular/router";
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { HelperDataService } from '../../services/helper-data-service';
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { HelperDataService } from "../../services/helper-data-service";
 import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { NgRedux, select } from "@angular-redux/store";
@@ -15,10 +15,10 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
 @Component({
-    selector: 'helpdesk',
+    selector: "helpdesk",
     template: `
         <div class = "loading" *ngIf="(showLoader | async) === true"></div>
         <p align="left"><strong>Ηλεκτρονικές δηλώσεις προτίμησης ΕΠΑΛ για το νέο σχολικό έτος</strong></p>
@@ -159,7 +159,7 @@ import {
 
 @Injectable() export default class HelpDesk implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private emailSent: BehaviorSubject<boolean>;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     private loginInfoSub: Subscription;
@@ -172,22 +172,21 @@ import {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.showLoader = new BehaviorSubject(false);
         this.formGroup = fb.group({
-            userEmail: ['', [Validators.pattern(VALID_EMAIL_PATTERN), Validators.required]],
-            userName: ['', [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
-            userSurname: ['', [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
-            userMessage: ['', [Validators.required]],
-
-        })
+            userEmail: ["", [Validators.pattern(VALID_EMAIL_PATTERN), Validators.required]],
+            userName: ["", [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
+            userSurname: ["", [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
+            userMessage: ["", [Validators.required]],
+        });
         this.emailSent = new BehaviorSubject(false);
     }
 
     public showModal(popupMsgId): void {
-        (<any>$(popupMsgId)).modal('show');
+        (<any>$(popupMsgId)).modal("show");
     }
 
     public hideModal(popupMsgId): void {
 
-        (<any>$(popupMsgId)).modal('hide');
+        (<any>$(popupMsgId)).modal("hide");
     }
 
     public onHidden(popupMsgId): void {
@@ -199,22 +198,22 @@ import {
     }
 
     ngOnInit() {
-        (<any>$('#mailsent')).appendTo("body");
-        (<any>$('#dangermodal')).appendTo("body");
-        (<any>$('#fillfields')).appendTo("body");
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        (<any>$("#mailsent")).appendTo("body");
+        (<any>$("#dangermodal")).appendTo("body");
+        (<any>$("#fillfields")).appendTo("body");
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
                 let linfo = <ILoginInfo>loginInfo;
                 if (linfo.size > 0) {
                     linfo.reduce(({}, loginInfoToken) => {
-                        this.formGroup.controls['userEmail'].setValue(loginInfoToken.cu_email);
-                        this.formGroup.controls['userName'].setValue(loginInfoToken.cu_name);
-                        this.formGroup.controls['userSurname'].setValue(loginInfoToken.cu_surname);
+                        this.formGroup.controls["userEmail"].setValue(loginInfoToken.cu_email);
+                        this.formGroup.controls["userName"].setValue(loginInfoToken.cu_name);
+                        this.formGroup.controls["userSurname"].setValue(loginInfoToken.cu_surname);
                         return loginInfoToken;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
-            }, error => {console.log("error selecting loginInfo");});
+            }, error => { console.log("error selecting loginInfo"); });
     }
 
     sendmail() {

@@ -1,24 +1,24 @@
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import {OnInit, OnDestroy, Component} from '@angular/core';
-import { LoginInfoActions } from '../actions/logininfo.actions';
-import { ILoginInfo } from '../store/logininfo/logininfo.types';
-import { NgRedux, select } from '@angular-redux/store';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { IAppState } from '../store/store';
-import { HelperDataService } from '../services/helper-data-service';
-import { CookieService } from 'ngx-cookie';
-import { STUDENT_ROLE } from '../constants';
+import {Router, ActivatedRoute, Params} from "@angular/router";
+import {OnInit, OnDestroy, Component} from "@angular/core";
+import { LoginInfoActions } from "../actions/logininfo.actions";
+import { ILoginInfo } from "../store/logininfo/logininfo.types";
+import { NgRedux, select } from "@angular-redux/store";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { IAppState } from "../store/store";
+import { HelperDataService } from "../services/helper-data-service";
+import { CookieService } from "ngx-cookie";
+import { STUDENT_ROLE } from "../constants";
 import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import {
     FormBuilder,
     FormGroup,
     FormControl,
     FormArray
-} from '@angular/forms';
+} from "@angular/forms";
 
-import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
+import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
 @Component({
-    selector: 'home',
+    selector: "home",
     template: `
   <div>
        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
@@ -39,9 +39,6 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
             </p>
             </div>
 
-
-
-
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row" style="min-height: 300px; margin-top: 100px;">
 
@@ -58,7 +55,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from '../app.settings';
 })
 
 export default class Home implements OnInit, OnDestroy {
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private authToken: string;
     private authRole: string;
     private name: any;
@@ -74,11 +71,11 @@ export default class Home implements OnInit, OnDestroy {
         private activatedRoute: ActivatedRoute,
         private _hds: HelperDataService,
         private router: Router,
-        private _cookieService:CookieService
+        private _cookieService: CookieService
     ) {
-        this.authToken = '';
-        this.authRole = '';
-        this.name = '';
+        this.authToken = "";
+        this.authRole = "";
+        this.name = "";
         this.formGroup = this.fb.group({
         });
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -86,17 +83,17 @@ export default class Home implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select('loginInfo').subscribe(loginInfo => {
-            let linfo=<ILoginInfo>loginInfo;
+        this.loginInfoSub = this._ngRedux.select("loginInfo").subscribe(loginInfo => {
+            let linfo = <ILoginInfo>loginInfo;
             if (linfo.size > 0) {
                 linfo.reduce(({}, loginInfoToken) => {
                     this.authToken = loginInfoToken.auth_token;
                     this.authRole = loginInfoToken.auth_role;
                     if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE) {
                         if (loginInfoToken.lock_application === 1)
-                            this.router.navigate(['/info']);
+                            this.router.navigate(["/info"]);
                         else {
-                            this.router.navigate(['/parent-form']);
+                            this.router.navigate(["/parent-form"]);
                         }
                     }
                     return loginInfoToken;
@@ -104,13 +101,13 @@ export default class Home implements OnInit, OnDestroy {
             }
 
             this.loginInfo$.next(linfo);
-        }, error => {console.log("error selecting loginInfo");});
+        }, error => { console.log("error selecting loginInfo"); });
 
         // subscribe to router event
         this.activatedRoute.queryParams.subscribe((params: Params) => {
             if (params) {
-                this.authToken = params['auth_token'];
-                this.authRole = params['auth_role'];
+                this.authToken = params["auth_token"];
+                this.authRole = params["auth_role"];
             }
 
             if (this.authToken && this.authRole)
@@ -119,15 +116,15 @@ export default class Home implements OnInit, OnDestroy {
         });
     }
 
-    ngOnDestroy () {
+    ngOnDestroy() {
         if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
     }
 
-    getCookie(key: string){
+    getCookie(key: string) {
         return this._cookieService.get(key);
     }
 
-    removeCookie(key: string){
+    removeCookie(key: string) {
         return this._cookieService.remove(key);
     }
 

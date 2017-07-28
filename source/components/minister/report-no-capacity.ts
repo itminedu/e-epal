@@ -1,19 +1,19 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
-import {reportsSchema, TableColumn} from './reports-schema';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import {csvCreator} from './csv-creator';
-import {chartCreator} from './chart-creator';
+import { Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
+import {ReportsSchema, TableColumn} from "./reports-schema";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import {CsvCreator} from "./csv-creator";
+import {ChartCreator} from "./chart-creator";
 
 import {
     FormBuilder,
@@ -21,13 +21,13 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
 
-import { API_ENDPOINT } from '../../app.settings';
+import { API_ENDPOINT } from "../../app.settings";
 
 @Component({
-    selector: 'report-no-capacity',
+    selector: "report-no-capacity",
     template: `
 
   <div>
@@ -77,9 +77,9 @@ import { API_ENDPOINT } from '../../app.settings';
 
 @Injectable() export default class ReportNoCapacity implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
-    loginInfoSub: Subscription;
+    private formGroup: FormGroup;
+    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
@@ -95,11 +95,11 @@ import { API_ENDPOINT } from '../../app.settings';
     private source: LocalDataSource;
     columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new reportsSchema();
-    private csvObj = new csvCreator();
+    private reportSchema = new ReportsSchema();
+    private csvObj = new CsvCreator();
 
-    private chartObj = new chartCreator();
-    @ViewChild('chart') public chartContainer: ElementRef;
+    private chartObj = new ChartCreator();
+    @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
 
@@ -110,12 +110,12 @@ import { API_ENDPOINT } from '../../app.settings';
         private router: Router) {
 
         this.formGroup = this.fb.group({
-            capacityEnabled: ['', []],
+            capacityEnabled: ["", []],
         });
 
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.generalReport$ = new BehaviorSubject([{}]);
-        this.minedu_userName = '';
+        this.minedu_userName = "";
         this.validCreator = -1;
         this.enableCapacityFilter = false;
 
@@ -123,19 +123,21 @@ import { API_ENDPOINT } from '../../app.settings';
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfo>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoToken) => {
+                        this.minedu_userName = loginInfoToken.minedu_username;
+                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                        return loginInfoToken;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
 
         this.routerSub = this.activatedRoute.params.subscribe(params => {
-            this.reportId = +params['reportId'];
+            this.reportId = +params["reportId"];
 
         });
 
@@ -147,11 +149,6 @@ import { API_ENDPOINT } from '../../app.settings';
             this.loginInfoSub.unsubscribe();
         if (this.generalReportSub)
             this.generalReportSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.generalReport$)
-            this.generalReport$.unsubscribe();
-
     }
 
 
@@ -174,7 +171,7 @@ import { API_ENDPOINT } from '../../app.settings';
             this.source = new LocalDataSource(this.data);
             this.columnMap = new Map<string, TableColumn>();
 
-            //pass parametes to csv class object
+            // pass parametes to csv class object
             this.csvObj.columnMap = this.columnMap;
             this.csvObj.source = this.source;
             this.csvObj.settings = this.settings;
@@ -195,11 +192,11 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     navigateBack() {
-        this.router.navigate(['/ministry/minister-reports']);
+        this.router.navigate(["/ministry/minister-reports"]);
     }
 
 
-    onSearch(query: string = '') {
+    onSearch(query: string = "") {
 
         this.csvObj.onSearch(query);
     }

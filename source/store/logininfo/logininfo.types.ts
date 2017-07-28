@@ -1,4 +1,4 @@
-import { List } from 'immutable';
+import { List } from "immutable";
 
 export interface ILoginInfoToken {
     auth_token: string;

@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { HelperDataService } from "../../services/helper-data-service";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
 import {Router} from "@angular/router";
 
 @Component({
-    selector: 'info',
+    selector: "info",
     template: `
 
     <div class="loading" *ngIf="(showLoader$ | async) === true"></div>
@@ -52,10 +52,10 @@ import {Router} from "@angular/router";
     }
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
                 this.loginInfo$.next(<ILoginInfo>loginInfo);
-            }, error => {console.log("error selecting loginInfo");});
+            }, error => { console.log("error selecting loginInfo"); });
     }
 
     signOut() {

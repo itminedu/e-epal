@@ -1,26 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { ISectors } from '../../store/sectorcourses/sectorcourses.types';
-import { SECTOR_COURSES_INITIAL_STATE } from '../../store/sectorcourses/sectorcourses.initial-state';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import {RemoveSpaces} from '../../pipes/removespaces';
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import {RemoveSpaces} from "../../pipes/removespaces";
 
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 
 import {
     FormBuilder,
     FormGroup,
     FormControl,
     FormArray
-} from '@angular/forms';
-import {AppSettings} from '../../app.settings';
+} from "@angular/forms";
+import {AppSettings} from "../../app.settings";
 
 @Component({
-    selector: 'sectorcourses-fields-select',
+    selector: "sectorcourses-fields-select",
     template: `
     <div id="sectorCourseNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
@@ -100,11 +100,11 @@ import {AppSettings} from '../../app.settings';
     public isModalShown: BehaviorSubject<boolean>;
 
     constructor(private fb: FormBuilder,
-                private _sca: SectorCoursesActions,
-                private _rsa: RegionSchoolsActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router
-            ) {
+        private _sca: SectorCoursesActions,
+        private _rsa: RegionSchoolsActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router
+    ) {
 
         this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
         this.formGroup = this.fb.group({
@@ -117,23 +117,23 @@ import {AppSettings} from '../../app.settings';
     };
 
     ngOnInit() {
-        (<any>$('#sectorCourseNotice')).appendTo("body");
+        (<any>$("#sectorCourseNotice")).appendTo("body");
         this._sca.getSectorCourses(false);
         let ids = 0;
-        this.sectorsSub = this._ngRedux.select('sectors').subscribe(sectors => {
+        this.sectorsSub = this._ngRedux.select("sectors").subscribe(sectors => {
             let scs = <ISectors>sectors;
-            scs.reduce((prevSector, sector) =>{
+            scs.reduce((prevSector, sector) => {
                 this.sectorsList[ids] = sector.sector_selected;
                 ids++;
-                //In case we want to preserve last checked option when we revisit the form
+                // In case we want to preserve last checked option when we revisit the form
                 if (sector.sector_selected === true)
-                    this.sectorActive = ids-1;
-                sector.courses.reduce((prevCourse, course) =>{
-                    this.rss.push( new FormControl(course.selected, []));
-                    //this.retrieveCheck();
+                    this.sectorActive = ids - 1;
+                sector.courses.reduce((prevCourse, course) => {
+                    this.rss.push(new FormControl(course.selected, []));
+                    // this.retrieveCheck();
                     if (course.selected === true) {
-                      //In case we want to preserve last checked option when we revisit the form
-                      this.idx = course.globalIndex;
+                        // In case we want to preserve last checked option when we revisit the form
+                        this.idx = course.globalIndex;
                     }
                     return course;
                 }, {});
@@ -141,21 +141,21 @@ import {AppSettings} from '../../app.settings';
             }, {});
             ids = 0;
             this.sectors$.next(scs);
-        }, error => {console.log("error selecting sectors");});
+        }, error => { console.log("error selecting sectors"); });
 
     }
 
     ngOnDestroy() {
-        (<any>$('#sectorCourseNotice')).remove();
+        (<any>$("#sectorCourseNotice")).remove();
         if (this.sectorsSub) this.sectorsSub.unsubscribe();
     }
 
     public showModal(): void {
-        (<any>$('#sectorCourseNotice')).modal('show');
+        (<any>$("#sectorCourseNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#sectorCourseNotice')).modal('hide');
+        (<any>$("#sectorCourseNotice")).modal("hide");
 
     }
 
@@ -164,9 +164,9 @@ import {AppSettings} from '../../app.settings';
     }
 
     setActiveSector(ind) {
-      if (ind === this.sectorActive)
-        ind = -1;
-      this.sectorActive = ind;
+        if (ind === this.sectorActive)
+            ind = -1;
+        this.sectorActive = ind;
     }
 
     saveSelected() {
@@ -183,23 +183,23 @@ import {AppSettings} from '../../app.settings';
             this.modalHeader.next("modal-header-danger");
             this.showModal();
         } else {
-            this.router.navigate(['/region-schools-select']);
+            this.router.navigate(["/region-schools-select"]);
         }
     }
 
-    updateCheckedOptions(globalIndex, cb){
-      this.idx = globalIndex;
-      for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-        this.formGroup.value.formArray[i] = false;
-      this.formGroup.value.formArray[globalIndex] = cb.checked;
-      if (cb.checked === false)
-        this.idx = -1;
+    updateCheckedOptions(globalIndex, cb) {
+        this.idx = globalIndex;
+        for (let i = 0; i < this.formGroup.value.formArray.length; i++)
+            this.formGroup.value.formArray[i] = false;
+        this.formGroup.value.formArray[globalIndex] = cb.checked;
+        if (cb.checked === false)
+            this.idx = -1;
 
-      for (let i = 0; i < this.sectorsList.length; i++)
-          this.sectorsList[i] = false;
-      this.sectorsList[this.sectorActive] = true;
+        for (let i = 0; i < this.sectorsList.length; i++)
+            this.sectorsList[i] = false;
+        this.sectorsList[this.sectorActive] = true;
 
-      this.saveSelected();
-  }
+        this.saveSelected();
+    }
 
 }

@@ -1,25 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { NgRedux, select } from '@angular-redux/store';
-import { IEpalClasses } from '../../store/epalclasses/epalclasses.types';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { IAppState } from '../../store/store';
+import { EpalClassesActions } from "../../actions/epalclass.actions";
+import { NgRedux, select } from "@angular-redux/store";
+import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { IAppState } from "../../store/store";
 import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
 import {
     FormBuilder,
     FormGroup,
     FormControl,
     FormArray
-} from '@angular/forms';
-import {AppSettings} from '../../app.settings';
+} from "@angular/forms";
+import {AppSettings} from "../../app.settings";
 
 @Component({
-    selector: 'epal-class-select',
+    selector: "epal-class-select",
     template: `
     <div class="row">
              <breadcrumbs></breadcrumbs>
@@ -51,8 +51,8 @@ import {AppSettings} from '../../app.settings';
               <label for="name"></label><br/>
                     <select class="form-control" formControlName="name" (change)="initializestore()">
                         <option value="">Επιλέξτε Τάξη</option>
-                        <option value="1">Α’ Λυκείου</option>
-                        <option value="2">Β’ Λυκείου</option>
+                        <option value="1">Α' Λυκείου</option>
+                        <option value="2">Β' Λυκείου</option>
                         <option value="3">Γ' Λυκείου</option>
                         <option value="4">Δ' Λυκείου</option>
 
@@ -80,59 +80,59 @@ import {AppSettings} from '../../app.settings';
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private epalclassesSub: Subscription;
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
 
-       constructor(private fb: FormBuilder,
-                private _cfa: EpalClassesActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private _csa: SectorCoursesActions,
-                private _sfa: SectorFieldsActions,
-                private _rsa: RegionSchoolsActions,
-                private router: Router) {
-       this.formGroup = this.fb.group({
+    constructor(private fb: FormBuilder,
+        private _cfa: EpalClassesActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private _csa: SectorCoursesActions,
+        private _sfa: SectorFieldsActions,
+        private _rsa: RegionSchoolsActions,
+        private router: Router) {
+        this.formGroup = this.fb.group({
             name: []
-            });
-            this.modalTitle = new BehaviorSubject("");
-            this.modalText = new BehaviorSubject("");
-            this.modalHeader = new BehaviorSubject("");
-            this.isModalShown = new BehaviorSubject(false);
-            this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
-        };
+        });
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
+        this.isModalShown = new BehaviorSubject(false);
+        this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
+    };
 
     ngOnInit() {
-        (<any>$('#epalClassNotice')).appendTo("body");
-          this.epalclassesSub = this._ngRedux.select('epalclasses')
-                .subscribe(epalclasses => {
-                    let ecs = <IEpalClasses>epalclasses;
-                  if (ecs.size > 0) {
-                      ecs.reduce(({}, epalclass) => {
-                          this.formGroup.setValue(epalclass);
-                          return epalclass;
-                      }, {});
-                  } else {
-                      this.formGroup.controls["name"].setValue("");
-                  }
-                  this.epalclasses$.next(ecs);
-              }, error => {console.log("error selecting epalclasses");});
+        (<any>$("#epalClassNotice")).appendTo("body");
+        this.epalclassesSub = this._ngRedux.select("epalclasses")
+            .subscribe(epalclasses => {
+                let ecs = <IEpalClasses>epalclasses;
+                if (ecs.size > 0) {
+                    ecs.reduce(({}, epalclass) => {
+                        this.formGroup.setValue(epalclass);
+                        return epalclass;
+                    }, {});
+                } else {
+                    this.formGroup.controls["name"].setValue("");
+                }
+                this.epalclasses$.next(ecs);
+            }, error => { console.log("error selecting epalclasses"); });
 
     }
 
     ngOnDestroy() {
         if (this.epalclassesSub)
             this.epalclassesSub.unsubscribe();
-        (<any>$('#epalClassNotice')).remove();
+        (<any>$("#epalClassNotice")).remove();
     }
 
     public showModal(): void {
-        (<any>$('#epalClassNotice')).modal('show');
+        (<any>$("#epalClassNotice")).modal("show");
     }
 
     public hideModal(): void {
-        (<any>$('#epalClassNotice')).modal('hide');
+        (<any>$("#epalClassNotice")).modal("hide");
 
     }
 
@@ -148,31 +148,29 @@ import {AppSettings} from '../../app.settings';
             this.modalHeader.next("modal-header-danger");
             this.showModal();
         }
-        else
-        {
+        else {
             this._cfa.saveEpalClassesSelected(this.formGroup.value);
             if (this.formGroup.value.name === "1")
-              this.router.navigate(['/region-schools-select']);
+                this.router.navigate(["/region-schools-select"]);
             else if (this.formGroup.value.name === "2")
-                this.router.navigate(['/sector-fields-select']);
+                this.router.navigate(["/sector-fields-select"]);
             else if (this.formGroup.value.name === "3" || this.formGroup.value.name === "4")
-                this.router.navigate(['/sectorcourses-fields-select']);
+                this.router.navigate(["/sectorcourses-fields-select"]);
 
         }
 
     }
 
     navigateBack() {
-        this.router.navigate(['/intro-statement']);
+        this.router.navigate(["/intro-statement"]);
     }
 
 
-    initializestore()
-    {
-       this._cfa.saveEpalClassesSelected(this.formGroup.value);
-       this._sfa.initSectorFields();
-       this._rsa.initRegionSchools();
-       this._csa.initSectorCourses();
+    initializestore() {
+        this._cfa.saveEpalClassesSelected(this.formGroup.value);
+        this._sfa.initSectorFields();
+        this._rsa.initRegionSchools();
+        this._csa.initSectorCourses();
     }
 
 }

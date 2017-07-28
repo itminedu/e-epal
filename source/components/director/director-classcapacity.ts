@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import {Observable} from "rxjs/Observable";
-import {Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { VALID_CAPACITY_PATTERN} from '../../constants';
-import {maxValue} from '../../constants';
-import {minValue} from '../../constants';
+import {Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import {Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { VALID_CAPACITY_PATTERN} from "../../constants";
+import {maxValue} from "../../constants";
+import {minValue} from "../../constants";
 
 
 import {
@@ -20,9 +20,9 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 @Component({
-    selector: 'director-classcapacity',
+    selector: "director-classcapacity",
     template: `
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
@@ -92,7 +92,7 @@ import {
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
 
     private CapacityPerCourse$: BehaviorSubject<any>;
     private CapacityPerCourseSub: Subscription;
@@ -124,12 +124,11 @@ import {
 
 
     public showModal(popupMsgId): void {
-        (<any>$(popupMsgId)).modal('show');
+        (<any>$(popupMsgId)).modal("show");
     }
 
     public hideModal(popupMsgId): void {
-        //(<any>$('#distributionWaitingNotice')).modal('hide');
-        (<any>$(popupMsgId)).modal('hide');
+        (<any>$(popupMsgId)).modal("hide");
     }
 
     public onHidden(popupMsgId): void {
@@ -142,7 +141,7 @@ import {
     }
 
     ngOnInit() {
-        (<any>$('#checksaved1')).appendTo("body");
+        (<any>$("#checksaved1")).appendTo("body");
 
         this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
             this.CapacityPerCourse$.next(x);
@@ -156,7 +155,7 @@ import {
 
 
     handleChange(e: Event) {
-        this.newvalue = e.target['value'];
+        this.newvalue = e.target["value"];
     }
 
     saveCapacity(spec, sect, taxi, oldvalue, ind) {

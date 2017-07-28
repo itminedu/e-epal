@@ -1,17 +1,17 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
+import { AppSettings } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
 import {Observable} from "rxjs/Observable";
-import {Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from '@angular-redux/store';
-import { IAppState } from '../../store/store';
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { VALID_CAPACITY_PATTERN} from '../../constants';
-import {maxValue} from '../../constants';
-import {minValue} from '../../constants';
+import {Http, Headers, RequestOptions} from "@angular/http";
+import { NgRedux, select } from "@angular-redux/store";
+import { IAppState } from "../../store/store";
+import {Router, ActivatedRoute, Params} from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { VALID_CAPACITY_PATTERN} from "../../constants";
+import {maxValue} from "../../constants";
+import {minValue} from "../../constants";
 
 
 import {
@@ -20,9 +20,9 @@ import {
     FormControl,
     FormArray,
     Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 @Component({
-    selector: 'director-classcapacity',
+    selector: "director-classcapacity",
     template: `
 
 
@@ -284,7 +284,7 @@ import {
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
 
     private CoursesPerSchool$: BehaviorSubject<any>;
     private CoursesPerSchoolSub: Subscription;
@@ -323,28 +323,28 @@ import {
 
 
     public showConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('show');
+        (<any>$("#applicationDeleteConfirm")).modal("show");
     }
 
     public showErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('show');
+        (<any>$("#applicationDeleteError")).modal("show");
     }
 
     public hideConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('hide');
+        (<any>$("#applicationDeleteConfirm")).modal("hide");
     }
     public hideErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('hide');
+        (<any>$("#applicationDeleteError")).modal("hide");
     }
 
 
     public showModal(popupMsgId): void {
-        (<any>$(popupMsgId)).modal('show');
+        (<any>$(popupMsgId)).modal("show");
     }
 
     public hideModal(popupMsgId): void {
 
-        (<any>$(popupMsgId)).modal('hide');
+        (<any>$(popupMsgId)).modal("hide");
     }
 
     public onHidden(popupMsgId): void {
@@ -353,16 +353,16 @@ import {
 
 
     ngOnDestroy() {
-        (<any>$('#applicationDeleteConfirm')).remove();
-        (<any>$('#applicationDeleteError')).remove();
+        (<any>$("#applicationDeleteConfirm")).remove();
+        (<any>$("#applicationDeleteError")).remove();
     }
 
     ngOnInit() {
-        (<any>$('#checksaved')).appendTo("body");
-        (<any>$('#dangermodal')).appendTo("body");
-        (<any>$('#emptyselection')).appendTo("body");
-        (<any>$('#applicationDeleteConfirm')).appendTo("body");
-        (<any>$('#applicationDeleteError')).appendTo("body");
+        (<any>$("#checksaved")).appendTo("body");
+        (<any>$("#dangermodal")).appendTo("body");
+        (<any>$("#emptyselection")).appendTo("body");
+        (<any>$("#applicationDeleteConfirm")).appendTo("body");
+        (<any>$("#applicationDeleteError")).appendTo("body");
         this.showLoader.next(true);
         this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
             this.CoursesPerSchool$.next(x);
@@ -399,7 +399,7 @@ import {
 
     setActive(ind) {
         this.StudentActive = -1;
-        if (this.courseActive == ind) {
+        if (this.courseActive === ind) {
             ind = -1;
         }
         this.courseActive = ind;
@@ -407,7 +407,7 @@ import {
 
     setActiveStudent(ind) {
         this.opened = true;
-        if (this.StudentActive == ind) {
+        if (this.StudentActive === ind) {
             ind = -1;
         }
         this.StudentActive = ind;
@@ -415,7 +415,7 @@ import {
 
     setActiveStudentnew(ind) {
         this.opened = false;
-        if (this.StudentActive == ind) {
+        if (this.StudentActive === ind) {
             ind = -1;
         }
         this.StudentActive = ind;
@@ -424,14 +424,14 @@ import {
 
 
     confirmStudent(student, cb, ind) {
-        var rtype;
-        if (cb.value == 1)
-            rtype = '1';
-        if (cb.value == 2)
-            rtype = '0';
-        if (cb.value == 3)
+        let rtype;
+        if (cb.value === 1)
+            rtype = "1";
+        if (cb.value === 2)
+            rtype = "0";
+        if (cb.value === 3)
             rtype = null;
-        var type = cb.value;
+        let type = cb.value;
         this.showLoader.next(true);
 
         let std = this.StudentInfo$.getValue();
@@ -474,7 +474,6 @@ import {
             this.CoursesPerSchoolSub.unsubscribe();
             this.showLoader.next(false);
             this.StudentActive = -1;
-            //this.courseActive = -1;
 
             this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
                 this.CoursesPerSchool$.next(x);

@@ -138,14 +138,8 @@
 
     <div class="form-group">
         <label for="lastschool_schoolname">Σχολείο τελευταίας φοίτησης(<span style="color: #ff0000;">*</span>)</label><br/>
-        <input ngui-auto-complete formControlName="lastschool_schoolname"
-        [source]="observableSource.bind(this)"
-        [list-formatter]="lastSchoolListFormatter"
-        [value-formatter]="lastSchoolValueFormatter"
-        [min-chars]="5"
-        no-match-found-text="Δεν βρέθηκαν σχολεία"
-            (valueChanged)="lastSchoolValueChanged($event)"
-            placeholder="Πληκτρολογήστε τουλάχιστο 5 χαρακτήρες" class="form-control">
+        <input ngui-auto-complete formControlName="lastschool_schoolname" [source]="observableSource.bind(this)" [list-formatter]="lastSchoolListFormatter" [value-formatter]="lastSchoolValueFormatter" [min-chars]="5" no-match-found-text="Δεν βρέθηκαν σχολεία"
+            (valueChanged)="lastSchoolValueChanged($event)" placeholder="Πληκτρολογήστε τουλάχιστο 5 χαρακτήρες" class="form-control">
     </div>
     <div class="alert alert-danger" *ngIf="studentDataGroup.get('lastschool_schoolname').dirty && studentDataGroup.get('lastschool_schoolname').hasError('status')">
         Η επιλογή από αυτή τη λίστα είναι απαραίτητη!
@@ -218,4 +212,4 @@
 
 </form>
 
-  <!-- <pre>{{studentDataGroup.value | json}}</pre> -->
+<!-- <pre>{{studentDataGroup.value | json}}</pre> -->

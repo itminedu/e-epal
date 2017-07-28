@@ -50,10 +50,10 @@ import {
                         <div class="col-md-8">Τμήματα</div>
                         <div class="col-md-2">Επιλεχθέντες</div>
                         <div class="col-md-2">Χωρητικότητα</div>
-                    </div> 
+                    </div>
                     <div class = "row" *ngFor="let CoursesNames$  of CoursesPerPerf$  | async; let j=index; let isOdd2=odd; let isEven2=even"
-                        [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)" 
-                        [class.changecolorbalck]="calccolor(CoursesNames$.limitdown, CoursesNames$.size)"    
+                        [class.oddin]="isOdd2" [class.evenin]="isEven2" [class.changecolor]="calccolor(CoursesNames$.size,CoursesNames$.limitdown)"
+                        [class.changecolorbalck]="calccolor(CoursesNames$.limitdown, CoursesNames$.size)"
                         [class.selectedappout]="regionActive === j"
                         [hidden]="SchoolNames$.id !== regionActive" style="margin: 0px 2px 0px 2px;">
                         <div class="col-md-8">{{CoursesNames$.name}}</div>
@@ -70,7 +70,7 @@ import {
 
 @Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
     private LimitPerCateg$: BehaviorSubject<any>;
@@ -80,7 +80,6 @@ import {
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
-    public perfecture;
     private regionActive = <number>-1;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;

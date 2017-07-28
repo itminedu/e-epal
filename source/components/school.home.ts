@@ -51,7 +51,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
 })
 
 export default class SchoolHome implements OnInit, OnDestroy {
-    public formGroup: FormGroup;
+    private formGroup: FormGroup;
     private authToken: string;
     private errorCode$: BehaviorSubject<string>;
     private authRole: string;
@@ -74,7 +74,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
         this.authRole = "";
         this.name = "";
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-        this.errorCode$ = new BehaviorSubject('');
+        this.errorCode$ = new BehaviorSubject("");
         this.formGroup = this.fb.group({
         });
     };
@@ -87,9 +87,9 @@ export default class SchoolHome implements OnInit, OnDestroy {
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select('loginInfo')
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
             .subscribe(loginInfo => {
-                let linfo=<ILoginInfo>loginInfo;
+                let linfo = <ILoginInfo>loginInfo;
                 if (linfo.size > 0) {
                     linfo.reduce(({ }, loginInfoToken) => {
                         this.authToken = loginInfoToken.auth_token;
@@ -117,7 +117,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
                 this.authRole = params["auth_role"];
                 this.errorCode$.next((params["error_code"] === undefined) ? "" : params["error_code"]);
             }
-            if (this.authToken && this.authRole && this.errorCode$.getValue() == "") {
+            if (this.authToken && this.authRole && this.errorCode$.getValue() === "") {
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             }
         });
@@ -141,12 +141,11 @@ export default class SchoolHome implements OnInit, OnDestroy {
     casSignOut() {
         this._hds.casSignOut().then(data => {
             this._ata.initLoginInfo();
-            // this.router.navigate(['/school']);
-            this.authToken = '';
-            this.authRole = '';
+            this.authToken = "";
+            this.authRole = "";
             window.location.assign((<any>data).next);
         }).catch(err => {
-            console.log(err)
+            console.log(err);
         });
     }
 }

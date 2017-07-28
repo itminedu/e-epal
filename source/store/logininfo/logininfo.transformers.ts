@@ -1,4 +1,4 @@
-import { ILoginInfo, ILoginInfoToken } from './logininfo.types';
+import { ILoginInfo, ILoginInfoToken } from "./logininfo.types";
 
 export function deimmutifyLoginInfo(state: ILoginInfo): ILoginInfoToken[] {
     let fetchedLoginInfoTokens = new Array();

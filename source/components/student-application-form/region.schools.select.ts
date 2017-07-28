@@ -10,7 +10,7 @@ import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
 import { IAppState } from "../../store/store";
 import { RemoveSpaces } from "../../pipes/removespaces";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
-import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 
 
 import {
@@ -191,6 +191,7 @@ import {AppSettings} from "../../app.settings";
     selectEpalClasses() {
         this.epalclassesSub = this._ngRedux.select("epalclasses")
             .subscribe(epalclasses => {
+                console.log(epalclasses);
                 let ecs = <IEpalClasses>epalclasses;
                 if (ecs.size > 0) {
                     ecs.reduce(({}, epalclass, i) => {
@@ -214,24 +215,24 @@ import {AppSettings} from "../../app.settings";
                 let numreg = 0;   // count reduced regions in order to set activeRegion when user comes back to his choices
                 console.log("selectRegionSchools");
                 this.selectionLimitOptional.next(false);
-
-                if (rgns.size === 0)
-                    return;
-
+                let pushControls = false;
+                if (this.rss.length === 0)
+                    pushControls = true;
                 rgns.reduce((prevRegion, region) => {
                     numreg++;
                     region.get("epals").reduce((prevEpal, epal) => {
-                        this.rss.push(new FormControl(epal.get("selected"), []));
+                        if (pushControls)
+                            this.rss.push(new FormControl(epal.get("selected"), []));
                         if (epal.get("selected") === true) {
                             numsel++;
                             if (epal.get("epal_special_case") === "1") {
                                 this.selectionLimitOptional.next(true);
                             }
-                            this.regionActiveId = Number(region.region_id);
+                            this.regionActiveId = parseInt(region.region_id);
                             this.regionActive = numreg - 1;
                         }
-                        if (Number(region.region_id) === this.regionActiveId) {
-                            if (region.get("epals").length < this.regionSizeLimit)
+                        if (parseInt(region.region_id) === this.regionActiveId) {
+                            if (region.get("epals").size < this.regionSizeLimit)
                                 this.selectionLimitOptional.next(true);
                         }
                         return epal;
@@ -258,8 +259,8 @@ import {AppSettings} from "../../app.settings";
         }
         else if (epalClass === "2") {
             this.sectorFieldsSub = this._ngRedux.select("sectorFields")
-                .subscribe(sectorFields => {
-                    let sfds = <ISectorFields>sectorFields;
+                .map(sectorFields => <ISectorFieldRecords>sectorFields)
+                .subscribe(sfds => {
                     console.log("sectorFieldsSub");
                     sfds.reduce(({}, sectorField) => {
                         if (sectorField.selected === true) {
@@ -285,7 +286,7 @@ import {AppSettings} from "../../app.settings";
                                 if (course.selected === true) {
                                     this.courseActive = parseInt(course.course_id);
                                     // this._rsa.getRegionSchools(3,this.courseActive, false);
-                                    this._rsa.getRegionSchools(Number(epalClass), this.courseActive, false);
+                                    this._rsa.getRegionSchools(parseInt(epalClass), this.courseActive, false);
                                 }
                                 return course;
                             }, {});

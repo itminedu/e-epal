@@ -8,7 +8,7 @@ import { IAppState } from "../../store/store";
 import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
-import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
 import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
@@ -250,8 +250,8 @@ import { HelperDataService } from "../../services/helper-data-service";
             });
 
         this.sectorFieldsSub = this._ngRedux.select("sectorFields")
-            .subscribe(sectorFields => {
-                let sfds = <ISectorFields>sectorFields;
+            .map(sectorFields => <ISectorFieldRecords>sectorFields)
+            .subscribe(sfds => {
                 console.log("SELECTOR");
                 sfds.reduce(({ }, sectorField) => {
                     if (sectorField.selected === true) {

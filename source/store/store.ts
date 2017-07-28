@@ -7,7 +7,7 @@ import * as epalclasses from "./epalclasses";
 import * as loginInfo from "./logininfo";
 
 export interface IAppState {
-    sectorFields?: sectorFields.ISectorFields;
+    sectorFields?: sectorFields.ISectorFieldRecords;
     regions?: regions.IRegionRecords;
     sectors?: sectors.ISectors;
     studentDataFields?: studentDataFields.IStudentDataFields;

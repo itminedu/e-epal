@@ -8,7 +8,7 @@ import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
@@ -82,7 +82,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
     private sectors$: BehaviorSubject<ISectors>;
     private regions$: BehaviorSubject<IRegionRecords>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
-    private sectorFields$: BehaviorSubject<ISectorFields>;
+    private sectorFields$: BehaviorSubject<ISectorFieldRecords>;
     private epalclasses$: BehaviorSubject<IEpalClasses>;
     private epalclassesSub: Subscription;
     private sectorsSub: Subscription;
@@ -128,8 +128,6 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
                 let rgns = <IRegionRecords>regions;
                 let numsel = 0, numsel2 = 0;
                 let selectedSchools = Array<IRegionSchoolRecord>();
-                if (rgns.size === 0)
-                    return;
                 rgns.reduce((prevRegion, region) => {
                     region.get("epals").reduce((prevEpal, epal) => {
                         if (epal.get("selected") === true) {
@@ -150,7 +148,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
 
         this.sectorFieldsSub = this._ngRedux.select("sectorFields")
             .subscribe(sectorFields => {
-                this.sectorFields$.next(<ISectorFields>sectorFields);
+                this.sectorFields$.next(<ISectorFieldRecords>sectorFields);
             }, error => { console.log("error selecting sectorFields"); });
 
         this.epalclassesSub = this._ngRedux.select("epalclasses")

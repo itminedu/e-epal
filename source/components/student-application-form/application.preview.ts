@@ -11,7 +11,7 @@ import { EpalClassesActions } from "../../actions/epalclass.actions";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
-import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
 import {AppSettings} from "../../app.settings";
 import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
 import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
@@ -27,16 +27,16 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
                 <li class="list-group-item active">
                     Τάξη φοίτησης στο νέο σχολικό έτος
                 </li>
-                <li class="list-group-item" *ngIf="epalclass$.name === '1'">
+                <li class="list-group-item" *ngIf="epalclass$.get('name') === '1'">
                     Α’ Λυκείου
                 </li>
-                <li class="list-group-item" *ngIf="epalclass$.name === '2'">
+                <li class="list-group-item" *ngIf="epalclass$.get('name') === '2'">
                     Β’ Λυκείου
                 </li>
-                <li class="list-group-item" *ngIf="epalclass$.name === '3'">
+                <li class="list-group-item" *ngIf="epalclass$.get('name') === '3'">
                     Γ’ Λυκείου
                 </li>
-                <li class="list-group-item" *ngIf="epalclass$.name === '4'">
+                <li class="list-group-item" *ngIf="epalclass$.get('name') === '4'">
                     Δ’ Λυκείου
                 </li>
 
@@ -83,7 +83,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
     private regions$: BehaviorSubject<IRegionRecords>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFieldRecords>;
-    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private epalclasses$: BehaviorSubject<IEpalClassRecords>;
     private epalclassesSub: Subscription;
     private sectorsSub: Subscription;
     private regionsSub: Subscription;
@@ -153,15 +153,15 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
 
         this.epalclassesSub = this._ngRedux.select("epalclasses")
             .subscribe(epalclasses => {
-                let ecs = <IEpalClasses>epalclasses;
+                let ecs = <IEpalClassRecords>epalclasses;
                 ecs.reduce(({}, epalclass) => {
-                    if (epalclass.name === "Α' Λυκείου")
+                    if (epalclass.get("name") === "Α' Λυκείου")
                         this.classSelected = 1;
-                    else if (epalclass.name === "Β' Λυκείου")
+                    else if (epalclass.get("name") === "Β' Λυκείου")
                         this.classSelected = 2;
-                    else if (epalclass.name === "Γ' Λυκείου")
+                    else if (epalclass.get("name") === "Γ' Λυκείου")
                         this.classSelected = 3;
-                    else if (epalclass.name === "Δ' Λυκείου")
+                    else if (epalclass.get("name") === "Δ' Λυκείου")
                         this.classSelected = 4;
                     return epalclass;
                 }, {});
@@ -181,19 +181,15 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
     ngOnDestroy() {
         if (this.regionsSub) {
             this.regionsSub.unsubscribe();
-            //            this.regions$.unsubscribe();
         }
         if (this.sectorsSub) {
             this.sectorsSub.unsubscribe();
-            //            this.sectors$.unsubscribe();
         }
         if (this.sectorFieldsSub) {
             this.sectorFieldsSub.unsubscribe();
-            //            this.sectorFields$.unsubscribe();
         }
         if (this.epalclassesSub) {
             this.epalclassesSub.unsubscribe();
-            //            this.epalclasses$.unsubscribe();
         }
 
     }

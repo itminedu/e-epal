@@ -9,7 +9,7 @@ import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionsc
 import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { IAppState } from "../../store/store";
 import { RemoveSpaces } from "../../pipes/removespaces";
-import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 
 
@@ -190,16 +190,15 @@ import {AppSettings} from "../../app.settings";
 
     selectEpalClasses() {
         this.epalclassesSub = this._ngRedux.select("epalclasses")
-            .subscribe(epalclasses => {
-                console.log(epalclasses);
-                let ecs = <IEpalClasses>epalclasses;
+            .map(epalClasses => <IEpalClassRecords>epalClasses)
+            .subscribe(ecs => {
                 if (ecs.size > 0) {
                     ecs.reduce(({}, epalclass, i) => {
-                        this.setClassActive(epalclass.name);
-                        if (epalclass.name === "4") {
+                        this.setClassActive(epalclass.get("name"));
+                        if (epalclass.get("name") === "4") {
                             this.classNight.next(true);
                         }
-                        this.getAppropriateSchools(epalclass.name);
+                        this.getAppropriateSchools(epalclass.get("name"));
                         return epalclass;
                     }, {});
                 }

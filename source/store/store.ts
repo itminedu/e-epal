@@ -11,7 +11,7 @@ export interface IAppState {
     regions?: regions.IRegionRecords;
     sectors?: sectors.ISectorRecords;
     studentDataFields?: studentDataFields.IStudentDataFieldRecords;
-    epalclasses?: epalclasses.IEpalClasses;
+    epalclasses?: epalclasses.IEpalClassRecords;
     loginInfo?: loginInfo.ILoginInfo;
 };
 

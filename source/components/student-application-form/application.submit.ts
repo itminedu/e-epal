@@ -9,7 +9,7 @@ import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentd
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
 import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
 import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
@@ -124,7 +124,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private classSelected;
     private totalPoints = <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
-    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private epalclasses$: BehaviorSubject<IEpalClassRecords>;
     private loginInfo$: BehaviorSubject<ILoginInfo>;
     private studentDataFieldsSub: Subscription;
     private regionsSub: Subscription;
@@ -191,15 +191,14 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.loginInfo$.next(linfo);
             }, error => { console.log("error selecting loginInfo"); });
 
-        this.epalclassesSub = this._ngRedux.select("epalclasses").subscribe(epalclasses => {
-            let ecs = <IEpalClasses>epalclasses;
+        this.epalclassesSub = this._ngRedux.select("epalclasses")
+            .map(epalClasses => <IEpalClassRecords>epalClasses)
+            .subscribe(ecs => {
             console.log("SELECTOR4");
-            if (ecs.size > 0) {
-                ecs.reduce(({ }, epalclass) => {
-                    this.classSelected = epalclass.name;
-                    return epalclass;
-                }, {});
-            }
+            ecs.reduce(({ }, epalclass) => {
+                this.classSelected = epalclass.get("name");
+                return epalclass;
+            }, {});
             this.epalclasses$.next(ecs);
         }, error => { console.log("error selecting epalclasses"); });
 

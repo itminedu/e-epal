@@ -9,7 +9,7 @@ import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { EpalClassesActions } from "../../actions/epalclass.actions";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
 import {AppSettings} from "../../app.settings";
@@ -45,21 +45,21 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
 
         <div *ngFor="let sectorField$ of sectorFields$ | async">
         <ul class="list-group left-side-view">
-            <li class="list-group-item active" *ngIf="sectorField$.selected === true" >
-                {{sectorField$.name}}
+            <li class="list-group-item active" *ngIf="sectorField$.get('selected') === true" >
+                {{sectorField$.get("name")}}
             </li>
             </ul>
         </div>
 
     <div *ngFor="let sector$ of sectors$  | async;">
-            <ul class="list-group left-side-view" style="margin-bottom: 20px;" *ngIf="sector$.sector_selected === true">
-                <li class="list-group-item active" *ngIf="sector$.sector_selected === true" >
-                    {{sector$.sector_name }}
+            <ul class="list-group left-side-view" style="margin-bottom: 20px;" *ngIf="sector$.get('sector_selected') === true">
+                <li class="list-group-item active" *ngIf="sector$.get('sector_selected') === true" >
+                    {{sector$.get("sector_name") }}
                 </li>
         <div *ngFor="let course$ of sector$.courses;" >
 
                 <li class="list-group-item" *ngIf="course$.selected === true">
-                    {{course$.course_name   }}
+                    {{course$.get("course_name")   }}
                 </li>
 
         </div>
@@ -79,7 +79,7 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
 })
 
 @Injectable() export default class ApplicationPreview implements OnInit {
-    private sectors$: BehaviorSubject<ISectors>;
+    private sectors$: BehaviorSubject<ISectorRecords>;
     private regions$: BehaviorSubject<IRegionRecords>;
     private selectedSchools$: BehaviorSubject<Array<IRegionSchoolRecord>> = new BehaviorSubject(Array());
     private sectorFields$: BehaviorSubject<ISectorFieldRecords>;
@@ -108,12 +108,12 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
     ngOnInit() {
         this.currentUrl = this.router.url;
         this.sectorsSub = this._ngRedux.select("sectors")
-            .subscribe(sectors => {
-                let scs = <ISectors>sectors;
+            .map(sectors => <ISectorRecords>sectors)
+            .subscribe(scs => {
                 scs.reduce((prevSector, sector) => {
-                    sector.courses.reduce((prevCourse, course) => {
-                        if (course.selected === true) {
-                            this.courseActive = course.course_id;
+                    sector.get("courses").reduce((prevCourse, course) => {
+                        if (course.get("selected") === true) {
+                            this.courseActive = course.get("course_id");
                         }
 
                         return course;

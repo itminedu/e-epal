@@ -7,7 +7,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
 import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
-import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
@@ -235,13 +235,13 @@ import { HelperDataService } from "../../services/helper-data-service";
 
 
         this.sectorsSub = this._ngRedux.select("sectors")
-            .subscribe(sectors => {
-                let scs = <ISectors>sectors;
+            .map(sectors => <ISectorRecords>sectors)
+            .subscribe(scs => {
                 console.log("SELECTOR2");
                 scs.reduce((prevSector, sector) => {
-                    sector.courses.reduce((prevCourse, course) => {
-                        if (course.selected === true) {
-                            this.courseSelected = course.course_id;
+                    sector.get("courses").reduce((prevCourse, course) => {
+                        if (course.get("selected") === true) {
+                            this.courseSelected = course.get("course_id");
                         }
                         return course;
                     }, {});

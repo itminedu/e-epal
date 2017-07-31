@@ -9,7 +9,7 @@ import * as loginInfo from "./logininfo";
 export interface IAppState {
     sectorFields?: sectorFields.ISectorFieldRecords;
     regions?: regions.IRegionRecords;
-    sectors?: sectors.ISectors;
+    sectors?: sectors.ISectorRecords;
     studentDataFields?: studentDataFields.IStudentDataFieldRecords;
     epalclasses?: epalclasses.IEpalClasses;
     loginInfo?: loginInfo.ILoginInfo;

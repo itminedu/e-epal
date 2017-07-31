@@ -1,6 +1,6 @@
 import { IRRegion, IRRegionSchool, IRegionSchoolRecord, IRegionSchoolRecords, IRegionRecord, IRegionRecords } from "./regionschools.types";
 import { REGION_SCHOOLS_INITIAL_STATE } from "./regionschools.initial-state";
-import { Seq, Map, fromJS, List } from "immutable";
+import { List } from "immutable";
 import {recordify} from "typed-immutable-record";
 
 import {
@@ -29,10 +29,8 @@ export function regionSchoolsReducer(state: IRegionRecords = REGION_SCHOOLS_INIT
             });
             return List(newRegions);
         case REGIONSCHOOLS_SELECTED_SAVE:
-
-            let ind = 0;
             return state.withMutations(function(list) {
-                list.setIn([action.payload.rIndex, "epals"], state.get(action.payload.rIndex).get("epals").setIn([action.payload.sIndex, "selected"], action.payload.checked));
+                list.setIn([action.payload.rIndex, "epals"], list.get(action.payload.rIndex).get("epals").setIn([action.payload.sIndex, "selected"], action.payload.checked));
             });
 
         case REGIONSCHOOLS_ORDER_SAVE:

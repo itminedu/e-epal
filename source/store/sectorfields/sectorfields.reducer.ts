@@ -1,6 +1,6 @@
 import { ISectorFieldRecords, ISectorFieldRecord, ISectorField } from "./sectorfields.types";
 import { SECTOR_FIELDS_INITIAL_STATE } from "./sectorfields.initial-state";
-import { Seq, List } from "immutable";
+import { List } from "immutable";
 import {recordify} from "typed-immutable-record";
 
 import {

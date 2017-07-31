@@ -4,7 +4,7 @@ import { IAppState, rootReducer, deimmutify } from "./store";
 import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields/sectorfields.types";
 import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolRecord, IRegionSchoolRecords } from "./regionschools/regionschools.types";
 import { ISectors, ISector, ISectorCourse } from "./sectorcourses/sectorcourses.types";
-import { IStudentDataField, IStudentDataFields } from "./studentdatafields/studentdatafields.types";
+import { IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields/studentdatafields.types";
 import { IEpalClass, IEpalClasses } from "./epalclasses/epalclasses.types";
 import { ILoginInfoToken, ILoginInfo } from "./logininfo/logininfo.types";
 
@@ -22,8 +22,8 @@ IRRegionSchool,
 ISectors,
 ISector,
 ISectorCourse,
-IStudentDataField,
-IStudentDataFields,
+IStudentDataFieldRecord,
+IStudentDataFieldRecords,
 IEpalClass,
 IEpalClasses,
 ILoginInfo,

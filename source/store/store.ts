@@ -10,7 +10,7 @@ export interface IAppState {
     sectorFields?: sectorFields.ISectorFieldRecords;
     regions?: regions.IRegionRecords;
     sectors?: sectors.ISectors;
-    studentDataFields?: studentDataFields.IStudentDataFields;
+    studentDataFields?: studentDataFields.IStudentDataFieldRecords;
     epalclasses?: epalclasses.IEpalClasses;
     loginInfo?: loginInfo.ILoginInfo;
 };

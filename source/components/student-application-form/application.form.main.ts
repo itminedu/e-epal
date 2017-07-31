@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { NgRedux, select } from "@angular-redux/store";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
-import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
+import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
 import { IAppState } from "../../store/store";
 import { VALID_NAMES_PATTERN, VALID_UCASE_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN,
     VALID_DATE_PATTERN, FIRST_SCHOOL_YEAR, VALID_YEAR_PATTERN, VALID_TELEPHONE_PATTERN } from "../../constants";
@@ -30,7 +30,7 @@ import {
 @Injectable() export default class StudentApplicationMain implements OnInit {
 
     private loginInfo$: BehaviorSubject<ILoginInfo>;
-    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
 
     private studentDataFieldsSub: Subscription;
     private loginInfoSub: Subscription;
@@ -112,23 +112,23 @@ import {
 
         this.studentDataFieldsSub = this._ngRedux.select("studentDataFields")
             .subscribe(studentDataFields => {
-                let sdfds = <IStudentDataFields>studentDataFields;
+                let sdfds = <IStudentDataFieldRecords>studentDataFields;
                 if (sdfds.size > 0) {
                     sdfds.reduce(({}, studentDataField) => {
 
-                        this.studentDataGroup.controls["name"].setValue(studentDataField.name);
-                        this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.studentsurname);
-                        this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.fatherfirstname);
-                        this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.motherfirstname);
-                        this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.regionaddress);
-                        this.studentDataGroup.controls["regiontk"].setValue(studentDataField.regiontk);
-                        this.studentDataGroup.controls["regionarea"].setValue(studentDataField.regionarea);
-                        this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.lastschool_schoolname);
-                        this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.lastschool_schoolyear);
-                        this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.lastschool_class);
-                        this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.relationtostudent);
-                        this.studentDataGroup.controls["telnum"].setValue(studentDataField.telnum);
-                        this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.studentbirthdate));
+                        this.studentDataGroup.controls["name"].setValue(studentDataField.get("name"));
+                        this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.get("studentsurname"));
+                        this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.get("fatherfirstname"));
+                        this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.get("motherfirstname"));
+                        this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.get("regionaddress"));
+                        this.studentDataGroup.controls["regiontk"].setValue(studentDataField.get("regiontk"));
+                        this.studentDataGroup.controls["regionarea"].setValue(studentDataField.get("regionarea"));
+                        this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.get("lastschool_schoolname"));
+                        this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.get("lastschool_schoolyear"));
+                        this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.get("lastschool_class"));
+                        this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.get("relationtostudent"));
+                        this.studentDataGroup.controls["telnum"].setValue(studentDataField.get("telnum"));
+                        this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.get("studentbirthdate")));
                         return studentDataField;
                     }, {});
                 }

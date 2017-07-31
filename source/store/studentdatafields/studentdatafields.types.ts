@@ -1,4 +1,5 @@
 import { List } from "immutable";
+import {TypedRecord} from "typed-immutable-record";
 
 export interface IStudentDataField {
     epaluser_id: number;
@@ -22,4 +23,6 @@ export interface IStudentDataField {
     telnum: string;
 }
 
-export type IStudentDataFields = List<IStudentDataField>;
+export interface IStudentDataFieldRecord extends TypedRecord<IStudentDataFieldRecord>, IStudentDataField { };
+export type IStudentDataFieldRecords = List<IStudentDataFieldRecord>;
+// export type IStudentDataFields = List<IStudentDataField>;

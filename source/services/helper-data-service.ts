@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import "rxjs/add/operator/map";
 import { ISectorField } from "../store/sectorfields/sectorfields.types";
 import { IRegionRecord, IRegionSchoolRecord, IRRegion, IRRegionSchool } from "../store/regionschools/regionschools.types";
-import { ISector, ISectors, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
+import { ISectorRecord, ISectorRecords, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
 import { AppSettings } from "../app.settings";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../store/store";
@@ -276,7 +276,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     }
 
     transformSectorCoursesSchema(sectorCourses: any) {
-        let rsa = Array<ISector>();
+        let rsa = Array<any>();
         let trackSectorId: string;
         let trackIndex: number;
 
@@ -287,7 +287,7 @@ export class HelperDataService implements OnInit, OnDestroy {
         sectorCourses.forEach(sectorCourse => {
             if (trackSectorId !== sectorCourse.sector_id) {
                 trackIndex++;
-                rsa.push(<ISector>{ "sector_id": sectorCourse.sector_id, "sector_name": sectorCourse.sector_name, "sector_selected": false, "courses": Array<ISectorCourse>() });
+                rsa.push(<any>{ "sector_id": sectorCourse.sector_id, "sector_name": sectorCourse.sector_name, "sector_selected": false, "courses": Array<any>() });
                 trackSectorId = sectorCourse.sector_id;
             }
             rsa[trackIndex].courses.push(<ISectorCourse>{ "course_id": sectorCourse.course_id, "course_name": sectorCourse.course_name, "globalIndex": j, "selected": false });

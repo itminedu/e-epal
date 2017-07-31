@@ -6,7 +6,7 @@ import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { NgRedux, select } from "@angular-redux/store";
 import { IRegionRecord, IRegionRecords } from "../../store/regionschools/regionschools.types";
 import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
-import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { IAppState } from "../../store/store";
 import { RemoveSpaces } from "../../pipes/removespaces";
 import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
@@ -277,14 +277,14 @@ import {AppSettings} from "../../app.settings";
         else if (epalClass === "3" || epalClass === "4") {
 
             this.sectorsSub = this._ngRedux.select("sectors")
-                .map(sectors => <ISectors>sectors)
+                .map(sectors => <ISectorRecords>sectors)
                 .subscribe(sectors => {
                     console.log("sectorsSub");
                     sectors.reduce((prevSector, sector) => {
-                        if (sector.sector_selected === true) {
-                            sector.courses.reduce((prevCourse, course) => {
-                                if (course.selected === true) {
-                                    this.courseActive = parseInt(course.course_id);
+                        if (sector.get("sector_selected") === true) {
+                            sector.get("courses").reduce((prevCourse, course) => {
+                                if (course.get("selected") === true) {
+                                    this.courseActive = parseInt(course.get("course_id"));
                                     // this._rsa.getRegionSchools(3,this.courseActive, false);
                                     this._rsa.getRegionSchools(parseInt(epalClass), this.courseActive, false);
                                 }

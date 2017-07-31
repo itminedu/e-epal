@@ -3,7 +3,7 @@ import {createLogger} from "redux-logger";
 import { IAppState, rootReducer, deimmutify } from "./store";
 import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields/sectorfields.types";
 import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolRecord, IRegionSchoolRecords } from "./regionschools/regionschools.types";
-import { ISectors, ISector, ISectorCourse } from "./sectorcourses/sectorcourses.types";
+import { ISectorRecords, ISectorRecord, ISector, ISectorCourseRecords, ISectorCourseRecord, ISectorCourse } from "./sectorcourses/sectorcourses.types";
 import { IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields/studentdatafields.types";
 import { IEpalClass, IEpalClasses } from "./epalclasses/epalclasses.types";
 import { ILoginInfoToken, ILoginInfo } from "./logininfo/logininfo.types";
@@ -19,8 +19,11 @@ IRegionRecords,
 IRegionSchoolRecord,
 IRegionSchoolRecords,
 IRRegionSchool,
-ISectors,
+ISectorRecords,
+ISectorRecord,
 ISector,
+ISectorCourseRecords,
+ISectorCourseRecord,
 ISectorCourse,
 IStudentDataFieldRecord,
 IStudentDataFieldRecords,

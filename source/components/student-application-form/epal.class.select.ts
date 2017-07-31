@@ -4,7 +4,7 @@ import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { Injectable } from "@angular/core";
 import { EpalClassesActions } from "../../actions/epalclass.actions";
 import { NgRedux, select } from "@angular-redux/store";
-import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
 import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
@@ -77,7 +77,7 @@ import {AppSettings} from "../../app.settings";
 })
 
 @Injectable() export default class EpalClassesSelect implements OnInit, OnDestroy {
-    private epalclasses$: BehaviorSubject<IEpalClasses>;
+    private epalclasses$: BehaviorSubject<IEpalClassRecords>;
     private epalclassesSub: Subscription;
 
     private formGroup: FormGroup;
@@ -106,11 +106,11 @@ import {AppSettings} from "../../app.settings";
     ngOnInit() {
         (<any>$("#epalClassNotice")).appendTo("body");
         this.epalclassesSub = this._ngRedux.select("epalclasses")
-            .subscribe(epalclasses => {
-                let ecs = <IEpalClasses>epalclasses;
+            .map(epalClasses => <IEpalClassRecords>epalClasses)
+            .subscribe(ecs => {
                 if (ecs.size > 0) {
                     ecs.reduce(({}, epalclass) => {
-                        this.formGroup.setValue(epalclass);
+                        this.formGroup.controls["name"].setValue(epalclass.get("name"));
                         return epalclass;
                     }, {});
                 } else {

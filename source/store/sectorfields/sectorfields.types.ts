@@ -9,4 +9,3 @@ export interface ISectorField {
 
 export interface ISectorFieldRecord extends TypedRecord<ISectorFieldRecord>, ISectorField { };
 export type ISectorFieldRecords = List<ISectorFieldRecord>;
-// export type ISectorFields = List<ISectorField>;

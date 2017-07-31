@@ -98,7 +98,6 @@ import {AppSettings} from "../../app.settings";
     private courseSelectedPrev = <number>-1;
     private idx = <number>-1;
     private idxPrev = <number>-1;
-    private sectorsList: Array<boolean> = new Array();
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
@@ -134,24 +133,18 @@ import {AppSettings} from "../../app.settings";
                     pushControls = true;
 
                 scs.reduce((prevSector, sector) => {
-                    this.sectorsList[ids] = sector.get("sector_selected");
-
-                    // In case we want to preserve last checked option when we revisit the form
                     if (sector.get("sector_selected") === true)
                         this.sectorActive = ids;
                     sector.get("courses").reduce((prevCourse, course) => {
                         if (pushControls)
                             this.scsControls.push(new FormControl(course.get("selected"), []));
-                        // this.retrieveCheck();
                         if (course.get("selected") === true) {
-                            // In case we want to preserve last checked option when we revisit the form
                             this.sectorBelongingPrev = this.sectorBelonging;
                             this.sectorBelonging = ids;
                             this.courseSelectedPrev = this.courseSelected;
                             this.courseSelected = idc;
                             this.idxPrev = this.idx;
                             this.idx = course.get("globalIndex");
-
                         }
                         idc++;
                         return course;
@@ -184,7 +177,6 @@ import {AppSettings} from "../../app.settings";
     }
 
     setActiveSector(ind) {
-//        this._sca.selectSector(this.sectorActive, ind);
         this.sectorActive = ind;
     }
 
@@ -208,15 +200,14 @@ import {AppSettings} from "../../app.settings";
 
         this.idxPrev = this.idx;
         this.idx = globalIndex;
-/*        for (let i = 0; i < this.formGroup.value.formArray.length; i++)
-            this.formGroup.value.formArray[i] = false; */
+
         if (this.idxPrev >= 0)
             this.formGroup.value.formArray[this.idxPrev] = false;
         if (this.idx >= 0)
             this.formGroup.value.formArray[globalIndex] = cb.checked;
 
-
         this._sca.saveSectorCoursesSelected(this.sectorBelongingPrev, this.courseSelectedPrev, cb.checked, i, j);
+
         if (cb.checked === false) {
             this.idxPrev = -1;
             this.idx = -1;
@@ -224,11 +215,6 @@ import {AppSettings} from "../../app.settings";
 
         this._rsa.initRegionSchools();
 
-/*        for (let i = 0; i < this.sectorsList.length; i++)
-            this.sectorsList[i] = false;
-        this.sectorsList[this.sectorActive] = true; */
-
-//        this.saveSelected();
     }
 
 }

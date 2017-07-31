@@ -5,7 +5,7 @@ import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields/sectorfi
 import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolRecord, IRegionSchoolRecords } from "./regionschools/regionschools.types";
 import { ISectorRecords, ISectorRecord, ISector, ISectorCourseRecords, ISectorCourseRecord, ISectorCourse } from "./sectorcourses/sectorcourses.types";
 import { IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields/studentdatafields.types";
-import { IEpalClass, IEpalClasses } from "./epalclasses/epalclasses.types";
+import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses/epalclasses.types";
 import { ILoginInfoToken, ILoginInfo } from "./logininfo/logininfo.types";
 
 export {
@@ -28,7 +28,8 @@ ISectorCourse,
 IStudentDataFieldRecord,
 IStudentDataFieldRecords,
 IEpalClass,
-IEpalClasses,
+IEpalClassRecord,
+IEpalClassRecords,
 ILoginInfo,
 };
 

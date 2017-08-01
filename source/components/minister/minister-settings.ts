@@ -8,7 +8,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 
 
@@ -121,7 +121,7 @@ import {
 @Injectable() export default class MinisterSettings implements OnInit, OnDestroy {
 
     private formGroup: FormGroup;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
@@ -188,13 +188,13 @@ import {
         (<any>$("#configNotice")).appendTo("body");
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.minedu_userName = loginInfoToken.minedu_username;
-                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                        return loginInfoToken;
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
@@ -253,36 +253,23 @@ import {
     }
 
     toggleCapacityFilter() {
-
         this.capacityDisabled = !this.capacityDisabled;
-
     }
 
     toggleDirectorView() {
-
         this.directorViewDisabled = !this.directorViewDisabled;
-
     }
 
     toggleApplicantsLogin() {
-
         this.applicantsLoginDisabled = !this.applicantsLoginDisabled;
-
     }
 
     toggleApplicantsResults() {
-
         this.applicantsResultsDisabled = !this.applicantsResultsDisabled;
-
     }
 
     toggleSecondPeriod() {
-
         this.secondPeriodEnabled = !this.secondPeriodEnabled;
-
     }
-
-
-
 
 }

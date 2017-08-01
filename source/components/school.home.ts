@@ -1,7 +1,7 @@
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { OnInit, OnDestroy, Component } from "@angular/core";
 import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfo } from "../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import { NgRedux, select } from "@angular-redux/store";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
@@ -57,7 +57,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
@@ -88,12 +88,12 @@ export default class SchoolHome implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({ }, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        this.authRole = loginInfoToken.auth_role;
+                    linfo.reduce(({ }, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
                         if (this.authToken && this.authToken.length > 0) {
                             if (this.authRole === "director") {
                                 this.router.navigate(["/school/director-buttons"]);
@@ -103,7 +103,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
                             else if (this.authRole === "dide")
                                 this.router.navigate(["/school/eduadmin-view"]);
                         }
-                        return loginInfoToken;
+                        return loginInfoObj;
                     }, {});
                 }
 

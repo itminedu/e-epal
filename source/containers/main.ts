@@ -50,9 +50,9 @@ export default class Main {
         _ngRedux.configureStore(
             rootReducer,
             {},
-            middleware,
+//            middleware,
             //      tools ? [ ...enhancers, tools ] : enhancers);
-            tools);
-        //      );
+//            tools);
+              );
     }
 }

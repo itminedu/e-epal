@@ -1,6 +1,7 @@
-import { ILoginInfo, ILoginInfoToken } from "./logininfo.types";
+import { ILoginInfoRecords, ILoginInfoRecord, ILoginInfoObj } from "./logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "./logininfo.initial-state";
-import { Seq } from "immutable";
+import {recordify} from "typed-immutable-record";
+import { List } from "immutable";
 
 import {
     LOGININFO_SAVE,
@@ -9,13 +10,14 @@ import {
     STATEMENTAGREE_SAVE
 } from "../../constants";
 
-export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, action): ILoginInfo {
+export function loginInfoReducer(state: ILoginInfoRecords = LOGININFO_INITIAL_STATE, action): ILoginInfoRecords {
     switch (action.type) {
         case LOGININFO_SAVE:
-            let loginInfoTokens = Array<ILoginInfoToken>();
-            let i = 0;
+
+            let loginInfoArray = Array<ILoginInfoRecord>();
+
             action.payload.loginInfos.forEach(loginInfo => {
-                loginInfoTokens.push(<ILoginInfoToken>{
+                loginInfoArray.push(recordify<ILoginInfoObj, ILoginInfoRecord>({
                     auth_token: loginInfo.auth_token,
                     auth_role: loginInfo.auth_role,
                     cu_name: loginInfo.cu_name,
@@ -29,31 +31,23 @@ export function loginInfoReducer(state: ILoginInfo = LOGININFO_INITIAL_STATE, ac
                     lock_students: loginInfo.lock_students,
                     lock_application: loginInfo.lock_application,
                     disclaimer_checked: loginInfo.disclaimer_checked
-                });
-                i++;
-            });
-            return Seq(loginInfoTokens).map(n => n).toList();
+                }));
+        });
+
+        return List(loginInfoArray);
 
         case PROFILE_SAVE:
-            state.forEach(loginInfoToken => {
-                loginInfoToken.cu_name = action.payload.profile.userName;
-                loginInfoToken.cu_surname = action.payload.profile.userSurname;
-                loginInfoToken.cu_fathername = action.payload.profile.userFathername;
-                loginInfoToken.cu_mothername = action.payload.profile.userMothername;
-                return state.withMutations(function(list) {
-                    list.set(0, loginInfoToken);
-                });
+            return state.withMutations(function(list) {
+                list.setIn([0, "cu_name"], action.payload.profile.userName);
+                list.setIn([0, "cu_surname"], action.payload.profile.userSurname);
+                list.setIn([0, "cu_fathername"], action.payload.profile.userFathername);
+                list.setIn([0, "cu_mothername"], action.payload.profile.userMothername);
             });
-            return state;
 
         case STATEMENTAGREE_SAVE:
-            state.forEach(loginInfoToken => {
-                loginInfoToken.disclaimer_checked = action.payload.disclaimer_checked;
-                return state.withMutations(function(list) {
-                    list.set(0, loginInfoToken);
-                });
+            return state.withMutations(function(list) {
+                list.setIn([0, "disclaimer_checked"], action.payload.disclaimer_checked);
             });
-            return state;
 
         case LOGININFO_INIT:
             return LOGININFO_INITIAL_STATE;

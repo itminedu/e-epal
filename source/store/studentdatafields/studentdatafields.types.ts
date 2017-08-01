@@ -25,4 +25,3 @@ export interface IStudentDataField {
 
 export interface IStudentDataFieldRecord extends TypedRecord<IStudentDataFieldRecord>, IStudentDataField { };
 export type IStudentDataFieldRecords = List<IStudentDataFieldRecord>;
-// export type IStudentDataFields = List<IStudentDataField>;

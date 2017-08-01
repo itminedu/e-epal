@@ -1,4 +1,4 @@
 import { List } from "immutable";
-import { ILoginInfoToken } from "./logininfo.types";
+import { ILoginInfoRecord } from "./logininfo.types";
 
-export const LOGININFO_INITIAL_STATE = List<ILoginInfoToken>();
+export const LOGININFO_INITIAL_STATE = List<ILoginInfoRecord>();

@@ -1,7 +1,7 @@
 import { Router, Params} from "@angular/router";
 import { OnInit, OnDestroy, Component} from "@angular/core";
 import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfo } from "../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
 import { NgRedux, select } from "@angular-redux/store";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { IAppState } from "../store/store";
@@ -65,7 +65,7 @@ export default class MinistryHome implements OnInit, OnDestroy {
     // private mineduPassword: string;
     // private cuName: string;
     private validLogin: number;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
 
@@ -93,15 +93,14 @@ export default class MinistryHome implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({}, loginInfoToken) => {
-                        this.mineduUsername = loginInfoToken.minedu_username;
-                        // this.mineduPassword = loginInfoToken.minedu_userpassword;
+                    linfo.reduce(({}, loginInfoObj) => {
+                        this.mineduUsername = loginInfoObj.minedu_username;
                         if (this.mineduUsername && this.mineduUsername.length > 0)
                             this.router.navigate(["/ministry/minister-settings"]);
-                        return loginInfoToken;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
@@ -130,7 +129,5 @@ export default class MinistryHome implements OnInit, OnDestroy {
                 }
             });
     }
-
-
 
 }

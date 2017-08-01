@@ -212,7 +212,6 @@ import {AppSettings} from "../../app.settings";
                 let rgns = <IRegionRecords>regions;
                 let numsel = 0;
                 let numreg = 0;   // count reduced regions in order to set activeRegion when user comes back to his choices
-                console.log("selectRegionSchools");
                 this.selectionLimitOptional.next(false);
                 let pushControls = false;
                 if (this.rss.length === 0)
@@ -253,14 +252,12 @@ import {AppSettings} from "../../app.settings";
     getAppropriateSchools(epalClass) {
 
         if (epalClass === "1") {
-            console.log("getRegionSchools");
             this._rsa.getRegionSchools(1, "-1", false);
         }
         else if (epalClass === "2") {
             this.sectorFieldsSub = this._ngRedux.select("sectorFields")
                 .map(sectorFields => <ISectorFieldRecords>sectorFields)
                 .subscribe(sfds => {
-                    console.log("sectorFieldsSub");
                     sfds.reduce(({}, sectorField) => {
                         if (sectorField.selected === true) {
                             this.courseActive = sectorField.id;
@@ -278,7 +275,6 @@ import {AppSettings} from "../../app.settings";
             this.sectorsSub = this._ngRedux.select("sectors")
                 .map(sectors => <ISectorRecords>sectors)
                 .subscribe(sectors => {
-                    console.log("sectorsSub");
                     sectors.reduce((prevSector, sector) => {
                         if (sector.get("sector_selected") === true) {
                             sector.get("courses").reduce((prevCourse, course) => {

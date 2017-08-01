@@ -10,12 +10,6 @@ import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfiel
 
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from "@angular/forms";
 import {AppSettings} from "../../app.settings";
 
 @Component({
@@ -72,15 +66,13 @@ import {AppSettings} from "../../app.settings";
 @Injectable() export default class SectorFieldsSelect implements OnInit, OnDestroy {
     private sectorFields$: BehaviorSubject<ISectorFieldRecords>;
     private sectorFieldsSub: Subscription;
-    private formGroup: FormGroup;
     private sectorActive = <number>-1;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
 
-    constructor(private fb: FormBuilder,
-        private _cfa: SectorFieldsActions,
+    constructor(private _cfa: SectorFieldsActions,
         private _rsa: RegionSchoolsActions,
         private _ngRedux: NgRedux<IAppState>,
         private router: Router) {

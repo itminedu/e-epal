@@ -8,7 +8,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
 import { ReportsSchema, TableColumn } from "./reports-schema";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -77,7 +77,7 @@ import { API_ENDPOINT } from "../../app.settings";
 @Injectable() export default class ReportGeneral implements OnInit, OnDestroy {
 
     private formGroup: FormGroup;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
@@ -99,7 +99,6 @@ import { API_ENDPOINT } from "../../app.settings";
     @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
-
     constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
@@ -117,37 +116,31 @@ import { API_ENDPOINT } from "../../app.settings";
         this.minedu_userName = "";
         this.validCreator = -1;
         this.createGraph = false;
-
     }
 
     ngOnInit() {
-
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({ }, loginInfoToken) => {
-                        this.minedu_userName = loginInfoToken.minedu_username;
-                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                        return loginInfoToken;
+                    loginInfo.reduce(({ }, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
             }, error => console.log("error selecting loginInfo"));
-
     }
 
     ngOnDestroy() {
-
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
         if (this.generalReportSub)
             this.generalReportSub.unsubscribe();
-
     }
 
     createReport() {
-
         this.validCreator = 0;
         this.createGraph = false;
 
@@ -162,7 +155,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.source = new LocalDataSource(this.data);
                 this.columnMap = new Map<string, TableColumn>();
 
-                // pass parametes to csv class object
                 this.csvObj.columnMap = this.columnMap;
                 this.csvObj.source = this.source;
                 this.csvObj.settings = this.settings;
@@ -173,7 +165,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.validCreator = -1;
                 console.log("Error Getting generalReport");
             });
-
     }
 
     navigateBack() {

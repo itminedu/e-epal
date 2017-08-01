@@ -8,7 +8,7 @@ import { ISectorRecord, ISectorRecords, ISectorCourse } from "../store/sectorcou
 import { AppSettings } from "../app.settings";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../store/store";
-import { ILoginInfo, ILoginInfoToken } from "../store/logininfo/logininfo.types";
+import { ILoginInfoRecords, ILoginInfoObj, ILoginInfoRecord } from "../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
 import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from "../constants";
 import { CookieService } from "ngx-cookie";
@@ -25,7 +25,7 @@ export class HelperDataService implements OnInit, OnDestroy {
     private authRole: string;
     private minedu_userName: string;
     private minedu_userPassword: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
 
     constructor(
         private http: Http,
@@ -36,13 +36,13 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({ }, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        this.authRole = loginInfoToken.auth_role;
-                        return loginInfoToken;
+                    loginInfo.reduce(({ }, loginInfoObj) => {
+                        this.authToken = loginInfoObj.get("auth_token");
+                        this.authRole = loginInfoObj.get("auth_role");
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
@@ -333,9 +333,9 @@ export class HelperDataService implements OnInit, OnDestroy {
 
 
     transformUserSchema(userlogin: any, oauthtoken: string, oauthrole: string) {
-        let rsa = Array<ILoginInfoToken>();
+        let rsa = Array<any>();
 
-        rsa.push(<ILoginInfoToken>{
+        rsa.push(<any>{
             "auth_token": oauthtoken,
             "auth_role": oauthrole,
             "cu_name": userlogin.cu_name,
@@ -792,7 +792,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             .map(response => response.json());
     }
 
-
     getCritiria(headerid, type) {
         let headerIdNew = headerid.toString();
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -807,8 +806,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         return this.http.get(`${AppSettings.API_ENDPOINT}/epal/critiriachosen/` + headerIdNew + "/" + type, options)
             .map(response => response.json());
     }
-
-
 
     getSchoolId() {
 
@@ -826,9 +823,6 @@ export class HelperDataService implements OnInit, OnDestroy {
 
     }
 
-
-
-
     FindCapacityPerSchool() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -845,7 +839,6 @@ export class HelperDataService implements OnInit, OnDestroy {
             .map(response => response.json());
 
     }
-
 
     FindCoursesPerSchool() {
 
@@ -948,20 +941,6 @@ export class HelperDataService implements OnInit, OnDestroy {
         });
     }
 
-    /*    showResults(headerid) {
-
-          let headers = new Headers({
-              "Content-Type": "application/json",
-          });
-          this.createAuthorizationHeader(headers);
-          let options = new RequestOptions({ headers: headers });
-          let headerIdStr = headerid.toString();
-          return this.http.get(`${AppSettings.API_ENDPOINT}/epal/showresults/` + headerIdStr, options)
-              .map(response => response.json());
-
-        } */
-
-
     findTotalStudents() {
 
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -977,9 +956,6 @@ export class HelperDataService implements OnInit, OnDestroy {
 
             .map(response => response.json());
     }
-
-
-
 
     deleteApplicationforDirector(appId) {
         this.loginInfo$.getValue().forEach(loginInfoToken => {
@@ -1004,8 +980,5 @@ export class HelperDataService implements OnInit, OnDestroy {
                 });
         });
     }
-
-
-
 
 }

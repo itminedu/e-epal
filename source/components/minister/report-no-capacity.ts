@@ -8,7 +8,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
 import {ReportsSchema, TableColumn} from "./reports-schema";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -78,7 +78,7 @@ import { API_ENDPOINT } from "../../app.settings";
 @Injectable() export default class ReportNoCapacity implements OnInit, OnDestroy {
 
     private formGroup: FormGroup;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
@@ -102,7 +102,6 @@ import { API_ENDPOINT } from "../../app.settings";
     @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
-
     constructor(private fb: FormBuilder,
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
@@ -124,13 +123,13 @@ import { API_ENDPOINT } from "../../app.settings";
     ngOnInit() {
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.minedu_userName = loginInfoToken.minedu_username;
-                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                        return loginInfoToken;
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
@@ -150,7 +149,6 @@ import { API_ENDPOINT } from "../../app.settings";
         if (this.generalReportSub)
             this.generalReportSub.unsubscribe();
     }
-
 
     createReport() {
         this.validCreator = 0;
@@ -186,9 +184,7 @@ import { API_ENDPOINT } from "../../app.settings";
     }
 
     toggleCapacityFilter() {
-
         this.enableCapacityFilter = !this.enableCapacityFilter;
-
     }
 
     navigateBack() {
@@ -197,16 +193,11 @@ import { API_ENDPOINT } from "../../app.settings";
 
 
     onSearch(query: string = "") {
-
         this.csvObj.onSearch(query);
     }
 
 
     export2Csv() {
-
         this.csvObj.export2Csv();
-
     }
-
-
 }

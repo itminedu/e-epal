@@ -6,7 +6,7 @@ import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolR
 import { ISectorRecords, ISectorRecord, ISector, ISectorCourseRecords, ISectorCourseRecord, ISectorCourse } from "./sectorcourses/sectorcourses.types";
 import { IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields/studentdatafields.types";
 import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses/epalclasses.types";
-import { ILoginInfoToken, ILoginInfo } from "./logininfo/logininfo.types";
+import { ILoginInfoObj, ILoginInfoRecord, ILoginInfoRecords } from "./logininfo/logininfo.types";
 
 export {
 IAppState,
@@ -30,7 +30,9 @@ IStudentDataFieldRecords,
 IEpalClass,
 IEpalClassRecord,
 IEpalClassRecords,
-ILoginInfo,
+ILoginInfoObj,
+ILoginInfoRecord,
+ILoginInfoRecords
 };
 
 const myLogger = createLogger({

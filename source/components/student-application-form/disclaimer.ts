@@ -6,7 +6,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
 
@@ -128,7 +128,7 @@ import {
 @Injectable() export default class Disclaimer implements OnInit, OnDestroy {
 
     private formGroup: FormGroup;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
@@ -178,13 +178,13 @@ import {
         (<any>$("#disclaimerNotice")).appendTo("body");
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({}, loginInfoToken) => {
-                        this.formGroup.controls["disclaimerChecked"].setValue(loginInfoToken.disclaimer_checked);
-                        this.disclaimerChecked.next(loginInfoToken.disclaimer_checked);
-                        return loginInfoToken;
+                    linfo.reduce(({}, loginInfoObj) => {
+                        this.formGroup.controls["disclaimerChecked"].setValue(loginInfoObj.disclaimer_checked);
+                        this.disclaimerChecked.next(loginInfoObj.disclaimer_checked);
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);

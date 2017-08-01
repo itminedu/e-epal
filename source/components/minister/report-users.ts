@@ -8,7 +8,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
 import {ReportsSchema, TableColumn} from "./reports-schema";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -56,7 +56,7 @@ import { API_ENDPOINT } from "../../app.settings";
 
 @Injectable() export default class ReportUsers implements OnInit, OnDestroy {
 
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
@@ -66,7 +66,6 @@ import { API_ENDPOINT } from "../../app.settings";
     private distStatus = "READY";
     private data;
     private validCreator: number;
-    // private reportId: number;
     private routerSub: any;
 
     private source: LocalDataSource;
@@ -90,13 +89,13 @@ import { API_ENDPOINT } from "../../app.settings";
     ngOnInit() {
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.minedu_userName = loginInfoToken.minedu_username;
-                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                        return loginInfoToken;
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
@@ -104,7 +103,6 @@ import { API_ENDPOINT } from "../../app.settings";
     }
 
     ngOnDestroy() {
-
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
         if (this.generalReportSub)
@@ -113,14 +111,10 @@ import { API_ENDPOINT } from "../../app.settings";
             this.loginInfo$.unsubscribe();
         if (this.generalReport$)
             this.generalReport$.unsubscribe();
-
     }
 
-
     createReport() {
-
         this.validCreator = 0;
-
         let route = "/ministry/report-users/";
         this.settings = this.reportSchema.ReportUsersSchema;
 
@@ -132,7 +126,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.source = new LocalDataSource(this.data);
                 this.columnMap = new Map<string, TableColumn>();
 
-                // pass parametes to csv class object
                 this.csvObj.columnMap = this.columnMap;
                 this.csvObj.source = this.source;
                 this.csvObj.settings = this.settings;
@@ -143,7 +136,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.validCreator = -1;
                 console.log("Error Getting ReportUsers");
             });
-
     }
 
     navigateBack() {

@@ -81,7 +81,6 @@ class DirectorView extends ControllerBase
                              'error_code' => 4003,
                          ], Response::HTTP_FORBIDDEN);
                 } elseif ($userRole === 'epal') {
-                    $selectIdNew = $selectId;
                     if ($classId == 1) {
                         $selectIdNew = -1;
                     } elseif ($classId == 2) {
@@ -374,6 +373,7 @@ class DirectorView extends ControllerBase
                     $userRole = $tmpRole;
                 }
             }
+
             if ($userRole === '') {
                 return $this->respondWithStatus([
                     'error_code' => 4003,
@@ -390,6 +390,7 @@ class DirectorView extends ControllerBase
             } else {
                 $schools = [];
             }
+
             if ($schools) {
                 $list = array();
 
@@ -582,6 +583,27 @@ class DirectorView extends ControllerBase
         }
     }
 
+    protected function getLimit($name, $categ)
+    {
+        static $limits = array();
+
+        $key = "{$name}_{$categ}";
+        if (isset($limits[$key])) {
+            $limit = $limits[$key];
+        } else {
+            $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => $name, 'category' => $categ));
+            $limitdown = reset($limit_down);
+            if ($limitdown) {
+                $limit = $limitdown->limit_down->value;
+            } else {
+                $limit = -1;
+            }
+            $limits[$key] = $limit;
+        }
+
+        return $limit;
+    }
+
     public function returnstatus($id)
     {
         $schoolid = $id;
@@ -595,13 +617,7 @@ class DirectorView extends ControllerBase
 
         $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $schoolid));
         if ($CourseA) {
-            $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 1, 'category' => $categ));
-            $limitdown = reset($limit_down);
-            if ($limitdown) {
-                $limit = $limitdown->limit_down->value;
-            } else {
-                $limit = -1;
-            }
+            $limit = $this->getLimit(1, $categ);
 
             $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => -1, 'currentclass' => 1));
 
@@ -610,42 +626,45 @@ class DirectorView extends ControllerBase
             }
         }
 
-        $CourseB = $this->entityTypeManager->getStorage('eepal_sectors_in_epal')->loadByProperties(array('epal_id' => $schoolid));
-        if ($CourseB) {
-            $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 2, 'category' => $categ));
-            $limitdown = reset($limit_down);
-            if ($limitdown) {
-                $limit = $limitdown->limit_down->value;
-            } else {
-                $limit = -1;
-            }
+        $limit = $this->getLimit(2, $categ);
+        $sCon = $this->connection->select('eepal_sectors_in_epal_field_data', 'eSchool');
+        $sCon->leftJoin('epal_student_class', 'eStudent',
+            'eStudent.epal_id = ' . $schoolid . ' ' .
+            'AND eStudent.specialization_id = eSchool.sector_id ' .
+            'AND eStudent.currentclass = 2');
+        $sCon->fields('eSchool', array('sector_id'))
+            ->fields('eStudent', array('specialization_id'))
+            ->groupBy('specialization_id')
+            ->groupBy('sector_id')
+            ->condition('eSchool.epal_id', $schoolid, '=');
+        $sCon->addExpression('count(eStudent.id)', 'eStudent_count');
 
-            foreach ($CourseB as $object) {
-                $sectorid = $object->sector_id->entity->id();
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $sectorid, 'currentclass' => 2));
-                if (sizeof($studentPerSchool) < $limit) {
-                    return false;
-                }
+        $results = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+        foreach ($results as $result) {
+            if ($result->eStudent_count < $limit) {
+                return false;
             }
         }
 
-        $CourseC = $this->entityTypeManager->getStorage('eepal_specialties_in_epal')->loadByProperties(array('epal_id' => $schoolid));
-        if ($CourseC) {
-            $limit_down = $this->entityTypeManager->getStorage('epal_class_limits')->loadByProperties(array('name' => 3, 'category' => $categ));
-            $limitdown = reset($limit_down);
-            if ($limitdown) {
-                $limit = $limitdown->limit_down->value;
-            } else {
-                $limit = -1;
-            }
+        $limit = $this->getLimit(3, $categ);
+        $sCon = $this->connection->select('eepal_specialties_in_epal_field_data', 'eSchool');
+        $sCon->leftJoin('epal_student_class', 'eStudent',
+            'eStudent.epal_id = ' . $schoolid . ' ' .
+            'AND eStudent.specialization_id = eSchool.specialty_id ' .
+            'AND eStudent.currentclass = 3');
+        $sCon->fields('eSchool', array('specialty_id'))
+            ->fields('eStudent', array('specialization_id'))
+            ->groupBy('specialization_id')
+            ->groupBy('specialty_id')
+            ->condition('eSchool.epal_id', $schoolid, '=');
+        $sCon->addExpression('count(eStudent.id)', 'eStudent_count');
 
-            foreach ($CourseC as $object) {
-                $specialityid = $object->specialty_id->entity->id();
-                $studentPerSchool = $this->entityTypeManager->getStorage('epal_student_class')->loadByProperties(array('epal_id' => $schoolid, 'specialization_id' => $specialityid, 'currentclass' => 3));
+        $results = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
 
-                if (sizeof($studentPerSchool) < $limit) {
-                    return false;
-                }
+        foreach ($results as $result) {
+            if ($result->eStudent_count < $limit) {
+                return false;
             }
         }
 

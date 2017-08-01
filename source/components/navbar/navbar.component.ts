@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 
@@ -20,7 +20,7 @@ import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial
     private lockCapacity: BehaviorSubject<boolean>;
     private lockStudents: BehaviorSubject<boolean>;
     private cuName: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private cuser: any;
     private loginInfoSub: Subscription;
 
@@ -38,34 +38,31 @@ import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        this.authRole = loginInfoToken.auth_role;
-                        if (loginInfoToken.lock_capacity === 1)
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        if (loginInfoObj.lock_capacity === 1)
                             this.lockCapacity.next(true);
                         else
                             this.lockCapacity.next(false);
-                        if (loginInfoToken.lock_students === 1)
+                        if (loginInfoObj.lock_students === 1)
                             this.lockStudents.next(true);
                         else
                             this.lockStudents.next(false);
-                        this.cuName = loginInfoToken.cu_name;
-                        return loginInfoToken;
+                        this.cuName = loginInfoObj.cu_name;
+                        return loginInfoObj;
                     }, {});
                 }
 
                 this.loginInfo$.next(loginInfo);
             });
-
     }
 
     ngOnDestroy() {
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-
     }
-
 }

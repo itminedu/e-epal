@@ -4,7 +4,7 @@ import { HelperDataService } from "../../services/helper-data-service";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from "../../constants";
@@ -57,14 +57,14 @@ import { StudentDataFieldsActions } from "../../actions/studentdatafields.action
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({}, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        this.authRole = loginInfoToken.auth_role;
-                        this.cuName = loginInfoToken.cu_name;
-                        return loginInfoToken;
+                    linfo.reduce(({}, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        this.cuName = loginInfoObj.cu_name;
+                        return loginInfoObj;
                     }, {});
                 }
             }, error => { console.log("error selecting epalclasses"); });

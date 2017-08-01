@@ -7,8 +7,6 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import {Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
-
 import {
     FormBuilder,
     FormGroup,
@@ -124,7 +122,6 @@ import {
                 this.showModal();
                 this.showLoader.next(false);
             });
-
     }
 
     calccolor(size, limit) {

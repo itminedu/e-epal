@@ -12,7 +12,7 @@ export interface IAppState {
     sectors?: sectors.ISectorRecords;
     studentDataFields?: studentDataFields.IStudentDataFieldRecords;
     epalclasses?: epalclasses.IEpalClassRecords;
-    loginInfo?: loginInfo.ILoginInfo;
+    loginInfo?: loginInfo.ILoginInfoRecords;
 };
 
 export const rootReducer = combineReducers<IAppState>({

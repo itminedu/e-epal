@@ -17,7 +17,7 @@ import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorco
 import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
 import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from "../students/student";
 import { AppSettings } from "../../app.settings";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { EpalClassesActions } from "../../actions/epalclass.actions";
 import { SectorFieldsActions } from "../../actions/sectorfields.actions";
@@ -125,7 +125,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private totalPoints = <number>0;
     private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
     private epalclasses$: BehaviorSubject<IEpalClassRecords>;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private studentDataFieldsSub: Subscription;
     private regionsSub: Subscription;
     private sectorsSub: Subscription;
@@ -172,20 +172,19 @@ import { HelperDataService } from "../../services/helper-data-service";
 
         (<any>$("#studentFormSentNotice")).appendTo("body");
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
-                console.log("SELECTOR5");
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({ }, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
+                    linfo.reduce(({ }, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
 
-                        this.cu_name = loginInfoToken.cu_name;
-                        this.cu_surname = loginInfoToken.cu_surname;
-                        this.cu_fathername = loginInfoToken.cu_fathername;
-                        this.cu_mothername = loginInfoToken.cu_mothername;
-                        this.disclaimer_checked = loginInfoToken.disclaimer_checked;
+                        this.cu_name = loginInfoObj.cu_name;
+                        this.cu_surname = loginInfoObj.cu_surname;
+                        this.cu_fathername = loginInfoObj.cu_fathername;
+                        this.cu_mothername = loginInfoObj.cu_mothername;
+                        this.disclaimer_checked = loginInfoObj.disclaimer_checked;
 
-                        return loginInfoToken;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);
@@ -194,7 +193,6 @@ import { HelperDataService } from "../../services/helper-data-service";
         this.epalclassesSub = this._ngRedux.select("epalclasses")
             .map(epalClasses => <IEpalClassRecords>epalClasses)
             .subscribe(ecs => {
-            console.log("SELECTOR4");
             ecs.reduce(({ }, epalclass) => {
                 this.classSelected = epalclass.get("name");
                 return epalclass;
@@ -209,7 +207,6 @@ import { HelperDataService } from "../../services/helper-data-service";
 
         this.regionsSub = this._ngRedux.select("regions").
             subscribe(regions => {
-                console.log("SELECTOR: REGIONS");
                 let rgns = <IRegionRecords>regions;
                 let prevSelected: Array<number> = new Array();
                 rgns.reduce((prevRgn, rgn) => {
@@ -236,7 +233,6 @@ import { HelperDataService } from "../../services/helper-data-service";
         this.sectorsSub = this._ngRedux.select("sectors")
             .map(sectors => <ISectorRecords>sectors)
             .subscribe(scs => {
-                console.log("SELECTOR2");
                 scs.reduce((prevSector, sector) => {
                     sector.get("courses").reduce((prevCourse, course) => {
                         if (course.get("selected") === true) {
@@ -251,7 +247,6 @@ import { HelperDataService } from "../../services/helper-data-service";
         this.sectorFieldsSub = this._ngRedux.select("sectorFields")
             .map(sectorFields => <ISectorFieldRecords>sectorFields)
             .subscribe(sfds => {
-                console.log("SELECTOR");
                 sfds.reduce(({ }, sectorField) => {
                     if (sectorField.selected === true) {
                         this.sectorSelected = sectorField.id;

@@ -8,7 +8,7 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
 import {ReportsSchema, TableColumn} from "./reports-schema";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -143,7 +143,7 @@ import { API_ENDPOINT } from "../../app.settings";
 @Injectable() export default class ReportAllStat implements OnInit, OnDestroy {
 
     private formGroup: FormGroup;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private RegionSelections$: BehaviorSubject<any>;
@@ -240,32 +240,32 @@ import { API_ENDPOINT } from "../../app.settings";
     ngOnInit() {
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.minedu_userName = loginInfoToken.minedu_username;
-                        this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
 
-                        this.userLoggedIn = loginInfoToken.auth_role;
-                        if (loginInfoToken.auth_role === PDE_ROLE || loginInfoToken.auth_role === DIDE_ROLE) {
+                        this.userLoggedIn = loginInfoObj.auth_role;
+                        if (loginInfoObj.auth_role === PDE_ROLE || loginInfoObj.auth_role === DIDE_ROLE) {
                             let regId = -1;
-                            this.minedu_userName = loginInfoToken.auth_token;
-                            this.minedu_userPassword = loginInfoToken.auth_token;
-                            if (loginInfoToken.auth_role === PDE_ROLE || loginInfoToken.auth_role === DIDE_ROLE) {
+                            this.minedu_userName = loginInfoObj.auth_token;
+                            this.minedu_userPassword = loginInfoObj.auth_token;
+                            if (loginInfoObj.auth_role === PDE_ROLE || loginInfoObj.auth_role === DIDE_ROLE) {
 
                                 this.RegionRetrieveSub = this._hds.getUserRegistryNo(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
                                     this.RegionRetrieve$.next(data);
                                     this.data = data;
                                     regId = this.data["id"];
 
-                                    if (loginInfoToken.auth_role === PDE_ROLE) {
+                                    if (loginInfoObj.auth_role === PDE_ROLE) {
                                         this.regionSelected = regId;
                                         this.showAdminList.next(true);
 
                                         this.checkregion(this.regionSelected);
                                     }
-                                    else if (loginInfoToken.auth_role === DIDE_ROLE) {
+                                    else if (loginInfoObj.auth_role === DIDE_ROLE) {
                                         this.adminAreaSelected = regId;
                                         this.showAdminList.next(false);
                                         this.checkadminarea(this.adminAreaSelected);
@@ -276,7 +276,7 @@ import { API_ENDPOINT } from "../../app.settings";
                                     });
                             }
                         }
-                        return loginInfoToken;
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(loginInfo);
@@ -286,9 +286,7 @@ import { API_ENDPOINT } from "../../app.settings";
             this.reportId = +params["reportId"];
         });
 
-
         this.showFilters();
-
     }
 
     ngOnDestroy() {
@@ -309,9 +307,7 @@ import { API_ENDPOINT } from "../../app.settings";
             this.CourseSelectionsSub.unsubscribe();
         if (this.RegionRetrieveSub)
             this.RegionRetrieveSub.unsubscribe();
-
     }
-
 
     createReport(regionSel) {
 
@@ -388,7 +384,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.generalReport$.next([{}]);
                 console.log("Error Getting generalReport");
             });
-
     }
 
     navigateBack() {
@@ -404,7 +399,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.RegionSelections$.next([{}]);
                 console.log("Error Getting RegionSelections");
             });
-
     }
 
     toggleRegionFilter() {
@@ -466,13 +460,10 @@ import { API_ENDPOINT } from "../../app.settings";
     }
 
     checkschool(schId) {
-
         this.schSelected = schId.value;
-
     }
 
     checkclass(classId) {
-
         this.classSelected = classId.value;
         this.sectorSelected = 0;
         this.courseSelected = 0;
@@ -487,12 +478,9 @@ import { API_ENDPOINT } from "../../app.settings";
                     console.log("Error Getting SectorSelections");
                 });
         } // end if
-
-
     }
 
     checksector(sectorId) {
-
         this.courseSelected = 0;
         this.sectorSelected = sectorId.value;
 
@@ -507,22 +495,15 @@ import { API_ENDPOINT } from "../../app.settings";
     }
 
     checkcourse(courseId) {
-
         this.courseSelected = courseId.value;
-
     }
 
-
-
     onSearch(query: string = "") {
-
         this.csvObj.onSearch(query);
     }
 
     export2Csv() {
-
         this.csvObj.export2Csv();
-
     }
 
 
@@ -538,9 +519,7 @@ import { API_ENDPOINT } from "../../app.settings";
     }
 
     generateGraphData() {
-
         this.d3data = [];
-
         if (this.reportId === 2) {
             let labelsX = [];
             labelsX.push("Σχολείο");
@@ -569,14 +548,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 labelsX[4],
                 this.data[0].percD,
             ]);
-
         }
-
     }
-
-
-
-
-
-
 }

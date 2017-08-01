@@ -8,7 +8,6 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import {Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
 import { VALID_CAPACITY_PATTERN} from "../../constants";
 import {maxValue} from "../../constants";
 import {minValue} from "../../constants";
@@ -66,7 +65,6 @@ import {
       </form>
     </div>
 
-
   <div id="checksaved1" (onHidden)="onHidden('#checksaved1')"
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -102,10 +100,6 @@ import {
     private courseActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
 
-
-
-
-
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
@@ -121,8 +115,6 @@ import {
 
     }
 
-
-
     public showModal(popupMsgId): void {
         (<any>$(popupMsgId)).modal("show");
     }
@@ -134,7 +126,6 @@ import {
     public onHidden(popupMsgId): void {
 
     }
-
 
     ngOnDestroy() {
 
@@ -153,7 +144,6 @@ import {
             });
     }
 
-
     handleChange(e: Event) {
         this.newvalue = e.target["value"];
     }
@@ -165,7 +155,6 @@ import {
             }
             else {
                 this.showLoader.next(true);
-
 
                 let std = this.CapacityPerCourse$.getValue();
                 std[ind].capacity = this.newvalue;
@@ -179,16 +168,13 @@ import {
                         this.showLoader.next(false);
                         console.log("Error Saving Capacity");
                     });
-
             }
-
         }
         else {
             if (oldvalue === null)
                 this.showModal("#checksaved1");
         }
     }
-
 
     setActive(ind) {
         this.courseActive = ind;

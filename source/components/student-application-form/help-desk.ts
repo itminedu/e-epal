@@ -5,7 +5,7 @@ import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from "../../constants";
 import {Router} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { HelperDataService } from "../../services/helper-data-service";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
@@ -161,7 +161,7 @@ import {
 
     private formGroup: FormGroup;
     private emailSent: BehaviorSubject<boolean>;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
 
@@ -202,14 +202,14 @@ import {
         (<any>$("#dangermodal")).appendTo("body");
         (<any>$("#fillfields")).appendTo("body");
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                let linfo = <ILoginInfo>loginInfo;
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
                 if (linfo.size > 0) {
-                    linfo.reduce(({}, loginInfoToken) => {
-                        this.formGroup.controls["userEmail"].setValue(loginInfoToken.cu_email);
-                        this.formGroup.controls["userName"].setValue(loginInfoToken.cu_name);
-                        this.formGroup.controls["userSurname"].setValue(loginInfoToken.cu_surname);
-                        return loginInfoToken;
+                    linfo.reduce(({}, loginInfoObj) => {
+                        this.formGroup.controls["userEmail"].setValue(loginInfoObj.cu_email);
+                        this.formGroup.controls["userName"].setValue(loginInfoObj.cu_name);
+                        this.formGroup.controls["userSurname"].setValue(loginInfoObj.cu_surname);
+                        return loginInfoObj;
                     }, {});
                 }
                 this.loginInfo$.next(linfo);

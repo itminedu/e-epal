@@ -5,7 +5,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { HelperDataService } from "../../services/helper-data-service";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
@@ -25,7 +25,7 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     private studentRole = STUDENT_ROLE;
     private authRole: string;
     private cuName: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
     private modalTitle: BehaviorSubject<string>;
@@ -66,14 +66,14 @@ export default class HeaderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         (<any>$("#headerNotice")).appendTo("body");
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .map(loginInfo => <ILoginInfo>loginInfo)
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
                 if (loginInfo.size > 0) {
-                    loginInfo.reduce(({}, loginInfoToken) => {
-                        this.authToken = loginInfoToken.auth_token;
-                        this.authRole = loginInfoToken.auth_role;
-                        this.cuName = loginInfoToken.cu_name;
-                        return loginInfoToken;
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        this.cuName = loginInfoObj.cu_name;
+                        return loginInfoObj;
                     }, {});
 
                     if (this.hasvalue === false) {
@@ -88,16 +88,10 @@ export default class HeaderComponent implements OnInit, OnDestroy {
                                 console.log("Error Getting courses perSchool");
                                 this.showLoader.next(false);
                             });
-
                     }
-
                 }
-
                 this.loginInfo$.next(loginInfo);
             });
-
-
-
 
     }
 
@@ -106,7 +100,6 @@ export default class HeaderComponent implements OnInit, OnDestroy {
         if (this.loginInfoSub) {
             this.loginInfoSub.unsubscribe();
         }
-
     }
 
     signOut() {

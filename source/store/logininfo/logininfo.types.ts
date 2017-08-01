@@ -1,6 +1,7 @@
 import { List } from "immutable";
+import {TypedRecord} from "typed-immutable-record";
 
-export interface ILoginInfoToken {
+export interface ILoginInfoObj {
     auth_token: string;
     auth_role: string;
     cu_name: string;
@@ -16,4 +17,5 @@ export interface ILoginInfoToken {
     disclaimer_checked: number;
 }
 
-export type ILoginInfo = List<ILoginInfoToken>;
+export interface ILoginInfoRecord extends TypedRecord<ILoginInfoRecord>, ILoginInfoObj { };
+export type ILoginInfoRecords = List<ILoginInfoRecord>;

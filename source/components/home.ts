@@ -1,7 +1,7 @@
 import {Router, ActivatedRoute, Params} from "@angular/router";
 import {OnInit, OnDestroy, Component} from "@angular/core";
 import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfo } from "../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
 import { NgRedux, select } from "@angular-redux/store";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import { IAppState } from "../store/store";
@@ -60,7 +60,7 @@ export default class Home implements OnInit, OnDestroy {
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
     private loginInfoSub: Subscription;
@@ -83,20 +83,21 @@ export default class Home implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select("loginInfo").subscribe(loginInfo => {
-            let linfo = <ILoginInfo>loginInfo;
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
             if (linfo.size > 0) {
-                linfo.reduce(({}, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
+                linfo.reduce(({}, loginInfoObj) => {
+                    this.authToken = loginInfoObj.auth_token;
+                    this.authRole = loginInfoObj.auth_role;
                     if (this.authToken && this.authToken.length > 0 && this.authRole && this.authRole === STUDENT_ROLE) {
-                        if (loginInfoToken.lock_application === 1)
+                        if (loginInfoObj.lock_application === 1)
                             this.router.navigate(["/info"]);
                         else {
                             this.router.navigate(["/parent-form"]);
                         }
                     }
-                    return loginInfoToken;
+                    return loginInfoObj;
                 }, {});
             }
 

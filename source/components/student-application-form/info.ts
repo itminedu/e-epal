@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import { HelperDataService } from "../../services/helper-data-service";
 import { LoginInfoActions } from "../../actions/logininfo.actions";
@@ -32,7 +32,7 @@ import {Router} from "@angular/router";
 
 @Injectable() export default class Info implements OnInit, OnDestroy {
 
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     loginInfoSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
 
@@ -53,8 +53,9 @@ import {Router} from "@angular/router";
 
     ngOnInit() {
         this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(loginInfo => {
-                this.loginInfo$.next(<ILoginInfo>loginInfo);
+                this.loginInfo$.next(loginInfo);
             }, error => { console.log("error selecting loginInfo"); });
     }
 

@@ -9,7 +9,7 @@ import { IAppState } from "../../store/store";
 import { VALID_NAMES_PATTERN, VALID_UCASE_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN,
     VALID_DATE_PATTERN, FIRST_SCHOOL_YEAR, VALID_YEAR_PATTERN, VALID_TELEPHONE_PATTERN } from "../../constants";
 import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
 import {IMyDpOptions} from "mydatepicker";
 import {Http, RequestOptions} from "@angular/http";
@@ -29,7 +29,7 @@ import {
 
 @Injectable() export default class StudentApplicationMain implements OnInit {
 
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
 
     private studentDataFieldsSub: Subscription;
@@ -43,8 +43,6 @@ import {
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private schoolyears: string[];
-
-    private rss = new FormArray([]);
 
     private myDatePickerOptions: IMyDpOptions = {
         // other options...
@@ -106,8 +104,9 @@ import {
         (<any>$("#applicationFormNotice")).appendTo("body");
 
         this.loginInfoSub = this._ngRedux.select("loginInfo")
-            .subscribe(loginInfo => {
-                this.loginInfo$.next(<ILoginInfo>loginInfo);
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
+                this.loginInfo$.next(linfo);
             }, error => { console.log("error selecting loginInfo"); });
 
         this.studentDataFieldsSub = this._ngRedux.select("studentDataFields")
@@ -188,7 +187,6 @@ import {
 
     checkcriteria(cb, mutual_disabled) {
         if (mutual_disabled !== "-1" && cb.checked === true) {
-            // this.studentCriteriaGroup.controls["formArray"]["controls"][mutual_disabled-1].setValue(false);
             let mutual_ids = mutual_disabled.split(",");
             for (let i = 0; i < mutual_ids.length; i++) {
                 this.studentCriteriaGroup.controls["formArray"]["controls"][mutual_ids[i] - 1].setValue(false);

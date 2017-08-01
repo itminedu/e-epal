@@ -8,12 +8,9 @@ import { NgRedux, select } from "@angular-redux/store";
 import { IAppState } from "../../store/store";
 import {Router, ActivatedRoute, Params} from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
 import { VALID_CAPACITY_PATTERN} from "../../constants";
 import {maxValue} from "../../constants";
 import {minValue} from "../../constants";
-
-
 import {
     FormBuilder,
     FormGroup,
@@ -114,11 +111,6 @@ import {
                           <option value="3" [selected]="StudentDetails$.checkstatus != '0' && StudentDetails$.checkstatus != '1'">Δεν ελέγχθηκε</option>
                       </select>
                       </div>
-<!--                      <div class="col-md-2">
-                      <button type="button" class="btn-primary btn-sm pull-right" (click)="confirmStudent(StudentDetails$.id, cb, j)">
-                           Ενημέρωση
-                       </button>
-                     </div> -->
                      </div>
 
                      <div class="row oddin" style="margin: 0px 2px 0px 2px; line-height: 2em;">
@@ -277,8 +269,6 @@ import {
         </div>
       </div>
     </div>
-
-
    `
 })
 
@@ -302,8 +292,6 @@ import {
     private sector = <number>0;
     private special = <number>0;
 
-
-
     constructor(private fb: FormBuilder,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
@@ -321,7 +309,6 @@ import {
 
     }
 
-
     public showConfirmModal(): void {
         (<any>$("#applicationDeleteConfirm")).modal("show");
     }
@@ -337,7 +324,6 @@ import {
         (<any>$("#applicationDeleteError")).modal("hide");
     }
 
-
     public showModal(popupMsgId): void {
         (<any>$(popupMsgId)).modal("show");
     }
@@ -350,7 +336,6 @@ import {
     public onHidden(popupMsgId): void {
 
     }
-
 
     ngOnDestroy() {
         (<any>$("#applicationDeleteConfirm")).remove();
@@ -367,16 +352,13 @@ import {
         this.CoursesPerSchoolSub = this._hds.FindCoursesPerSchool().subscribe(x => {
             this.CoursesPerSchool$.next(x);
             this.showLoader.next(false);
-
         },
             error => {
                 this.CoursesPerSchool$.next([{}]);
                 console.log("Error Getting courses perSchool");
                 this.showLoader.next(false);
             });
-
     }
-
 
     findstudent(taxi, sector, special) {
         this.showLoader.next(true);
@@ -395,7 +377,6 @@ import {
             });
 
     }
-
 
     setActive(ind) {
         this.StudentActive = -1;
@@ -420,8 +401,6 @@ import {
         }
         this.StudentActive = ind;
     }
-
-
 
     confirmStudent(student, cb, ind) {
         let rtype;
@@ -451,7 +430,6 @@ import {
             });
     }
 
-
     deleteApplication(appId: number, taxi, sector, special): void {
 
         this.applicationId = appId;
@@ -460,10 +438,6 @@ import {
         this.special = special;
         this.showConfirmModal();
     }
-
-
-
-
 
     deleteApplicationDo(): void {
 
@@ -485,8 +459,6 @@ import {
                     console.log("Error Getting courses perSchool");
                     this.showLoader.next(false);
                 });
-
-
             this.StudentInfoSub = this._hds.getStudentPerSchool(this.taxi, this.sector, this.special)
                 .subscribe(data => {
                     this.StudentInfo$.next(data);
@@ -499,8 +471,6 @@ import {
                     this.showLoader.next(false);
                     this.showModal("#emptyselection");
                 });
-
-
         }).catch(err => {
             this.showErrorModal();
             this.showLoader.next(false);

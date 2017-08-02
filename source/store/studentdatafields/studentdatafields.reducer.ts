@@ -1,8 +1,9 @@
-import { IStudentDataFieldRecords, IStudentDataFieldRecord, IStudentDataField } from "./studentdatafields.types";
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "./studentdatafields.initial-state";
-import {recordify} from "typed-immutable-record";
 import { List } from "immutable";
-import { STUDENTDATAFIELDS_SAVE, STUDENTDATAFIELDS_INIT } from "../../constants";
+import { recordify } from "typed-immutable-record";
+
+import { STUDENTDATAFIELDS_INIT, STUDENTDATAFIELDS_SAVE } from "../../constants";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "./studentdatafields.initial-state";
+import { IStudentDataField, IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields.types";
 
 export function studentDataFieldsReducer(state: IStudentDataFieldRecords = STUDENT_DATA_FIELDS_INITIAL_STATE, action): IStudentDataFieldRecords {
     switch (action.type) {

@@ -1,5 +1,5 @@
+import { ElementRef, ViewChild } from "@angular/core";
 import * as d3 from "d3";
-import {  ElementRef, ViewChild } from "@angular/core";
 
 export class ChartCreator {
 

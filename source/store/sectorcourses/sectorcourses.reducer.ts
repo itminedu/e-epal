@@ -1,13 +1,9 @@
-import { ISectorRecords, ISectorRecord, ISectorCourseRecord, ISector, ISectorCourse } from "./sectorcourses.types";
-import { SECTOR_COURSES_INITIAL_STATE } from "./sectorcourses.initial-state";
 import { List } from "immutable";
-import {recordify} from "typed-immutable-record";
+import { recordify } from "typed-immutable-record";
 
-import {
-    SECTORCOURSES_RECEIVED,
-    SECTORCOURSES_SELECTED_SAVE,
-    SECTORCOURSES_INIT
-} from "../../constants";
+import { SECTORCOURSES_INIT, SECTORCOURSES_RECEIVED, SECTORCOURSES_SELECTED_SAVE } from "../../constants";
+import { SECTOR_COURSES_INITIAL_STATE } from "./sectorcourses.initial-state";
+import { ISector, ISectorCourse, ISectorCourseRecord, ISectorRecord, ISectorRecords } from "./sectorcourses.types";
 
 export function sectorCoursesReducer(state: ISectorRecords = SECTOR_COURSES_INITIAL_STATE, action): ISectorRecords {
     switch (action.type) {

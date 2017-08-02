@@ -1,30 +1,28 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
-import { Http, Response, RequestOptions, Headers } from "@angular/http";
-import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
-import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
-import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
-import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
-import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
-import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
-import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
-import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
-import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from "../students/student";
-import { AppSettings } from "../../app.settings";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { Component, OnInit } from "@angular/core";
+import { Headers, Http, RequestOptions, Response } from "@angular/http";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
 import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
+import { AppSettings } from "../../app.settings";
 import { HelperDataService } from "../../services/helper-data-service";
+import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IRegionRecords } from "../../store/regionschools/regionschools.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
+import { IAppState } from "../../store/store";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
+import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
+import { StudentCourseChosen, StudentEpalChosen, StudentSectorChosen } from "../students/student";
 
 @Component({
     selector: "application-submit",

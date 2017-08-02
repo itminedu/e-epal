@@ -1,8 +1,9 @@
-import { SECTORFIELDS_RECEIVED, SECTORFIELDS_SELECTED_SAVE, SECTORFIELDS_INIT } from "../constants";
-import { Injectable } from "@angular/core";
 import { NgRedux } from "@angular-redux/store";
-import { IAppState } from "../store";
+import { Injectable } from "@angular/core";
+
+import { SECTORFIELDS_INIT, SECTORFIELDS_RECEIVED, SECTORFIELDS_SELECTED_SAVE } from "../constants";
 import { HelperDataService } from "../services/helper-data-service";
+import { IAppState } from "../store";
 
 @Injectable()
 export class SectorFieldsActions {

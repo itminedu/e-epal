@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import {TypedRecord} from "typed-immutable-record";
+import { TypedRecord } from "typed-immutable-record";
 
 export interface IEpalClass {
     name: string;

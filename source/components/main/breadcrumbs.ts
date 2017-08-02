@@ -1,8 +1,6 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
 import { Router } from "@angular/router";
-
 
 @Component({
     selector: "breadcrumbs",
@@ -15,9 +13,7 @@ import { Router } from "@angular/router";
           <div [hidden]="currentUrl !== '/student-application-form-main'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Προσωπικά Στοιχεία</p></div>
           <div [hidden]="currentUrl !== '/application-submit'" class="col-sm-12"><p class="crumb" >Νέα Δήλωση Προτίμησης -> Προεπισκόπηση Δήλωσης Προτίμησης</p></div>
           <div [hidden]="currentUrl !== '/submited-preview'" class="col-sm-12"><p class="crumb" > Υποβληθείσες Δηλώσεις Προτίμησης</p></div>
-
           <div [hidden]="currentUrl !== '/ministry'" class="col-sm-12"><p class="crumb" > Διαχειριστής Υπουργείου Παιδείας -> Σύνδεση</p></div>
-
   `
 })
 

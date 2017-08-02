@@ -1,15 +1,16 @@
-import { Router, ActivatedRoute, Params } from "@angular/router";
-import { OnInit, OnDestroy, Component } from "@angular/core";
-import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
-import { NgRedux, select } from "@angular-redux/store";
-import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { IAppState } from "../store/store";
-import { HelperDataService } from "../services/helper-data-service";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import { CookieService } from "ngx-cookie";
-import { FormBuilder, FormGroup, FormControl, FormArray } from "@angular/forms";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { LoginInfoActions } from "../actions/logininfo.actions";
 import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
+import { HelperDataService } from "../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
+import { IAppState } from "../store/store";
 
 @Component({
     selector: "school-home",

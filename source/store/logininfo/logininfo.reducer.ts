@@ -1,14 +1,9 @@
-import { ILoginInfoRecords, ILoginInfoRecord, ILoginInfoObj } from "./logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "./logininfo.initial-state";
-import {recordify} from "typed-immutable-record";
 import { List } from "immutable";
+import { recordify } from "typed-immutable-record";
 
-import {
-    LOGININFO_SAVE,
-    LOGININFO_INIT,
-    PROFILE_SAVE,
-    STATEMENTAGREE_SAVE
-} from "../../constants";
+import { LOGININFO_INIT, LOGININFO_SAVE, PROFILE_SAVE, STATEMENTAGREE_SAVE } from "../../constants";
+import { LOGININFO_INITIAL_STATE } from "./logininfo.initial-state";
+import { ILoginInfoObj, ILoginInfoRecord, ILoginInfoRecords } from "./logininfo.types";
 
 export function loginInfoReducer(state: ILoginInfoRecords = LOGININFO_INITIAL_STATE, action): ILoginInfoRecords {
     switch (action.type) {

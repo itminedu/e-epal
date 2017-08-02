@@ -1,4 +1,4 @@
-// used by dubmit component
+// used by submit component
 export class StudentEpalChosen {
     constructor(
         public student_id: number,

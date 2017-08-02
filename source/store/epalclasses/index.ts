@@ -1,11 +1,11 @@
-import { IEpalClass, IEpalClassRecords, IEpalClassRecord } from "./epalclasses.types";
-import { epalclassesReducer } from "./epalclasses.reducer";
 import { deimmutifyEpalClasses } from "./epalclasses.transformers";
+import { epalclassesReducer } from "./epalclasses.reducer";
+import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses.types";
 
 export {
-IEpalClass,
-IEpalClassRecords,
-IEpalClassRecord,
-epalclassesReducer,
-deimmutifyEpalClasses,
+    IEpalClass,
+    IEpalClassRecords,
+    IEpalClassRecord,
+    epalclassesReducer,
+    deimmutifyEpalClasses,
 };

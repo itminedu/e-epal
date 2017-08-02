@@ -1,17 +1,19 @@
-import { Http, Headers, RequestOptions, ResponseContentType, Response } from "@angular/http";
-import { Injectable, OnInit, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Subscription } from "rxjs/Rx";
 import "rxjs/add/operator/map";
-import { ISectorField } from "../store/sectorfields/sectorfields.types";
-import { IRegionRecord, IRegionSchoolRecord, IRRegion, IRRegionSchool } from "../store/regionschools/regionschools.types";
-import { ISectorRecord, ISectorRecords, ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
-import { AppSettings } from "../app.settings";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../store/store";
-import { ILoginInfoRecords, ILoginInfoObj, ILoginInfoRecord } from "../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
-import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from "../constants";
+
+import { NgRedux } from "@angular-redux/store";
+import { Injectable, OnDestroy, OnInit } from "@angular/core";
+import { Headers, Http, RequestOptions, ResponseContentType } from "@angular/http";
 import { CookieService } from "ngx-cookie";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { AppSettings } from "../app.settings";
+import { DIDE_ROLE, MINISTRY_ROLE, PDE_ROLE, SCHOOL_ROLE } from "../constants";
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
+import { IRRegionSchool } from "../store/regionschools/regionschools.types";
+import { ISectorCourse } from "../store/sectorcourses/sectorcourses.types";
+import { ISectorField } from "../store/sectorfields/sectorfields.types";
+import { IAppState } from "../store/store";
 
 import * as FileSaver from "file-saver";
 

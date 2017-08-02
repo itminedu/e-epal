@@ -1,13 +1,11 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
-import {Router} from "@angular/router";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LoginInfoActions } from "../../actions/logininfo.actions";
+
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "reg-navbar",

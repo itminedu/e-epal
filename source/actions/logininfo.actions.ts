@@ -1,9 +1,10 @@
-import { LOGININFO_SAVE, PROFILE_SAVE, LOGININFO_RECEIVED, STATEMENTAGREE_SAVE } from "../constants";
-import { LOGININFO_INIT } from "../constants";
-import { Injectable } from "@angular/core";
 import { NgRedux } from "@angular-redux/store";
-import { IAppState } from "../store";
+import { Injectable } from "@angular/core";
+
+import { LOGININFO_SAVE, PROFILE_SAVE, STATEMENTAGREE_SAVE } from "../constants";
+import { LOGININFO_INIT } from "../constants";
 import { HelperDataService } from "../services/helper-data-service";
+import { IAppState } from "../store";
 
 @Injectable()
 export class LoginInfoActions {

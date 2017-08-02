@@ -1,20 +1,10 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import { Observable } from "rxjs/Observable";
-import { Http, Headers, RequestOptions } from "@angular/http";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params } from "@angular/router";
+import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
+import { HelperDataService } from "../../services/helper-data-service";
+
 @Component({
     selector: "eduadmin-view",
     template: `

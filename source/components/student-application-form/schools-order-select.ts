@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
-import { NgRedux, select } from "@angular-redux/store";
+
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
-import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
-import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { IAppState } from "../../store/store";
-import {AppSettings} from "../../app.settings";
 
 @Component({
     selector: "schools-order-select",

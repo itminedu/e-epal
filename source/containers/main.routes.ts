@@ -1,51 +1,48 @@
-import {
-    Routes,
-    RouterModule,
-} from "@angular/router";
+import { Routes } from "@angular/router";
 
-import {CamelCasePipe} from "../pipes/camelcase";
-import {RemoveSpaces} from "../pipes/removespaces";
-import Info from "../components/student-application-form/info";
-import ParentForm from "../components/student-application-form/parent.form";
-import StudentApplicationMain from "../components/student-application-form/application.form.main";
-import Home from "../components/home";
-import SchoolHome from "../components/school.home";
-import MinistryHome from "../components/ministry.home";
-import Disclaimer from "../components/student-application-form/disclaimer";
-import EpalClassesSelect from "../components/student-application-form/epal.class.select";
-import SectorFieldsSelect from "../components/student-application-form/sector.fields.select";
-import RegionSchoolsSelect from "../components/student-application-form/region.schools.select";
-import SectorCoursesSelect from "../components/student-application-form/sector.courses.select";
-import ApplicationPreview from "../components/student-application-form/application.preview";
-import SchoolsOrderSelect from "../components/student-application-form/schools-order-select";
-import ApplicationSubmit from "../components/student-application-form/application.submit";
-import SubmitedPreview from "../components/student-application-form/submited.aplication.preview";
-import AfterSubmit from "../components/student-application-form/after.submit";
+import DirectorClassCapacity from "../components/director/director-classcapacity";
 import DirectorView from "../components/director/director-view";
 import DirectorButtons from "../components/director/director.buttons";
-import PerfectureView from "../components/infoviews/perfecture-view";
+import Home from "../components/home";
 import EduadminView from "../components/infoviews/eduadmin-view";
-import DirectorClassCapacity from "../components/director/director-classcapacity";
-import MinisterView from "../components/minister/minister-view";
+import PerfectureView from "../components/infoviews/perfecture-view";
+import Breadcrumbs from "../components/main/breadcrumbs";
+import InformStudents from "../components/minister/minister-informstudents";
 import MinisterReports from "../components/minister/minister-reports";
+import MinisterSettings from "../components/minister/minister-settings";
+import MinisterView from "../components/minister/minister-view";
 import ReportAllStat from "../components/minister/report-all-stat";
 import ReportGeneral from "../components/minister/report-general";
-import ReportUsers from "../components/minister/report-users";
 import ReportNoCapacity from "../components/minister/report-no-capacity";
-import InformStudents from "../components/minister/minister-informstudents";
-import MinisterSettings from "../components/minister/minister-settings";
+import ReportUsers from "../components/minister/report-users";
+import MinistryHome from "../components/ministry.home";
+import SchoolHome from "../components/school.home";
+import AfterSubmit from "../components/student-application-form/after.submit";
+import StudentApplicationMain from "../components/student-application-form/application.form.main";
+import ApplicationPreview from "../components/student-application-form/application.preview";
+import ApplicationSubmit from "../components/student-application-form/application.submit";
+import Disclaimer from "../components/student-application-form/disclaimer";
+import EpalClassesSelect from "../components/student-application-form/epal.class.select";
+import HelpDesk from "../components/student-application-form/help-desk";
+import Info from "../components/student-application-form/info";
+import LegalInfo from "../components/student-application-form/legalinfos";
+import ParentForm from "../components/student-application-form/parent.form";
+import RegionSchoolsSelect from "../components/student-application-form/region.schools.select";
+import SchoolsOrderSelect from "../components/student-application-form/schools-order-select";
+import SectorCoursesSelect from "../components/student-application-form/sector.courses.select";
+import SectorFieldsSelect from "../components/student-application-form/sector.fields.select";
+import SubmitedPreview from "../components/student-application-form/submited.aplication.preview";
+import EduAdminAuthGuard from "../guards/eduadmin.auth.guard";
+import MinistryAuthGuard from "../guards/ministry.auth.guard";
+import RegionEduAuthGuard from "../guards/regionedu.auth.guard";
+import ReportsAuthGuard from "../guards/reports.auth.guard";
 import SchoolAuthGuard from "../guards/school.auth.guard";
-import SchoolStudentsLockedGuard from "../guards/school.students.locked.guard";
 import SchoolCapacityLockedGuard from "../guards/school.capacity.locked.guard";
+import SchoolStudentsLockedGuard from "../guards/school.students.locked.guard";
 import StudentAuthGuard from "../guards/student.auth.guard";
 import StudentLockGuard from "../guards/student.lock.guard";
-import RegionEduAuthGuard from "../guards/regionedu.auth.guard";
-import EduAdminAuthGuard from  "../guards/eduadmin.auth.guard";
-import HelpDesk from  "../components/student-application-form/help-desk";
-import LegalInfo from  "../components/student-application-form/legalinfos";
-import MinistryAuthGuard from "../guards/ministry.auth.guard";
-import ReportsAuthGuard from "../guards/reports.auth.guard";
-import Breadcrumbs from "../components/main/breadcrumbs";
+import { CamelCasePipe } from "../pipes/camelcase";
+import { RemoveSpaces } from "../pipes/removespaces";
 
 export const MainRoutes: Routes = [
     { path: "", component: Home },

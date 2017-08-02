@@ -1,12 +1,11 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs/Rx";
 import "rxjs/add/operator/map";
-import { AppSettings } from "../app.settings";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../store/store";
-import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
+
+import { NgRedux } from "@angular-redux/store";
+import { Injectable } from "@angular/core";
+
 import { MINISTRY_ROLE } from "../constants";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
+import { IAppState } from "../store/store";
 
 @Injectable()
 export class AuthService {

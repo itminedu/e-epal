@@ -1,20 +1,17 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params} from "@angular/router";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { LocalDataSource } from "ng2-smart-table";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
-import {ReportsSchema, TableColumn} from "./reports-schema";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import {CsvCreator} from "./csv-creator";
 
 import { API_ENDPOINT } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
+import { CsvCreator } from "./csv-creator";
+import { ReportsSchema, TableColumn } from "./reports-schema";
 
 @Component({
     selector: "report-users",

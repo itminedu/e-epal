@@ -1,23 +1,15 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
-import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
-import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
-import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import {RemoveSpaces} from "../../pipes/removespaces";
 
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from "@angular/forms";
-import {AppSettings} from "../../app.settings";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "sectorcourses-fields-select",

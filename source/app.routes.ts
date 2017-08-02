@@ -1,7 +1,6 @@
-import { RouterModule }  from "@angular/router";
+import { RouterModule } from "@angular/router";
 
-import { MainRoutes, MainDeclarations }
-from "./containers/main.routes";
+import { MainDeclarations, MainRoutes } from "./containers/main.routes";
 
 export const routes = [
     ...MainRoutes

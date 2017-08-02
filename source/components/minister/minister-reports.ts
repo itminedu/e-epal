@@ -1,34 +1,22 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params} from "@angular/router";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { MINISTRY_ROLE, PDE_ROLE, DIDE_ROLE } from "../../constants";
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
 
 import { API_ENDPOINT } from "../../app.settings";
+import { DIDE_ROLE, MINISTRY_ROLE, PDE_ROLE } from "../../constants";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "minister-reports",
     // encapsulation: ViewEncapsulation.None,
     template: `
-
   <div style="min-height: 500px; ">
-
         <h5> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">

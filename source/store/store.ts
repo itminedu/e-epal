@@ -1,10 +1,11 @@
 import { combineReducers } from "redux";
-import * as sectorFields from "./sectorfields";
-import * as regions from "./regionschools";
-import * as sectors from "./sectorcourses";
-import * as studentDataFields from "./studentdatafields";
+
 import * as epalclasses from "./epalclasses";
 import * as loginInfo from "./logininfo";
+import * as regions from "./regionschools";
+import * as sectors from "./sectorcourses";
+import * as sectorFields from "./sectorfields";
+import * as studentDataFields from "./studentdatafields";
 
 export interface IAppState {
     sectorFields?: sectorFields.ISectorFieldRecords;

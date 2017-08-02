@@ -1,7 +1,6 @@
 import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
 import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LocalDataSource } from "ng2-smart-table";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
@@ -24,7 +23,7 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
           class = "loading" *ngIf="validCreator == 0" >
         </div>
 
-        <form [formGroup]="formGroup"  #form>
+        <form #form>
 
           <h5> >Επιλογή Φίλτρων <br><br></h5>
           <h6> Δεν υπάρχουν διαθέσιμα φίλτρα <br><br><br></h6>
@@ -66,7 +65,6 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
 
 @Injectable() export default class ReportGeneral implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup;
     private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
@@ -89,18 +87,12 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
     @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
-        this.formGroup = this.fb.group({
-            region: ["", []],
-            adminarea: ["", []],
-            schoollist: ["", []],
-        });
-
+        private router: Router
+    ) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.generalReport$ = new BehaviorSubject([{}]);
         this.minedu_userName = "";

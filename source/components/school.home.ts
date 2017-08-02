@@ -1,6 +1,5 @@
 import { NgRedux } from "@angular-redux/store";
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { CookieService } from "ngx-cookie";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
@@ -35,7 +34,7 @@ import { IAppState } from "../store/store";
         </div>
     </div>
     <div *ngIf="(errorCode$ | async) == ''">
-        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
+        <form method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
             <!-- <input type="hidden" name="X-oauth-enabled" value="true"> -->
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row">
@@ -52,7 +51,6 @@ import { IAppState } from "../store/store";
 })
 
 export default class SchoolHome implements OnInit, OnDestroy {
-    private formGroup: FormGroup;
     private authToken: string;
     private errorCode$: BehaviorSubject<string>;
     private authRole: string;
@@ -64,7 +62,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ata: LoginInfoActions,
         private _ngRedux: NgRedux<IAppState>,
         private activatedRoute: ActivatedRoute,
@@ -77,8 +75,6 @@ export default class SchoolHome implements OnInit, OnDestroy {
         this.name = "";
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.errorCode$ = new BehaviorSubject("");
-        this.formGroup = this.fb.group({
-        });
     };
 
     ngOnDestroy() {

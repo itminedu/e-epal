@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
@@ -51,8 +50,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     </div>
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
-    <form [formGroup]="formGroup">
-
+    <form>
        <p style="margin-top: 20px; line-height: 2em;"> H παρακάτω λίστα διαμορφώνει τη δυναμική του σχολείου σας σε τμήματα με κριτήριο τον αριθμό των διαθεσίμων αιθουσών.  </p>
        <p style="margin-top: 20px; line-height: 2em;"> Παρακαλείστε να καταγράψετε τον αριθμό των τμημάτων ανά τάξη, τομέα και ειδικότητα.  </p>
 
@@ -262,8 +260,6 @@ import { HelperDataService } from "../../services/helper-data-service";
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup;
-
     private CoursesPerSchool$: BehaviorSubject<any>;
     private CoursesPerSchoolSub: Subscription;
     private StudentInfo$: BehaviorSubject<any>;
@@ -280,21 +276,17 @@ import { HelperDataService } from "../../services/helper-data-service";
     private sector = <number>0;
     private special = <number>0;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
+        private router: Router
+    ) {
         this.CoursesPerSchool$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.StudentInfo$ = new BehaviorSubject([{}]);
         this.retrievedStudent = new BehaviorSubject(false);
         this.SavedStudents$ = new BehaviorSubject({});
         this.opened = false;
-        this.formGroup = this.fb.group({
-
-        });
-
     }
 
     public showConfirmModal(): void {

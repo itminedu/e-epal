@@ -268,8 +268,6 @@ import { IAppState } from "../../store/store";
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
             this.SubmitedDetailsSub.unsubscribe();
-        this.SubmitedDetails$.unsubscribe();
-        this.SubmitedApplic$.unsubscribe();
     }
 
     ngOnInit() {

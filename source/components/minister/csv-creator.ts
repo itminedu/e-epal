@@ -1,6 +1,7 @@
-import {ReportsSchema, TableColumn} from "./reports-schema";
-import { LocalDataSource } from "ng2-smart-table";
 import { Input } from "@angular/core";
+import { LocalDataSource } from "ng2-smart-table";
+
+import { ReportsSchema, TableColumn } from "./reports-schema";
 
 export class CsvCreator {
 

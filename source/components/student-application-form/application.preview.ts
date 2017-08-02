@@ -1,22 +1,18 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Injectable } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
-import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
-import { RegionSchoolsActions } from "../../actions/regionschools.actions";
-import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
-import { IRegionRecord, IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
-import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
-import {AppSettings} from "../../app.settings";
-import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+
 import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { IRegionRecords, IRegionSchoolRecord } from "../../store/regionschools/regionschools.types";
 import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "application-preview-select",

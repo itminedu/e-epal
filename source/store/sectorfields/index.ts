@@ -3,8 +3,8 @@ import { sectorFieldsReducer } from "./sectorfields.reducer";
 import { deimmutifySectorFields } from "./sectorfields.transformers";
 
 export {
-ISectorFieldRecord,
-ISectorFieldRecords,
-sectorFieldsReducer,
-deimmutifySectorFields,
+    ISectorFieldRecord,
+    ISectorFieldRecords,
+    sectorFieldsReducer,
+    deimmutifySectorFields,
 };

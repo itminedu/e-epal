@@ -10,20 +10,6 @@ export class TableColumn {
 
 export class ReportsSchema {
 
-    /*
-    defaultSettings = {
-      actions: {
-        columnTitle: "Actions",
-        add: false,
-        edit: false,
-        delete: false
-      },
-      pager: {
-        display: true,
-        perPage: 50
-      }
-    };
-    */
     ReportUsersSchema = {
         actions: false,
         noDataMessage: "Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης",
@@ -100,9 +86,6 @@ export class ReportsSchema {
         }
     };
 
-
-
-
     reportNoCapacity = {
         actions: false,
         pager: {
@@ -138,9 +121,6 @@ export class ReportsSchema {
             }
         }
     };
-
-
-
 
     reportCompletenessSchema = {
         actions: false,
@@ -188,7 +168,6 @@ export class ReportsSchema {
             }
         }
     };
-
 
     constructor() { }
 

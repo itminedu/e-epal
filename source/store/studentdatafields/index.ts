@@ -3,8 +3,8 @@ import { studentDataFieldsReducer } from "./studentdatafields.reducer";
 import { deimmutifyStudentDataFields } from "./studentdatafields.transformers";
 
 export {
-IStudentDataFieldRecord,
-IStudentDataFieldRecords,
-studentDataFieldsReducer,
-deimmutifyStudentDataFields,
+    IStudentDataFieldRecord,
+    IStudentDataFieldRecords,
+    studentDataFieldsReducer,
+    deimmutifyStudentDataFields,
 };

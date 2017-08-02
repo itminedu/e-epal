@@ -1,18 +1,11 @@
-import { Component, OnInit, OnDestroy, Injectable, ViewChild, ElementRef, Renderer } from "@angular/core";
+import { Component, Injectable, OnDestroy, OnInit, Renderer } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { BehaviorSubject, Subscription, Observable } from "rxjs/Rx";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { LoginInfoActions } from "../../actions/logininfo.actions";
 import { VALID_EMAIL_PATTERN, VALID_UCASE_NAMES_PATTERN } from "../../constants";
 import { HelperDataService } from "../../services/helper-data-service";
-import { LoginInfoActions } from "../../actions/logininfo.actions";
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
-import {AppSettings} from "../../app.settings";
 
 @Component({
     selector: "parent-form",

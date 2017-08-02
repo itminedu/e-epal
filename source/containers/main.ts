@@ -1,28 +1,10 @@
-import { Component, Inject, OnInit, OnDestroy }
-from "@angular/core";
-import {
-    Router,
-    ActivatedRoute,
-    NavigationStart
-}
-from "@angular/router";
 import "./globalstyles.css";
-import { DevToolsExtension, NgRedux, select } from "@angular-redux/store";
 
-import {
-    IAppState,
-    rootReducer,
-    middleware,
-    //  enhancers,
-} from "../store";
+import { DevToolsExtension, NgRedux } from "@angular-redux/store";
+import { Component } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
-import {
-    applyMiddleware,
-    Store,
-    combineReducers,
-    compose,
-    createStore
-} from "redux";
+import { IAppState, rootReducer } from "../store";
 
 @Component({
     selector: "main",
@@ -45,14 +27,14 @@ export default class Main {
     ) {
 
         const tools = _devTools.enhancer({
-            //      deserializeState: reimmutify,
+            // deserializeState: reimmutify,
         });
         _ngRedux.configureStore(
             rootReducer,
             {},
-//            middleware,
-            //      tools ? [ ...enhancers, tools ] : enhancers);
-//            tools);
-              );
+            // middleware,
+            // tools ? [ ...enhancers, tools ] : enhancers);
+            // tools);
+        );
     }
 }

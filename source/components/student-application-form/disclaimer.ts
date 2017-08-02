@@ -1,22 +1,14 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params} from "@angular/router";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { LoginInfoActions } from "../../actions/logininfo.actions";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
+import { LoginInfoActions } from "../../actions/logininfo.actions";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "intro-statement",

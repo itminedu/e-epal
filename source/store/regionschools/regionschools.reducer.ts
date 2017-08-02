@@ -1,14 +1,21 @@
-import { IRRegion, IRRegionSchool, IRegionSchoolRecord, IRegionSchoolRecords, IRegionRecord, IRegionRecords } from "./regionschools.types";
-import { REGION_SCHOOLS_INITIAL_STATE } from "./regionschools.initial-state";
 import { List } from "immutable";
-import {recordify} from "typed-immutable-record";
+import { recordify } from "typed-immutable-record";
 
 import {
+    REGIONSCHOOLS_INIT,
+    REGIONSCHOOLS_ORDER_SAVE,
     REGIONSCHOOLS_RECEIVED,
     REGIONSCHOOLS_SELECTED_SAVE,
-    REGIONSCHOOLS_ORDER_SAVE,
-    REGIONSCHOOLS_INIT
 } from "../../constants";
+import { REGION_SCHOOLS_INITIAL_STATE } from "./regionschools.initial-state";
+import {
+    IRegionRecord,
+    IRegionRecords,
+    IRegionSchoolRecord,
+    IRegionSchoolRecords,
+    IRRegion,
+    IRRegionSchool,
+} from "./regionschools.types";
 
 export function regionSchoolsReducer(state: IRegionRecords = REGION_SCHOOLS_INITIAL_STATE, action): IRegionRecords {
     switch (action.type) {

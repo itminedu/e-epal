@@ -1,5 +1,5 @@
-import {Router} from "@angular/router";
-import {OnInit, Component, Injectable} from "@angular/core";
+import { Component, Injectable, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
     selector: "director-buttons",

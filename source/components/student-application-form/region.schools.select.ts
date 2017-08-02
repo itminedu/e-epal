@@ -1,25 +1,17 @@
-import { Component, OnInit, OnDestroy} from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
+
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
-import { NgRedux, select } from "@angular-redux/store";
-import { IRegionRecord, IRegionRecords } from "../../store/regionschools/regionschools.types";
-import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
-import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
-import { IAppState } from "../../store/store";
-import { RemoveSpaces } from "../../pipes/removespaces";
 import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
+import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
+import { IRegionRecords } from "../../store/regionschools/regionschools.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
 import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from "@angular/forms";
-import {AppSettings} from "../../app.settings";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "region-schools-select",

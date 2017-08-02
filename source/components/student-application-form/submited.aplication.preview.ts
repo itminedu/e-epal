@@ -1,13 +1,12 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Location } from "@angular/common";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import {Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import {Router, ActivatedRoute, Params} from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import {Location} from "@angular/common";
+
+import { HelperDataService } from "../../services/helper-data-service";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "submited-preview",

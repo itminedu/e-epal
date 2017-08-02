@@ -1,16 +1,14 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
-import { NgRedux, select } from "@angular-redux/store";
-import { ISectorFieldRecord, ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
-import { IAppState } from "../../store/store";
-import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
 
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
-
-import {AppSettings} from "../../app.settings";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "sector-fields-select",

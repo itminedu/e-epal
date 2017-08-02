@@ -1,26 +1,26 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Subscription, Observable } from "rxjs/Rx";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Http } from "@angular/http";
 import { Router } from "@angular/router";
-import { NgRedux, select } from "@angular-redux/store";
-import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
-import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
-import { IAppState } from "../../store/store";
-import { VALID_NAMES_PATTERN, VALID_UCASE_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN,
-    VALID_DATE_PATTERN, FIRST_SCHOOL_YEAR, VALID_YEAR_PATTERN, VALID_TELEPHONE_PATTERN } from "../../constants";
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import {IMyDpOptions} from "mydatepicker";
-import {Http, RequestOptions} from "@angular/http";
+import { IMyDpOptions } from "mydatepicker";
+import { BehaviorSubject, Observable, Subscription } from "rxjs/Rx";
 
+import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
 import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
+    FIRST_SCHOOL_YEAR,
+    VALID_ADDRESS_PATTERN,
+    VALID_ADDRESSTK_PATTERN,
+    VALID_NAMES_PATTERN,
+    VALID_TELEPHONE_PATTERN,
+    VALID_UCASE_NAMES_PATTERN,
+} from "../../constants";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
+import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
 
 @Component({
     selector: "application-form-main",

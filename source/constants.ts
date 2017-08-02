@@ -1,6 +1,5 @@
-
-import {ValidatorFn} from "@angular/forms";
-import {AbstractControl} from "@angular/forms";
+import { ValidatorFn } from "@angular/forms";
+import { AbstractControl } from "@angular/forms";
 
 export const COURSEFIELDS_RECEIVED = "COURSEFIELDS_RECEIVED";
 export const COURSEFIELDS_SELECTED_SAVE = "COURSEFIELDS_SELECTED_SAVE";

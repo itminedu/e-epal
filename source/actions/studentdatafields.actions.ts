@@ -1,6 +1,7 @@
-import { STUDENTDATAFIELDS_SAVE, STUDENTDATAFIELDS_INIT } from "../constants";
-import { Injectable } from "@angular/core";
 import { NgRedux } from "@angular-redux/store";
+import { Injectable } from "@angular/core";
+
+import { STUDENTDATAFIELDS_INIT, STUDENTDATAFIELDS_SAVE } from "../constants";
 import { IAppState } from "../store";
 
 @Injectable()
@@ -15,7 +16,6 @@ export class StudentDataFieldsActions {
             payload: {
                 studentDataFields
             }
-
         });
 
     };

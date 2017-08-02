@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { CanActivate } from "@angular/router";
-import { AuthService } from "../services/auth.service";
-import { STUDENT_ROLE } from "../constants";
 import { Router } from "@angular/router";
+
+import { STUDENT_ROLE } from "../constants";
+import { AuthService } from "../services/auth.service";
 
 @Injectable()
 export default class StudentLockGuard implements CanActivate {

@@ -1,13 +1,9 @@
-import { ISectorFieldRecords, ISectorFieldRecord, ISectorField } from "./sectorfields.types";
-import { SECTOR_FIELDS_INITIAL_STATE } from "./sectorfields.initial-state";
 import { List } from "immutable";
-import {recordify} from "typed-immutable-record";
+import { recordify } from "typed-immutable-record";
 
-import {
-    SECTORFIELDS_RECEIVED,
-    SECTORFIELDS_SELECTED_SAVE,
-    SECTORFIELDS_INIT
-} from "../../constants";
+import { SECTORFIELDS_INIT, SECTORFIELDS_RECEIVED, SECTORFIELDS_SELECTED_SAVE } from "../../constants";
+import { SECTOR_FIELDS_INITIAL_STATE } from "./sectorfields.initial-state";
+import { ISectorField, ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields.types";
 
 export function sectorFieldsReducer(state: ISectorFieldRecords = SECTOR_FIELDS_INITIAL_STATE, action): ISectorFieldRecords {
     switch (action.type) {

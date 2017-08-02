@@ -1,4 +1,4 @@
-import {Pipe, PipeTransform} from "@angular/core";
+import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({ name: "removetags" })
 export class Removetags implements PipeTransform {

@@ -1,21 +1,15 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import {Location} from "@angular/common";
+import { NgRedux } from "@angular-redux/store";
+import { Location } from "@angular/common";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from "../../constants";
-import {Router} from "@angular/router";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { VALID_EMAIL_PATTERN, VALID_NAMES_PATTERN } from "../../constants";
 import { HelperDataService } from "../../services/helper-data-service";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { NgRedux, select } from "@angular-redux/store";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
 import { IAppState } from "../../store/store";
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
 
 @Component({
     selector: "helpdesk",

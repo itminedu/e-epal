@@ -1,9 +1,9 @@
-import { IEpalClassRecords, IEpalClass, IEpalClassRecord } from "./epalclasses.types";
-import { EPALCLASSES_INITIAL_STATE } from "./epalclasses.initial-state";
 import { List } from "immutable";
-import {recordify} from "typed-immutable-record";
+import { recordify } from "typed-immutable-record";
 
-import {  EPALCLASSES_SAVE, EPALCLASSES_INIT } from "../../constants";
+import { EPALCLASSES_INIT, EPALCLASSES_SAVE } from "../../constants";
+import { EPALCLASSES_INITIAL_STATE } from "./epalclasses.initial-state";
+import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses.types";
 
 export function epalclassesReducer(state: IEpalClassRecords = EPALCLASSES_INITIAL_STATE, action): IEpalClassRecords {
 

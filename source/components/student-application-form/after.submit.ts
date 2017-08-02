@@ -1,18 +1,17 @@
-import {Router} from "@angular/router";
-import {OnInit, OnDestroy, Component, Injectable} from "@angular/core";
-import { HelperDataService } from "../../services/helper-data-service";
+import { NgRedux } from "@angular-redux/store";
+import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { NgRedux, select } from "@angular-redux/store";
-import { IAppState } from "../../store/store";
-import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
-import { LoginInfoActions } from "../../actions/logininfo.actions";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from "../../constants";
+
 import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { LoginInfoActions } from "../../actions/logininfo.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
+import { HelperDataService } from "../../services/helper-data-service";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "post-submit",

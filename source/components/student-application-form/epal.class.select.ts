@@ -1,22 +1,17 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { Injectable } from "@angular/core";
+
 import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { NgRedux, select } from "@angular-redux/store";
-import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
-import { IAppState } from "../../store/store";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray
-} from "@angular/forms";
-import {AppSettings} from "../../app.settings";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "epal-class-select",

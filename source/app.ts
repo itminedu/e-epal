@@ -1,55 +1,43 @@
-import "reflect-metadata";
 import "babel-polyfill";
 import "core-js/es6";
 import "core-js/es7/reflect";
+import "reflect-metadata";
+
+import { DevToolsExtension, NgReduxModule } from "@angular-redux/store";
+import { APP_BASE_HREF, HashLocationStrategy, LocationStrategy, NgLocalization } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { NgReduxModule, DevToolsExtension, NgRedux } from "@angular-redux/store";
-import {BrowserModule} from "@angular/platform-browser";
-import { CookieModule } from "ngx-cookie";
-import { MyDatePickerModule } from "mydatepicker";
-import { NguiAutoCompleteModule } from "@ngui/auto-complete";
-import {
-    FormsModule,
-    ReactiveFormsModule,
-} from "@angular/forms";
-
-import {RouterModule} from "@angular/router";
+import { enableProdMode } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
-import {
-    APP_BASE_HREF,
-    HashLocationStrategy,
-    LocationStrategy,
-    NgLocalization,
-} from "@angular/common";
-
+import { BrowserModule } from "@angular/platform-browser";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import Main from "./containers/main";
-import { APP_ROUTER_PROVIDERS, APP_DECLARATIONS } from "./app.routes";
+import { RouterModule } from "@angular/router";
+import { NguiAutoCompleteModule } from "@ngui/auto-complete";
+import { MyDatePickerModule } from "mydatepicker";
+import { Ng2SmartTableModule } from "ng2-smart-table";
+import { CookieModule } from "ngx-cookie";
 
-import {HelperDataService} from "./services/helper-data-service";
-import {LoaderService} from "./services/Spinner.service";
-import {AuthService} from "./services/auth.service";
-import SchoolAuthGuard from "./guards/school.auth.guard";
-import SchoolStudentsLockedGuard from "./guards/school.students.locked.guard";
-import SchoolCapacityLockedGuard from "./guards/school.capacity.locked.guard";
-import StudentAuthGuard from "./guards/student.auth.guard";
-import ReportsAuthGuard from "./guards/reports.auth.guard";
-import StudentLockGuard from "./guards/student.lock.guard";
-import RegionEduAuthGuard from "./guards/regionedu.auth.guard";
+import { ACTION_PROVIDERS } from "./actions";
+import { APP_DECLARATIONS, APP_ROUTER_PROVIDERS } from "./app.routes";
+import FooterComponent from "./components/footer/footer.component";
+import HeaderComponent from "./components/header/header.component";
+import MainComponent from "./components/main/main.component";
+import NavbarComponent from "./components/navbar/navbar.component";
+import Main from "./containers/main";
 import EduAdminAuthGuard from "./guards/eduadmin.auth.guard";
 import MinistryAuthGuard from "./guards/ministry.auth.guard";
+import RegionEduAuthGuard from "./guards/regionedu.auth.guard";
+import ReportsAuthGuard from "./guards/reports.auth.guard";
+import SchoolAuthGuard from "./guards/school.auth.guard";
+import SchoolCapacityLockedGuard from "./guards/school.capacity.locked.guard";
+import SchoolStudentsLockedGuard from "./guards/school.students.locked.guard";
+import StudentAuthGuard from "./guards/student.auth.guard";
+import StudentLockGuard from "./guards/student.lock.guard";
+import { AuthService } from "./services/auth.service";
+import { HelperDataService } from "./services/helper-data-service";
+import { LoaderService } from "./services/Spinner.service";
 
 import * as $ from "jquery";
-import { ACTION_PROVIDERS } from "./actions";
-import Home from "./components/home";
-import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
-
-import HeaderComponent from "./components/header/header.component";
-import NavbarComponent from "./components/navbar/navbar.component";
-import MainComponent from "./components/main/main.component";
-import FooterComponent from "./components/footer/footer.component";
-
-import {enableProdMode} from "@angular/core";
 
 class MyLocalization extends NgLocalization {
     getPluralCategory(value: any) {

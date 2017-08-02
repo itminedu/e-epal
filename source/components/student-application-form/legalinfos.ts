@@ -1,6 +1,6 @@
+import { Location } from "@angular/common";
 import { Component, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import {Location} from "@angular/common";
 
 @Component({
     selector: "legal-info",

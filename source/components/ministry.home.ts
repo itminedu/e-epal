@@ -1,22 +1,16 @@
-import { Router, Params} from "@angular/router";
-import { OnInit, OnDestroy, Component} from "@angular/core";
-import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
-import { NgRedux, select } from "@angular-redux/store";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Http } from "@angular/http";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { IAppState } from "../store/store";
-import { HelperDataService } from "../services/helper-data-service";
-import {Http, Response, RequestOptions} from "@angular/http";
-import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators
-} from "@angular/forms";
 
+import { LoginInfoActions } from "../actions/logininfo.actions";
 import { API_ENDPOINT } from "../app.settings";
+import { HelperDataService } from "../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
+import { IAppState } from "../store/store";
 
 @Component({
     selector: "ministry-home",

@@ -3,9 +3,9 @@ import { loginInfoReducer } from "./logininfo.reducer";
 import { deimmutifyLoginInfo } from "./logininfo.transformers";
 
 export {
-ILoginInfoObj,
-ILoginInfoRecord,
-ILoginInfoRecords,
-loginInfoReducer,
-deimmutifyLoginInfo,
+    ILoginInfoObj,
+    ILoginInfoRecord,
+    ILoginInfoRecords,
+    loginInfoReducer,
+    deimmutifyLoginInfo,
 };

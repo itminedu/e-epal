@@ -104,10 +104,6 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
             this.loginInfoSub.unsubscribe();
         if (this.generalReportSub)
             this.generalReportSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.generalReport$)
-            this.generalReport$.unsubscribe();
     }
 
     createReport() {

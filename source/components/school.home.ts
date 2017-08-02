@@ -60,6 +60,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
     private xcsrftoken: any;
     private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
+    private queryParamSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
 
@@ -83,8 +84,8 @@ export default class SchoolHome implements OnInit, OnDestroy {
     ngOnDestroy() {
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-        this.loginInfo$.unsubscribe();
-        this.errorCode$.unsubscribe();
+        if (this.queryParamSub)
+            this.queryParamSub.unsubscribe();
     };
 
     ngOnInit() {
@@ -112,7 +113,7 @@ export default class SchoolHome implements OnInit, OnDestroy {
             });
 
         // subscribe to router event
-        this.activatedRoute.queryParams.subscribe((params: Params) => {
+        this.queryParamSub = this.activatedRoute.queryParams.subscribe((params: Params) => {
             if (params) {
                 this.authToken = params["auth_token"];
                 this.authRole = params["auth_role"];

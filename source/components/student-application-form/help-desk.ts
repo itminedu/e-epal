@@ -188,7 +188,7 @@ import { IAppState } from "../../store/store";
     }
 
     ngOnDestroy() {
-        if (this.loginInfo$) this.loginInfo$.unsubscribe();
+        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
     }
 
     ngOnInit() {

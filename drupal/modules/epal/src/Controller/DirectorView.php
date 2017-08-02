@@ -611,8 +611,10 @@ class DirectorView extends ControllerBase
         $SchoolCat = reset($SchoolCats);
         if ($SchoolCat) {
             $categ = $SchoolCat->metathesis_region->value;
+            $operation_shift = $school -> operation_shift -> value;
         } else {
             $categ = '-';
+            $operation_shift ='-';
         }
 
         $CourseA = $this->entityTypeManager->getStorage('epal_student')->loadByProperties(array('id' => $schoolid));
@@ -665,6 +667,30 @@ class DirectorView extends ControllerBase
         foreach ($results as $result) {
             if ($result->eStudent_count < $limit) {
                 return false;
+            }
+        }
+
+        if ($operation_shift == 'ΕΣΠΕΡΙΝΟ')
+        {
+            $limit = $this->getLimit(4, $categ);
+            $sCon = $this->connection->select('eepal_specialties_in_epal_field_data', 'eSchool');
+            $sCon->leftJoin('epal_student_class', 'eStudent',
+                'eStudent.epal_id = ' . $schoolid . ' ' .
+                'AND eStudent.specialization_id = eSchool.specialty_id ' .
+                'AND eStudent.currentclass = 4');
+            $sCon->fields('eSchool', array('specialty_id'))
+                ->fields('eStudent', array('specialization_id'))
+                ->groupBy('specialization_id')
+                ->groupBy('specialty_id')
+                ->condition('eSchool.epal_id', $schoolid, '=');
+            $sCon->addExpression('count(eStudent.id)', 'eStudent_count');
+
+            $results = $sCon->execute()->fetchAll(\PDO::FETCH_OBJ);
+
+            foreach ($results as $result) {
+                if ($result->eStudent_count < $limit) {
+                    return false;
+                }
             }
         }
 

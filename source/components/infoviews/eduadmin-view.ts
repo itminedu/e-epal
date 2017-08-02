@@ -1,5 +1,4 @@
 import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
@@ -26,7 +25,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         </div>
       </div>
       <div style="min-height: 500px;">
-        <form [formGroup]="formGroup">
+        <form>
             <p style="margin-top: 20px; line-height: 2em;">Στην παρακάτω λίστα βλέπετε τα σχολεία ευθύνης σας.
             <br/>Επιλέξτε σχολείο για να εμφανιστούν τα τμήματα του σχολείου.</p>
             <div class="row" style="margin-top: 20px; line-height: 2em;"><p><strong>Τα τμήματα</strong></p></div>
@@ -59,7 +58,6 @@ import { HelperDataService } from "../../services/helper-data-service";
 
 @Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
     private LimitPerCateg$: BehaviorSubject<any>;
@@ -76,7 +74,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private router: Router,
         private _hds: HelperDataService,
     ) {
@@ -86,8 +84,6 @@ import { HelperDataService } from "../../services/helper-data-service";
         this.StudentsSize$ = new BehaviorSubject({});
         this.School$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
-        this.formGroup = this.fb.group({
-        });
         this.modalTitle = new BehaviorSubject("");
         this.modalText = new BehaviorSubject("");
         this.modalHeader = new BehaviorSubject("");

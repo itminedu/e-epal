@@ -1,7 +1,6 @@
 import { NgRedux } from "@angular-redux/store";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
@@ -73,7 +72,6 @@ import { IAppState } from "../../store/store";
 
 @Injectable() export default class MinisterReports implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup;
     private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
@@ -82,22 +80,15 @@ import { IAppState } from "../../store/store";
     private distStatus = "READY";
     private userRole: string;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
-        this.formGroup = this.fb.group({
-            region: ["", []],
-            adminarea: ["", []],
-            schoollist: ["", []],
-        });
-
+        private router: Router
+    ) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.minedu_userName = "";
         this.userRole = MINISTRY_ROLE;
-
     }
 
     ngOnInit() {

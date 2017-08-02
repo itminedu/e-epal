@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
@@ -11,7 +10,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     template: `
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
-    <form [formGroup]="formGroup">
+    <form>
 
 
        <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο σύμβολο,
@@ -76,8 +75,6 @@ import { HelperDataService } from "../../services/helper-data-service";
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup;
-
     private CapacityPerCourse$: BehaviorSubject<any>;
     private CapacityPerCourseSub: Subscription;
     private saveCapacitySub: Subscription;
@@ -86,19 +83,14 @@ import { HelperDataService } from "../../services/helper-data-service";
     private courseActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
+        private router: Router
+    ) {
         this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.isEdit = false;
-
-        this.formGroup = this.fb.group({
-
-        });
-
     }
 
     public showModal(popupMsgId): void {

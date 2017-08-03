@@ -304,14 +304,14 @@ class CBController extends ControllerBase
     public function getXMLElements($doc){
         $webUserDetails = $doc->getElementsByTagName( "WebUserDetails" );
         if (!$webUserDetails || $webUserDetails->length === 0)
-//            return false;
-            return array(   // to be changed to empty array
+            return false;
+/*            return array(   // to be changed to empty array
                 'firstName' => '',
                 'surname' => '',
                 'fathersName' => '',
                 'comments' => '',
                 'tin' => '12345'
-            );
+            ); */
 
         foreach( $webUserDetails as $element )
         {
@@ -331,14 +331,14 @@ class CBController extends ControllerBase
             $tin = $tins->item(0)->nodeValue;
 
             if (!$tin || $tin === '')
-//                return false;
-                return array(   // to be changed to empty array
+                return false;
+/*                return array(   // to be changed to empty array
                     'firstName' => '',
                     'surname' => '',
                     'fathersName' => '',
                     'comments' => '',
                     'tin' => '12345'
-                ); 
+                ); */
             return array(
                 'firstName' => $firstName,
                 'surname' => $surname,

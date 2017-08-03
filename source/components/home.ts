@@ -1,6 +1,5 @@
 import { NgRedux } from "@angular-redux/store";
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { CookieService } from "ngx-cookie";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
@@ -17,7 +16,7 @@ import { IAppState } from "../store/store";
     selector: "home",
     template: `
   <div>
-       <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
+       <form  method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
 <!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
 
             <div class="bg-warning" style="padding: 2em;">
@@ -51,7 +50,7 @@ import { IAppState } from "../store/store";
 })
 
 export default class Home implements OnInit, OnDestroy {
-    private formGroup: FormGroup;
+    
     private authToken: string;
     private authRole: string;
     private name: any;
@@ -61,7 +60,7 @@ export default class Home implements OnInit, OnDestroy {
     private apiEndPointParams = API_ENDPOINT_PARAMS;
     private loginInfoSub: Subscription;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ata: LoginInfoActions,
         private _ngRedux: NgRedux<IAppState>,
         private activatedRoute: ActivatedRoute,
@@ -72,8 +71,6 @@ export default class Home implements OnInit, OnDestroy {
         this.authToken = "";
         this.authRole = "";
         this.name = "";
-        this.formGroup = this.fb.group({
-        });
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     };
 

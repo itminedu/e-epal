@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains \Drupal\query_example\Controller\QueryExampleController.
+ * Contains \Drupal\query_example\Controller\QueryExampleController
  */
 
 namespace Drupal\epal\Controller;
@@ -20,8 +20,6 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\TypedData\Plugin\DataType\TimeStamp;
 use Drupal\Core\Language\LanguageManagerInterface;
 
-
-
 class HelpDesk extends ControllerBase {
 
     protected $entity_query;
@@ -35,12 +33,11 @@ class HelpDesk extends ControllerBase {
         Connection $connection,
         LoggerChannelFactoryInterface $loggerChannel
     ) {
-    
-            $this->entityTypeManager = $entityTypeManager;
-            $this->entity_query = $entity_query;
-            $connection = Database::getConnection();
-            $this->connection = $connection;
-            $this->logger = $loggerChannel->get('epal');
+        $this->entityTypeManager = $entityTypeManager;
+        $this->entity_query = $entity_query;
+        $connection = Database::getConnection();
+        $this->connection = $connection;
+        $this->logger = $loggerChannel->get('epal');
     }
 
     public static function create(ContainerInterface $container)
@@ -53,43 +50,35 @@ class HelpDesk extends ControllerBase {
         );
     }
 
-
-
 	private function respondWithStatus($arr, $s) {
 		$res = new JsonResponse($arr);
 		$res->setStatusCode($s);
 		return $res;
 	}
 
-
-
-
-	 public function sendEmail(Request $request)
+    public function sendEmail(Request $request)
     {
-
         if (!$request->isMethod('POST')) {
 			return $this->respondWithStatus([
-					"message" => t("Method Not Allowed")
-				], Response::HTTP_METHOD_NOT_ALLOWED);
+                "message" => t("Method Not Allowed")
+            ], Response::HTTP_METHOD_NOT_ALLOWED);
     	}
 
-				$postData = null;
-                if ($content = $request->getContent()) {
-                    $postData = json_decode($content);
+        $postData = null;
+        if ($content = $request->getContent()) {
+            $postData = json_decode($content);
 
-                	 $this->sendEmailToHelpDesk($postData->userEmail, $postData->userName, $postData->userMessage,$postData->userSurname);
-                    return $this->respondWithStatus([
-                        'error_code' => 0,
-                    ], Response::HTTP_OK);
-                }
-                else {
-                    return $this->respondWithStatus([
-                        'message' => t("post with no data"),
-                    ], Response::HTTP_BAD_REQUEST);
-                }
-
+                $this->sendEmailToHelpDesk($postData->userEmail, $postData->userName, $postData->userMessage,$postData->userSurname);
+            return $this->respondWithStatus([
+                'error_code' => 0,
+            ], Response::HTTP_OK);
+        }
+        else {
+            return $this->respondWithStatus([
+                'message' => t("post with no data"),
+            ], Response::HTTP_BAD_REQUEST);
+        }
     }
-
 
     private function sendEmailToHelpDesk($email, $name, $cont_message, $surname) {
 
@@ -113,50 +102,26 @@ class HelpDesk extends ControllerBase {
         return;
     }
 
-         public function findTotalStudents(Request $request)
+    public function findTotalStudents(Request $request)
     {
+        $authToken = $request->headers->get('PHP_AUTH_USER');
+        $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
+        $user = reset($users);
+        if (!$user) {
+            return $this->respondWithStatus([
+                'message' => t("User not found"),
+            ], Response::HTTP_FORBIDDEN);
+        }
 
+        $list = array();
 
+        $sCon = $this->connection
+            ->select('epal_student', 'eStudent')
+            ->fields('eStudent', array('id'));
+        $numApplications = $sCon->countQuery()->execute()->fetchField();
+        array_push($list, (object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
 
-            $authToken = $request->headers->get('PHP_AUTH_USER');
-            $users = $this->entityTypeManager->getStorage('user')->loadByProperties(array('name' => $authToken));
-            $user = reset($users);
-            if (!$user) {
-                return $this->respondWithStatus([
-                    'message' => t("User not found"),
-                ], Response::HTTP_FORBIDDEN);
-            }
-
-            //user role validation
-            $roles = $user->getRoles();
-            $validRole = false;
-            foreach ($roles as $role) {
-                if ($role === "applicant") {
-                    $validRole = true;
-                    break;
-                }
-            }
-            if (!$validRole) {
-                return $this->respondWithStatus([
-                    'message' => t("User Invalid Role"),
-                ], Response::HTTP_FORBIDDEN);
-            }
-
-            $list = array();
-
-            $sCon = $this->connection
-                ->select('epal_student', 'eStudent')
-                ->fields('eStudent', array('id'));
-            $numApplications = $sCon->countQuery()->execute()->fetchField();
-            array_push($list, (object) array('name' => "Αριθμός Αιτήσεων (συνολικά)", 'numStudents' => $numApplications));
-
-
-            return $this->respondWithStatus($list, Response::HTTP_OK);
-
-
+        return $this->respondWithStatus($list, Response::HTTP_OK);
     }
-
-
-
 
 }

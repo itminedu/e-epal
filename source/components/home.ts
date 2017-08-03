@@ -17,8 +17,6 @@ import { IAppState } from "../store/store";
     template: `
   <div>
        <form  method = "POST" action="{{apiEndPoint}}/oauth/login{{apiEndPointParams}}" #form>
-<!--            <input type="hidden" name="X-oauth-enabled" value="true"> -->
-
             <div class="bg-warning" style="padding: 2em;">
             <p>
             <strong>Ανακοίνωση:</strong> Παρακαλείσθε να μην καταχωρείτε δήλωση προτίμησης επιλέγοντας τα παρακάτω:</p>
@@ -50,7 +48,6 @@ import { IAppState } from "../store/store";
 })
 
 export default class Home implements OnInit, OnDestroy {
-    
     private authToken: string;
     private authRole: string;
     private name: any;
@@ -73,9 +70,7 @@ export default class Home implements OnInit, OnDestroy {
         this.name = "";
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
     };
-
     ngOnInit() {
-
         this.loginInfoSub = this._ngRedux.select("loginInfo")
             .map(loginInfo => <ILoginInfoRecords>loginInfo)
             .subscribe(linfo => {

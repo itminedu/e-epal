@@ -1,29 +1,26 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Subscription, Observable } from "rxjs/Rx";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Http } from "@angular/http";
 import { Router } from "@angular/router";
-import { NgRedux, select } from "ng2-redux";
-import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
-import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
-import { CriteriaActions } from "../../actions/criteria.actions";
-import { ICriter } from "../../store/criteria/criteria.types";
-import { IAppState } from "../../store/store";
-import { VALID_NAMES_PATTERN, VALID_UCASE_NAMES_PATTERN, VALID_ADDRESS_PATTERN, VALID_ADDRESSTK_PATTERN, VALID_DIGITS_PATTERN,
-    VALID_DATE_PATTERN, FIRST_SCHOOL_YEAR, VALID_YEAR_PATTERN, VALID_TELEPHONE_PATTERN } from "../../constants";
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
-import { CRITERIA_INITIAL_STATE } from "../../store/criteria/criteria.initial-state";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import {IMyDpOptions} from "mydatepicker";
-import {Http, RequestOptions} from "@angular/http";
+import { IMyDpOptions } from "mydatepicker";
+import { BehaviorSubject, Observable, Subscription } from "rxjs/Rx";
 
+import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
 import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
+    FIRST_SCHOOL_YEAR,
+    VALID_ADDRESS_PATTERN,
+    VALID_ADDRESSTK_PATTERN,
+    VALID_NAMES_PATTERN,
+    VALID_TELEPHONE_PATTERN,
+    VALID_UCASE_NAMES_PATTERN,
+} from "../../constants";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
+import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
 
 @Component({
     selector: "application-form-main",
@@ -32,23 +29,20 @@ import {
 
 @Injectable() export default class StudentApplicationMain implements OnInit {
 
-    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
-    private criteria$: BehaviorSubject<ICriter>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
 
     private studentDataFieldsSub: Subscription;
+    private loginInfoSub: Subscription;
     private criteriaSub: Subscription;
 
-    public studentDataGroup: FormGroup;
-    public studentCriteriaGroup: FormGroup;
-
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private studentDataGroup: FormGroup;
+    private studentCriteriaGroup: FormGroup;
 
     private modalTitle: BehaviorSubject<string>;
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
     private schoolyears: string[];
-
-    private rss = new FormArray([]);
 
     private myDatePickerOptions: IMyDpOptions = {
         // other options...
@@ -78,19 +72,17 @@ import {
     };
 
     constructor(private fb: FormBuilder,
-                private _sdfa: StudentDataFieldsActions,
-                private _sdfb: CriteriaActions,
-                private _ngRedux: NgRedux<IAppState>,
-                private router: Router,
-                private http: Http) {
+        private _sdfa: StudentDataFieldsActions,
+        private _ngRedux: NgRedux<IAppState>,
+        private router: Router,
+        private http: Http) {
         this.populateSchoolyears();
-        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-        this.modalTitle =  new BehaviorSubject("");
-        this.modalText =  new BehaviorSubject("");
-        this.modalHeader =  new BehaviorSubject("");
+        this.modalTitle = new BehaviorSubject("");
+        this.modalText = new BehaviorSubject("");
+        this.modalHeader = new BehaviorSubject("");
 
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
-        this.criteria$ = new BehaviorSubject(CRITERIA_INITIAL_STATE);
         this.studentDataGroup = this.fb.group({
             name: ["", [Validators.pattern(VALID_UCASE_NAMES_PATTERN), Validators.required]],
             studentsurname: ["", [Validators.pattern(VALID_UCASE_NAMES_PATTERN), Validators.required]],
@@ -101,7 +93,7 @@ import {
             regiontk: ["", [Validators.pattern(VALID_ADDRESSTK_PATTERN), Validators.required]],
             regionarea: ["", [Validators.pattern(VALID_NAMES_PATTERN), Validators.required]],
             relationtostudent: ["", this.checkChoice],
-            telnum:  ["", [Validators.pattern(VALID_TELEPHONE_PATTERN), Validators.required]],
+            telnum: ["", [Validators.pattern(VALID_TELEPHONE_PATTERN), Validators.required]],
             lastschool_schoolname: ["", [Validators.required]],
             lastschool_schoolyear: ["", this.checkChoice],
             lastschool_class: ["", this.checkChoice],
@@ -111,45 +103,42 @@ import {
     ngOnInit() {
         (<any>$("#applicationFormNotice")).appendTo("body");
 
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
+                this.loginInfo$.next(linfo);
+            }, error => { console.log("error selecting loginInfo"); });
 
-        this.studentDataFieldsSub = this._ngRedux.select(state => {
-            if (state.studentDataFields.size > 0) {
-                state.studentDataFields.reduce(({}, studentDataField) => {
+        this.studentDataFieldsSub = this._ngRedux.select("studentDataFields")
+            .subscribe(studentDataFields => {
+                let sdfds = <IStudentDataFieldRecords>studentDataFields;
+                if (sdfds.size > 0) {
+                    sdfds.reduce(({}, studentDataField) => {
 
-                    this.studentDataGroup.controls["name"].setValue(studentDataField.name);
-                    this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.studentsurname);
-                    this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.fatherfirstname);
-                    this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.motherfirstname);
-                    this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.regionaddress);
-                    this.studentDataGroup.controls["regiontk"].setValue(studentDataField.regiontk);
-                    this.studentDataGroup.controls["regionarea"].setValue(studentDataField.regionarea);
-                    this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.lastschool_schoolname);
-                    this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.lastschool_schoolyear);
-                    this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.lastschool_class);
-                    this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.relationtostudent);
-                    this.studentDataGroup.controls["telnum"].setValue(studentDataField.telnum);
-                    this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.studentbirthdate));
-                    return studentDataField;
-                }, {});
-            }
-            return state.studentDataFields;
-        }).subscribe(this.studentDataFields$);
+                        this.studentDataGroup.controls["name"].setValue(studentDataField.get("name"));
+                        this.studentDataGroup.controls["studentsurname"].setValue(studentDataField.get("studentsurname"));
+                        this.studentDataGroup.controls["fatherfirstname"].setValue(studentDataField.get("fatherfirstname"));
+                        this.studentDataGroup.controls["motherfirstname"].setValue(studentDataField.get("motherfirstname"));
+                        this.studentDataGroup.controls["regionaddress"].setValue(studentDataField.get("regionaddress"));
+                        this.studentDataGroup.controls["regiontk"].setValue(studentDataField.get("regiontk"));
+                        this.studentDataGroup.controls["regionarea"].setValue(studentDataField.get("regionarea"));
+                        this.studentDataGroup.controls["lastschool_schoolname"].setValue(studentDataField.get("lastschool_schoolname"));
+                        this.studentDataGroup.controls["lastschool_schoolyear"].setValue(studentDataField.get("lastschool_schoolyear"));
+                        this.studentDataGroup.controls["lastschool_class"].setValue(studentDataField.get("lastschool_class"));
+                        this.studentDataGroup.controls["relationtostudent"].setValue(studentDataField.get("relationtostudent"));
+                        this.studentDataGroup.controls["telnum"].setValue(studentDataField.get("telnum"));
+                        this.studentDataGroup.controls["studentbirthdate"].setValue(this.populateDate(studentDataField.get("studentbirthdate")));
+                        return studentDataField;
+                    }, {});
+                }
+                this.studentDataFields$.next(sdfds);
+            }, error => { console.log("error selecting studentDataFields"); });
 
     };
 
     ngOnDestroy() {
         (<any>$("#applicationFormNotice")).remove();
         if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.studentDataFields$) this.studentDataFields$.unsubscribe();
-        if (this.loginInfo$) this.loginInfo$.unsubscribe();
     }
 
     navigateBack() {
@@ -186,29 +175,28 @@ import {
         else if ((new Date().getFullYear()) - d.date.year < 14)
             return 2;
         if (!this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no &&
-            this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id!==38)
+            this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id !== 38)
             return 3;
-        else if (this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id===38)
-            this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no='0000000'
-        if (this.studentDataGroup.controls["telnum"].value.length !== 10 )
+        else if (this.studentDataGroup.controls["lastschool_schoolname"].value.unit_type_id === 38)
+            this.studentDataGroup.controls["lastschool_schoolname"].value.registry_no = "0000000";
+        if (this.studentDataGroup.controls["telnum"].value.length !== 10)
             return 4;
 
         return 0;
     }
 
     checkcriteria(cb, mutual_disabled) {
-      if (mutual_disabled !== "-1" && cb.checked === true) {
-        // this.studentCriteriaGroup.controls["formArray"]["controls"][mutual_disabled-1].setValue(false);
-        let  mutual_ids = mutual_disabled.split(",");
-        for (let i = 0; i < mutual_ids.length; i++) {
-          this.studentCriteriaGroup.controls["formArray"]["controls"][mutual_ids[i] - 1].setValue(false);
-        }
+        if (mutual_disabled !== "-1" && cb.checked === true) {
+            let mutual_ids = mutual_disabled.split(",");
+            for (let i = 0; i < mutual_ids.length; i++) {
+                this.studentCriteriaGroup.controls["formArray"]["controls"][mutual_ids[i] - 1].setValue(false);
+            }
 
-      }
+        }
     }
 
     checkChoice(c: FormControl) {
-      return (c.value === "" ) ? {status: true} : null;
+        return (c.value === "") ? { status: true } : null;
     }
 
     populateDate(d) {
@@ -237,10 +225,12 @@ import {
 
     setDate() {
         let date = new Date();
-        return { date: {
-            year: date.getFullYear() - 14,
-            month: date.getMonth() + 1,
-            day: date.getDate()}
+        return {
+            date: {
+                year: date.getFullYear() - 14,
+                month: date.getMonth() + 1,
+                day: date.getDate()
+            }
         };
     }
 
@@ -257,11 +247,11 @@ import {
     }
 
     lastSchoolListFormatter(data: any): string {
-      return data.name;
+        return data.name;
     };
 
     lastSchoolValueFormatter(data: any): string {
-      return data.name;
+        return data.name;
     };
 
     lastSchoolValueChanged(e: any): void {

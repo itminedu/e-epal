@@ -10,7 +10,8 @@
     "sourceMap": false,
     "inlineSourceMap": false,
     "module": "commonjs",
-    "target": "ES5"
+    "target": "ES5",
+    "types": []
 
   },
   "exclude": [

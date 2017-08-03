@@ -1,41 +1,39 @@
-import { ISectors, ISector, ISectorCourse } from './sectorcourses.types';
-import { SECTOR_COURSES_INITIAL_STATE } from './sectorcourses.initial-state';
-import { Seq } from 'immutable';
+import { List } from "immutable";
+import { recordify } from "typed-immutable-record";
 
-import {
-  SECTORCOURSES_RECEIVED,
-  SECTORCOURSES_SELECTED_SAVE,
-  SECTORCOURSES_INIT
-} from '../../constants';
+import { SECTORCOURSES_INIT, SECTORCOURSES_RECEIVED, SECTORCOURSES_SELECTED_SAVE } from "../../constants";
+import { SECTOR_COURSES_INITIAL_STATE } from "./sectorcourses.initial-state";
+import { ISector, ISectorCourse, ISectorCourseRecord, ISectorRecord, ISectorRecords } from "./sectorcourses.types";
 
-export function sectorCoursesReducer(state: ISectors = SECTOR_COURSES_INITIAL_STATE, action): ISectors {
-  switch (action.type) {
-    case SECTORCOURSES_RECEIVED:
-        let newSectors = Array<ISector>();
-        let i=0;
+export function sectorCoursesReducer(state: ISectorRecords = SECTOR_COURSES_INITIAL_STATE, action): ISectorRecords {
+    switch (action.type) {
+        case SECTORCOURSES_RECEIVED:
+        let newSectors = Array<ISectorRecord>();
+        let newCourses = Array<ISectorCourseRecord>();
+        let i = 0, j = 0;
+        let ii = 0;
+
         action.payload.sectors.forEach(sector => {
-            newSectors.push(<ISector>{sector_id: sector.sector_id, sector_name: sector.sector_name, sector_selected: sector.sector_selected, courses: Array<ISectorCourse>() });
             sector.courses.forEach(course => {
-                newSectors[i].courses.push(<ISectorCourse>{course_id: course.course_id, course_name: course.course_name, globalIndex: course.globalIndex, selected: course.selected });
-            })
+                newCourses.push(recordify<ISectorCourse, ISectorCourseRecord>({ course_id: course.course_id, course_name: course.course_name, globalIndex: course.globalIndex, selected: course.selected }));
+                ii++;
+            });
+            newSectors.push(recordify<ISector, ISectorRecord>({ sector_id: sector.sector_id, sector_name: sector.sector_name, sector_selected: sector.sector_selected, courses: List(newCourses) }));
+            newCourses = Array<ISectorCourseRecord>();
             i++;
         });
-        return Seq(newSectors).map(n => n).toList();
+        return List(newSectors);
 
-    case SECTORCOURSES_SELECTED_SAVE:
-        let sectorsWithSelections = Array<ISector>();
-        let ind=0, j = 0;
-        state.forEach(sector => {
-            sectorsWithSelections.push(<ISector>{sector_id: sector.sector_id, sector_name: sector.sector_name, sector_selected: action.payload.sectorSelected[ind], courses: Array<ISectorCourse>()});
-            sector.courses.forEach(course => {
-                sectorsWithSelections[ind].courses.push(<ISectorCourse>{course_id: course.course_id, course_name: course.course_name, globalIndex: course.globalIndex, selected: action.payload.sectorCoursesSelected[j]});
-                j++;
-            })
-            ind++;
-        });
-        return Seq(sectorsWithSelections).map(n => n).toList();
-    case SECTORCOURSES_INIT:
-        return SECTOR_COURSES_INITIAL_STATE;
-    default: return state;
-  }
+        case SECTORCOURSES_SELECTED_SAVE:
+            return state.withMutations(function(list) {
+                list.setIn([action.payload.oldSIndex, "sector_selected"], false);
+                list.setIn([action.payload.sIndex, "sector_selected"], true);
+                list.setIn([action.payload.oldSIndex, "courses"], list.get(action.payload.oldSIndex).get("courses").setIn([action.payload.oldCIndex, "selected"], false));
+                list.setIn([action.payload.sIndex, "courses"], list.get(action.payload.sIndex).get("courses").setIn([action.payload.cIndex, "selected"], action.payload.checked));
+            });
+
+        case SECTORCOURSES_INIT:
+            return SECTOR_COURSES_INITIAL_STATE;
+        default: return state;
+    }
 };

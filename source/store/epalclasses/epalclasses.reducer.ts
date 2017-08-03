@@ -1,21 +1,20 @@
-import { IEpalClasses, IEpalClass } from './epalclasses.types';
-import { EPALCLASSES_INITIAL_STATE } from './epalclasses.initial-state';
-import { Seq } from 'immutable';
+import { List } from "immutable";
+import { recordify } from "typed-immutable-record";
 
-import {  EPALCLASSES_SAVE, EPALCLASSES_INIT } from '../../constants';
+import { EPALCLASSES_INIT, EPALCLASSES_SAVE } from "../../constants";
+import { EPALCLASSES_INITIAL_STATE } from "./epalclasses.initial-state";
+import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses.types";
 
-export function epalclassesReducer(state: IEpalClasses = EPALCLASSES_INITIAL_STATE, action): IEpalClasses {
+export function epalclassesReducer(state: IEpalClassRecords = EPALCLASSES_INITIAL_STATE, action): IEpalClassRecords {
 
+    switch (action.type) {
+        case EPALCLASSES_SAVE:
+            let newEpalClasses = Array<IEpalClassRecord>();
+            newEpalClasses.push(recordify<IEpalClass, IEpalClassRecord>({ name: action.payload.epalClasses.name }));
+            return List(newEpalClasses);
 
-  switch (action.type) {
-
-
-    case EPALCLASSES_SAVE:
-        let selectedEpalClasses = Array<IEpalClass>();
-        selectedEpalClasses.push(<IEpalClass>{ name: action.payload.epalClasses.name});
-        return Seq(selectedEpalClasses).map(n => n).toList();
-    case EPALCLASSES_INIT:
-        return EPALCLASSES_INITIAL_STATE;
-    default: return state;
-  }
+        case EPALCLASSES_INIT:
+            return EPALCLASSES_INITIAL_STATE;
+        default: return state;
+    }
 };

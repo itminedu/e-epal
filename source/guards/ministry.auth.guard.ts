@@ -1,22 +1,23 @@
-import { Injectable } from '@angular/core';
-import { CanActivate } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { MINISTRY_ROLE } from '../constants';
-import { Router } from '@angular/router';
+import { Injectable } from "@angular/core";
+import { CanActivate } from "@angular/router";
+import { Router } from "@angular/router";
+
+import { MINISTRY_ROLE } from "../constants";
+import { AuthService } from "../services/auth.service";
 
 @Injectable()
 export default class MinistryAuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthService, private router: Router) { }
 
-  canActivate() {
-    return this.authService.isLoggedIn(MINISTRY_ROLE).then(loggedIn => {
-        if (!loggedIn) {
-            this.router.navigate(['/ministry/logout']);
-        }
-        return loggedIn;
-    }).catch(err => {
-        return false;
-    });
-  }
+    canActivate() {
+        return this.authService.isLoggedIn(MINISTRY_ROLE).then(loggedIn => {
+            if (!loggedIn) {
+                this.router.navigate(["/ministry/logout"]);
+            }
+            return loggedIn;
+        }).catch(err => {
+            return false;
+        });
+    }
 }

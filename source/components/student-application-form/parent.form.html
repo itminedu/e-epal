@@ -1,84 +1,84 @@
-<div class = "loading" *ngIf="(showLoader | async) === true"></div>
+<div class="loading" *ngIf="(showLoader | async) === true"></div>
 
 <div id="emailSentNotice" (onHidden)="onHidden()" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header modal-header-danger">
-          <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-danger">
+                <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;{{ modalTitle | async }}</h3>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal()">
           <span aria-hidden="true"><i class="fa fa-times"></i></span>
         </button>
-      </div>
-      <div class="modal-body">
-          <p>{{ modalText | async }}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
-      </div>
+            </div>
+            <div class="modal-body">
+                <p>{{ modalText | async }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <div style="min-height: 500px; margin-bottom: 30px;">
     <p style="margin-top: 20px; line-height: 2em;"> <b> Στοιχεία γονέα-κηδεμόνα. Όλα τα πεδία που συνοδεύονται από (*) είναι απαραίτητο να συμπληρωθούν. Στα ονόματα επιτρέπονται μόνο κεφαλαία γράμματα.</b></p>
-<form [formGroup]="formGroup">
+    <form [formGroup]="formGroup">
 
-    <div class="form-group">
-        <label for="userEmail">Email Επικοινωνίας(<span style="color: #ff0000;">*</span>)</label><input #userEmail class="form-control" type="text" formControlName="userEmail">
-    </div>
-    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('required')">
-        Το πεδίο δεν μπορεί να αφεθεί κενό!
-    </div>
-    <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('pattern')">
-        Πληκτρολογήστε ένα σωστό συντακτικά email!
-    </div>
-
-    <div class="form-group">
-        <label for="userName">Όνομα(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userName">
-        <div class="alert alert-danger" *ngIf="formGroup.get('userName').touched && formGroup.get('userName').hasError('required') ">
+        <div class="form-group">
+            <label for="userEmail">Email Επικοινωνίας(<span style="color: #ff0000;">*</span>)</label><input #userEmail class="form-control" type="text" formControlName="userEmail">
+        </div>
+        <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('required')">
             Το πεδίο δεν μπορεί να αφεθεί κενό!
         </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('userName').hasError('pattern')">
-            Πληκτρολογήστε το όνομά σας με κεφαλαία γράμματα!
+        <div class="alert alert-danger" *ngIf="formGroup.get('userEmail').hasError('pattern')">
+            Πληκτρολογήστε ένα σωστό συντακτικά email!
         </div>
-    </div>
 
-    <div class="form-group">
-        <label for="userSurname">Επώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userSurname">
-        <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').touched && formGroup.get('userSurname').hasError('required') ">
-            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        <div class="form-group">
+            <label for="userName">Όνομα(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userName">
+            <div class="alert alert-danger" *ngIf="formGroup.get('userName').touched && formGroup.get('userName').hasError('required') ">
+                Το πεδίο δεν μπορεί να αφεθεί κενό!
+            </div>
+            <div class="alert alert-danger" *ngIf="formGroup.get('userName').hasError('pattern')">
+                Πληκτρολογήστε το όνομά σας με κεφαλαία γράμματα!
+            </div>
         </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').hasError('pattern')">
-            Πληκτρολογήστε το επώνυμό σας με κεφαλαία γράμματα!
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label for="userFathername">Πατρώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userFathername">
-        <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').touched && formGroup.get('userFathername').hasError('required') ">
-            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        <div class="form-group">
+            <label for="userSurname">Επώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userSurname">
+            <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').touched && formGroup.get('userSurname').hasError('required') ">
+                Το πεδίο δεν μπορεί να αφεθεί κενό!
+            </div>
+            <div class="alert alert-danger" *ngIf="formGroup.get('userSurname').hasError('pattern')">
+                Πληκτρολογήστε το επώνυμό σας με κεφαλαία γράμματα!
+            </div>
         </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').hasError('pattern')">
-            Πληκτρολογήστε το όνομα του πατέρα σας με κεφαλαία γράμματα!
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label for="userMothername">Μητρώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userMothername">
-        <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').touched && formGroup.get('userMothername').hasError('required') ">
-            Το πεδίο δεν μπορεί να αφεθεί κενό!
+        <div class="form-group">
+            <label for="userFathername">Πατρώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userFathername">
+            <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').touched && formGroup.get('userFathername').hasError('required') ">
+                Το πεδίο δεν μπορεί να αφεθεί κενό!
+            </div>
+            <div class="alert alert-danger" *ngIf="formGroup.get('userFathername').hasError('pattern')">
+                Πληκτρολογήστε το όνομα του πατέρα σας με κεφαλαία γράμματα!
+            </div>
         </div>
-        <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').hasError('pattern')">
-            Πληκτρολογήστε το όνομα της μητέρας σας με κεφαλαία γράμματα!
+
+        <div class="form-group">
+            <label for="userMothername">Μητρώνυμο(<span style="color: #ff0000;">*</span>)</label><input class="form-control" type="text" formControlName="userMothername">
+            <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').touched && formGroup.get('userMothername').hasError('required') ">
+                Το πεδίο δεν μπορεί να αφεθεί κενό!
+            </div>
+            <div class="alert alert-danger" *ngIf="formGroup.get('userMothername').hasError('pattern')">
+                Πληκτρολογήστε το όνομα της μητέρας σας με κεφαλαία γράμματα!
+            </div>
         </div>
-    </div>
 
 
-    <div class="row">
-        <div class="col-md-12">
-            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="saveProfileAndContinue()" >
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="saveProfileAndContinue()">
                 <span style="font-size: 0.9em; font-weight: bold;">Συνέχεια&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
+            </div>
         </div>
-    </div>
- </form>
- </div>
+    </form>
+</div>

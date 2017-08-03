@@ -1,32 +1,16 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
-import {Observable} from "rxjs/Observable";
-import {Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { VALID_CAPACITY_PATTERN} from '../../constants';
-import {maxValue} from '../../constants';
-import {minValue} from '../../constants';
+import { ActivatedRoute, Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
+import { HelperDataService } from "../../services/helper-data-service";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from '@angular/forms';
 @Component({
-    selector: 'director-classcapacity',
+    selector: "director-classcapacity",
     template: `
     <div class = "loading" *ngIf="(showLoader | async) === true"></div>
     <div style="min-height: 500px;">
-    <form [formGroup]="formGroup">
+    <form>
 
 
        <p style="margin-top: 20px; line-height: 2em;"> Στην παρακάτω λίστα βλέπετε τα τμήματα του σχολείου σας με την αντίστοιχη δυναμίκη τους σε αίθουσες. Παρακαλώ για να τροποποποιήσετε τη δυναμικήαυτή κάντε κλικ στον αντίστοιχο σύμβολο,
@@ -66,7 +50,6 @@ import {
       </form>
     </div>
 
-
   <div id="checksaved1" (onHidden)="onHidden('#checksaved1')"
     class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -92,8 +75,6 @@ import {
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-
     private CapacityPerCourse$: BehaviorSubject<any>;
     private CapacityPerCourseSub: Subscription;
     private saveCapacitySub: Subscription;
@@ -102,47 +83,34 @@ import {
     private courseActive = <number>-1;
     private showLoader: BehaviorSubject<boolean>;
 
-
-
-
-
-    constructor(private fb: FormBuilder,
+    constructor(
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
+        private router: Router
+    ) {
         this.CapacityPerCourse$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
         this.isEdit = false;
-
-        this.formGroup = this.fb.group({
-
-        });
-
     }
 
-
-
     public showModal(popupMsgId): void {
-        (<any>$(popupMsgId)).modal('show');
+        (<any>$(popupMsgId)).modal("show");
     }
 
     public hideModal(popupMsgId): void {
-        //(<any>$('#distributionWaitingNotice')).modal('hide');
-        (<any>$(popupMsgId)).modal('hide');
+        (<any>$(popupMsgId)).modal("hide");
     }
 
     public onHidden(popupMsgId): void {
 
     }
 
-
     ngOnDestroy() {
 
     }
 
     ngOnInit() {
-        (<any>$('#checksaved1')).appendTo("body");
+        (<any>$("#checksaved1")).appendTo("body");
 
         this.CapacityPerCourseSub = this._hds.FindCapacityPerSchool().subscribe(x => {
             this.CapacityPerCourse$.next(x);
@@ -154,9 +122,8 @@ import {
             });
     }
 
-
     handleChange(e: Event) {
-        this.newvalue = e.target['value'];
+        this.newvalue = e.target["value"];
     }
 
     saveCapacity(spec, sect, taxi, oldvalue, ind) {
@@ -166,7 +133,6 @@ import {
             }
             else {
                 this.showLoader.next(true);
-
 
                 let std = this.CapacityPerCourse$.getValue();
                 std[ind].capacity = this.newvalue;
@@ -180,16 +146,13 @@ import {
                         this.showLoader.next(false);
                         console.log("Error Saving Capacity");
                     });
-
             }
-
         }
         else {
             if (oldvalue === null)
                 this.showModal("#checksaved1");
         }
     }
-
 
     setActive(ind) {
         this.courseActive = ind;

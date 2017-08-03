@@ -1,4 +1,5 @@
-import { List } from 'immutable';
+import { List } from "immutable";
+import { TypedRecord } from "typed-immutable-record";
 
 export interface ISectorField {
     id: number;
@@ -6,4 +7,5 @@ export interface ISectorField {
     selected: boolean;
 }
 
-export type ISectorFields = List<ISectorField>;
+export interface ISectorFieldRecord extends TypedRecord<ISectorFieldRecord>, ISectorField { };
+export type ISectorFieldRecords = List<ISectorFieldRecord>;

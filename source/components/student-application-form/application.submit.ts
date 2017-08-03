@@ -1,35 +1,33 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { Router } from "@angular/router";
-import { Http, Response, RequestOptions, Headers } from "@angular/http";
-import { BehaviorSubject, Subscription } from "rxjs/Rx";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from "ng2-redux";
-import { IAppState } from "../../store/store";
-import { IStudentDataFields } from "../../store/studentdatafields/studentdatafields.types";
-import { IRegions } from "../../store/regionschools/regionschools.types";
-import { ISectors } from "../../store/sectorcourses/sectorcourses.types";
-import { ISectorFields } from "../../store/sectorfields/sectorfields.types";
-import { IEpalClasses } from "../../store/epalclasses/epalclasses.types";
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
-import { REGION_SCHOOLS_INITIAL_STATE } from "../../store/regionschools/regionschools.initial-state";
-import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
-import { SECTOR_COURSES_INITIAL_STATE } from "../../store/sectorcourses/sectorcourses.initial-state";
-import { SECTOR_FIELDS_INITIAL_STATE } from "../../store/sectorfields/sectorfields.initial-state";
-import { StudentEpalChosen, StudentCourseChosen, StudentSectorChosen } from "../students/student";
-import { AppSettings } from "../../app.settings";
-import { ILoginInfo, ILoginInfoToken } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { Component, OnInit } from "@angular/core";
+import { Headers, Http, RequestOptions, Response } from "@angular/http";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
 import { EpalClassesActions } from "../../actions/epalclass.actions";
-import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { RegionSchoolsActions } from "../../actions/regionschools.actions";
 import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
 import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
+import { AppSettings } from "../../app.settings";
 import { HelperDataService } from "../../services/helper-data-service";
+import { EPALCLASSES_INITIAL_STATE } from "../../store/epalclasses/epalclasses.initial-state";
+import { IEpalClassRecords } from "../../store/epalclasses/epalclasses.types";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IRegionRecords } from "../../store/regionschools/regionschools.types";
+import { ISectorRecords } from "../../store/sectorcourses/sectorcourses.types";
+import { ISectorFieldRecords } from "../../store/sectorfields/sectorfields.types";
+import { IAppState } from "../../store/store";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "../../store/studentdatafields/studentdatafields.initial-state";
+import { IStudentDataFieldRecords } from "../../store/studentdatafields/studentdatafields.types";
+import { StudentCourseChosen, StudentEpalChosen, StudentSectorChosen } from "../students/student";
 
 @Component({
     selector: "application-submit",
     template: `
-    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (regions$ | async).size === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
+    <div class = "loading" *ngIf="(studentDataFields$ | async).size === 0 || (epalSelected$ | async).length === 0 || (epalclasses$ | async).size === 0 || (loginInfo$ | async).size === 0 || (showLoader | async) === true"></div>
     <div id="studentFormSentNotice" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -74,30 +72,30 @@ import { HelperDataService } from "../../services/helper-data-service";
     <div *ngFor="let studentDataField$ of studentDataFields$ | async;">
         <div class="row oddin" style="margin: 0px 2px 20px 2px; line-height: 2em;">
             <div class="col-md-3" style="font-size: 0.8em;">Διεύθυνση</div>
-            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.regionaddress}}</div>
+            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.get("regionaddress")}}</div>
             <div class="col-md-3" style="font-size: 0.8em;">ΤΚ - Πόλη</div>
-            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.regiontk}} - {{studentDataField$.regionarea}}</div>
+            <div class="col-md-3" style="font-size: 0.8em; font-weight: bold">{{studentDataField$.get("regiontk")}} - {{studentDataField$.get("regionarea")}}</div>
         </div>
 
         <div class="row evenin" style="margin: 20px 2px 10px 2px; line-height: 2em;">
             <div class="col-md-12" style="font-size: 1.5em; font-weight: bold; text-align: center;">Στοιχεία μαθητή</div>
         </div>
-        <div><label for="name">Όνομα μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;">   {{studentDataField$.name}} </p> </div>
-        <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.studentsurname}} </p></div>
-        <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.fatherfirstname}} </p></div>
-        <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.motherfirstname}} </p></div>
-        <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.studentbirthdate}} </p></div>
+        <div><label for="name">Όνομα μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;">   {{studentDataField$.get("name")}} </p> </div>
+        <div><label for="studentsurname">Επώνυμο μαθητή</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("studentsurname")}} </p></div>
+        <div><label for="fatherfirstname">Όνομα Πατέρα</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("fatherfirstname")}} </p></div>
+        <div><label for="motherfirstname">Όνομα Μητέρας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("motherfirstname")}} </p></div>
+        <div><label for="birthdate">Ημερομηνία Γέννησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("studentbirthdate")}} </p></div>
 
-        <div><label for="lastschool_schoolname">Σχολείο τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolname.name}} </p></div>
-        <div><label for="lastschool_schoolyear">Σχολικό έτος τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.lastschool_schoolyear}} </p></div>
+        <div><label for="lastschool_schoolname">Σχολείο τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("lastschool_schoolname").name}} </p></div>
+        <div><label for="lastschool_schoolyear">Σχολικό έτος τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("lastschool_schoolyear")}} </p></div>
 
-        <div *ngIf="studentDataField$.lastschool_class === 1"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Α'</p></div>
-        <div *ngIf="studentDataField$.lastschool_class === 2"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Β'</p></div>
-        <div *ngIf="studentDataField$.lastschool_class === 3"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Γ'</p></div>
-        <div *ngIf="studentDataField$.lastschool_class === 4"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Δ'</p></div>
+        <div *ngIf="studentDataField$.get('lastschool_class') === 1"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Α'</p></div>
+        <div *ngIf="studentDataField$.get('lastschool_class') === 2"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Β'</p></div>
+        <div *ngIf="studentDataField$.get('lastschool_class') === 3"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Γ'</p></div>
+        <div *ngIf="studentDataField$.get('lastschool_class') === 4"><label for="lastschool_class">Τάξη τελευταίας φοίτησης</label> <p class="form-control" style="border:1px solid #eceeef;">Δ'</p></div>
 
-        <div><label for="relationtostudent">Η δήλωση προτίμησης γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.relationtostudent}} </p></div>
-        <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.telnum}} </p></div>
+        <div><label for="relationtostudent">Η δήλωση προτίμησης γίνεται από</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("relationtostudent")}} </p></div>
+        <div><label for="telnum">Τηλέφωνο επικοινωνίας</label> <p class="form-control" style="border:1px solid #eceeef;"> {{studentDataField$.get("telnum")}} </p></div>
     </div>
     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
         <div class="col-md-6">
@@ -106,7 +104,7 @@ import { HelperDataService } from "../../services/helper-data-service";
             </button>
         </div>
         <div class="col-md-6">
-            <button type="button"  *ngIf="(studentDataFields$ | async).size > 0 && (regions$ | async).size > 0 && (epalclasses$ | async).size > 0 && (loginInfo$ | async).size > 0" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
+            <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 9em;" (click)="submitNow()">
                 <span style="font-size: 0.9em; font-weight: bold;">Υποβολή&nbsp;&nbsp;&nbsp;</span><i class="fa fa-forward"></i>
             </button>
         </div>
@@ -117,18 +115,15 @@ import { HelperDataService } from "../../services/helper-data-service";
 @Injectable() export default class ApplicationSubmit implements OnInit {
 
     private authToken;
-    private epalSelected: Array<number> = new Array();
+    private epalSelected$: BehaviorSubject<Array<number>> = new BehaviorSubject(new Array());
     private epalSelectedOrder: Array<number> = new Array();
     private courseSelected;
     private sectorSelected;
     private classSelected;
     private totalPoints = <number>0;
-    private studentDataFields$: BehaviorSubject<IStudentDataFields>;
-    private regions$: BehaviorSubject<IRegions>;
-    private sectors$: BehaviorSubject<ISectors>;
-    private sectorFields$: BehaviorSubject<ISectorFields>;
-    private epalclasses$: BehaviorSubject<IEpalClasses>;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private studentDataFields$: BehaviorSubject<IStudentDataFieldRecords>;
+    private epalclasses$: BehaviorSubject<IEpalClassRecords>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private studentDataFieldsSub: Subscription;
     private regionsSub: Subscription;
     private sectorsSub: Subscription;
@@ -140,7 +135,7 @@ import { HelperDataService } from "../../services/helper-data-service";
     private modalHeader: BehaviorSubject<string>;
     public isModalShown: BehaviorSubject<boolean>;
     private showLoader: BehaviorSubject<boolean>;
-    public currentUrl: string;
+    private currentUrl: string;
     private cu_name: string;
     private cu_surname: string;
     private cu_fathername: string;
@@ -159,10 +154,8 @@ import { HelperDataService } from "../../services/helper-data-service";
         private http: Http
     ) {
 
-        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
+        //        this.regions$ = new BehaviorSubject(REGION_SCHOOLS_INITIAL_STATE);
         this.epalclasses$ = new BehaviorSubject(EPALCLASSES_INITIAL_STATE);
-        this.sectors$ = new BehaviorSubject(SECTOR_COURSES_INITIAL_STATE);
-        this.sectorFields$ = new BehaviorSubject(SECTOR_FIELDS_INITIAL_STATE);
         this.studentDataFields$ = new BehaviorSubject(STUDENT_DATA_FIELDS_INITIAL_STATE);
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
@@ -176,120 +169,144 @@ import { HelperDataService } from "../../services/helper-data-service";
     ngOnInit() {
 
         (<any>$("#studentFormSentNotice")).appendTo("body");
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
+                if (linfo.size > 0) {
+                    linfo.reduce(({ }, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
 
-                    this.cu_name = loginInfoToken.cu_name;
-                    this.cu_surname = loginInfoToken.cu_surname;
-                    this.cu_fathername = loginInfoToken.cu_fathername;
-                    this.cu_mothername = loginInfoToken.cu_mothername;
-                    this.disclaimer_checked = loginInfoToken.disclaimer_checked;
+                        this.cu_name = loginInfoObj.cu_name;
+                        this.cu_surname = loginInfoObj.cu_surname;
+                        this.cu_fathername = loginInfoObj.cu_fathername;
+                        this.cu_mothername = loginInfoObj.cu_mothername;
+                        this.disclaimer_checked = loginInfoObj.disclaimer_checked;
 
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-
-        this.epalclassesSub = this._ngRedux.select(state => {
-            if (state.epalclasses.size > 0) {
-                state.epalclasses.reduce(({ }, epalclass) => {
-                    this.classSelected = epalclass.name;
-                    return epalclass;
-                }, {});
-            }
-            return state.epalclasses;
-        }).subscribe(this.epalclasses$);
-
-        this.studentDataFieldsSub = this._ngRedux.select(state => {
-            return state.studentDataFields;
-        }).subscribe(this.studentDataFields$);
-
-        this.regionsSub = this._ngRedux.select(state => {
-            state.regions.reduce((prevRegion, region) => {
-                region.epals.reduce((prevEpal, epal) => {
-                    if (epal.selected === true) {
-                        this.epalSelected.push(Number(epal.epal_id));
-                        this.epalSelectedOrder.push(epal.order_id);
-                    }
-                    return epal;
-                }, {});
-                return region;
-            }, {});
-            return state.regions;
-        }).subscribe(this.regions$);
-
-        this.sectorsSub = this._ngRedux.select(state => {
-            state.sectors.reduce((prevSector, sector) => {
-                sector.courses.reduce((prevCourse, course) => {
-                    if (course.selected === true) {
-                        this.courseSelected = course.course_id;
-                    }
-                    return course;
-                }, {});
-                return sector;
-            }, {});
-            return state.sectors;
-        }).subscribe(this.sectors$);
-
-        this.sectorFieldsSub = this._ngRedux.select(state => {
-            state.sectorFields.reduce(({ }, sectorField) => {
-                if (sectorField.selected === true) {
-                    this.sectorSelected = sectorField.id;
+                        return loginInfoObj;
+                    }, {});
                 }
-                return sectorField;
+                this.loginInfo$.next(linfo);
+            }, error => { console.log("error selecting loginInfo"); });
+
+        this.epalclassesSub = this._ngRedux.select("epalclasses")
+            .map(epalClasses => <IEpalClassRecords>epalClasses)
+            .subscribe(ecs => {
+            ecs.reduce(({ }, epalclass) => {
+                this.classSelected = epalclass.get("name");
+                return epalclass;
             }, {});
-            return state.sectorFields;
-        }).subscribe(this.sectorFields$);
+            this.epalclasses$.next(ecs);
+        }, error => { console.log("error selecting epalclasses"); });
+
+        this.studentDataFieldsSub = this._ngRedux.select("studentDataFields")
+            .subscribe(studentDataFields => {
+                this.studentDataFields$.next(<IStudentDataFieldRecords>studentDataFields);
+            }, error => { console.log("error selecting studentDataFields"); });
+
+        this.regionsSub = this._ngRedux.select("regions").
+            subscribe(regions => {
+                let rgns = <IRegionRecords>regions;
+                let prevSelected: Array<number> = new Array();
+                rgns.reduce((prevRgn, rgn) => {
+                    rgn.epals.reduce((prevSchool, school) => {
+                        if (school.selected === true) {
+                            prevSelected = this.epalSelected$.getValue();
+                            prevSelected[prevSelected.length] = <number>parseInt(school.epal_id);
+
+                            this.epalSelected$.next(prevSelected);
+                            this.epalSelectedOrder.push(school.order_id);
+                        }
+                        return school;
+                    }, {});
+                    return rgn;
+                }, {});
+                //                    this.regions$.next(<IRegionRecords>regions);
+            },
+            error => {
+                console.log("Error Selecting Regions");
+            }
+            );
+
+
+        this.sectorsSub = this._ngRedux.select("sectors")
+            .map(sectors => <ISectorRecords>sectors)
+            .subscribe(scs => {
+                scs.reduce((prevSector, sector) => {
+                    sector.get("courses").reduce((prevCourse, course) => {
+                        if (course.get("selected") === true) {
+                            this.courseSelected = course.get("course_id");
+                        }
+                        return course;
+                    }, {});
+                    return sector;
+                }, {});
+            });
+
+        this.sectorFieldsSub = this._ngRedux.select("sectorFields")
+            .map(sectorFields => <ISectorFieldRecords>sectorFields)
+            .subscribe(sfds => {
+                sfds.reduce(({ }, sectorField) => {
+                    if (sectorField.selected === true) {
+                        this.sectorSelected = sectorField.id;
+                    }
+                    return sectorField;
+                }, {});
+            });
 
     };
 
     ngOnDestroy() {
         (<any>$("#studentFormSentNotice")).remove();
-        if (this.studentDataFieldsSub) this.studentDataFieldsSub.unsubscribe();
-        if (this.regionsSub) this.regionsSub.unsubscribe();
-        if (this.sectorsSub) this.sectorsSub.unsubscribe();
-        if (this.sectorFieldsSub) this.sectorFieldsSub.unsubscribe();
-        if (this.epalclassesSub) this.epalclassesSub.unsubscribe();
-        if (this.loginInfoSub) this.loginInfoSub.unsubscribe();
-        this.regions$.unsubscribe();
-        this.epalclasses$.unsubscribe();
-        this.sectors$.unsubscribe();
-        this.sectorFields$.unsubscribe();
-        this.studentDataFields$.unsubscribe();
-        this.loginInfo$.unsubscribe();
+        if (this.studentDataFieldsSub) {
+            this.studentDataFieldsSub.unsubscribe();
+        }
+        if (this.regionsSub) {
+            this.regionsSub.unsubscribe();
+        }
+        if (this.sectorsSub) {
+            this.sectorsSub.unsubscribe();
+        }
+        if (this.sectorFieldsSub) {
+            this.sectorFieldsSub.unsubscribe();
+        }
+        if (this.epalclassesSub) {
+            this.epalclassesSub.unsubscribe();
+        }
+        if (this.loginInfoSub) {
+            this.loginInfoSub.unsubscribe();
+        }
     }
 
     submitNow() {
-        // αποστολή στοιχείων μαθητή στο entity: epal_student
-        // let aitisiObj: Array<Student | StudentEpalChosen[] | StudentCriteriaChosen[] | StudentCourseChosen | StudentSectorChosen > = [];
+
+        if (this.studentDataFields$.getValue().size === 0 || this.epalSelected$.getValue().length === 0 || this.epalclasses$.getValue().size === 0 || this.loginInfo$.getValue().size === 0)
+            return;
+
         let aitisiObj: Array<any> = [];
         let epalObj: Array<StudentEpalChosen> = [];
 
         let std = this.studentDataFields$.getValue().get(0);
 
         aitisiObj[0] = <any>{};
-        aitisiObj[0].name = std.name;
-        aitisiObj[0].studentsurname = std.studentsurname;
-        aitisiObj[0].studentbirthdate = std.studentbirthdate;
-        aitisiObj[0].fatherfirstname = std.fatherfirstname;
-        aitisiObj[0].motherfirstname = std.motherfirstname;
-        aitisiObj[0].regionaddress = std.regionaddress;
-        aitisiObj[0].regionarea = std.regionarea;
-        aitisiObj[0].regiontk = std.regiontk;
+        aitisiObj[0].name = std.get("name");
+        aitisiObj[0].studentsurname = std.get("studentsurname");
+        aitisiObj[0].studentbirthdate = std.get("studentbirthdate");
+        aitisiObj[0].fatherfirstname = std.get("fatherfirstname");
+        aitisiObj[0].motherfirstname = std.get("motherfirstname");
+        aitisiObj[0].regionaddress = std.get("regionaddress");
+        aitisiObj[0].regionarea = std.get("regionarea");
+        aitisiObj[0].regiontk = std.get("regiontk");
         aitisiObj[0].certificatetype = "";
 
         aitisiObj[0].graduation_year = 0;
-        aitisiObj[0].lastschool_registrynumber = std.lastschool_schoolname.registry_no;
-        aitisiObj[0].lastschool_schoolname = std.lastschool_schoolname.name;
-        aitisiObj[0].lastschool_schoolyear = std.lastschool_schoolyear;
-        aitisiObj[0].lastschool_unittypeid = std.lastschool_schoolname.unit_type_id;
-        aitisiObj[0].lastschool_class = std.lastschool_class;
+        aitisiObj[0].lastschool_registrynumber = std.get("lastschool_schoolname").registry_no;
+        aitisiObj[0].lastschool_schoolname = std.get("lastschool_schoolname").name;
+        aitisiObj[0].lastschool_schoolyear = std.get("lastschool_schoolyear");
+        aitisiObj[0].lastschool_unittypeid = std.get("lastschool_schoolname").unit_type_id;
+        aitisiObj[0].lastschool_class = std.get("lastschool_class");
 
-        aitisiObj[0].relationtostudent = std.relationtostudent;
-        aitisiObj[0].telnum = std.telnum;
+        aitisiObj[0].relationtostudent = std.get("relationtostudent");
+        aitisiObj[0].telnum = std.get("telnum");
 
         aitisiObj[0].cu_name = this.cu_name;
         aitisiObj[0].cu_surname = this.cu_surname;
@@ -298,8 +315,9 @@ import { HelperDataService } from "../../services/helper-data-service";
         aitisiObj[0].disclaimer_checked = this.disclaimer_checked;
         aitisiObj[0].currentclass = this.classSelected;
 
-        for (let i = 0; i < this.epalSelected.length; i++) {
-            epalObj[i] = new StudentEpalChosen(null, this.epalSelected[i], this.epalSelectedOrder[i]);
+        let epalSelected = this.epalSelected$.getValue();
+        for (let i = 0; i < epalSelected.length; i++) {
+            epalObj[i] = new StudentEpalChosen(null, epalSelected[i], this.epalSelectedOrder[i]);
         }
         aitisiObj["1"] = epalObj;
 
@@ -358,14 +376,14 @@ import { HelperDataService } from "../../services/helper-data-service";
                 let mHeader = "";
                 switch (errorCode) {
                     case 0:
+                        mTitle = "Υποβολή Δήλωσης Προτίμησης";
+                        mText = "Η υποβολή της δήλωσής σας πραγματοποιήθηκε. Μπορείτε να τη δείτε και να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Από την επιλογή 'Υποβληθείσες Δηλώσεις' θα μπορείτε να ενημερωθείτε όταν υπάρξει εξέλιξη σχετική με τη δήλωση σας. Επίσης, θα λάβετε και ενημερωτικό email.";
+                        mHeader = "modal-header-success";
                         this._eca.initEpalClasses();
                         this._sfa.initSectorFields();
                         this._rsa.initRegionSchools();
                         this._csa.initSectorCourses();
                         this._sdfa.initStudentDataFields();
-                        mTitle = "Υποβολή Δήλωσης Προτίμησης";
-                        mText = "Η υποβολή της δήλωσής σας πραγματοποιήθηκε. Μπορείτε να τη δείτε και να την εκτυπώσετε από την επιλογή 'Εμφάνιση - Εκτύπωση Δήλωσης Προτίμησης'. Από την επιλογή 'Υποβληθείσες Δηλώσεις' θα μπορείτε να ενημερωθείτε όταν υπάρξει εξέλιξη σχετική με τη δήλωση σας. Επίσης, θα λάβετε και ενημερωτικό email.";
-                        mHeader = "modal-header-success";
                         break;
                     case 1000:
                         mTitle = "Αποτυχία Υποβολής Δήλωσης Προτίμησης";
@@ -457,6 +475,7 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.showModal();
                 (<any>$(".loading")).remove();
                 this.showLoader.next(false);
+
             },
             error => {
                 (<any>$(".loading")).remove();
@@ -466,7 +485,8 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.showModal();
                 this.showLoader.next(false);
                 console.log("Error HTTP POST Service");
-            });
+            }
+            );
 
     }
 

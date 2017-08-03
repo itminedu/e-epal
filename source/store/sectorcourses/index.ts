@@ -1,11 +1,14 @@
-import { ISectors, ISector, ISectorCourse } from './sectorcourses.types';
-import { sectorCoursesReducer } from './sectorcourses.reducer';
-import { deimmutifySectorCourses } from './sectorcourses.transformers';
+import { ISectorRecords, ISectorRecord, ISector, ISectorCourseRecords, ISectorCourseRecord, ISectorCourse } from "./sectorcourses.types";
+import { sectorCoursesReducer } from "./sectorcourses.reducer";
+import { deimmutifySectorCourses } from "./sectorcourses.transformers";
 
 export {
-  ISector,
-  ISectors,
-  ISectorCourse,
-  sectorCoursesReducer,
-  deimmutifySectorCourses,
+    ISectorRecords,
+    ISectorRecord,
+    ISector,
+    ISectorCourseRecords,
+    ISectorCourseRecord,
+    ISectorCourse,
+    sectorCoursesReducer,
+    deimmutifySectorCourses,
 };

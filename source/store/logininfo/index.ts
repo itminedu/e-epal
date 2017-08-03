@@ -1,10 +1,11 @@
-import { ILoginInfoToken, ILoginInfo } from './logininfo.types';
-import { loginInfoReducer } from './logininfo.reducer';
-import { deimmutifyLoginInfo } from './logininfo.transformers';
+import { ILoginInfoObj, ILoginInfoRecord, ILoginInfoRecords } from "./logininfo.types";
+import { loginInfoReducer } from "./logininfo.reducer";
+import { deimmutifyLoginInfo } from "./logininfo.transformers";
 
 export {
-  ILoginInfoToken,
-  ILoginInfo,
-  loginInfoReducer,
-  deimmutifyLoginInfo,
+    ILoginInfoObj,
+    ILoginInfoRecord,
+    ILoginInfoRecords,
+    loginInfoReducer,
+    deimmutifyLoginInfo,
 };

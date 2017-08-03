@@ -1,23 +1,14 @@
-import { Component, Inject, OnInit, OnDestroy }
- from '@angular/core';
-import {
-  Router,
-  ActivatedRoute,
-}
- from '@angular/router';
-import './globalstyles.css';
-//import '../../myschool/main.scss';
-import { DevToolsExtension, NgRedux, select } from 'ng2-redux';
-import {
-  IAppState,
-  rootReducer,
-  middleware,
-//  enhancers,
-} from '../store';
+import "./globalstyles.css";
+
+import { DevToolsExtension, NgRedux } from "@angular-redux/store";
+import { Component } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+
+import { IAppState, rootReducer } from "../store";
 
 @Component({
-  selector: 'main',
-  template: `
+    selector: "main",
+    template: `
   <reg-header></reg-header>
   <reg-navbar></reg-navbar>
   <reg-main></reg-main>
@@ -25,30 +16,25 @@ import {
   `
 })
 export default class Main {
-  public path: string = '';
-  public pathSchool: string = 'school';
+    private path: string = "";
+    private pathSchool: string = "school";
 
-  constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private _ngRedux: NgRedux<IAppState>,
-    private _devTools: DevToolsExtension
-  ) {
-    router.events.subscribe((data) => {
-      this.path = data.url.substr(1);
-      this.pathSchool = data.url.substr(1);
-    });
+    constructor(
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
+        private _ngRedux: NgRedux<IAppState>,
+        private _devTools: DevToolsExtension
+    ) {
 
-
-    const tools = _devTools.enhancer({
-//      deserializeState: reimmutify,
-  });
-    _ngRedux.configureStore(
-      rootReducer,
-      {},
-//      middleware,
-//      tools ? [ ...enhancers, tools ] : enhancers);
-//      tools);
-      );
-  }
+        const tools = _devTools.enhancer({
+            // deserializeState: reimmutify,
+        });
+        _ngRedux.configureStore(
+            rootReducer,
+            {},
+            // middleware,
+            // tools ? [ ...enhancers, tools ] : enhancers);
+            // tools);
+        );
+    }
 }

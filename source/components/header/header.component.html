@@ -32,7 +32,7 @@
                                 <span *ngIf="loginInfoRow$.auth_role===studentRole" class="signout isclickable" (click)="gohelpDesk()" style="color:#CC3300;">Επικοινωνία</span>
                             </div>
                             <div class="col-md-4">
-                                <span *ngIf="loginInfoRow$.auth_role===studentRole" class="signout" style="color:#CC3300;">
+                                <span class="signout" style="color:#CC3300;">
                                 <div *ngFor="let TotalStudent$  of TotalStudents$ | async;">
                                     Σύνολο Δηλώσεων: {{TotalStudent$.numStudents}}
                                 </div>

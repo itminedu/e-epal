@@ -235,9 +235,27 @@ import { HelperDataService } from "../../services/helper-data-service";
       </div>
     </div>
 
+    <div id="errorselection" (onHidden)="onHidden('#errorselection')" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header modal-header-danger">
+            <h3 class="modal-title pull-left"><i class="fa fa-ban"></i>&nbsp;&nbsp;Προέκυψε σφάλμα</h3>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="hideModal('#errorselection')">
+              <span aria-hidden="true"><i class="fa fa-times"></i></span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Προέκυψε σφάλμα κατά τη διαδικασία άντλησης των στοιχείων δήλωσης προτίμησης στο συγκεκριμένο τμήμα του σχολείου σας.</p>
+            <p>Παρακαλώ προσπαθείστε ξανά αργότερα.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Κλείσιμο</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div id="emptyselection" (onHidden)="onHidden('#emptyselection')"
-    class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="emptyselection" (onHidden)="onHidden('#emptyselection')" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header modal-header-danger">
@@ -255,7 +273,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         </div>
       </div>
     </div>
-   `
+    `
 })
 
 @Injectable() export default class DirectorClassCapacity implements OnInit, OnDestroy {
@@ -326,6 +344,7 @@ import { HelperDataService } from "../../services/helper-data-service";
         (<any>$("#checksaved")).appendTo("body");
         (<any>$("#dangermodal")).appendTo("body");
         (<any>$("#emptyselection")).appendTo("body");
+        (<any>$("#errorselection")).appendTo("body");
         (<any>$("#applicationDeleteConfirm")).appendTo("body");
         (<any>$("#applicationDeleteError")).appendTo("body");
         this.showLoader.next(true);
@@ -353,7 +372,11 @@ import { HelperDataService } from "../../services/helper-data-service";
                 this.StudentInfo$.next([{}]);
                 console.log("Error Getting Students");
                 this.showLoader.next(false);
-                this.showModal("#emptyselection");
+                if (error.status === 404) {
+                    this.showModal("#emptyselection");
+                } else {
+                    this.showModal("#errorselection");
+                }
             });
 
     }
@@ -449,7 +472,11 @@ import { HelperDataService } from "../../services/helper-data-service";
                     this.StudentInfo$.next([{}]);
                     console.log("Error Getting Students");
                     this.showLoader.next(false);
-                    this.showModal("#emptyselection");
+                    if (error.status === 404) {
+                        this.showModal("#emptyselection");
+                    } else {
+                        this.showModal("#errorselection");
+                    }
                 });
         }).catch(err => {
             this.showErrorModal();

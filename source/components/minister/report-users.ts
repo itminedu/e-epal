@@ -17,37 +17,25 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
     selector: "report-users",
     template: `
 
-  <div>
-        <div
-          class = "loading" *ngIf="validCreator == 0" >
-        </div>
+    <div class="reports-container">
+        <div class = "loading" *ngIf="validCreator == 0"></div>
 
-        <h5> >Επιλογή Φίλτρων <br><br></h5>
-        <h6> Δεν υπάρχουν διαθέσιμα φίλτρα <br><br><br></h6>
+        <h5>Αριθμός Αιτήσεων / Εγγεγραμμένων Χρηστών</h5>
+        <h6>Επιλογή Φίλτρων: Δεν υπάρχουν διαθέσιμα φίλτρα</h6>
 
-        <button type="submit" class="btn btn-alert"  (click)="createReport()" [hidden]="minedu_userName == ''" >
-        <i class="fa fa-file-text"></i>
-            Δημιουργία Αναφοράς
-        </button>
-        <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" >
-            Επιστροφή
-        </button>
-        <br><br>
+        <button type="submit" class="btn btn-alert" (click)="createReport()" [hidden]="minedu_userName == ''"><i class="fa fa-file-text"></i> Δημιουργία Αναφοράς</button>
+        <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" >Επιστροφή</button>
 
         <div *ngIf="validCreator == 1 ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
-          <div class="smart-table-container" reportScroll>
+          <div class="smart-table-container table table-hover table-striped" reportScroll>
             <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
           </div>
         </div>
 
         <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator != 1">
-        <i class="fa fa-download"></i>
-            <br>Εξαγωγή σε csv
-        </button>
-
+        <i class="fa fa-download"></i> Εξαγωγή σε csv</button>
     </div>
-
    `
 })
 

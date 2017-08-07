@@ -19,48 +19,30 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
     selector: "report-no-capacity",
     template: `
 
-  <div>
-        <div
-          class = "loading" *ngIf="validCreator == 0" >
-        </div>
+    <div class="reports-container">
+        <div class = "loading" *ngIf="validCreator == 0" ></div>
 
         <form [formGroup]="formGroup"  #form>
-          <h5> >Επιλογή Φίλτρων <br><br></h5>
-          <div class="row">
-            <div class="col-md-1 ">
-              <input type="checkbox" formControlName="capacityEnabled"
-              (click)="toggleCapacityFilter()" >
+            <h5>Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων</h5>
+            <h6>Επιλογή Φίλτρων</h6>
+            <div class="row">
+                <div class="col-md-1"><input type="checkbox" formControlName="capacityEnabled" (click)="toggleCapacityFilter()" ></div>
+                <div class="col-md-9"><label for="capacityEnabled"><i>Εμφάνιση ΚΑΙ των σχολείων που έχουν καθορίσει χωρητικότητα</i></label></div>
             </div>
-            <div class="col-md-9">
-              <label for="capacityEnabled"><i>Εμφάνιση ΚΑΙ των σχολείων που έχουν καθορίσει χωρητικότητα</i></label>
-            </div>
-          </div>
-          <br><br>
 
-          <button type="submit" class="btn btn-alert"  (click)="createReport()" [hidden]="minedu_userName == ''" >
-          <i class="fa fa-file-text"></i>
-              Δημιουργία Αναφοράς
-          </button>
-          <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" >
-              Επιστροφή
-          </button>
-          <br><br>
+            <button type="submit" class="btn btn-alert"  (click)="createReport()" [hidden]="minedu_userName == ''" ><i class="fa fa-file-text"></i> Δημιουργία Αναφοράς</button>
+            <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" > Επιστροφή</button>
         </form>
 
         <div *ngIf="validCreator == 1 ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
-          <div class="smart-table-container" reportScroll>
+          <div class="smart-table-container table table-hover table-striped" reportScroll>
             <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
           </div>
         </div>
 
-        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator != 1">
-        <i class="fa fa-download"></i>
-            <br>Εξαγωγή σε csv
-        </button>
-
+        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator != 1"><i class="fa fa-download"></i> Εξαγωγή σε csv</button>
     </div>
-
    `
 })
 

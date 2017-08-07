@@ -1,18 +1,18 @@
-import {Component} from '@angular/core';
+import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 
 @Component({
-  selector: 'reg-main',
-  templateUrl: 'main.component.html'
+    selector: "reg-main",
+    templateUrl: "main.component.html"
 })
-export default class MainComponent { 
+export default class MainComponent {
 
-	constructor(
+    constructor(
         private router: Router
-    ) {}
+    ) { }
 
-navigatelegal() {
-  this.router.navigate(['/legal-info']);
+    navigatelegal() {
+        this.router.navigate(["/legal-info"]);
     }
 
 }

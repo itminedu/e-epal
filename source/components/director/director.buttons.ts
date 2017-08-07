@@ -1,8 +1,8 @@
-import {Router} from '@angular/router';
-import {OnInit, Component, Injectable} from '@angular/core';
+import { Component, Injectable, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
-    selector: 'director-buttons',
+    selector: "director-buttons",
     template: `
            <div class="row" style="margin-top: 130px; margin-bottom: 200px;">
                <div class="col-md-3 offset-md-3">
@@ -23,21 +23,20 @@ import {OnInit, Component, Injectable} from '@angular/core';
 
     constructor(
         private router: Router,
-    )
-    {
+    ) {
     };
 
     ngOnInit() {
 
     }
 
-    navigatedirector(){
-        this.router.navigate(['/school/director-view']);
+    navigatedirector() {
+        this.router.navigate(["/school/director-view"]);
 
     }
 
-    navigatecapacity(){
-        this.router.navigate(['/school/director-classcapacity']);
+    navigatecapacity() {
+        this.router.navigate(["/school/director-classcapacity"]);
     }
 
 }

@@ -1,11 +1,9 @@
-import { List } from 'immutable';
+import { List } from "immutable";
+import { TypedRecord } from "typed-immutable-record";
 
 export interface IEpalClass {
-   // id: number;
     name: string;
-    
 }
 
-export type IEpalClasses = List<IEpalClass>;
-
-
+export interface IEpalClassRecord extends TypedRecord<IEpalClassRecord>, IEpalClass { };
+export type IEpalClassRecords = List<IEpalClassRecord>;

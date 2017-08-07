@@ -1,9 +1,9 @@
+import { Location } from "@angular/common";
 import { Component, Injectable } from "@angular/core";
-import { Router } from '@angular/router';
-import {Location} from '@angular/common';
+import { Router } from "@angular/router";
 
 @Component({
-    selector: 'legal-info',
+    selector: "legal-info",
     template: `
         <p align="left"><strong> Νομοθεσία  </strong></p>
         <ul class="list-group">
@@ -74,7 +74,7 @@ import {Location} from '@angular/common';
     }
 
     public goHome(): void {
-        this.router.navigate(['']);
+        this.router.navigate([""]);
     }
 
 }

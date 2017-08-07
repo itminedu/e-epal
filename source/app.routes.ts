@@ -1,14 +1,13 @@
-import { RouterModule }  from '@angular/router';
+import { RouterModule } from "@angular/router";
 
-import { MainRoutes, MainDeclarations }
- from './containers/main.routes';
+import { MainDeclarations, MainRoutes } from "./containers/main.routes";
 
 export const routes = [
-  ...MainRoutes
+    ...MainRoutes
 ];
 
 export const APP_DECLARATIONS = [
-  ...MainDeclarations
+    ...MainDeclarations
 ];
 
 export const APP_ROUTER_PROVIDERS = RouterModule.forRoot(routes);

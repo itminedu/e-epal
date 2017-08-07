@@ -170,22 +170,21 @@ class DirectorView extends ControllerBase
                             );
                         }
                     }
-                    return $this->respondWithStatus(
-                     $list, Response::HTTP_OK);
+                    return $this->respondWithStatus($list, Response::HTTP_OK);
                 } else {
-                       return $this->respondWithStatus([
-                    'message' => t('Students not found!'),
-                        ], Response::HTTP_FORBIDDEN);
+                    return $this->respondWithStatus([
+                        'message' => t('Students not found!'),
+                    ], Response::HTTP_NOT_FOUND);
                 }
             } else {
                 return $this->respondWithStatus([
-                'message' => t('User not found!'),
+                    'message' => t('User not found!'),
                 ], Response::HTTP_FORBIDDEN);
             }
         } catch (\Exception $e) {
             $this->logger->warning($e->getMessage());
             return $this->respondWithStatus([
-            'message' => t('Unexpected Error'),
+                'message' => t('Unexpected Error'),
             ], Response::HTTP_FORBIDDEN);
         }
     }

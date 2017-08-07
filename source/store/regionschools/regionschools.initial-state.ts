@@ -1,5 +1,5 @@
-import { List } from 'immutable';
-import { IRegion } from './regionschools.types';
+import { List } from "immutable";
 
-// export const INITIAL_STATE = List<ICourseField>([new CourseFieldRecord({})]);
-export const REGION_SCHOOLS_INITIAL_STATE = List<IRegion>();
+import { IRegionRecord } from "./regionschools.types";
+
+export const REGION_SCHOOLS_INITIAL_STATE = List<IRegionRecord>();

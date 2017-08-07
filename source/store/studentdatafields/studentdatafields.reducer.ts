@@ -1,33 +1,30 @@
-import { IStudentDataFields, IStudentDataField } from './studentdatafields.types';
-import { STUDENT_DATA_FIELDS_INITIAL_STATE } from './studentdatafields.initial-state';
-import { Seq } from 'immutable';
-import { STUDENTDATAFIELDS_SAVE, STUDENTDATAFIELDS_INIT } from '../../constants';
+import { List } from "immutable";
+import { recordify } from "typed-immutable-record";
 
-export function studentDataFieldsReducer(state: IStudentDataFields = STUDENT_DATA_FIELDS_INITIAL_STATE, action): IStudentDataFields {
-  switch (action.type) {
-    case STUDENTDATAFIELDS_SAVE:
-        let studentDataFields = Array<IStudentDataField>();
-        let ind=0;
+import { STUDENTDATAFIELDS_INIT, STUDENTDATAFIELDS_SAVE } from "../../constants";
+import { STUDENT_DATA_FIELDS_INITIAL_STATE } from "./studentdatafields.initial-state";
+import { IStudentDataField, IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields.types";
 
-        action.payload.studentDataFields.forEach(studentDataField => {
-            let transformedDate = "";
-            if (studentDataField.studentbirthdate && studentDataField.studentbirthdate.date) {
-                transformedDate = studentDataField.studentbirthdate.date.year + "-";
-                transformedDate += studentDataField.studentbirthdate.date.month < 10 ? "0" + studentDataField.studentbirthdate.date.month + "-" : studentDataField.studentbirthdate.date.month + "-";
-                transformedDate += studentDataField.studentbirthdate.date.day < 10 ? "0" + studentDataField.studentbirthdate.date.day : studentDataField.studentbirthdate.date.day;
-            }
-            // transformedDate = studentDataField.studentbirthdate.jsDate;
+export function studentDataFieldsReducer(state: IStudentDataFieldRecords = STUDENT_DATA_FIELDS_INITIAL_STATE, action): IStudentDataFieldRecords {
+    switch (action.type) {
+        case STUDENTDATAFIELDS_SAVE:
+            let studentDataFields = Array<IStudentDataFieldRecord>();
 
-            studentDataField.studentbirthdate = transformedDate;
+            action.payload.studentDataFields.forEach(studentDataField => {
+                let transformedDate = "";
+                if (studentDataField.studentbirthdate && studentDataField.studentbirthdate.date) {
+                    transformedDate = studentDataField.studentbirthdate.date.year + "-";
+                    transformedDate += studentDataField.studentbirthdate.date.month < 10 ? "0" + studentDataField.studentbirthdate.date.month + "-" : studentDataField.studentbirthdate.date.month + "-";
+                    transformedDate += studentDataField.studentbirthdate.date.day < 10 ? "0" + studentDataField.studentbirthdate.date.day : studentDataField.studentbirthdate.date.day;
+                }
 
+                studentDataField.studentbirthdate = transformedDate;
+                studentDataFields.push(recordify<IStudentDataField, IStudentDataFieldRecord>(studentDataField));
+            });
 
-            studentDataFields.push(<IStudentDataField>studentDataField);
-            ind++;
-        });
-
-        return Seq(studentDataFields).map(n => n).toList();
-    case STUDENTDATAFIELDS_INIT:
-        return STUDENT_DATA_FIELDS_INITIAL_STATE;
-    default: return state;
-  }
+            return List(studentDataFields);
+        case STUDENTDATAFIELDS_INIT:
+            return STUDENT_DATA_FIELDS_INITIAL_STATE;
+        default: return state;
+    }
 };

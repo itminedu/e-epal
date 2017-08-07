@@ -1,17 +1,15 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild} from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Location } from "@angular/common";
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
-import {Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import {Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import {Location} from '@angular/common';
+import { ActivatedRoute, Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { HelperDataService } from "../../services/helper-data-service";
+import { IAppState } from "../../store/store";
 
 @Component({
-    selector: 'submited-preview',
+    selector: "submited-preview",
     template: `
     <div id="applicationDeleteConfirm" (onHidden)="onHidden()" class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog modal-lg">
@@ -206,13 +204,6 @@ import {Location} from '@angular/common';
                     </div>
 
                     <div class="row" style="margin-top: 20px; margin-bottom: 20px;">
-                        <!--
-                        <div class="col-md-6">
-                            <button type="button" class="btn-primary btn-lg pull-left isclickable" style="width: 10em;" (click)="showResults()" [hidden] = "StudentDetails$.applicantsResultsDisabled == '0'">
-                                <span style="font-size: 0.9em; font-weight: bold;">Αποτελέσματα</span>
-                            </button>
-                        </div>
-                        -->
                         <div class="col-md-12">
                             <button type="button" class="btn-primary btn-lg pull-right isclickable" style="width: 10em;" (click)="createPdfServerSide()">
                                 <span style="font-size: 0.9em; font-weight: bold;">Εκτύπωση(PDF)&nbsp;&nbsp;&nbsp;</span>
@@ -251,13 +242,12 @@ import {Location} from '@angular/common';
     private SubmitedDetails$: BehaviorSubject<any>;
     private SubmitedDetailsSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
-    public isModalShown: BehaviorSubject<boolean>;
+    private isModalShown: BehaviorSubject<boolean>;
     private applicationIdActive = <number>-1;
 
-    public StudentId;
     private applicationId = <number>0;
 
-    @ViewChild('target') element: ElementRef;
+    @ViewChild("target") element: ElementRef;
 
     constructor(private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
@@ -272,20 +262,18 @@ import {Location} from '@angular/common';
     }
 
     ngOnDestroy() {
-        (<any>$('#applicationDeleteConfirm')).remove();
-        (<any>$('#applicationDeleteError')).remove();
+        (<any>jQuery("#applicationDeleteConfirm")).remove();
+        (<any>jQuery("#applicationDeleteError")).remove();
         if (this.SubmitedUsersSub)
             this.SubmitedUsersSub.unsubscribe();
         if (this.SubmitedDetailsSub)
             this.SubmitedDetailsSub.unsubscribe();
-        this.SubmitedDetails$.unsubscribe();
-        this.SubmitedApplic$.unsubscribe();
     }
 
     ngOnInit() {
 
-        (<any>$('#applicationDeleteConfirm')).appendTo("body");
-        (<any>$('#applicationDeleteError')).appendTo("body");
+        (<any>jQuery("#applicationDeleteConfirm")).appendTo("body");
+        (<any>jQuery("#applicationDeleteError")).appendTo("body");
         this.showLoader$.next(true);
 
         this.SubmitedUsersSub = this._hds.getSubmittedPreviw().subscribe(
@@ -356,18 +344,18 @@ import {Location} from '@angular/common';
     }
 
     public showConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('show');
+        (<any>jQuery("#applicationDeleteConfirm")).modal("show");
     }
 
     public showErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('show');
+        (<any>jQuery("#applicationDeleteError")).modal("show");
     }
 
     public hideConfirmModal(): void {
-        (<any>$('#applicationDeleteConfirm')).modal('hide');
+        (<any>jQuery("#applicationDeleteConfirm")).modal("hide");
     }
     public hideErrorModal(): void {
-        (<any>$('#applicationDeleteError')).modal('hide');
+        (<any>jQuery("#applicationDeleteError")).modal("hide");
     }
 
     public onHidden(): void {
@@ -380,7 +368,7 @@ import {Location} from '@angular/common';
     }
 
     public goHome(): void {
-        this.router.navigate(['']);
+        this.router.navigate([""]);
     }
 
 }

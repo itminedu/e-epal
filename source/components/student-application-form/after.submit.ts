@@ -1,22 +1,20 @@
-import {Router} from '@angular/router';
-import {OnInit, OnDestroy, Component, Injectable} from '@angular/core';
-import { HelperDataService } from '../../services/helper-data-service';
-import { BehaviorSubject } from 'rxjs/Rx';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { SCHOOL_ROLE, STUDENT_ROLE, PDE_ROLE, DIDE_ROLE, MINISTRY_ROLE } from '../../constants';
-import { EpalClassesActions } from '../../actions/epalclass.actions';
-import { SectorFieldsActions } from '../../actions/sectorfields.actions';
-import { RegionSchoolsActions } from '../../actions/regionschools.actions';
-import { SectorCoursesActions } from '../../actions/sectorcourses.actions';
-import { CriteriaActions } from '../../actions/criteria.actions';
-import { StudentDataFieldsActions } from '../../actions/studentdatafields.actions';
+import { NgRedux } from "@angular-redux/store";
+import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { EpalClassesActions } from "../../actions/epalclass.actions";
+import { LoginInfoActions } from "../../actions/logininfo.actions";
+import { RegionSchoolsActions } from "../../actions/regionschools.actions";
+import { SectorCoursesActions } from "../../actions/sectorcourses.actions";
+import { SectorFieldsActions } from "../../actions/sectorfields.actions";
+import { StudentDataFieldsActions } from "../../actions/studentdatafields.actions";
+import { HelperDataService } from "../../services/helper-data-service";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
-    selector: 'post-submit',
+    selector: "post-submit",
     template: `
         <div class = "loading" *ngIf="(showLoader$ | async) === true"></div>
            <div class="row" style="margin-top: 130px; margin-bottom: 200px;">
@@ -38,9 +36,9 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     private authToken: string;
     private authRole: string;
     private cuName: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
-    public cuser: any;
+    private cuser: any;
     private showLoader$: BehaviorSubject<boolean>;
+    private loginInfoSub: Subscription;
 
     constructor(
         private _ata: LoginInfoActions,
@@ -50,7 +48,6 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
         private _rsa: RegionSchoolsActions,
         private _eca: EpalClassesActions,
         private _sdfa: StudentDataFieldsActions,
-        private _cria: CriteriaActions,
         private _ngRedux: NgRedux<IAppState>,
         private router: Router
     ) {
@@ -58,25 +55,24 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
     };
 
     ngOnInit() {
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    this.cuName = loginInfoToken.cu_name;
-                    return loginInfoToken;
-                }, {})
-            }
-
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-    }
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
+                if (linfo.size > 0) {
+                    linfo.reduce(({}, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        this.cuName = loginInfoObj.cu_name;
+                        return loginInfoObj;
+                    }, {});
+                }
+            }, error => { console.log("error selecting epalclasses"); });
+    };
 
     ngOnDestroy() {
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-
-    }
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
+    };
 
     signOut() {
         this.showLoader$.next(true);
@@ -87,20 +83,19 @@ import { StudentDataFieldsActions } from '../../actions/studentdatafields.action
             this._rsa.initRegionSchools();
             this._csa.initSectorCourses();
             this._sdfa.initStudentDataFields();
-            this._cria.initCriteria();
-            this.router.navigate(['']);
-            this.authToken = '';
-            this.authRole = '';
+            this.router.navigate([""]);
+            this.authToken = "";
+            this.authRole = "";
             this.showLoader$.next(false);
         }).catch(err => {
             this.showLoader$.next(false);
-            console.log(err)
+            console.log(err);
         });
 
     }
 
     submittedView() {
-        this.router.navigate(['/submited-preview']);
+        this.router.navigate(["/submited-preview"]);
     }
 
 }

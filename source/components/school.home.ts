@@ -1,15 +1,15 @@
-import { Router, ActivatedRoute, Params } from "@angular/router";
-import { OnInit, OnDestroy, Component } from "@angular/core";
-import { LoginInfoActions } from "../actions/logininfo.actions";
-import { ILoginInfo } from "../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
-import { NgRedux, select } from "ng2-redux";
-import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { IAppState } from "../store/store";
-import { HelperDataService } from "../services/helper-data-service";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Params, Router } from "@angular/router";
 import { CookieService } from "ngx-cookie";
-import { FormBuilder, FormGroup, FormControl, FormArray } from "@angular/forms";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
+import { LoginInfoActions } from "../actions/logininfo.actions";
 import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
+import { HelperDataService } from "../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../store/logininfo/logininfo.types";
+import { IAppState } from "../store/store";
 
 @Component({
     selector: "school-home",
@@ -34,7 +34,7 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
         </div>
     </div>
     <div *ngIf="(errorCode$ | async) == ''">
-        <form [formGroup]="formGroup" method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
+        <form method = "POST" action="{{apiEndPoint}}/cas/login{{apiEndPointParams}}" #form>
             <!-- <input type="hidden" name="X-oauth-enabled" value="true"> -->
             <div *ngFor="let loginInfoToken$ of loginInfo$ | async; let i=index"></div>
             <div class="row">
@@ -51,18 +51,18 @@ import { API_ENDPOINT, API_ENDPOINT_PARAMS } from "../app.settings";
 })
 
 export default class SchoolHome implements OnInit, OnDestroy {
-    public formGroup: FormGroup;
     private authToken: string;
     private errorCode$: BehaviorSubject<string>;
     private authRole: string;
     private name: any;
     private xcsrftoken: any;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     private loginInfoSub: Subscription;
+    private queryParamSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private apiEndPointParams = API_ENDPOINT_PARAMS;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ata: LoginInfoActions,
         private _ngRedux: NgRedux<IAppState>,
         private activatedRoute: ActivatedRoute,
@@ -74,48 +74,48 @@ export default class SchoolHome implements OnInit, OnDestroy {
         this.authRole = "";
         this.name = "";
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
-        this.errorCode$ = new BehaviorSubject('');
-        this.formGroup = this.fb.group({
-        });
+        this.errorCode$ = new BehaviorSubject("");
     };
 
     ngOnDestroy() {
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-        this.loginInfo$.unsubscribe();
-        this.errorCode$.unsubscribe();
+        if (this.queryParamSub)
+            this.queryParamSub.unsubscribe();
     };
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({ }, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    if (this.authToken && this.authToken.length > 0) {
-                        if (this.authRole === "director") {
-                            this.router.navigate(["/school/director-buttons"]);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(linfo => {
+                if (linfo.size > 0) {
+                    linfo.reduce(({ }, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        if (this.authToken && this.authToken.length > 0) {
+                            if (this.authRole === "director") {
+                                this.router.navigate(["/school/director-buttons"]);
+                            }
+                            else if (this.authRole === "pde")
+                                this.router.navigate(["/school/perfecture-view"]);
+                            else if (this.authRole === "dide")
+                                this.router.navigate(["/school/eduadmin-view"]);
                         }
-                        else if (this.authRole === "pde")
-                            this.router.navigate(["/school/perfecture-view"]);
-                        else if (this.authRole === "dide")
-                            this.router.navigate(["/school/eduadmin-view"]);
-                    }
-                    return loginInfoToken;
-                }, {});
-            }
+                        return loginInfoObj;
+                    }, {});
+                }
 
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+                this.loginInfo$.next(linfo);
+            });
 
         // subscribe to router event
-        this.activatedRoute.queryParams.subscribe((params: Params) => {
+        this.queryParamSub = this.activatedRoute.queryParams.subscribe((params: Params) => {
             if (params) {
                 this.authToken = params["auth_token"];
                 this.authRole = params["auth_role"];
                 this.errorCode$.next((params["error_code"] === undefined) ? "" : params["error_code"]);
             }
-            if (this.authToken && this.authRole && this.errorCode$.getValue() == "") {
+            if (this.authToken && this.authRole && this.errorCode$.getValue() === "") {
                 this._ata.getloginInfo({ auth_token: this.authToken, auth_role: this.authRole });
             }
         });
@@ -139,12 +139,11 @@ export default class SchoolHome implements OnInit, OnDestroy {
     casSignOut() {
         this._hds.casSignOut().then(data => {
             this._ata.initLoginInfo();
-            // this.router.navigate(['/school']);
-            this.authToken = '';
-            this.authRole = '';
+            this.authToken = "";
+            this.authRole = "";
             window.location.assign((<any>data).next);
         }).catch(err => {
-            console.log(err)
+            console.log(err);
         });
     }
 }

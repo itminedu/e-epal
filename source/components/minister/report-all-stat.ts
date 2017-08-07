@@ -1,41 +1,30 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
-import { AppSettings } from '../../app.settings';
-import { HelperDataService } from '../../services/helper-data-service';
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from '@angular/http';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { Router, ActivatedRoute, Params} from '@angular/router';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { Ng2SmartTableModule, LocalDataSource } from 'ng2-smart-table';
-import {reportsSchema, TableColumn} from './reports-schema';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { DIDE_ROLE, PDE_ROLE, MINISTRY_ROLE } from '../../constants';
-import {csvCreator} from './csv-creator';
-import {chartCreator} from './chart-creator';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { ActivatedRoute, Router } from "@angular/router";
+import { LocalDataSource } from "ng2-smart-table";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from '@angular/forms';
-
-
-import { API_ENDPOINT } from '../../app.settings';
+import { API_ENDPOINT } from "../../app.settings";
+import { DIDE_ROLE, PDE_ROLE } from "../../constants";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
+import { ChartCreator } from "./chart-creator";
+import { CsvCreator } from "./csv-creator";
+import { ReportsSchema, TableColumn } from "./reports-schema";
 
 @Component({
-    selector: 'report-all-stat',
+    selector: "report-all-stat",
     template: `
 
   <div>
 
 
         <div
-          class = "loading" *ngIf="validCreator == 0" >
+          class = "loading" *ngIf="validCreator === 0" >
         </div>
 
         <form [formGroup]="formGroup"  #form>
@@ -44,22 +33,22 @@ import { API_ENDPOINT } from '../../app.settings';
           <br>
           <button type="button" class="btn-link" (click)="toggleRegionFilter()" >
 
-          <div *ngIf = "userLoggedIn == 'supervisor'">    > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου </div>
-          <div *ngIf = "userLoggedIn == 'dide'" >    > Φίλτρο Επιλογής Σχολείου </div>
-          <div *ngIf = "userLoggedIn == 'pde'">    > Φίλτρο Επιλογής Δ/νσης Εκπ/σης - Σχολείου </div>
+          <div *ngIf = "userLoggedIn === 'supervisor'">    > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου </div>
+          <div *ngIf = "userLoggedIn === 'dide'" >    > Φίλτρο Επιλογής Σχολείου </div>
+          <div *ngIf = "userLoggedIn === 'pde'">    > Φίλτρο Επιλογής Δ/νσης Εκπ/σης - Σχολείου </div>
 
           </button>
 
           <div  class="col-md-11 offset-md-1">
-                <label *ngIf = "enableRegionFilter && userLoggedIn == 'supervisor'"> Περιφερειακή Διεύθυνση </label>
-                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn != 'supervisor'" formControlName="region">
+                <label *ngIf = "enableRegionFilter && userLoggedIn === 'supervisor'"> Περιφερειακή Διεύθυνση </label>
+                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn !== 'supervisor'" formControlName="region">
                   <option value="0"></option>
                   <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showAdminList | async) && enableRegionFilter && userLoggedIn != 'dide'">Διεύθυνση Εκπαίδευσης</label>
-                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" [hidden] = "userLoggedIn == 'dide'" formControlName="adminarea">
+                <label *ngIf="(showAdminList | async) && enableRegionFilter && userLoggedIn !== 'dide'">Διεύθυνση Εκπαίδευσης</label>
+                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" [hidden] = "userLoggedIn === 'dide'" formControlName="adminarea">
                   <option value="0"></option>
                   <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
                 </select>
@@ -72,7 +61,7 @@ import { API_ENDPOINT } from '../../app.settings';
                 </select>
           </div>
 
-          <div *ngIf = "reportId == 3 || reportId == 5" >
+          <div *ngIf = "reportId === 3 || reportId === 5" >
             <button type="button" class="btn-link" (click)="toggleCourseFilter()" >
                   > Φίλτρο Επιλογής Τομέα / Ειδικότητας
             </button>
@@ -89,49 +78,49 @@ import { API_ENDPOINT } from '../../app.settings';
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3 || classSelected == 4) ">Τομέας</label>
-                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected == 2 || classSelected == 3 || classSelected == 4)"
+                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4) ">Τομέας</label>
+                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4)"
                       (change)="checksector(secsel)" formControlName="sector">
                   <option value="0"></option>
                   <option *ngFor="let SectorSelection$  of SectorSelections$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.name}}</option>
                 </select>
           </div>
           <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected == 3 || classSelected == 4)">Ειδικότητα</label>
-                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected == 3 || classSelected == 4)"
+                <label *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)">Ειδικότητα</label>
+                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)"
                       (change)="checkcourse(coursel)" formControlName="course">
                   <option value="0"></option>
                   <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
                 </select>
           </div>
           <br>
-          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName == ''" >
+          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName === ''" >
           <i class="fa fa-file-text"></i>
               Δημιουργία Αναφοράς
           </button>
-          <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName == ''" >
+          <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName === ''" >
               Επιστροφή
           </button>
           <br><br>
         </form>
 
-        <div *ngIf="validCreator == 1 ">
+        <div *ngIf="validCreator === 1 ">
           <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
           <div class="smart-table-container" reportScroll>
             <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
           </div>
         </div>
 
-        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator != 1">
+        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator !== 1">
         <i class="fa fa-download"></i>
             <br>Εξαγωγή σε csv
         </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator != 1 || schSelected == 0 || (reportId != 2 ) ">
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator !== 1 || schSelected === 0 || (reportId !== 2 ) ">
         <i class="fa fa-bar-chart"></i>
             Διάγραμμα
         </button>
 
-        <div class="d3-chart" *ngIf = "validCreator == 1" #chart>
+        <div class="d3-chart" *ngIf = "validCreator === 1" #chart>
         </div>
         <br><br><br><br><br>
 
@@ -142,9 +131,9 @@ import { API_ENDPOINT } from '../../app.settings';
 
 @Injectable() export default class ReportAllStat implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
-    loginInfoSub: Subscription;
+    private formGroup: FormGroup;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
+    private loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private RegionSelections$: BehaviorSubject<any>;
     private AdminAreaSelections$: BehaviorSubject<any>;
@@ -163,7 +152,7 @@ import { API_ENDPOINT } from '../../app.settings';
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
-    private data;
+    private data: any;
     private validCreator: number;
     private reportId: number;
     private source: LocalDataSource;
@@ -183,18 +172,18 @@ import { API_ENDPOINT } from '../../app.settings';
 
     columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new reportsSchema();
+    private reportSchema = new ReportsSchema();
 
-    //csvObj:csvCreator ;
-    private csvObj = new csvCreator();
+    // csvObj:CsvCreator ;
+    private csvObj = new CsvCreator();
 
     private createGraph: boolean;
-    //d3 creator
-    private chartObj = new chartCreator();
-    @ViewChild('chart') public chartContainer: ElementRef;
+    // d3 creator
+    private chartObj = new ChartCreator();
+    @ViewChild("chart") public chartContainer: ElementRef;
     private d3data: Array<any>;
 
-    //private repid: number;
+    // private repid: number;
     private routerSub: any;
 
     constructor(private fb: FormBuilder,
@@ -204,12 +193,12 @@ import { API_ENDPOINT } from '../../app.settings';
         private router: Router) {
 
         this.formGroup = this.fb.group({
-            region: ['', []],
-            adminarea: ['', []],
-            schoollist: ['', []],
-            classid: ['', []],
-            sector: ['', []],
-            course: ['', []],
+            region: ["", []],
+            adminarea: ["", []],
+            schoollist: ["", []],
+            classid: ["", []],
+            sector: ["", []],
+            course: ["", []],
         });
 
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
@@ -220,7 +209,7 @@ import { API_ENDPOINT } from '../../app.settings';
         this.SectorSelections$ = new BehaviorSubject([{}]);
         this.CourseSelections$ = new BehaviorSubject([{}]);
         this.RegionRetrieve$ = new BehaviorSubject([{}]);
-        this.minedu_userName = '';
+        this.minedu_userName = "";
         this.validCreator = -1;
         this.showAdminList = new BehaviorSubject(false);
         this.showSectorList = new BehaviorSubject(false);
@@ -239,54 +228,54 @@ import { API_ENDPOINT } from '../../app.settings';
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
 
-                    this.userLoggedIn = loginInfoToken.auth_role;
-                    if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE) {
-                        let regId = -1;
-                        this.minedu_userName = loginInfoToken.auth_token;
-                        this.minedu_userPassword = loginInfoToken.auth_token;
-                        if (loginInfoToken.auth_role == PDE_ROLE || loginInfoToken.auth_role == DIDE_ROLE) {
+                        this.userLoggedIn = loginInfoObj.auth_role;
+                        if (loginInfoObj.auth_role === PDE_ROLE || loginInfoObj.auth_role === DIDE_ROLE) {
+                            let regId = -1;
+                            this.minedu_userName = loginInfoObj.auth_token;
+                            this.minedu_userPassword = loginInfoObj.auth_token;
+                            if (loginInfoObj.auth_role === PDE_ROLE || loginInfoObj.auth_role === DIDE_ROLE) {
 
-                            this.RegionRetrieveSub = this._hds.getUserRegistryNo(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
-                                this.RegionRetrieve$.next(data);
-                                this.data = data;
-                                regId = this.data['id'];
+                                this.RegionRetrieveSub = this._hds.getUserRegistryNo(this.minedu_userName, this.minedu_userPassword).subscribe(data => {
+                                    this.RegionRetrieve$.next(data);
+                                    this.data = data;
+                                    regId = this.data["id"];
 
-                                if (loginInfoToken.auth_role == PDE_ROLE) {
-                                    this.regionSelected = regId;
-                                    this.showAdminList.next(true);
+                                    if (loginInfoObj.auth_role === PDE_ROLE) {
+                                        this.regionSelected = regId;
+                                        this.showAdminList.next(true);
 
-                                    this.checkregion(this.regionSelected);
-                                }
-                                else if (loginInfoToken.auth_role == DIDE_ROLE) {
-                                    this.adminAreaSelected = regId;
-                                    this.showAdminList.next(false);
-                                    this.checkadminarea(this.adminAreaSelected);
-                                }
-                            },
-                                error => {
-                                    this.RegionRetrieve$.next([{}]);
-                                });
+                                        this.checkregion(this.regionSelected);
+                                    }
+                                    else if (loginInfoObj.auth_role === DIDE_ROLE) {
+                                        this.adminAreaSelected = regId;
+                                        this.showAdminList.next(false);
+                                        this.checkadminarea(this.adminAreaSelected);
+                                    }
+                                },
+                                    error => {
+                                        this.RegionRetrieve$.next([{}]);
+                                    });
+                            }
                         }
-                    }
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+                        return loginInfoObj;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
 
         this.routerSub = this.activatedRoute.params.subscribe(params => {
-            this.reportId = +params['reportId'];
+            this.reportId = +params["reportId"];
         });
 
-
         this.showFilters();
-
     }
 
     ngOnDestroy() {
@@ -305,34 +294,9 @@ import { API_ENDPOINT } from '../../app.settings';
             this.SectorSelectionsSub.unsubscribe();
         if (this.CourseSelectionsSub)
             this.CourseSelectionsSub.unsubscribe();
-
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.generalReport$)
-            this.generalReport$.unsubscribe();
-        if (this.RegionSelections$)
-            this.RegionSelections$.unsubscribe();
-        if (this.AdminAreaSelections$)
-            this.AdminAreaSelections$.unsubscribe();
-        if (this.SchoolSelections$)
-            this.SchoolSelections$.unsubscribe();
-        if (this.SectorSelections$)
-            this.SectorSelections$.unsubscribe();
-        if (this.CourseSelections$)
-            this.CourseSelections$.unsubscribe();
-        if (this.showAdminList)
-            this.showAdminList.unsubscribe();
-        if (this.showSectorList)
-            this.showSectorList.unsubscribe();
-        if (this.showCourseList)
-            this.showCourseList.unsubscribe();
         if (this.RegionRetrieveSub)
             this.RegionRetrieveSub.unsubscribe();
-        if (this.RegionRetrieve$)
-            this.RegionRetrieve$.unsubscribe();
-
     }
-
 
     createReport(regionSel) {
 
@@ -361,8 +325,8 @@ import { API_ENDPOINT } from '../../app.settings';
 
         let regSel = 0, admSel = 0, schSel = 0;
         if (this.enableRegionFilter) {
-            //if (regionSel.value != 0)
-            //regSel = regionSel.value;
+            // if (regionSel.value !== 0)
+            // regSel = regionSel.value;
             regSel = this.regionSelected;
             admSel = this.adminAreaSelected;
             schSel = this.schSelected;
@@ -375,10 +339,10 @@ import { API_ENDPOINT } from '../../app.settings';
             courSel = this.courseSelected;
         }
 
-        if (this.userLoggedIn == PDE_ROLE) {
+        if (this.userLoggedIn === PDE_ROLE) {
             regSel = this.regionSelected;
         }
-        else if (this.userLoggedIn == DIDE_ROLE)
+        else if (this.userLoggedIn === DIDE_ROLE)
             admSel = this.adminAreaSelected;
 
         this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel, this.distribFinalized).subscribe(data => {
@@ -398,22 +362,21 @@ import { API_ENDPOINT } from '../../app.settings';
             this.source = new LocalDataSource(this.data);
             this.columnMap = new Map<string, TableColumn>();
 
-            //pass parametes to csv class object
+            // pass parametes to csv class object
             this.csvObj.columnMap = this.columnMap;
             this.csvObj.source = this.source;
             this.csvObj.settings = this.settings;
-            //this.prepareColumnMap();
+            // this.prepareColumnMap();
             this.csvObj.prepareColumnMap();
         },
             error => {
                 this.generalReport$.next([{}]);
                 console.log("Error Getting generalReport");
             });
-
     }
 
     navigateBack() {
-        this.router.navigate(['/ministry/minister-reports']);
+        this.router.navigate(["/ministry/minister-reports"]);
     }
 
     showFilters() {
@@ -425,7 +388,6 @@ import { API_ENDPOINT } from '../../app.settings';
                 this.RegionSelections$.next([{}]);
                 console.log("Error Getting RegionSelections");
             });
-
     }
 
     toggleRegionFilter() {
@@ -441,7 +403,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
     checkregion(regionId) {
 
-        if (typeof regionId.value != "undefined")
+        if (typeof regionId.value !== "undefined")
             this.regionSelected = regionId.value;
         this.adminAreaSelected = 0;
         this.schSelected = 0;
@@ -469,7 +431,7 @@ import { API_ENDPOINT } from '../../app.settings';
 
         this.schSelected = 0;
 
-        if (typeof adminId.value != "undefined")
+        if (typeof adminId.value !== "undefined")
             this.adminAreaSelected = adminId.value;
         this.SchoolSelectionsSub = this._hds.getSchoolsPerAdminArea(this.minedu_userName, this.minedu_userPassword, this.adminAreaSelected).subscribe(data => {
             this.SchoolSelections$.next(data);
@@ -487,18 +449,15 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     checkschool(schId) {
-
         this.schSelected = schId.value;
-
     }
 
     checkclass(classId) {
-
         this.classSelected = classId.value;
         this.sectorSelected = 0;
         this.courseSelected = 0;
 
-        if (this.classSelected == 2 || this.classSelected == 3 || this.classSelected == 4) {
+        if (this.classSelected === 2 || this.classSelected === 3 || this.classSelected === 4) {
             this.SectorSelectionsSub = this._hds.getSectors(this.minedu_userName, this.minedu_userPassword, this.classSelected).subscribe(data => {
                 this.SectorSelections$.next(data);
                 this.showSectorList.next(true);
@@ -507,13 +466,10 @@ import { API_ENDPOINT } from '../../app.settings';
                     this.SectorSelections$.next([{}]);
                     console.log("Error Getting SectorSelections");
                 });
-        } //end if
-
-
+        } // end if
     }
 
     checksector(sectorId) {
-
         this.courseSelected = 0;
         this.sectorSelected = sectorId.value;
 
@@ -528,22 +484,15 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     checkcourse(courseId) {
-
         this.courseSelected = courseId.value;
-
     }
 
-
-
-    onSearch(query: string = '') {
-
+    onSearch(query: string = "") {
         this.csvObj.onSearch(query);
     }
 
     export2Csv() {
-
         this.csvObj.export2Csv();
-
     }
 
 
@@ -559,9 +508,7 @@ import { API_ENDPOINT } from '../../app.settings';
     }
 
     generateGraphData() {
-
         this.d3data = [];
-
         if (this.reportId === 2) {
             let labelsX = [];
             labelsX.push("Σχολείο");
@@ -590,14 +537,6 @@ import { API_ENDPOINT } from '../../app.settings';
                 labelsX[4],
                 this.data[0].percD,
             ]);
-
         }
-
     }
-
-
-
-
-
-
 }

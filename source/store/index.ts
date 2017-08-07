@@ -1,41 +1,46 @@
-// import * as persistState from 'redux-localstorage';
-import * as createLogger from 'redux-logger';
-import { IAppState, rootReducer, deimmutify } from './store';
-import { ICourseField, ICourseFields } from './coursefields/coursefields.types';
-import { ISectorField, ISectorFields } from './sectorfields/sectorfields.types';
-import { IRegions, IRegion, IRegionSchool } from './regionschools/regionschools.types';
-import { ISectors, ISector, ISectorCourse } from './sectorcourses/sectorcourses.types';
-import { IStudentDataField, IStudentDataFields } from './studentdatafields/studentdatafields.types';
-import { IEpalClass, IEpalClasses } from './epalclasses/epalclasses.types';
-import { ILoginInfoToken, ILoginInfo } from './logininfo/logininfo.types';
-import { ICriter, ICriteria } from './criteria/criteria.types';
+import { createLogger } from "redux-logger";
+
+import { IAppState, rootReducer, deimmutify } from "./store";
+import { ISectorFieldRecord, ISectorFieldRecords } from "./sectorfields/sectorfields.types";
+import { IRRegion, IRRegionSchool, IRegionRecord, IRegionRecords, IRegionSchoolRecord, IRegionSchoolRecords } from "./regionschools/regionschools.types";
+import { ISectorRecords, ISectorRecord, ISector, ISectorCourseRecords, ISectorCourseRecord, ISectorCourse } from "./sectorcourses/sectorcourses.types";
+import { IStudentDataFieldRecord, IStudentDataFieldRecords } from "./studentdatafields/studentdatafields.types";
+import { IEpalClass, IEpalClassRecord, IEpalClassRecords } from "./epalclasses/epalclasses.types";
+import { ILoginInfoObj, ILoginInfoRecord, ILoginInfoRecords } from "./logininfo/logininfo.types";
 
 export {
-  IAppState,
-  rootReducer,
-  ICourseField,
-  ICourseFields,
-  ISectorField,
-  ISectorFields,
-  IRegions,
-  IRegion,
-  IRegionSchool,
-  ISectors,
-  ISector,
-  ISectorCourse,
-  IStudentDataField,
-  IStudentDataFields,
-  IEpalClass,
-  IEpalClasses,
-  ILoginInfo,
-  ICriter,
-  ICriteria
+    IAppState,
+    rootReducer,
+    ISectorFieldRecord,
+    ISectorFieldRecords,
+    IRRegion,
+    IRegionRecord,
+    IRegionRecords,
+    IRegionSchoolRecord,
+    IRegionSchoolRecords,
+    IRRegionSchool,
+    ISectorRecords,
+    ISectorRecord,
+    ISector,
+    ISectorCourseRecords,
+    ISectorCourseRecord,
+    ISectorCourse,
+    IStudentDataFieldRecord,
+    IStudentDataFieldRecords,
+    IEpalClass,
+    IEpalClassRecord,
+    IEpalClassRecords,
+    ILoginInfoObj,
+    ILoginInfoRecord,
+    ILoginInfoRecords
 };
 
-export const middleware = [
-  createLogger({
-    level: 'info',
+const myLogger = createLogger({
+    level: "info",
     collapsed: true,
     stateTransformer: deimmutify
-  })
+});
+
+export const middleware = [
+    myLogger
 ];

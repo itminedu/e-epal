@@ -1,16 +1,17 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { BehaviorSubject, Subscription } from 'rxjs/Rx';
-import { ILoginInfo } from '../../store/logininfo/logininfo.types';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
-import { HelperDataService } from "../../services/helper-data-service";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
+
 import { LoginInfoActions } from "../../actions/logininfo.actions";
-import {Router} from "@angular/router";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
-    selector: 'info',
+    selector: "info",
     template: `
 
     <div class="loading" *ngIf="(showLoader$ | async) === true"></div>
@@ -32,7 +33,7 @@ import {Router} from "@angular/router";
 
 @Injectable() export default class Info implements OnInit, OnDestroy {
 
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     loginInfoSub: Subscription;
     private showLoader$: BehaviorSubject<boolean>;
 
@@ -47,23 +48,16 @@ import {Router} from "@angular/router";
     }
 
     ngOnDestroy() {
-
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
-
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
     }
 
     ngOnInit() {
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(loginInfo => {
+                this.loginInfo$.next(loginInfo);
+            }, error => { console.log("error selecting loginInfo"); });
     }
 
     signOut() {

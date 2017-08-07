@@ -1,5 +1,5 @@
-import { List } from 'immutable';
-import { ISectorField } from './sectorfields.types';
+import { List } from "immutable";
 
-// export const INITIAL_STATE = List<ICourseField>([new CourseFieldRecord({})]);
-export const SECTOR_FIELDS_INITIAL_STATE = List<ISectorField>();
+import { ISectorFieldRecord } from "./sectorfields.types";
+
+export const SECTOR_FIELDS_INITIAL_STATE = List<ISectorFieldRecord>();

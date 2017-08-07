@@ -1,8 +1,9 @@
-import { SECTORFIELDS_RECEIVED, SECTORFIELDS_SELECTED_SAVE, SECTORFIELDS_INIT } from '../constants';
-import { Injectable } from '@angular/core';
-import { NgRedux } from 'ng2-redux';
-import { IAppState } from '../store';
-import { HelperDataService } from '../services/helper-data-service';
+import { NgRedux } from "@angular-redux/store";
+import { Injectable } from "@angular/core";
+
+import { SECTORFIELDS_INIT, SECTORFIELDS_RECEIVED, SECTORFIELDS_SELECTED_SAVE } from "../constants";
+import { HelperDataService } from "../services/helper-data-service";
+import { IAppState } from "../store";
 
 @Injectable()
 export class SectorFieldsActions {
@@ -12,7 +13,7 @@ export class SectorFieldsActions {
 
     getSectorFields = (reload) => {
         const { sectorFields } = this._ngRedux.getState();
-        //if (sectorFields.size === 0) {
+        // if (sectorFields.size === 0) {
         if (reload === true || (reload === false && sectorFields.size === 0)) {
             return this._hds.getSectorFields().then(sectorFields => {
                 return this._ngRedux.dispatch({
@@ -34,11 +35,12 @@ export class SectorFieldsActions {
     };
 
 
-    saveSectorFieldsSelected = (sectorFieldsSelected) => {
+    saveSectorFieldsSelected = (prevChoice: number, newChoice: number) => {
         return this._ngRedux.dispatch({
             type: SECTORFIELDS_SELECTED_SAVE,
             payload: {
-                sectorFieldsSelected
+                prevChoice: prevChoice,
+                newChoice: newChoice
             }
         });
     };

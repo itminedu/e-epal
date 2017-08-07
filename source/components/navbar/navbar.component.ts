@@ -1,67 +1,66 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {Router} from '@angular/router';
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
+import { BehaviorSubject, Subscription } from "rxjs/Rx";
 
-import { BehaviorSubject } from 'rxjs/Rx';
-import { NgRedux, select } from 'ng2-redux';
-import { IAppState } from '../../store/store';
-import { ILoginInfo, ILoginInfoToken } from '../../store/logininfo/logininfo.types';
-import { LoginInfoActions } from '../../actions/logininfo.actions';
-import { LOGININFO_INITIAL_STATE } from '../../store/logininfo/logininfo.initial-state';
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
-  selector: 'reg-navbar',
-  templateUrl: 'navbar.component.html',
+    selector: "reg-navbar",
+    templateUrl: "navbar.component.html",
 })
 
-@Injectable() export default class NavbarComponent implements OnInit, OnDestroy{
+@Injectable() export default class NavbarComponent implements OnInit, OnDestroy {
     private authToken: string;
     private authRole: string;
     private lockCapacity: BehaviorSubject<boolean>;
     private lockStudents: BehaviorSubject<boolean>;
     private cuName: string;
-    private loginInfo$: BehaviorSubject<ILoginInfo>;
- 	public cuser :any;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
+    private cuser: any;
+    private loginInfoSub: Subscription;
 
-    constructor( private _ngRedux: NgRedux<IAppState>
-                ) {
+    constructor(private _ngRedux: NgRedux<IAppState>
+    ) {
 
-                        this.authToken = '';
-                        this.authRole = '';
-                        this.lockCapacity = new BehaviorSubject(true);
-                        this.lockStudents = new BehaviorSubject(true);
-                        this.cuName = '';
-                        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
+        this.authToken = "";
+        this.authRole = "";
+        this.lockCapacity = new BehaviorSubject(true);
+        this.lockStudents = new BehaviorSubject(true);
+        this.cuName = "";
+        this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
 
-        };
+    };
 
     ngOnInit() {
-        this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.authToken = loginInfoToken.auth_token;
-                    this.authRole = loginInfoToken.auth_role;
-                    if (loginInfoToken.lock_capacity === 1)
-                        this.lockCapacity.next(true);
-                    else
-                        this.lockCapacity.next(false);
-                    if (loginInfoToken.lock_students === 1)
-                        this.lockStudents.next(true);
-                    else
-                        this.lockStudents.next(false);
-                    this.cuName = loginInfoToken.cu_name;
-                    return loginInfoToken;
-                }, {})
-            }
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.authToken = loginInfoObj.auth_token;
+                        this.authRole = loginInfoObj.auth_role;
+                        if (loginInfoObj.lock_capacity === 1)
+                            this.lockCapacity.next(true);
+                        else
+                            this.lockCapacity.next(false);
+                        if (loginInfoObj.lock_students === 1)
+                            this.lockStudents.next(true);
+                        else
+                            this.lockStudents.next(false);
+                        this.cuName = loginInfoObj.cu_name;
+                        return loginInfoObj;
+                    }, {});
+                }
 
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-
+                this.loginInfo$.next(loginInfo);
+            });
     }
 
     ngOnDestroy() {
-        this.loginInfo$.unsubscribe();
-
+        if (this.loginInfoSub)
+            this.loginInfoSub.unsubscribe();
     }
-
 }

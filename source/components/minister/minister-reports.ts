@@ -1,36 +1,21 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "ng2-redux";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params} from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import { MINISTRY_ROLE, PDE_ROLE, DIDE_ROLE } from "../../constants";
-
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
 
 import { API_ENDPOINT } from "../../app.settings";
+import { DIDE_ROLE, MINISTRY_ROLE, PDE_ROLE } from "../../constants";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
 
 @Component({
     selector: "minister-reports",
     // encapsulation: ViewEncapsulation.None,
     template: `
-
-
-
   <div style="min-height: 500px; ">
-
         <h5> >Επιλογή Αναφοράς<br><br></h5>
 
         <div class="col-md-1">
@@ -87,59 +72,49 @@ import { API_ENDPOINT } from "../../app.settings";
 
 @Injectable() export default class MinisterReports implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
-    loginInfo$: BehaviorSubject<ILoginInfo>;
-    loginInfoSub: Subscription;
+    private loginInfo$: BehaviorSubject<ILoginInfoRecords>;
+    private loginInfoSub: Subscription;
     private apiEndPoint = API_ENDPOINT;
     private minedu_userName: string;
     private minedu_userPassword: string;
     private distStatus = "READY";
     private userRole: string;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private _ngRedux: NgRedux<IAppState>,
         private _hds: HelperDataService,
         private activatedRoute: ActivatedRoute,
-        private router: Router) {
-
-        this.formGroup = this.fb.group({
-            region: ["", []],
-            adminarea: ["", []],
-            schoollist: ["", []],
-        });
-
+        private router: Router
+    ) {
         this.loginInfo$ = new BehaviorSubject(LOGININFO_INITIAL_STATE);
         this.minedu_userName = "";
         this.userRole = MINISTRY_ROLE;
-
     }
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    if (loginInfoToken.auth_role === PDE_ROLE || loginInfoToken.auth_role === DIDE_ROLE) {
-                        this.userRole = loginInfoToken.auth_role;
-                        this.minedu_userName = loginInfoToken.auth_token;
-                        this.minedu_userPassword = loginInfoToken.auth_token;
-                    }
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
-
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        if (loginInfoObj.auth_role === PDE_ROLE || loginInfoObj.auth_role === DIDE_ROLE) {
+                            this.userRole = loginInfoObj.auth_role;
+                            this.minedu_userName = loginInfoObj.auth_token;
+                            this.minedu_userPassword = loginInfoObj.auth_token;
+                        }
+                        return loginInfoObj;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
     }
 
     ngOnDestroy() {
         if (this.loginInfoSub) {
             this.loginInfoSub.unsubscribe();
-        }
-        if (this.loginInfo$) {
-            this.loginInfo$.unsubscribe();
         }
     }
 

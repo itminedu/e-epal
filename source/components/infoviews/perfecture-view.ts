@@ -1,21 +1,9 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Injectable} from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import {Observable} from "rxjs/Observable";
-import {Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "ng2-redux";
-import { IAppState } from "../../store/store";
-import {Router, ActivatedRoute, Params} from "@angular/router";
+import { Component, Injectable, OnDestroy, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
 
-import {
-    FormBuilder,
-    FormGroup,
-    FormControl,
-    FormArray,
-    Validators,
-} from "@angular/forms";
+import { HelperDataService } from "../../services/helper-data-service";
+
 @Component({
     selector: "perfecture-view",
     template: `
@@ -37,7 +25,7 @@ import {
         </div>
       </div>
       <div style="min-height: 500px;">
-        <form [formGroup]="formGroup">
+        <form>
             <p style="margin-top: 20px; line-height: 2em;">Στην παρακάτω λίστα βλέπετε τα σχολεία ευθύνης σας.
             <br/>Επιλέξτε σχολείο για να εμφανιστούν τα τμήματα του σχολείου.</p>
             <div class="row" style="margin-top: 20px; line-height: 2em;"><p><strong>Τα τμήματα</strong></p></div>
@@ -69,7 +57,6 @@ import {
 
 @Injectable() export default class EduadminView implements OnInit, OnDestroy {
 
-    public formGroup: FormGroup;
     private SchoolsPerPerf$: BehaviorSubject<any>;
     private SchoolPerPerfSub: Subscription;
     private LimitPerCateg$: BehaviorSubject<any>;
@@ -79,7 +66,6 @@ import {
     private StudentsSize$: BehaviorSubject<any>;
     private StudentsSizeSub: Subscription;
     private showLoader: BehaviorSubject<boolean>;
-    public perfecture;
     private regionActive = <number>-1;
     private School$: BehaviorSubject<any>;
     private SchoolSub: Subscription;
@@ -87,7 +73,7 @@ import {
     private modalText: BehaviorSubject<string>;
     private modalHeader: BehaviorSubject<string>;
 
-    constructor(private fb: FormBuilder,
+    constructor(
         private router: Router,
         private _hds: HelperDataService,
     ) {
@@ -97,8 +83,6 @@ import {
         this.StudentsSize$ = new BehaviorSubject({});
         this.School$ = new BehaviorSubject([{}]);
         this.showLoader = new BehaviorSubject(false);
-        this.formGroup = this.fb.group({
-        });
         this.modalTitle = new BehaviorSubject("");
         this.modalText = new BehaviorSubject("");
         this.modalHeader = new BehaviorSubject("");
@@ -125,7 +109,6 @@ import {
                 this.showModal();
                 this.showLoader.next(false);
             });
-
     }
 
     calccolor(size, limit) {

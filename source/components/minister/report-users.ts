@@ -1,20 +1,17 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from "@angular/core";
+import { NgRedux } from "@angular-redux/store";
 import { Injectable } from "@angular/core";
-import { AppSettings } from "../../app.settings";
-import { HelperDataService } from "../../services/helper-data-service";
-import { Observable} from "rxjs/Observable";
-import { Http, Headers, RequestOptions} from "@angular/http";
-import { NgRedux, select } from "ng2-redux";
-import { IAppState } from "../../store/store";
-import { Router, ActivatedRoute, Params} from "@angular/router";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { LocalDataSource } from "ng2-smart-table";
 import { BehaviorSubject, Subscription } from "rxjs/Rx";
-import { ILoginInfo } from "../../store/logininfo/logininfo.types";
-import { Ng2SmartTableModule, LocalDataSource } from "ng2-smart-table";
-import {reportsSchema, TableColumn} from "./reports-schema";
-import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
-import {csvCreator} from "./csv-creator";
 
 import { API_ENDPOINT } from "../../app.settings";
+import { HelperDataService } from "../../services/helper-data-service";
+import { LOGININFO_INITIAL_STATE } from "../../store/logininfo/logininfo.initial-state";
+import { ILoginInfoRecords } from "../../store/logininfo/logininfo.types";
+import { IAppState } from "../../store/store";
+import { CsvCreator } from "./csv-creator";
+import { ReportsSchema, TableColumn } from "./reports-schema";
 
 @Component({
     selector: "report-users",
@@ -56,7 +53,7 @@ import { API_ENDPOINT } from "../../app.settings";
 
 @Injectable() export default class ReportUsers implements OnInit, OnDestroy {
 
-    loginInfo$: BehaviorSubject<ILoginInfo>;
+    loginInfo$: BehaviorSubject<ILoginInfoRecords>;
     loginInfoSub: Subscription;
     private generalReport$: BehaviorSubject<any>;
     private generalReportSub: Subscription;
@@ -66,14 +63,13 @@ import { API_ENDPOINT } from "../../app.settings";
     private distStatus = "READY";
     private data;
     private validCreator: number;
-    // private reportId: number;
     private routerSub: any;
 
     private source: LocalDataSource;
     columnMap: Map<string, TableColumn> = new Map<string, TableColumn>();
     @Input() settings: any;
-    private reportSchema = new reportsSchema();
-    private csvObj = new csvCreator();
+    private reportSchema = new ReportsSchema();
+    private csvObj = new CsvCreator();
 
     constructor(
         private _ngRedux: NgRedux<IAppState>,
@@ -89,36 +85,29 @@ import { API_ENDPOINT } from "../../app.settings";
 
     ngOnInit() {
 
-        this.loginInfoSub = this._ngRedux.select(state => {
-            if (state.loginInfo.size > 0) {
-                state.loginInfo.reduce(({}, loginInfoToken) => {
-                    this.minedu_userName = loginInfoToken.minedu_username;
-                    this.minedu_userPassword = loginInfoToken.minedu_userpassword;
-                    return loginInfoToken;
-                }, {});
-            }
-            return state.loginInfo;
-        }).subscribe(this.loginInfo$);
+        this.loginInfoSub = this._ngRedux.select("loginInfo")
+            .map(loginInfo => <ILoginInfoRecords>loginInfo)
+            .subscribe(loginInfo => {
+                if (loginInfo.size > 0) {
+                    loginInfo.reduce(({}, loginInfoObj) => {
+                        this.minedu_userName = loginInfoObj.minedu_username;
+                        this.minedu_userPassword = loginInfoObj.minedu_userpassword;
+                        return loginInfoObj;
+                    }, {});
+                }
+                this.loginInfo$.next(loginInfo);
+            }, error => console.log("error selecting loginInfo"));
     }
 
     ngOnDestroy() {
-
         if (this.loginInfoSub)
             this.loginInfoSub.unsubscribe();
         if (this.generalReportSub)
             this.generalReportSub.unsubscribe();
-        if (this.loginInfo$)
-            this.loginInfo$.unsubscribe();
-        if (this.generalReport$)
-            this.generalReport$.unsubscribe();
-
     }
 
-
     createReport() {
-
         this.validCreator = 0;
-
         let route = "/ministry/report-users/";
         this.settings = this.reportSchema.ReportUsersSchema;
 
@@ -130,7 +119,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.source = new LocalDataSource(this.data);
                 this.columnMap = new Map<string, TableColumn>();
 
-                // pass parametes to csv class object
                 this.csvObj.columnMap = this.columnMap;
                 this.csvObj.source = this.source;
                 this.csvObj.settings = this.settings;
@@ -141,7 +129,6 @@ import { API_ENDPOINT } from "../../app.settings";
                 this.validCreator = -1;
                 console.log("Error Getting ReportUsers");
             });
-
     }
 
     navigateBack() {

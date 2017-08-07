@@ -300,11 +300,13 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
             route = "/ministry/report-all-stat/";
             this.distribFinalized = 1;
             this.settings = this.reportSchema.reportAllStatSchema;
+            this.settings.fileName = "e-ΕΠΑΛ Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ";
         }
         else if (this.reportId === 5) {
             route = "/ministry/report-all-stat/";
             this.distribFinalized = 0;
             this.settings = this.reportSchema.reportAllStatSchema;
+            this.settings.fileName = "e-ΕΠΑΛ Ολιγομελή τμήματα - Προσωρινά τοποθετημένοι μαθητές";
         }
 
         let regSel = 0, admSel = 0, schSel = 0;
@@ -326,8 +328,9 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
         if (this.userLoggedIn === PDE_ROLE) {
             regSel = this.regionSelected;
         }
-        else if (this.userLoggedIn === DIDE_ROLE)
+        else if (this.userLoggedIn === DIDE_ROLE) {
             admSel = this.adminAreaSelected;
+        }
 
         this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel, this.distribFinalized).subscribe(data => {
             this.generalReport$.next(data);
@@ -339,8 +342,17 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
 
                 this.data[i].percTotal = Number(data[i].percTotal);
                 this.data[i].percA = Number(data[i].percA);
+                if (Number.isNaN(this.data[i].percA)) {
+                    this.data[i].percA = "-";
+                }
                 this.data[i].percB = Number(data[i].percB);
+                if (Number.isNaN(this.data[i].percB)) {
+                    this.data[i].percB = "-";
+                }
                 this.data[i].percC = Number(data[i].percC);
+                if (Number.isNaN(this.data[i].percC)) {
+                    this.data[i].percC = "-";
+                }
             }
             this.validCreator = 1;
             this.source = new LocalDataSource(this.data);
@@ -353,10 +365,10 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
             // this.prepareColumnMap();
             this.csvObj.prepareColumnMap();
         },
-            error => {
-                this.generalReport$.next([{}]);
-                console.log("Error Getting generalReport");
-            });
+        error => {
+            this.generalReport$.next([{}]);
+            console.log("Error Getting generalReport");
+        });
     }
 
     navigateBack() {

@@ -236,7 +236,7 @@ div.changecolorbalck {
 
 .d3-chart {
     width: 100%;
-    height: 400px;
+    height: 550px; 
 }
 
 .d3-chart .axis path, .d3-chart .axis line {
@@ -339,3 +339,10 @@ label {
 .ng2-smart-pagination {
     display: inline-flex !important;
 }
+
+.reports-container { min-height: 550px; }
+.reports-container h5, 
+.reports-container h6,
+.reports-container button {
+    margin: 0 0 1em 0;
+} 

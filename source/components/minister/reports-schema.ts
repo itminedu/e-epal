@@ -12,6 +12,7 @@ export class ReportsSchema {
 
     ReportUsersSchema = {
         actions: false,
+        fileName: "e-ΕΠΑΛ Αριθμός Αιτήσεων - Εγγεγραμμένων Χρηστών",
         noDataMessage: "Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης",
         columns: {
             name: {
@@ -27,6 +28,7 @@ export class ReportsSchema {
 
     genReportSchema = {
         actions: false,
+        fileName: "e-ΕΠΑΛ Κατανομή Μαθητών με Βάση τη Σειρά Προτίμησης",
         noDataMessage: "Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης",
         columns: {
             name: {
@@ -42,6 +44,7 @@ export class ReportsSchema {
 
     reportAllStatSchema = {
         actions: false,
+        fileName: "e-ΕΠΑΛ Αναφορά",
         pager: {
             display: true,
             perPage: 10
@@ -88,6 +91,7 @@ export class ReportsSchema {
 
     reportNoCapacity = {
         actions: false,
+        fileName: "e-ΕΠΑΛ Σχολικές μονάδες που δεν έχουν δηλώσει Χωρητικότητα τμημάτων",
         pager: {
             display: true,
             perPage: 10
@@ -124,6 +128,7 @@ export class ReportsSchema {
 
     reportCompletenessSchema = {
         actions: false,
+        fileName: "e-ΕΠΑΛ Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη",
         noDataMessage: "Δεν υπάρχουν δεδομένα που περιέχουν το κείμενο αναζήτησης",
         columns: {
             name: {

@@ -20,112 +20,96 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
     selector: "report-all-stat",
     template: `
 
-  <div>
-
-
-        <div
-          class = "loading" *ngIf="validCreator === 0" >
-        </div>
+    <div class="reports-container">
+        <div class = "loading" *ngIf="validCreator === 0" ></div>
 
         <form [formGroup]="formGroup"  #form>
-
-          <!--<h5> >Επιλογή Φίλτρων <br><br></h5>-->
-          <br>
-          <button type="button" class="btn-link" (click)="toggleRegionFilter()" >
-
-          <div *ngIf = "userLoggedIn === 'supervisor'">    > Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου </div>
-          <div *ngIf = "userLoggedIn === 'dide'" >    > Φίλτρο Επιλογής Σχολείου </div>
-          <div *ngIf = "userLoggedIn === 'pde'">    > Φίλτρο Επιλογής Δ/νσης Εκπ/σης - Σχολείου </div>
-
-          </button>
-
-          <div  class="col-md-11 offset-md-1">
-                <label *ngIf = "enableRegionFilter && userLoggedIn === 'supervisor'"> Περιφερειακή Διεύθυνση </label>
-                <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn !== 'supervisor'" formControlName="region">
-                  <option value="0"></option>
-                  <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
-                </select>
-          </div>
-          <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showAdminList | async) && enableRegionFilter && userLoggedIn !== 'dide'">Διεύθυνση Εκπαίδευσης</label>
-                <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" [hidden] = "userLoggedIn === 'dide'" formControlName="adminarea">
-                  <option value="0"></option>
-                  <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
-                </select>
-          </div>
-          <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showAdminList | async) && enableRegionFilter">Σχολείο</label>
-                <select #schsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkschool(schsel)" formControlName="schoollist">
-                  <option value="0"></option>
-                  <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
-                </select>
-          </div>
-
-          <div *ngIf = "reportId === 3 || reportId === 5" >
-            <button type="button" class="btn-link" (click)="toggleCourseFilter()" >
-                  > Φίλτρο Επιλογής Τομέα / Ειδικότητας
+            <div [ngSwitch]="reportId">
+                <h5 *ngSwitchCase="2">Συνολική Πληρότητα σχολικών μονάδων ΕΠΑΛ ανά τάξη</h5>
+                <h5 *ngSwitchCase="3">Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ</h5>
+                <h5 *ngSwitchCase="5">Ολιγομελή τμήματα (Προσωρινά τοποθετημένοι μαθητές)</h5>
+                <h5 *ngSwitchDefault>Αναφορά</h5>
+            </div>
+            <h6>Επιλογή Φίλτρων</h6>
+            <button type="button" class="btn btn-sm" (click)="toggleRegionFilter()" >
+                <div *ngIf = "userLoggedIn === 'supervisor'">Φίλτρο Επιλογής Περιφ/κής Δ/νσης - Δ/νσης Εκπ/σης - Σχολείου</div>
+                <div *ngIf = "userLoggedIn === 'dide'">Φίλτρο Επιλογής Σχολείου</div>
+                <div *ngIf = "userLoggedIn === 'pde'">Φίλτρο Επιλογής Δ/νσης Εκπ/σης - Σχολείου</div>
             </button>
-          </div>
 
-          <div  class="col-md-11 offset-md-1">
-                <label for="classid" *ngIf = "enableCourseFilter" >Τάξη</label><br/>
-                <select #class_sel  class="form-control" (change)="checkclass(class_sel)" *ngIf = "enableCourseFilter" formControlName="classid" >
-                  <option value="0" ></option>
-                  <option value="1" >Α' Λυκείου</option>
-                  <option value="2" >Β' Λυκείου</option>
-                  <option value="3" >Γ' Λυκείου</option>
-                  <option value="4" >Δ' Λυκείου</option>
-                </select>
-          </div>
-          <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4) ">Τομέας</label>
-                <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4)"
-                      (change)="checksector(secsel)" formControlName="sector">
-                  <option value="0"></option>
-                  <option *ngFor="let SectorSelection$  of SectorSelections$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.name}}</option>
-                </select>
-          </div>
-          <div class="col-md-11 offset-md-1">
-                <label *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)">Ειδικότητα</label>
-                <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)"
-                      (change)="checkcourse(coursel)" formControlName="course">
-                  <option value="0"></option>
-                  <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
-                </select>
-          </div>
-          <br>
-          <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName === ''" >
-          <i class="fa fa-file-text"></i>
-              Δημιουργία Αναφοράς
-          </button>
-          <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName === ''" >
-              Επιστροφή
-          </button>
-          <br><br>
+            <div  class="col-md-11 offset-md-1">
+            <label *ngIf = "enableRegionFilter && userLoggedIn === 'supervisor'"> Περιφερειακή Διεύθυνση </label>
+            <select #regsel class="form-control" (change)="checkregion(regsel)" *ngIf = "enableRegionFilter" [value] = "regionSelected" [hidden] = "userLoggedIn !== 'supervisor'" formControlName="region">
+                <option value="0"></option>
+                <option *ngFor="let RegionSelection$  of RegionSelections$ | async; let i=index" [value] = "RegionSelection$.id"> {{RegionSelection$.name}} </option>
+            </select>
+            </div>
+            <div class="col-md-11 offset-md-1">
+            <label *ngIf="(showAdminList | async) && enableRegionFilter && userLoggedIn !== 'dide'">Διεύθυνση Εκπαίδευσης</label>
+            <select #admsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkadminarea(admsel)" [hidden] = "userLoggedIn === 'dide'" formControlName="adminarea">
+                <option value="0"></option>
+                <option *ngFor="let AdminAreaSelection$  of AdminAreaSelections$ | async; let i=index" [value] = "AdminAreaSelection$.id"> {{AdminAreaSelection$.name}}</option>
+            </select>
+            </div>
+            <div class="col-md-11 offset-md-1">
+            <label *ngIf="(showAdminList | async) && enableRegionFilter">Σχολείο</label>
+            <select #schsel class="form-control"  *ngIf="(showAdminList | async) && enableRegionFilter" (change)="checkschool(schsel)" formControlName="schoollist">
+                <option value="0"></option>
+                <option *ngFor="let SchoolSelection$  of SchoolSelections$ | async; let i=index" [value] = "SchoolSelection$.epal_id"> {{SchoolSelection$.epal_name}} </option>
+            </select>
+            </div>
+
+            <div *ngIf = "reportId === 3 || reportId === 5" >
+                <button type="button" class="btn btn-sm" (click)="toggleCourseFilter()" >Φίλτρο Επιλογής Τομέα / Ειδικότητας</button>
+
+                <div  class="col-md-11 offset-md-1">
+                    <label for="classid" *ngIf = "enableCourseFilter" >Τάξη</label>
+                    <select #class_sel  class="form-control" (change)="checkclass(class_sel)" *ngIf = "enableCourseFilter" formControlName="classid" >
+                        <option value="0" ></option>
+                        <option value="1" >Α' Λυκείου</option>
+                        <option value="2" >Β' Λυκείου</option>
+                        <option value="3" >Γ' Λυκείου</option>
+                        <option value="4" >Δ' Λυκείου</option>
+                    </select>
+                </div>
+                <div class="col-md-11 offset-md-1">
+                    <label *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4) ">Τομέας</label>
+                    <select #secsel class="form-control"  *ngIf="(showSectorList | async) && enableCourseFilter && (classSelected === 2 || classSelected === 3 || classSelected === 4)"
+                            (change)="checksector(secsel)" formControlName="sector">
+                        <option value="0"></option>
+                        <option *ngFor="let SectorSelection$  of SectorSelections$ | async; let i=index" [value] = "SectorSelection$.id"> {{SectorSelection$.name}}</option>
+                    </select>
+                </div>
+                <div class="col-md-11 offset-md-1">
+                    <label *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)">Ειδικότητα</label>
+                    <select #coursel class="form-control"  *ngIf="(showCourseList | async) && enableCourseFilter && (classSelected === 3 || classSelected === 4)"
+                            (change)="checkcourse(coursel)" formControlName="course">
+                        <option value="0"></option>
+                        <option *ngFor="let CourseSelection$  of CourseSelections$ | async; let i=index" [value] = "CourseSelection$.id"> {{CourseSelection$.name}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-alert"  (click)="createReport(regsel)" [hidden]="minedu_userName === ''" >
+            <i class="fa fa-file-text"></i>
+                Δημιουργία Αναφοράς
+            </button>
+            <button type="submit" class="btn btn-alert pull-right"  (click)="navigateBack()" [hidden]="minedu_userName === ''" >
+                Επιστροφή
+            </button>
         </form>
 
         <div *ngIf="validCreator === 1 ">
-          <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
-          <div class="smart-table-container" reportScroll>
+            <input #search class="search" type="text" placeholder="Αναζήτηση..." (keydown.enter)="onSearch(search.value)">
+            <div class="smart-table-container table table-hover table-striped" reportScroll>
             <ng2-smart-table [settings]="settings" [source]="source"></ng2-smart-table>
-          </div>
+            </div>
         </div>
 
-        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator !== 1">
-        <i class="fa fa-download"></i>
-            <br>Εξαγωγή σε csv
-        </button>
-        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator !== 1 || schSelected === 0 || (reportId !== 2 ) ">
-        <i class="fa fa-bar-chart"></i>
-            Διάγραμμα
-        </button>
-
-        <div class="d3-chart" *ngIf = "validCreator === 1" #chart>
-        </div>
-        <br><br><br><br><br>
-
+        <button type="button" class="alert alert-info pull-right" (click)="export2Csv()" [hidden]="validCreator !== 1"><i class="fa fa-download"></i> Εξαγωγή σε csv</button>
+        <button type="button" class="alert alert-info pull-left" (click)="createDiagram()" [hidden]="validCreator !== 1 || schSelected === 0 || (reportId !== 2 ) "><i class="fa fa-bar-chart"></i> Διάγραμμα</button>
+        <div class="d3-chart" *ngIf = "validCreator === 1" #chart></div>
     </div>
-
    `
 })
 
@@ -316,11 +300,13 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
             route = "/ministry/report-all-stat/";
             this.distribFinalized = 1;
             this.settings = this.reportSchema.reportAllStatSchema;
+            this.settings.fileName = "e-ΕΠΑΛ Αριθμός Μαθητών και Πληρότητα σχολικών μονάδων ΕΠΑΛ";
         }
         else if (this.reportId === 5) {
             route = "/ministry/report-all-stat/";
             this.distribFinalized = 0;
             this.settings = this.reportSchema.reportAllStatSchema;
+            this.settings.fileName = "e-ΕΠΑΛ Ολιγομελή τμήματα - Προσωρινά τοποθετημένοι μαθητές";
         }
 
         let regSel = 0, admSel = 0, schSel = 0;
@@ -342,8 +328,9 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
         if (this.userLoggedIn === PDE_ROLE) {
             regSel = this.regionSelected;
         }
-        else if (this.userLoggedIn === DIDE_ROLE)
+        else if (this.userLoggedIn === DIDE_ROLE) {
             admSel = this.adminAreaSelected;
+        }
 
         this.generalReportSub = this._hds.makeReport(this.minedu_userName, this.minedu_userPassword, route, regSel, admSel, schSel, clSel, secSel, courSel, this.distribFinalized).subscribe(data => {
             this.generalReport$.next(data);
@@ -355,8 +342,17 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
 
                 this.data[i].percTotal = Number(data[i].percTotal);
                 this.data[i].percA = Number(data[i].percA);
+                if (Number.isNaN(this.data[i].percA)) {
+                    this.data[i].percA = "-";
+                }
                 this.data[i].percB = Number(data[i].percB);
+                if (Number.isNaN(this.data[i].percB)) {
+                    this.data[i].percB = "-";
+                }
                 this.data[i].percC = Number(data[i].percC);
+                if (Number.isNaN(this.data[i].percC)) {
+                    this.data[i].percC = "-";
+                }
             }
             this.validCreator = 1;
             this.source = new LocalDataSource(this.data);
@@ -369,10 +365,10 @@ import { ReportsSchema, TableColumn } from "./reports-schema";
             // this.prepareColumnMap();
             this.csvObj.prepareColumnMap();
         },
-            error => {
-                this.generalReport$.next([{}]);
-                console.log("Error Getting generalReport");
-            });
+        error => {
+            this.generalReport$.next([{}]);
+            console.log("Error Getting generalReport");
+        });
     }
 
     navigateBack() {

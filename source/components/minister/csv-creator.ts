@@ -74,7 +74,7 @@ export class CsvCreator {
             // Set utf-8 header to let excel recognize its encoding
             let blob = new Blob(["\ufeff", encodedStr], { type: "text/csv" });
             a.href = window.URL.createObjectURL(blob);
-            a.download = (this.settings.fileName || "epalSystemReport") + "all_stat" + ".csv";
+            a.download = (this.settings.fileName || "epalSystemReport") + "_all_stat" + ".csv";
             a.click();
         });
     }
